@@ -1,5 +1,6 @@
 #import <Foundation/Foundation.h>
 #import <CoreLocation/CoreLocation.h>
+#import <Network/Network.h>
 
 /* How to Hook with Logos
 Hooks are written with syntax similar to that of an Objective-C @implementation.
@@ -45,51 +46,72 @@ the generation of a class list and an automatic constructor.
 // https://stackoverflow.com/questions/4152003/how-can-i-get-current-location-from-user-in-ios
 // https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ProgrammingWithObjectiveC/DefiningClasses/DefiningClasses.html
 
-@interface CaptureCellsLocationDelegate: NSObject<CLLocationManagerDelegate>
-
-@end
-
-@implementation CaptureCellsLocationDelegate
-
-- (void)locationManagerDidChangeAuthorization:(CLLocationManager *)manager {
-	NSLog(@" = %@ tweak loc change authorization %d", manager, manager.authorizationStatus);
-}
-
-- (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations {
-    NSLog(@" = %@ tweak loc update", locations);
-}
-
-- (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error {
-    NSLog(@" = %@ tweak loc error", error);
-}
-
 // https://developer.apple.com/documentation/corelocation/handling_location_updates_in_the_background?language=objc
 // https://developer.apple.com/documentation/corelocation/cllocationmanager/1620551-requestalwaysauthorization?language=objc
 // https://developer.apple.com/forums/thread/685525
 
-// TODO: Initialize the LocationManager here if we've solve the problem
-
-@end
-
-NSTimeInterval lastUpdateTimestmap = 0;
-NSArray *lastUpdateArray = NULL;
-CLLocationManager* locationManager = NULL;
-CaptureCellsLocationDelegate* locationManagerDelegate = NULL;
+NSTimeInterval g_last_update_timestmap = 0;
+NSArray *g_last_update_array = NULL;
+nw_listener_t g_listener = NULL;
+nw_connection_t g_inbound_connection = NULL;
 
 %ctor {
-	NSLog(@"Hello from tweak");
-	locationManager = [[CLLocationManager alloc] init];
-	locationManagerDelegate = [CaptureCellsLocationDelegate alloc];
+	NSString* programName = [NSString stringWithUTF8String: argv[0]];
+	NSLog(@"Hello from tweak %@", programName);
+	if ([programName isEqualToString:@"/System/Library/Frameworks/CoreTelephony.framework/Support/CommCenter"]) {
+		// https://developer.apple.com/documentation/network/implementing_netcat_with_network_framework?language=objc
+		nw_parameters_t parameters = nw_parameters_create_secure_tcp(
+			NW_PARAMETERS_DISABLE_PROTOCOL,
+			NW_PARAMETERS_DEFAULT_CONFIGURATION
+		);
+		// TODO: Only create for 127.0.0.1 interface with 
+		g_listener = nw_listener_create_with_port("33066", parameters);
+		nw_listener_set_queue(g_listener, dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0));
+		nw_listener_set_state_changed_handler(g_listener, ^(nw_listener_state_t state, nw_error_t error) {
+			NSLog(@"tweak: Network state changed %u - %@", state, error);
+		});
+		nw_listener_set_new_connection_handler(g_listener, ^(nw_connection_t connection) {
+			if (g_inbound_connection != NULL) {
+				nw_connection_cancel(connection);
+			} else {
+				g_inbound_connection = connection;
+				nw_connection_set_queue(g_inbound_connection, dispatch_get_main_queue());
+				nw_connection_set_state_changed_handler(g_inbound_connection, ^(nw_connection_state_t state, nw_error_t error) {
+					// TODO: Print anything?
+				});
+				nw_connection_start(g_inbound_connection);
 
-	locationManager.distanceFilter = kCLDistanceFilterNone;
-	locationManager.desiredAccuracy = kCLLocationAccuracyBest;
-	locationManager.delegate = locationManagerDelegate;
+				NSData *stringNSData = [@"Hello World\n" dataUsingEncoding:NSUTF8StringEncoding];
+				Byte bytes[stringNSData.length];
+				[stringNSData getBytes:bytes length:stringNSData.length];
+				dispatch_data_t sendData = dispatch_data_create(bytes, stringNSData.length, NULL, DISPATCH_DATA_DESTRUCTOR_DEFAULT);
+				nw_connection_send(g_inbound_connection, sendData, NW_CONNECTION_DEFAULT_MESSAGE_CONTEXT, true, ^(nw_error_t _Nullable error) {
+					if (error != NULL) {
+						NSLog(@"tweak: Send Error Log %@", error);
+						// … error logging …
+					} else {
+						nw_connection_send(g_inbound_connection, NULL, NW_CONNECTION_FINAL_MESSAGE_CONTEXT, true, ^(nw_error_t _Nullable error) {});
+					}
+				});
+			}
+
+			NSLog(@"tweak: New connection %@", connection);
+		});
+		nw_listener_start(g_listener);
+
+		NSLog(@"tweak: Opened port 33066");
+	}
 }
 
 %dtor {
 	NSLog(@"Bye from tweak");
-	locationManager = NULL;
-	locationManagerDelegate = NULL;
+	if (g_listener != NULL) {
+		nw_listener_cancel(g_listener);
+	}
+
+	g_last_update_timestmap = 0;
+	g_last_update_array = NULL;
+
 }
 
 %hook CTCellInfo
@@ -107,9 +129,9 @@ CaptureCellsLocationDelegate* locationManagerDelegate = NULL;
 
 	// If the new array is different or at least a second has passed, we'll log the array
 	NSTimeInterval now = [[NSDate date] timeIntervalSince1970];
-	if ((now - lastUpdateTimestmap) > 1.0 || ![r isEqualToArray: lastUpdateArray]) {
-		lastUpdateTimestmap = now;
-		lastUpdateArray = [r copy];
+	if ((now - g_last_update_timestmap) > 1.0 || ![r isEqualToArray: g_last_update_array]) {
+		g_last_update_timestmap = now;
+		g_last_update_array = [r copy];
 
 		// https://stackoverflow.com/a/17453020
 		// https://developer.apple.com/documentation/dispatch?language=objc
@@ -117,19 +139,11 @@ CaptureCellsLocationDelegate* locationManagerDelegate = NULL;
 		// https://developer.apple.com/documentation/dispatch/1453057-dispatch_async
 		dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0), ^(void) {
 			NSLog(@"queue = %@ tweak from queue", r);
-			// TODO: Move up to init method
-			NSLog(@"queue = %@ tweak from queue", r);
-			NSLog(@"tweak locman = %@", locationManager);
-			NSLog(@"tweak delegate = %@", locationManagerDelegate);
 
-			[locationManager requestLocation];
 			// https://developer.apple.com/documentation/corelocation/clauthorizationstatus/kclauthorizationstatusrestricted?language=objc
-			NSLog(@"tweak loc status %d == kCLAuthorizationStatusRestricted (%d)", locationManager.authorizationStatus, kCLAuthorizationStatusRestricted);
-			// [locationManager startUpdatingLocation];
-			// [locationManager stopUpdatingLocation];
 		});
 
-		NSLog(@" = %@ tweak", r);
+		// NSLog(@" = %@ tweak", r);
 	}
 
 	/*
