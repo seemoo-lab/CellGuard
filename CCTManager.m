@@ -11,6 +11,8 @@
 
 - (void)handleInboundConnection:(nw_connection_t)connection;
 
+- (void)emptyCache;
+
 - (void)sendLoop:(NSFileHandle *)fileHandle;
 
 - (void)closeConnection;
@@ -23,17 +25,6 @@
 
 @implementation CCTManager {
 
-}
-
-- (instancetype)init {
-    self = [super init];
-    if (self) {
-        // TODO: Is this even required?
-        /* self.cellLastData = NULL;
-        self.cellLastTimestamp = 0; */
-    }
-
-    return self;
 }
 
 
@@ -103,13 +94,45 @@
     }
 
     NSError *fileError;
-    NSFileHandle *fileHandle = [NSFileHandle fileHandleForReadingFromURL:cacheFile error:&fileError];
-    if (fileHandle == nil) {
-        NSLog(@"Can't open file %@ for reading: %@", cacheFile, fileError);
+    NSData *data = [NSData dataWithContentsOfURL:cacheFile options:0 error:&fileError];
+    if (data == nil) {
+        NSLog(@"CCTManager: Can't read the file %@ into memory: %@", cacheFile.path, fileError);
+        [self closeConnection];
         return;
     }
 
-    [self sendLoop:fileHandle];
+    Byte bytes[data.length];
+    [data getBytes:bytes length:data.length];
+    dispatch_data_t sendData = dispatch_data_create(bytes, data.length, NULL, DISPATCH_DATA_DESTRUCTOR_DEFAULT);
+    nw_connection_send(self.nw_inbound_connection, sendData, NW_CONNECTION_DEFAULT_MESSAGE_CONTEXT, true,
+            ^(nw_error_t _Nullable error) {
+                if (error != NULL) {
+                    NSLog(@"CCTManager: Can't send data over the wire: %@", error);
+                } else {
+                    [self emptyCache];
+                }
+                [self closeConnection];
+            });
+}
+
+- (void)emptyCache {
+    NSError *error;
+    NSFileHandle *fileHandle = [NSFileHandle fileHandleForUpdatingURL:self.cacheFile error:&error];
+    if (fileHandle == nil) {
+        NSLog(@"CCTManager: Can't open file %@ for reading: %@", self.cacheFile, error);
+        return;
+    }
+
+    // Truncate the file and close the file handle
+    if (![fileHandle truncateAtOffset:0 error:&error]) {
+        NSLog(@"CCTManager: Can't truncate the file after successful request: %@", error);
+    } else {
+        NSLog(@"CCTManager: Successfully truncated file after successful response");
+    }
+
+    if (![fileHandle closeAndReturnError:&error]) {
+        NSLog(@"CCTManager: Can't close file: %@", error);
+    }
 }
 
 - (void)sendLoop:(NSFileHandle *)fileHandle {
@@ -278,7 +301,7 @@
     NSFileManager *fileManager = [NSFileManager defaultManager];
     // https://developer.apple.com/forums/thread/688387
     NSURL *tmpDirectory = [fileManager URLForDirectory:NSDocumentDirectory inDomain:NSUserDomainMask
-            appropriateForURL:nil create:true error:&error];
+                                     appropriateForURL:nil create:true error:&error];
     NSURL *tweakDirectory = [tmpDirectory URLByAppendingPathComponent:@"CaptureCellsTweak" isDirectory:true];
     NSURL *cacheFile = [tweakDirectory URLByAppendingPathComponent:@"cells-cache.json"];
 
@@ -309,7 +332,11 @@
     }
 
     // Open the file handle for reading & writing (as we have to skip to the end of the file)
-    NSFileHandle *fileHandle = [NSFileHandle fileHandleForUpdatingAtPath:cacheFile.path];
+    NSFileHandle *fileHandle = [NSFileHandle fileHandleForUpdatingURL:cacheFile error:&error];
+    if (fileHandle == NULL) {
+        NSLog(@"CCTManager: Can't get file handle for %@: %@", cacheFile, error);
+        return;
+    }
 
     // Seek to the end of the file (inspired by https://stackoverflow.com/a/11106678)
     unsigned long long int endOffset = 0;
