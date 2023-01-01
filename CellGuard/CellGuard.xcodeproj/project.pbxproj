@@ -1,0 +1,613 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		CFD023372961A10D00AA5A1C /* CellGuardApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD023362961A10D00AA5A1C /* CellGuardApp.swift */; };
+		CFD023392961A10D00AA5A1C /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD023382961A10D00AA5A1C /* ContentView.swift */; };
+		CFD0233B2961A10D00AA5A1C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CFD0233A2961A10D00AA5A1C /* Assets.xcassets */; };
+		CFD0233E2961A10D00AA5A1C /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CFD0233D2961A10D00AA5A1C /* Preview Assets.xcassets */; };
+		CFD023402961A10D00AA5A1C /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD0233F2961A10D00AA5A1C /* Persistence.swift */; };
+		CFD023432961A10D00AA5A1C /* CellGuard.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = CFD023412961A10D00AA5A1C /* CellGuard.xcdatamodeld */; };
+		CFD0234D2961A10E00AA5A1C /* CellGuardTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD0234C2961A10E00AA5A1C /* CellGuardTests.swift */; };
+		CFD023572961A10E00AA5A1C /* CellGuardUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD023562961A10E00AA5A1C /* CellGuardUITests.swift */; };
+		CFD023592961A10E00AA5A1C /* CellGuardUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD023582961A10E00AA5A1C /* CellGuardUITestsLaunchTests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		CFD023492961A10E00AA5A1C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CFD0232B2961A10D00AA5A1C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CFD023322961A10D00AA5A1C;
+			remoteInfo = CellGuard;
+		};
+		CFD023532961A10E00AA5A1C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CFD0232B2961A10D00AA5A1C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CFD023322961A10D00AA5A1C;
+			remoteInfo = CellGuard;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		CFD023332961A10D00AA5A1C /* CellGuard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CellGuard.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		CFD023362961A10D00AA5A1C /* CellGuardApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellGuardApp.swift; sourceTree = "<group>"; };
+		CFD023382961A10D00AA5A1C /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		CFD0233A2961A10D00AA5A1C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		CFD0233D2961A10D00AA5A1C /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		CFD0233F2961A10D00AA5A1C /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
+		CFD023422961A10D00AA5A1C /* CellGuard.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = CellGuard.xcdatamodel; sourceTree = "<group>"; };
+		CFD023482961A10E00AA5A1C /* CellGuardTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CellGuardTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		CFD0234C2961A10E00AA5A1C /* CellGuardTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellGuardTests.swift; sourceTree = "<group>"; };
+		CFD023522961A10E00AA5A1C /* CellGuardUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CellGuardUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		CFD023562961A10E00AA5A1C /* CellGuardUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellGuardUITests.swift; sourceTree = "<group>"; };
+		CFD023582961A10E00AA5A1C /* CellGuardUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellGuardUITestsLaunchTests.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		CFD023302961A10D00AA5A1C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CFD023452961A10E00AA5A1C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CFD0234F2961A10E00AA5A1C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		CFD0232A2961A10D00AA5A1C = {
+			isa = PBXGroup;
+			children = (
+				CFD023352961A10D00AA5A1C /* CellGuard */,
+				CFD0234B2961A10E00AA5A1C /* CellGuardTests */,
+				CFD023552961A10E00AA5A1C /* CellGuardUITests */,
+				CFD023342961A10D00AA5A1C /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		CFD023342961A10D00AA5A1C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CFD023332961A10D00AA5A1C /* CellGuard.app */,
+				CFD023482961A10E00AA5A1C /* CellGuardTests.xctest */,
+				CFD023522961A10E00AA5A1C /* CellGuardUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		CFD023352961A10D00AA5A1C /* CellGuard */ = {
+			isa = PBXGroup;
+			children = (
+				CFD023362961A10D00AA5A1C /* CellGuardApp.swift */,
+				CFD023382961A10D00AA5A1C /* ContentView.swift */,
+				CFD0233A2961A10D00AA5A1C /* Assets.xcassets */,
+				CFD0233F2961A10D00AA5A1C /* Persistence.swift */,
+				CFD023412961A10D00AA5A1C /* CellGuard.xcdatamodeld */,
+				CFD0233C2961A10D00AA5A1C /* Preview Content */,
+			);
+			path = CellGuard;
+			sourceTree = "<group>";
+		};
+		CFD0233C2961A10D00AA5A1C /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				CFD0233D2961A10D00AA5A1C /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		CFD0234B2961A10E00AA5A1C /* CellGuardTests */ = {
+			isa = PBXGroup;
+			children = (
+				CFD0234C2961A10E00AA5A1C /* CellGuardTests.swift */,
+			);
+			path = CellGuardTests;
+			sourceTree = "<group>";
+		};
+		CFD023552961A10E00AA5A1C /* CellGuardUITests */ = {
+			isa = PBXGroup;
+			children = (
+				CFD023562961A10E00AA5A1C /* CellGuardUITests.swift */,
+				CFD023582961A10E00AA5A1C /* CellGuardUITestsLaunchTests.swift */,
+			);
+			path = CellGuardUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		CFD023322961A10D00AA5A1C /* CellGuard */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CFD0235C2961A10E00AA5A1C /* Build configuration list for PBXNativeTarget "CellGuard" */;
+			buildPhases = (
+				CFD0232F2961A10D00AA5A1C /* Sources */,
+				CFD023302961A10D00AA5A1C /* Frameworks */,
+				CFD023312961A10D00AA5A1C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = CellGuard;
+			productName = CellGuard;
+			productReference = CFD023332961A10D00AA5A1C /* CellGuard.app */;
+			productType = "com.apple.product-type.application";
+		};
+		CFD023472961A10E00AA5A1C /* CellGuardTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CFD0235F2961A10E00AA5A1C /* Build configuration list for PBXNativeTarget "CellGuardTests" */;
+			buildPhases = (
+				CFD023442961A10E00AA5A1C /* Sources */,
+				CFD023452961A10E00AA5A1C /* Frameworks */,
+				CFD023462961A10E00AA5A1C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				CFD0234A2961A10E00AA5A1C /* PBXTargetDependency */,
+			);
+			name = CellGuardTests;
+			productName = CellGuardTests;
+			productReference = CFD023482961A10E00AA5A1C /* CellGuardTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		CFD023512961A10E00AA5A1C /* CellGuardUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CFD023622961A10E00AA5A1C /* Build configuration list for PBXNativeTarget "CellGuardUITests" */;
+			buildPhases = (
+				CFD0234E2961A10E00AA5A1C /* Sources */,
+				CFD0234F2961A10E00AA5A1C /* Frameworks */,
+				CFD023502961A10E00AA5A1C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				CFD023542961A10E00AA5A1C /* PBXTargetDependency */,
+			);
+			name = CellGuardUITests;
+			productName = CellGuardUITests;
+			productReference = CFD023522961A10E00AA5A1C /* CellGuardUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		CFD0232B2961A10D00AA5A1C /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1420;
+				LastUpgradeCheck = 1420;
+				TargetAttributes = {
+					CFD023322961A10D00AA5A1C = {
+						CreatedOnToolsVersion = 14.2;
+					};
+					CFD023472961A10E00AA5A1C = {
+						CreatedOnToolsVersion = 14.2;
+						TestTargetID = CFD023322961A10D00AA5A1C;
+					};
+					CFD023512961A10E00AA5A1C = {
+						CreatedOnToolsVersion = 14.2;
+						TestTargetID = CFD023322961A10D00AA5A1C;
+					};
+				};
+			};
+			buildConfigurationList = CFD0232E2961A10D00AA5A1C /* Build configuration list for PBXProject "CellGuard" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = CFD0232A2961A10D00AA5A1C;
+			productRefGroup = CFD023342961A10D00AA5A1C /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				CFD023322961A10D00AA5A1C /* CellGuard */,
+				CFD023472961A10E00AA5A1C /* CellGuardTests */,
+				CFD023512961A10E00AA5A1C /* CellGuardUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		CFD023312961A10D00AA5A1C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CFD0233E2961A10D00AA5A1C /* Preview Assets.xcassets in Resources */,
+				CFD0233B2961A10D00AA5A1C /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CFD023462961A10E00AA5A1C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CFD023502961A10E00AA5A1C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		CFD0232F2961A10D00AA5A1C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CFD023402961A10D00AA5A1C /* Persistence.swift in Sources */,
+				CFD023432961A10D00AA5A1C /* CellGuard.xcdatamodeld in Sources */,
+				CFD023392961A10D00AA5A1C /* ContentView.swift in Sources */,
+				CFD023372961A10D00AA5A1C /* CellGuardApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CFD023442961A10E00AA5A1C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CFD0234D2961A10E00AA5A1C /* CellGuardTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CFD0234E2961A10E00AA5A1C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CFD023592961A10E00AA5A1C /* CellGuardUITestsLaunchTests.swift in Sources */,
+				CFD023572961A10E00AA5A1C /* CellGuardUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		CFD0234A2961A10E00AA5A1C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CFD023322961A10D00AA5A1C /* CellGuard */;
+			targetProxy = CFD023492961A10E00AA5A1C /* PBXContainerItemProxy */;
+		};
+		CFD023542961A10E00AA5A1C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CFD023322961A10D00AA5A1C /* CellGuard */;
+			targetProxy = CFD023532961A10E00AA5A1C /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		CFD0235A2961A10E00AA5A1C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		CFD0235B2961A10E00AA5A1C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		CFD0235D2961A10E00AA5A1C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"CellGuard/Preview Content\"";
+				DEVELOPMENT_TEAM = RJXNW62ZYN;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = CellGuard;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "de.tu-darmstadt.seemoo.CellGuard";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		CFD0235E2961A10E00AA5A1C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"CellGuard/Preview Content\"";
+				DEVELOPMENT_TEAM = RJXNW62ZYN;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = CellGuard;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "de.tu-darmstadt.seemoo.CellGuard";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		CFD023602961A10E00AA5A1C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = RJXNW62ZYN;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "de.tu-darmstadt.seemoo.CellGuardTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CellGuard.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/CellGuard";
+			};
+			name = Debug;
+		};
+		CFD023612961A10E00AA5A1C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = RJXNW62ZYN;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "de.tu-darmstadt.seemoo.CellGuardTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CellGuard.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/CellGuard";
+			};
+			name = Release;
+		};
+		CFD023632961A10E00AA5A1C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = RJXNW62ZYN;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "de.tu-darmstadt.seemoo.CellGuardUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = CellGuard;
+			};
+			name = Debug;
+		};
+		CFD023642961A10E00AA5A1C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = RJXNW62ZYN;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "de.tu-darmstadt.seemoo.CellGuardUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = CellGuard;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		CFD0232E2961A10D00AA5A1C /* Build configuration list for PBXProject "CellGuard" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CFD0235A2961A10E00AA5A1C /* Debug */,
+				CFD0235B2961A10E00AA5A1C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CFD0235C2961A10E00AA5A1C /* Build configuration list for PBXNativeTarget "CellGuard" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CFD0235D2961A10E00AA5A1C /* Debug */,
+				CFD0235E2961A10E00AA5A1C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CFD0235F2961A10E00AA5A1C /* Build configuration list for PBXNativeTarget "CellGuardTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CFD023602961A10E00AA5A1C /* Debug */,
+				CFD023612961A10E00AA5A1C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CFD023622961A10E00AA5A1C /* Build configuration list for PBXNativeTarget "CellGuardUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CFD023632961A10E00AA5A1C /* Debug */,
+				CFD023642961A10E00AA5A1C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		CFD023412961A10D00AA5A1C /* CellGuard.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				CFD023422961A10D00AA5A1C /* CellGuard.xcdatamodel */,
+			);
+			currentVersion = CFD023422961A10D00AA5A1C /* CellGuard.xcdatamodel */;
+			path = CellGuard.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
+	};
+	rootObject = CFD0232B2961A10D00AA5A1C /* Project object */;
+}
