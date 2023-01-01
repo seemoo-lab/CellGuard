@@ -13,8 +13,6 @@
 
 - (void)emptyCache;
 
-- (void)sendLoop:(NSFileHandle *)fileHandle;
-
 - (void)closeConnection;
 
 - (NSString *)dataToJSON:(NSArray *)data timestamp:(NSTimeInterval)timestamp;
@@ -84,6 +82,7 @@
     });
     nw_connection_start(self.nw_inbound_connection);
 
+    // Get the path of the cache file
     NSURL *cacheFile = self.cacheFile;
     NSFileManager *fileManager = [NSFileManager defaultManager];
 
@@ -93,6 +92,7 @@
         return;
     }
 
+    // Read the full content of the file into memory to lock the file as short as possible
     NSError *fileError;
     NSData *data = [NSData dataWithContentsOfURL:cacheFile options:0 error:&fileError];
     if (data == nil) {
@@ -101,21 +101,28 @@
         return;
     }
 
+    // Convert the data read from NSData into dispatch_data_t
     Byte bytes[data.length];
     [data getBytes:bytes length:data.length];
     dispatch_data_t sendData = dispatch_data_create(bytes, data.length, NULL, DISPATCH_DATA_DESTRUCTOR_DEFAULT);
+
+    // Send the data over the wire
     nw_connection_send(self.nw_inbound_connection, sendData, NW_CONNECTION_DEFAULT_MESSAGE_CONTEXT, true,
             ^(nw_error_t _Nullable error) {
                 if (error != NULL) {
+                    // Print an error
                     NSLog(@"CCTManager: Can't send data over the wire: %@", error);
                 } else {
+                    // If everything was successful, clear the cache file
                     [self emptyCache];
                 }
+                // In any case, close the connection
                 [self closeConnection];
             });
 }
 
 - (void)emptyCache {
+    // Get a file handle for the cache file
     NSError *error;
     NSFileHandle *fileHandle = [NSFileHandle fileHandleForUpdatingURL:self.cacheFile error:&error];
     if (fileHandle == nil) {
@@ -133,58 +140,6 @@
     if (![fileHandle closeAndReturnError:&error]) {
         NSLog(@"CCTManager: Can't close file: %@", error);
     }
-}
-
-- (void)sendLoop:(NSFileHandle *)fileHandle {
-    // If no inbound connection is available, there's nothing to do
-    if (self.nw_inbound_connection == NULL) {
-        return;
-    }
-
-    // Get the file descriptor and the queue
-    int fileDescriptor = [fileHandle fileDescriptor];
-    dispatch_queue_main_t queue = dispatch_get_main_queue();
-
-    // Read 512kb using the dispatch queue from the file descriptor and send it over the wire
-    dispatch_read(fileDescriptor, 1024 * 512, queue, ^(dispatch_data_t _Nonnull read_data, int read_error) {
-        if (read_error != 0) {
-            // If there's an error, we'll log it
-            NSLog(@"CCTManager: Can't read from file handle: %d", read_error);
-
-            // Close the connection
-            [self closeConnection];
-
-            // Close the fila handle
-            NSError *fileError;
-            if (![fileHandle closeAndReturnError:&fileError]) {
-                NSLog(@"CCTManager: Can't close file handle for reading (with other error): %@", fileError);
-            }
-        } else if (read_data == NULL) {
-            // If the read_data == NULL, the EOF is reached, and we'll send a message to close the connection
-            [self closeConnection];
-
-            // Truncate the file and close the file handle
-            NSError *fileError;
-            if (![fileHandle truncateAtOffset:0 error:&fileError]) {
-                NSLog(@"CCTManager: Can't truncate the file after successful request: %@", fileError);
-            } else {
-                NSLog(@"CCTManger: Successfully truncated file after extraction");
-            }
-
-            if (![fileHandle closeAndReturnError:&fileError]) {
-                NSLog(@"CCTManager: Can't close file handle for reading: %@", fileError);
-            }
-        } else {
-            nw_connection_send(self.nw_inbound_connection, read_data, NW_CONNECTION_DEFAULT_MESSAGE_CONTEXT, true,
-                    ^(nw_error_t _Nullable error) {
-                        if (error != NULL) {
-                            NSLog(@"CCTManager: Can't send data over the wire: %@", error);
-                        } else {
-                            [self sendLoop:fileHandle];
-                        }
-                    });
-        }
-    });
 }
 
 - (void)closeConnection {
@@ -235,39 +190,6 @@
 
     }
 }
-
-/*
-(
-    {
-        kCTCellMonitorBandInfo = 20;
-        kCTCellMonitorBandwidth = 50;
-        kCTCellMonitorCellId = 12941827;
-        kCTCellMonitorCellRadioAccessTechnology = kCTCellMonitorRadioAccessTechnologyLTE;
-        kCTCellMonitorCellType = kCTCellMonitorCellTypeServing;
-        kCTCellMonitorDeploymentType = 5;
-        kCTCellMonitorMCC = 262;
-        kCTCellMonitorMNC = 2;
-        kCTCellMonitorPID = 33;
-        kCTCellMonitorRSRP = 0;
-        kCTCellMonitorRSRQ = 0;
-        kCTCellMonitorSectorLat = 0;
-        kCTCellMonitorSectorLong = 0;
-        kCTCellMonitorTAC = 45711;
-        kCTCellMonitorUARFCN = 6300;
-    },
-    {
-        kCTCellMonitorCellRadioAccessTechnology = kCTCellMonitorRadioAccessTechnologyNR;
-        kCTCellMonitorCellType = kCTCellMonitorCellTypeNeighbor;
-        kCTCellMonitorIsSA = 0;
-        kCTCellMonitorNRARFCN = 372750;
-        kCTCellMonitorPCI = 133;
-        kCTCellMonitorSCS = 0;
-    }
-)
-    // https://github.com/nahum365/CellularInfo/blob/master/CellInfoView.m#L32
-    // Symbols from /System/Library/Frameworks/CoreTelephony.framework/CoreTelephony (dyld_cache)
-
-*/
 
 - (NSString *)dataToJSON:(NSArray *)data timestamp:(NSTimeInterval)timestamp {
     // Return an empty string if there's nothing to convert
