@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CF320F5529620B16009BAD18 /* CCTParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF320F5429620B16009BAD18 /* CCTParser.swift */; };
+		CF320F5729621C42009BAD18 /* CCTClientTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF320F5629621C42009BAD18 /* CCTClientTest.swift */; };
+		CF320F59296225F9009BAD18 /* CCTResponse.txt in Resources */ = {isa = PBXBuildFile; fileRef = CF320F582962208B009BAD18 /* CCTResponse.txt */; };
 		CFD023372961A10D00AA5A1C /* CellGuardApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD023362961A10D00AA5A1C /* CellGuardApp.swift */; };
 		CFD023392961A10D00AA5A1C /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD023382961A10D00AA5A1C /* ContentView.swift */; };
 		CFD0233B2961A10D00AA5A1C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CFD0233A2961A10D00AA5A1C /* Assets.xcassets */; };
@@ -20,6 +23,7 @@
 		CFD0236A2961ABA100AA5A1C /* ALSClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD023692961ABA100AA5A1C /* ALSClient.swift */; };
 		CFD0236D2961AD1500AA5A1C /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = CFD0236C2961AD1500AA5A1C /* SwiftProtobuf */; };
 		CFD0236F2961AE8300AA5A1C /* CoreLocationALS.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD0236E2961AE8300AA5A1C /* CoreLocationALS.pb.swift */; };
+		CFD023742961DF7400AA5A1C /* ALSClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD023732961DF7400AA5A1C /* ALSClientTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -40,6 +44,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		CF320F5429620B16009BAD18 /* CCTParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CCTParser.swift; sourceTree = "<group>"; };
+		CF320F5629621C42009BAD18 /* CCTClientTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CCTClientTest.swift; sourceTree = "<group>"; };
+		CF320F582962208B009BAD18 /* CCTResponse.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CCTResponse.txt; sourceTree = "<group>"; };
+		CF320F5A29622B6D009BAD18 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		CFD023332961A10D00AA5A1C /* CellGuard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CellGuard.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFD023362961A10D00AA5A1C /* CellGuardApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellGuardApp.swift; sourceTree = "<group>"; };
 		CFD023382961A10D00AA5A1C /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -55,6 +63,7 @@
 		CFD023672961AB9900AA5A1C /* CCTClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CCTClient.swift; sourceTree = "<group>"; };
 		CFD023692961ABA100AA5A1C /* ALSClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ALSClient.swift; sourceTree = "<group>"; };
 		CFD0236E2961AE8300AA5A1C /* CoreLocationALS.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreLocationALS.pb.swift; sourceTree = "<group>"; };
+		CFD023732961DF7400AA5A1C /* ALSClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ALSClientTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -106,14 +115,15 @@
 		CFD023352961A10D00AA5A1C /* CellGuard */ = {
 			isa = PBXGroup;
 			children = (
-				CFD023702961AF1700AA5A1C /* Location Tracker */,
-				CFD023662961AB7E00AA5A1C /* Capture Cells Tweak */,
+				CF320F5A29622B6D009BAD18 /* Info.plist */,
 				CFD023652961AB6E00AA5A1C /* Apple Location Service */,
+				CFD0233A2961A10D00AA5A1C /* Assets.xcassets */,
+				CFD023662961AB7E00AA5A1C /* Capture Cells Tweak */,
+				CFD023412961A10D00AA5A1C /* CellGuard.xcdatamodeld */,
 				CFD023362961A10D00AA5A1C /* CellGuardApp.swift */,
 				CFD023382961A10D00AA5A1C /* ContentView.swift */,
-				CFD0233A2961A10D00AA5A1C /* Assets.xcassets */,
+				CFD023702961AF1700AA5A1C /* Location Tracker */,
 				CFD0233F2961A10D00AA5A1C /* Persistence.swift */,
-				CFD023412961A10D00AA5A1C /* CellGuard.xcdatamodeld */,
 				CFD0233C2961A10D00AA5A1C /* Preview Content */,
 			);
 			path = CellGuard;
@@ -131,6 +141,9 @@
 			isa = PBXGroup;
 			children = (
 				CFD0234C2961A10E00AA5A1C /* CellGuardTests.swift */,
+				CFD023732961DF7400AA5A1C /* ALSClientTests.swift */,
+				CF320F5629621C42009BAD18 /* CCTClientTest.swift */,
+				CF320F582962208B009BAD18 /* CCTResponse.txt */,
 			);
 			path = CellGuardTests;
 			sourceTree = "<group>";
@@ -157,6 +170,7 @@
 			isa = PBXGroup;
 			children = (
 				CFD023672961AB9900AA5A1C /* CCTClient.swift */,
+				CF320F5429620B16009BAD18 /* CCTParser.swift */,
 			);
 			path = "Capture Cells Tweak";
 			sourceTree = "<group>";
@@ -287,6 +301,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF320F59296225F9009BAD18 /* CCTResponse.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -305,6 +320,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CFD023402961A10D00AA5A1C /* Persistence.swift in Sources */,
+				CF320F5529620B16009BAD18 /* CCTParser.swift in Sources */,
 				CFD023432961A10D00AA5A1C /* CellGuard.xcdatamodeld in Sources */,
 				CFD023682961AB9900AA5A1C /* CCTClient.swift in Sources */,
 				CFD0236A2961ABA100AA5A1C /* ALSClient.swift in Sources */,
@@ -319,6 +335,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				CFD0234D2961A10E00AA5A1C /* CellGuardTests.swift in Sources */,
+				CFD023742961DF7400AA5A1C /* ALSClientTests.swift in Sources */,
+				CF320F5729621C42009BAD18 /* CCTClientTest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -470,6 +488,7 @@
 				DEVELOPMENT_TEAM = RJXNW62ZYN;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = CellGuard/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = CellGuard;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -502,6 +521,7 @@
 				DEVELOPMENT_TEAM = RJXNW62ZYN;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = CellGuard/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = CellGuard;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;

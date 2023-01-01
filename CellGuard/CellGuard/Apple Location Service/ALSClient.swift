@@ -6,8 +6,14 @@
 //
 
 import Foundation
+import OSLog
 
 // https://github.com/apple/swift-protobuf/blob/main/Documentation/API.md#message-api
+
+enum ALSClientError: Error {
+    case httpStatus(URLResponse?)
+    case httpNoData(URLResponse?)
+}
 
 struct ALSLocation {
     var latitude = 0.0
@@ -41,6 +47,13 @@ struct ALSCell {
         return true;
     }
     
+    init(mcc: Int, mnc: Int, tac: Int, cellId: Int) {
+        self.mcc = mcc
+        self.mnc = mnc
+        self.tac = tac
+        self.cellId = cellId
+    }
+    
     init(fromProto proto: AlsProto_ALSLocationResponse.ResponseCell) {
         self.mcc = Int(proto.mcc)
         self.mnc = Int(proto.mnc)
@@ -60,24 +73,30 @@ struct ALSCell {
 }
 
 
-/// The central access poin for Apple's Location Service (ALS)
+/// The central access point for Apple's Location Service (ALS)
 struct ALSClient {
     
-    let endpoint = URL(string: "https://gs-loc.apple.com/clls/wloc")!
-    let headers = [
+    // https://swiftwithmajid.com/2022/04/06/logging-in-swift/
+    private static let logger = Logger(
+        subsystem: Bundle.main.bundleIdentifier!,
+        category: String(describing: ALSClient.self)
+    )
+    
+    private let endpoint = URL(string: "https://gs-loc.apple.com/clls/wloc")!
+    private let headers = [
         "User-Agent": "locationd/2420.8.11 CFNetwork/1206 Darwin/20.1.0",
         "Accept": "*/*",
         "Accept-Language": "en-us",
     ]
-    let serviceIdentifier = "com.apple.locationd"
-    let iOSVersion = "14.2.1.18B121"
-    let locale = "en_US"
+    private let serviceIdentifier = "com.apple.locationd"
+    private let iOSVersion = "14.2.1.18B121"
+    private let locale = "en_US"
     
     /// Request nearby celluluar cells from Apple's Location Service
     /// - Parameters:
     ///   - origin: the cell used as origin for the request, it doesn't require a location
     ///   - completion: called upon success with a list of nearby cells
-    func requestCells(origin: ALSCell, completion: @escaping ([ALSCell])->()) {
+    func requestCells(origin: ALSCell, completion: @escaping (Result<[ALSCell], Error>)->()) {
         let protoRequest = AlsProto_ALSLocationRequest.with {
             $0.cell = origin.toProto()
             $0.unknown3 = 0
@@ -89,16 +108,18 @@ struct ALSClient {
         do {
             data = try protoRequest.serializedData()
         } catch {
-            print("Can't encode proto request: \(error)")
+            Self.logger.warning("Can't encode proto request: \(error)")
+            completion(.failure(error))
             return
         }
         
-        sendHttpRequest(protoData: data) { resultData in
+        sendHttpRequest(protoData: data) { result in
             do {
-                let protoResponse = try AlsProto_ALSLocationResponse(serializedData: resultData)
-                completion(protoResponse.cells.map { ALSCell(fromProto: $0) });
+                let protoResponse = try AlsProto_ALSLocationResponse(serializedData: try result.get())
+                completion(.success(protoResponse.cells.map { ALSCell(fromProto: $0) }));
             } catch {
-                print("Can't decode proto response: \(error)")
+                Self.logger.warning("Can't decode proto response: \(error)")
+                completion(.failure(error))
                 return
             }
         }
@@ -108,7 +129,7 @@ struct ALSClient {
     /// - Parameters:
     ///   - protoData: the encoded data of the protobuf request
     ///   - completion: called upon success with the binary protobuf data of the response
-    private func sendHttpRequest(protoData: Data, completion: @escaping (Data)->()) {
+    private func sendHttpRequest(protoData: Data, completion: @escaping (Result<Data, Error>)->()) {
         // Why we esacpe the parameter complection? https://www.donnywals.com/what-is-escaping-in-swift/
         
         // First build a binary request header and then append the length and the binary of the protobuf request
@@ -124,21 +145,23 @@ struct ALSClient {
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
             // Check if error is set and if yes execute block (https://stackoverflow.com/a/25193174)
             if let error = error {
-                // TODO: Handle client error
-                print("Client error: \(error)")
+                Self.logger.warning("Client error: \(error)")
+                completion(.failure(error))
                 return
             }
-            // CHeck if the HTTP response is okay
+            // Check if the HTTP response is okay
             guard let httpResponse = response as? HTTPURLResponse,
                   (200...299).contains(httpResponse.statusCode) else {
-                // TODO: Handle server error
-                print("Server error: \(String(describing: response))")
+                Self.logger.warning("Server error: \(String(describing: response))")
+                completion(.failure(ALSClientError.httpStatus(response)))
                 return
             }
             // Check the response body
             if let data = data {
                 // If response data is provided, drop the first bytes because they also contain a binary TLV header in the format start + end + start + end + size, and invoke the callback.
-                completion(data.dropFirst(10))
+                completion(.success(data.dropFirst(10)))
+            } else {
+                completion(.failure(ALSClientError.httpNoData(response)))
             }
         }
         task.resume()
@@ -175,7 +198,7 @@ struct ALSClient {
     private func packString(_ string: String) -> Data {
         let data = string.data(using: .utf8) ?? Data()
         if data.isEmpty {
-            print("Failed to pack string '\(string)' into bytes")
+            Self.logger.warning("Failed to pack string '\(string)' into bytes")
         }
         
         return self.packLength(data.count) + data
@@ -186,7 +209,7 @@ struct ALSClient {
     /// - Returns: length as 2 byte value
     private func packLength(_ length: Int) -> Data {
         if length > Int16.max {
-            print("Failed to pack length into bytes as it is too long: \(length) > \(Int16.max)")
+            Self.logger.warning("Failed to pack length into bytes as it is too long: \(length) > \(Int16.max)")
             return Data()
         }
         
