@@ -43,7 +43,6 @@ final class CCTClientTests: XCTestCase {
             }))
         }
         
-        
         listener?.start(queue: .main)
     }
     

@@ -9,6 +9,9 @@ import Foundation
 import OSLog
 import Network
 
+typealias CellInfo = [String: Encodable]
+typealias CellSample = [CellInfo]
+
 struct CCTClient {
     
     private static let logger = Logger(
@@ -19,7 +22,7 @@ struct CCTClient {
     private let port = 33066
     let queue: DispatchQueue
     
-    func collectCells(completion: @escaping (Result<[[[String: Any]]], Error>) -> ()) {
+    func collectCells(completion: @escaping (Result<[CellSample], Error>) -> ()) {
         // https://stackoverflow.com/a/64242102
         
         let nwPort = NWEndpoint.Port(integerLiteral: UInt16(port))
@@ -55,7 +58,7 @@ struct CCTClient {
         connection.start(queue: self.queue)
     }
     
-    private func convert(data: Data) throws -> [[[String: Any]]]  {
+    private func convert(data: Data) throws -> [CellSample]  {
         guard let string = String(data: data, encoding: .utf8) else {
             Self.logger.warning("Can't convert data \(data.debugDescription) to string")
             return []
@@ -64,7 +67,7 @@ struct CCTClient {
         let jsonFriendlyStr = "[\(string.split(whereSeparator: \.isNewline).joined(separator: ", "))]"
         
         // We're using JSONSerilization because the JSONDecoder requires specific type information that we can't provide
-        return try JSONSerialization.jsonObject(with: jsonFriendlyStr.data(using: .utf8)!) as! [[[String : Any]]]
+        return try JSONSerialization.jsonObject(with: jsonFriendlyStr.data(using: .utf8)!) as! [[[String : Encodable]]]
     }
 
     private func connectionStateString(_ state: NWConnection.State) -> String {

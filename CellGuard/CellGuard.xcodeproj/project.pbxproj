@@ -10,6 +10,9 @@
 		CF320F5529620B16009BAD18 /* CCTParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF320F5429620B16009BAD18 /* CCTParser.swift */; };
 		CF320F5729621C42009BAD18 /* CCTClientTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF320F5629621C42009BAD18 /* CCTClientTest.swift */; };
 		CF320F59296225F9009BAD18 /* CCTResponse.txt in Resources */ = {isa = PBXBuildFile; fileRef = CF320F582962208B009BAD18 /* CCTResponse.txt */; };
+		CFB8B2882963417B00503189 /* LocationDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB8B2872963417B00503189 /* LocationDataManager.swift */; };
+		CFB8B28A2963498200503189 /* CellGuardAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB8B2892963498200503189 /* CellGuardAppDelegate.swift */; };
+		CFB8B291296359CC00503189 /* CCTCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB8B290296359CC00503189 /* CCTCollector.swift */; };
 		CFD023372961A10D00AA5A1C /* CellGuardApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD023362961A10D00AA5A1C /* CellGuardApp.swift */; };
 		CFD023392961A10D00AA5A1C /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD023382961A10D00AA5A1C /* ContentView.swift */; };
 		CFD0233B2961A10D00AA5A1C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CFD0233A2961A10D00AA5A1C /* Assets.xcassets */; };
@@ -48,6 +51,9 @@
 		CF320F5629621C42009BAD18 /* CCTClientTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CCTClientTest.swift; sourceTree = "<group>"; };
 		CF320F582962208B009BAD18 /* CCTResponse.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CCTResponse.txt; sourceTree = "<group>"; };
 		CF320F5A29622B6D009BAD18 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		CFB8B2872963417B00503189 /* LocationDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationDataManager.swift; sourceTree = "<group>"; };
+		CFB8B2892963498200503189 /* CellGuardAppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellGuardAppDelegate.swift; sourceTree = "<group>"; };
+		CFB8B290296359CC00503189 /* CCTCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CCTCollector.swift; sourceTree = "<group>"; };
 		CFD023332961A10D00AA5A1C /* CellGuard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CellGuard.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFD023362961A10D00AA5A1C /* CellGuardApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellGuardApp.swift; sourceTree = "<group>"; };
 		CFD023382961A10D00AA5A1C /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -92,6 +98,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		CFB8B28B2963560100503189 /* Core Data */ = {
+			isa = PBXGroup;
+			children = (
+				CFD023412961A10D00AA5A1C /* CellGuard.xcdatamodeld */,
+				CFD0233F2961A10D00AA5A1C /* Persistence.swift */,
+			);
+			path = "Core Data";
+			sourceTree = "<group>";
+		};
 		CFD0232A2961A10D00AA5A1C = {
 			isa = PBXGroup;
 			children = (
@@ -115,15 +130,15 @@
 		CFD023352961A10D00AA5A1C /* CellGuard */ = {
 			isa = PBXGroup;
 			children = (
-				CF320F5A29622B6D009BAD18 /* Info.plist */,
 				CFD023652961AB6E00AA5A1C /* Apple Location Service */,
-				CFD0233A2961A10D00AA5A1C /* Assets.xcassets */,
 				CFD023662961AB7E00AA5A1C /* Capture Cells Tweak */,
-				CFD023412961A10D00AA5A1C /* CellGuard.xcdatamodeld */,
-				CFD023362961A10D00AA5A1C /* CellGuardApp.swift */,
-				CFD023382961A10D00AA5A1C /* ContentView.swift */,
+				CFB8B28B2963560100503189 /* Core Data */,
 				CFD023702961AF1700AA5A1C /* Location Tracker */,
-				CFD0233F2961A10D00AA5A1C /* Persistence.swift */,
+				CF320F5A29622B6D009BAD18 /* Info.plist */,
+				CFD0233A2961A10D00AA5A1C /* Assets.xcassets */,
+				CFD023362961A10D00AA5A1C /* CellGuardApp.swift */,
+				CFB8B2892963498200503189 /* CellGuardAppDelegate.swift */,
+				CFD023382961A10D00AA5A1C /* ContentView.swift */,
 				CFD0233C2961A10D00AA5A1C /* Preview Content */,
 			);
 			path = CellGuard;
@@ -171,6 +186,7 @@
 			children = (
 				CFD023672961AB9900AA5A1C /* CCTClient.swift */,
 				CF320F5429620B16009BAD18 /* CCTParser.swift */,
+				CFB8B290296359CC00503189 /* CCTCollector.swift */,
 			);
 			path = "Capture Cells Tweak";
 			sourceTree = "<group>";
@@ -178,6 +194,7 @@
 		CFD023702961AF1700AA5A1C /* Location Tracker */ = {
 			isa = PBXGroup;
 			children = (
+				CFB8B2872963417B00503189 /* LocationDataManager.swift */,
 			);
 			path = "Location Tracker";
 			sourceTree = "<group>";
@@ -321,11 +338,14 @@
 			files = (
 				CFD023402961A10D00AA5A1C /* Persistence.swift in Sources */,
 				CF320F5529620B16009BAD18 /* CCTParser.swift in Sources */,
+				CFB8B291296359CC00503189 /* CCTCollector.swift in Sources */,
 				CFD023432961A10D00AA5A1C /* CellGuard.xcdatamodeld in Sources */,
 				CFD023682961AB9900AA5A1C /* CCTClient.swift in Sources */,
+				CFB8B28A2963498200503189 /* CellGuardAppDelegate.swift in Sources */,
 				CFD0236A2961ABA100AA5A1C /* ALSClient.swift in Sources */,
 				CFD023392961A10D00AA5A1C /* ContentView.swift in Sources */,
 				CFD0236F2961AE8300AA5A1C /* CoreLocationALS.pb.swift in Sources */,
+				CFB8B2882963417B00503189 /* LocationDataManager.swift in Sources */,
 				CFD023372961A10D00AA5A1C /* CellGuardApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -491,6 +511,8 @@
 				INFOPLIST_FILE = CellGuard/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = CellGuard;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Connect to local tweak and request the collected cells [TODO: Change this :)]";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Monitor your location to connect it with the collected cell data";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -524,6 +546,8 @@
 				INFOPLIST_FILE = CellGuard/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = CellGuard;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Connect to local tweak and request the collected cells [TODO: Change this :)]";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Monitor your location to connect it with the collected cell data";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
