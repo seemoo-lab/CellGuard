@@ -9,7 +9,7 @@ import Foundation
 import OSLog
 import Network
 
-typealias CellInfo = [String: Encodable]
+typealias CellInfo = [String: Any]
 typealias CellSample = [CellInfo]
 
 struct CCTClient {
@@ -67,7 +67,7 @@ struct CCTClient {
         let jsonFriendlyStr = "[\(string.split(whereSeparator: \.isNewline).joined(separator: ", "))]"
         
         // We're using JSONSerilization because the JSONDecoder requires specific type information that we can't provide
-        return try JSONSerialization.jsonObject(with: jsonFriendlyStr.data(using: .utf8)!) as! [[[String : Encodable]]]
+        return try JSONSerialization.jsonObject(with: jsonFriendlyStr.data(using: .utf8)!) as! [CellSample]
     }
 
     private func connectionStateString(_ state: NWConnection.State) -> String {

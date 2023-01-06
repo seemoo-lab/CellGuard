@@ -2,3 +2,4 @@
 .theos/
 packages/
 .DS_Store
+data

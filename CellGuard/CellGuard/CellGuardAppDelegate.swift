@@ -16,7 +16,7 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
         if let launchOptions = launchOptions {
             // https://developer.apple.com/documentation/corelocation/cllocationmanager/1423531-startmonitoringsignificantlocati
             if launchOptions[.location] != nil {
-               let manager = LocationDataManger(extact: false)
+                _ = LocationDataManger(extact: false)
             }
         }
         

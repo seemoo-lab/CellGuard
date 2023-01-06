@@ -8,8 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		CF320F5529620B16009BAD18 /* CCTParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF320F5429620B16009BAD18 /* CCTParser.swift */; };
-		CF320F5729621C42009BAD18 /* CCTClientTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF320F5629621C42009BAD18 /* CCTClientTest.swift */; };
+		CF320F5729621C42009BAD18 /* CCTClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF320F5629621C42009BAD18 /* CCTClientTests.swift */; };
 		CF320F59296225F9009BAD18 /* CCTResponse.txt in Resources */ = {isa = PBXBuildFile; fileRef = CF320F582962208B009BAD18 /* CCTResponse.txt */; };
+		CF5CBB8D29687CBB001CE9BE /* CCTParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5CBB8C29687CBB001CE9BE /* CCTParserTests.swift */; };
 		CFB8B2882963417B00503189 /* LocationDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB8B2872963417B00503189 /* LocationDataManager.swift */; };
 		CFB8B28A2963498200503189 /* CellGuardAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB8B2892963498200503189 /* CellGuardAppDelegate.swift */; };
 		CFB8B291296359CC00503189 /* CCTCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB8B290296359CC00503189 /* CCTCollector.swift */; };
@@ -48,9 +49,10 @@
 
 /* Begin PBXFileReference section */
 		CF320F5429620B16009BAD18 /* CCTParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CCTParser.swift; sourceTree = "<group>"; };
-		CF320F5629621C42009BAD18 /* CCTClientTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CCTClientTest.swift; sourceTree = "<group>"; };
+		CF320F5629621C42009BAD18 /* CCTClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CCTClientTests.swift; sourceTree = "<group>"; };
 		CF320F582962208B009BAD18 /* CCTResponse.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CCTResponse.txt; sourceTree = "<group>"; };
 		CF320F5A29622B6D009BAD18 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		CF5CBB8C29687CBB001CE9BE /* CCTParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CCTParserTests.swift; sourceTree = "<group>"; };
 		CFB8B2872963417B00503189 /* LocationDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationDataManager.swift; sourceTree = "<group>"; };
 		CFB8B2892963498200503189 /* CellGuardAppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellGuardAppDelegate.swift; sourceTree = "<group>"; };
 		CFB8B290296359CC00503189 /* CCTCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CCTCollector.swift; sourceTree = "<group>"; };
@@ -98,6 +100,24 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		CF5CBB8A29687BD8001CE9BE /* Capture Cells Tweak */ = {
+			isa = PBXGroup;
+			children = (
+				CF320F582962208B009BAD18 /* CCTResponse.txt */,
+				CF320F5629621C42009BAD18 /* CCTClientTests.swift */,
+				CF5CBB8C29687CBB001CE9BE /* CCTParserTests.swift */,
+			);
+			path = "Capture Cells Tweak";
+			sourceTree = "<group>";
+		};
+		CF5CBB8B29687BF1001CE9BE /* Apple Location Service */ = {
+			isa = PBXGroup;
+			children = (
+				CFD023732961DF7400AA5A1C /* ALSClientTests.swift */,
+			);
+			path = "Apple Location Service";
+			sourceTree = "<group>";
+		};
 		CFB8B28B2963560100503189 /* Core Data */ = {
 			isa = PBXGroup;
 			children = (
@@ -155,10 +175,9 @@
 		CFD0234B2961A10E00AA5A1C /* CellGuardTests */ = {
 			isa = PBXGroup;
 			children = (
+				CF5CBB8B29687BF1001CE9BE /* Apple Location Service */,
+				CF5CBB8A29687BD8001CE9BE /* Capture Cells Tweak */,
 				CFD0234C2961A10E00AA5A1C /* CellGuardTests.swift */,
-				CFD023732961DF7400AA5A1C /* ALSClientTests.swift */,
-				CF320F5629621C42009BAD18 /* CCTClientTest.swift */,
-				CF320F582962208B009BAD18 /* CCTResponse.txt */,
 			);
 			path = CellGuardTests;
 			sourceTree = "<group>";
@@ -355,8 +374,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				CFD0234D2961A10E00AA5A1C /* CellGuardTests.swift in Sources */,
+				CF5CBB8D29687CBB001CE9BE /* CCTParserTests.swift in Sources */,
 				CFD023742961DF7400AA5A1C /* ALSClientTests.swift in Sources */,
-				CF320F5729621C42009BAD18 /* CCTClientTest.swift in Sources */,
+				CF320F5729621C42009BAD18 /* CCTClientTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

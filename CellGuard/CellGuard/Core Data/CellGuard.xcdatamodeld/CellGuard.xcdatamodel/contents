@@ -9,8 +9,15 @@
         <attribute name="neighbourRadio" optional="YES" attributeType="String"/>
         <attribute name="network" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="radio" optional="YES" attributeType="String"/>
-        <attribute name="source" optional="YES" attributeType="String"/>
         <attribute name="timestamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <relationship name="location" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Location" inverseName="cells" inverseEntity="Location"/>
+        <relationship name="source" maxCount="1" deletionRule="Cascade" destinationEntity="CellSource" inverseName="cells" inverseEntity="CellSource"/>
+    </entity>
+    <entity name="CellSource" representedClassName="CellSource" syncable="YES" codeGenerationType="class">
+        <attribute name="mcc" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="timestamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="type" optional="YES" attributeType="String"/>
+        <relationship name="cells" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Cell" inverseName="source" inverseEntity="Cell"/>
     </entity>
     <entity name="Item" representedClassName="Item" syncable="YES" codeGenerationType="class">
         <attribute name="timestamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
@@ -22,5 +29,6 @@
         <attribute name="horizontalAccuracy" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="timestamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="verticalAccuracy" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <relationship name="cells" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Cell" inverseName="location" inverseEntity="Cell"/>
     </entity>
 </model>

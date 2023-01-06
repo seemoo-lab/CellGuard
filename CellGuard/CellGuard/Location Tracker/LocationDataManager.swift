@@ -82,7 +82,7 @@ class LocationDataManger : NSObject, CLLocationManagerDelegate {
     }
     
     private func resumeLocationUpdates(extact: Bool) {
-        // TODO: Do these calls clash?
+        // TODO: Do these function calls clash?
         if extact {
             locationManager.startUpdatingLocation()
         }
