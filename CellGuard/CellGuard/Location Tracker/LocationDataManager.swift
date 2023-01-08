@@ -9,7 +9,7 @@ import Foundation
 import CoreLocation
 import OSLog
 
-class LocationDataManger : NSObject, CLLocationManagerDelegate {
+class LocationDataManager : NSObject, CLLocationManagerDelegate {
     
     private static let logger = Logger(
         subsystem: Bundle.main.bundleIdentifier!,
@@ -51,25 +51,14 @@ class LocationDataManger : NSObject, CLLocationManagerDelegate {
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        Self.logger.log("New Location: \(locations)")
+        Self.logger.log("New Locations: \(locations)")
         
-        // TODO: View or Background context?
-        let context = PersistenceController.shared.container.viewContext
-        
-        locations.forEach { location in
-            let entity = Location(context: context)
-            entity.altitude = location.altitude
-            entity.verticalAccuracy = location.verticalAccuracy
-            entity.coordinateLatitude = location.coordinate.latitude
-            entity.coordinateLongitude = location.coordinate.longitude
-            entity.horizontalAccuracy = entity.horizontalAccuracy
-            entity.timestamp = location.timestamp
-        }
+        let importLocations = locations.map { LDMLocation(from: $0) }
         
         do {
-            try context.save()
+            try PersistenceController.shared.importLocations(from: importLocations)
         } catch {
-            Self.logger.warning("Couldn't save location data: \(error)\nLocations: \(locations)")
+            Self.logger.warning("Can't save locations: \(error)\nLocations: \(locations)")
         }
     }
     

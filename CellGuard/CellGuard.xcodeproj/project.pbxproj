@@ -16,6 +16,9 @@
 		CF0FDCC22969AC1100A6FFE2 /* SettingsSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0FDCC12969AC1100A6FFE2 /* SettingsSheet.swift */; };
 		CF0FDCC42969F4D200A6FFE2 /* CellSourceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0FDCC32969F4D200A6FFE2 /* CellSourceType.swift */; };
 		CF0FDCC72969F8D300A6FFE2 /* CellDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0FDCC62969F8D300A6FFE2 /* CellDetailsView.swift */; };
+		CF0FDCC9296B310400A6FFE2 /* PersistencePreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0FDCC8296B310400A6FFE2 /* PersistencePreview.swift */; };
+		CF0FDCCB296B466100A6FFE2 /* PersistenceError.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0FDCCA296B466100A6FFE2 /* PersistenceError.swift */; };
+		CF0FDCCD296B480B00A6FFE2 /* LDMLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0FDCCC296B480B00A6FFE2 /* LDMLocation.swift */; };
 		CF320F5529620B16009BAD18 /* CCTParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF320F5429620B16009BAD18 /* CCTParser.swift */; };
 		CF320F5729621C42009BAD18 /* CCTClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF320F5629621C42009BAD18 /* CCTClientTests.swift */; };
 		CF320F59296225F9009BAD18 /* CCTResponse.txt in Resources */ = {isa = PBXBuildFile; fileRef = CF320F582962208B009BAD18 /* CCTResponse.txt */; };
@@ -24,7 +27,7 @@
 		CF5CBB9B2968B84B001CE9BE /* LocalNetworkPermissionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5CBB9A2968B84B001CE9BE /* LocalNetworkPermissionView.swift */; };
 		CFB8B2882963417B00503189 /* LocationDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB8B2872963417B00503189 /* LocationDataManager.swift */; };
 		CFB8B28A2963498200503189 /* CellGuardAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB8B2892963498200503189 /* CellGuardAppDelegate.swift */; };
-		CFB8B291296359CC00503189 /* CCTCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB8B290296359CC00503189 /* CCTCollector.swift */; };
+		CFB8B291296359CC00503189 /* CCTProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB8B290296359CC00503189 /* CCTProvider.swift */; };
 		CFD023372961A10D00AA5A1C /* CellGuardApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD023362961A10D00AA5A1C /* CellGuardApp.swift */; };
 		CFD023392961A10D00AA5A1C /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD023382961A10D00AA5A1C /* ContentView.swift */; };
 		CFD0233B2961A10D00AA5A1C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CFD0233A2961A10D00AA5A1C /* Assets.xcassets */; };
@@ -68,6 +71,9 @@
 		CF0FDCC12969AC1100A6FFE2 /* SettingsSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsSheet.swift; sourceTree = "<group>"; };
 		CF0FDCC32969F4D200A6FFE2 /* CellSourceType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellSourceType.swift; sourceTree = "<group>"; };
 		CF0FDCC62969F8D300A6FFE2 /* CellDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellDetailsView.swift; sourceTree = "<group>"; };
+		CF0FDCC8296B310400A6FFE2 /* PersistencePreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistencePreview.swift; sourceTree = "<group>"; };
+		CF0FDCCA296B466100A6FFE2 /* PersistenceError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceError.swift; sourceTree = "<group>"; };
+		CF0FDCCC296B480B00A6FFE2 /* LDMLocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LDMLocation.swift; sourceTree = "<group>"; };
 		CF320F5429620B16009BAD18 /* CCTParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CCTParser.swift; sourceTree = "<group>"; };
 		CF320F5629621C42009BAD18 /* CCTClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CCTClientTests.swift; sourceTree = "<group>"; };
 		CF320F582962208B009BAD18 /* CCTResponse.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CCTResponse.txt; sourceTree = "<group>"; };
@@ -77,7 +83,7 @@
 		CF5CBB9A2968B84B001CE9BE /* LocalNetworkPermissionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalNetworkPermissionView.swift; sourceTree = "<group>"; };
 		CFB8B2872963417B00503189 /* LocationDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationDataManager.swift; sourceTree = "<group>"; };
 		CFB8B2892963498200503189 /* CellGuardAppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellGuardAppDelegate.swift; sourceTree = "<group>"; };
-		CFB8B290296359CC00503189 /* CCTCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CCTCollector.swift; sourceTree = "<group>"; };
+		CFB8B290296359CC00503189 /* CCTProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CCTProvider.swift; sourceTree = "<group>"; };
 		CFD023332961A10D00AA5A1C /* CellGuard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CellGuard.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFD023362961A10D00AA5A1C /* CellGuardApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellGuardApp.swift; sourceTree = "<group>"; };
 		CFD023382961A10D00AA5A1C /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -178,6 +184,8 @@
 				CFD023412961A10D00AA5A1C /* CellGuard.xcdatamodeld */,
 				CFD0233F2961A10D00AA5A1C /* Persistence.swift */,
 				CF0FDCC32969F4D200A6FFE2 /* CellSourceType.swift */,
+				CF0FDCC8296B310400A6FFE2 /* PersistencePreview.swift */,
+				CF0FDCCA296B466100A6FFE2 /* PersistenceError.swift */,
 			);
 			path = "Core Data";
 			sourceTree = "<group>";
@@ -262,7 +270,7 @@
 			children = (
 				CFD023672961AB9900AA5A1C /* CCTClient.swift */,
 				CF320F5429620B16009BAD18 /* CCTParser.swift */,
-				CFB8B290296359CC00503189 /* CCTCollector.swift */,
+				CFB8B290296359CC00503189 /* CCTProvider.swift */,
 			);
 			path = "Capture Cells Tweak";
 			sourceTree = "<group>";
@@ -271,6 +279,7 @@
 			isa = PBXGroup;
 			children = (
 				CFB8B2872963417B00503189 /* LocationDataManager.swift */,
+				CF0FDCCC296B480B00A6FFE2 /* LDMLocation.swift */,
 			);
 			path = "Location Tracker";
 			sourceTree = "<group>";
@@ -416,7 +425,7 @@
 				CF0FDCC72969F8D300A6FFE2 /* CellDetailsView.swift in Sources */,
 				CF320F5529620B16009BAD18 /* CCTParser.swift in Sources */,
 				CF5CBB9B2968B84B001CE9BE /* LocalNetworkPermissionView.swift in Sources */,
-				CFB8B291296359CC00503189 /* CCTCollector.swift in Sources */,
+				CFB8B291296359CC00503189 /* CCTProvider.swift in Sources */,
 				CF0FDCC42969F4D200A6FFE2 /* CellSourceType.swift in Sources */,
 				CFD023432961A10D00AA5A1C /* CellGuard.xcdatamodeld in Sources */,
 				CF0FDCB529698E1500A6FFE2 /* SummaryView.swift in Sources */,
@@ -425,10 +434,13 @@
 				CFB8B28A2963498200503189 /* CellGuardAppDelegate.swift in Sources */,
 				CF0FDCB729699E5100A6FFE2 /* MapView.swift in Sources */,
 				CF0FDCC02969A3E500A6FFE2 /* LargeButton.swift in Sources */,
+				CF0FDCC9296B310400A6FFE2 /* PersistencePreview.swift in Sources */,
 				CF0FDCB929699E6700A6FFE2 /* ListView.swift in Sources */,
 				CFD0236A2961ABA100AA5A1C /* ALSClient.swift in Sources */,
+				CF0FDCCB296B466100A6FFE2 /* PersistenceError.swift in Sources */,
 				CFD023392961A10D00AA5A1C /* ContentView.swift in Sources */,
 				CFD0236F2961AE8300AA5A1C /* CoreLocationALS.pb.swift in Sources */,
+				CF0FDCCD296B480B00A6FFE2 /* LDMLocation.swift in Sources */,
 				CFB8B2882963417B00503189 /* LocationDataManager.swift in Sources */,
 				CF5CBB9529689FFE001CE9BE /* CellGuardSceneDelegate.swift in Sources */,
 				CFD023372961A10D00AA5A1C /* CellGuardApp.swift in Sources */,

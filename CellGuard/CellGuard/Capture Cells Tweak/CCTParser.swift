@@ -27,15 +27,41 @@ enum CCTCellType: String {
     case Detected = "CellTypeDetected"
 }
 
+/// A structure similar to the model "Cell".
+struct CCTCellProperties: Persistable {
+    
+    var mcc: Int32?
+    var network: Int32?
+    var area: Int32?
+    var cellId: Int64?
+    
+    var radio: String?
+    var band: Int32?
+    var neighbourRadio: String?
+    
+    var timestamp: Date?
+    
+    var json: String?
+    
+    func asDictionary() -> [String: Any] {
+        return [
+            "mcc": mcc as Any,
+            "network": network as Any,
+            "area": area as Any,
+            "cellId": cellId as Any,
+            "radio": radio as Any,
+            "band": band as Any,
+            "neighbourRadio": neighbourRadio as Any,
+            "timestmap": timestamp as Any,
+            "json": json as Any
+        ]
+    }
+
+}
+
 struct CCTParser {
     
-    let context: NSManagedObjectContext
-    
-    init(context: NSManagedObjectContext) {
-        self.context = context
-    }
-    
-    func parse(_ sample: CellSample) throws -> Cell {
+    func parse(_ sample: CellSample) throws -> CCTCellProperties {
         if sample.isEmpty {
             throw CCTParserError.emptySample(sample)
         }
@@ -53,7 +79,7 @@ struct CCTParser {
         let servingCell = cells.first(where: { $0.type == CCTCellType.Serving})?.cell
         let neighborCell = cells.first(where: { $0.type == CCTCellType.Neighbour})?.cell
         
-        guard let servingCell = servingCell else {
+        guard var servingCell = servingCell else {
             throw CCTParserError.noServingCell(sample)
         }
         
@@ -68,7 +94,7 @@ struct CCTParser {
         return servingCell
     }
     
-    private func parseCell(_ info: CellInfo) throws -> (cell: Cell, type: CCTCellType) {
+    private func parseCell(_ info: CellInfo) throws -> (cell: CCTCellProperties, type: CCTCellType) {
         // Location for symbols:
         // - Own sample collection using the tweak
         // - IPSW: /System/Library/Frameworks/CoreTelephony.framework/CoreTelephony (dyld_cache)
@@ -79,7 +105,7 @@ struct CCTParser {
             throw CCTParserError.missingRAT(info)
         }
         
-        let cell: Cell
+        var cell: CCTCellProperties
         switch (rat) {
         case "RadioAccessTechnologyGSM":
             cell = try parseGSM(info)
@@ -122,8 +148,8 @@ struct CCTParser {
         return (cell, cellType)
     }
     
-    private func parseGSM(_ info: CellInfo) throws -> Cell {
-        let cell = Cell(context: self.context)
+    private func parseGSM(_ info: CellInfo) throws -> CCTCellProperties {
+        var cell = CCTCellProperties()
         
         cell.mcc = info["MCC"] as? Int32 ?? 0
         cell.network = info["MNC"] as? Int32 ?? 0
@@ -136,8 +162,8 @@ struct CCTParser {
         return cell
     }
     
-    private func parseUTMS(_ info: CellInfo) throws -> Cell {
-        let cell = Cell(context: self.context)
+    private func parseUTMS(_ info: CellInfo) throws -> CCTCellProperties {
+        var cell = CCTCellProperties()
         
         // UMTS has been phased out in many countries
         // https://de.wikipedia.org/wiki/Universal_Mobile_Telecommunications_System
@@ -155,7 +181,7 @@ struct CCTParser {
         return cell
     }
     
-    private func parseCDMA(_ info: CellInfo) throws -> Cell {
+    private func parseCDMA(_ info: CellInfo) throws -> CCTCellProperties {
         // CDMA has been shutdown is most conutries:
         // - https://www.verizon.com/about/news/3g-cdma-network-shut-date-set-december-31-2022
         // - https://www.digi.com/blog/post/2g-3g-4g-lte-network-shutdown-updates
@@ -170,7 +196,7 @@ struct CCTParser {
         
         // Just a guess, not tested
 
-        let cell = Cell(context: self.context)
+        var cell = CCTCellProperties()
         
         cell.mcc = info["MCC"] as? Int32 ?? 0
         cell.network = info["SID"] as? Int32 ?? 0
@@ -183,8 +209,8 @@ struct CCTParser {
     }
     
     
-    private func parseLTE(_ info: CellInfo) throws -> Cell {
-        let cell = Cell(context: self.context)
+    private func parseLTE(_ info: CellInfo) throws -> CCTCellProperties {
+        var cell = CCTCellProperties()
         
         cell.mcc = info["MCC"] as? Int32 ?? 0
         cell.network = info["MNC"] as? Int32 ?? 0
@@ -196,8 +222,8 @@ struct CCTParser {
         return cell
     }
     
-    private func parseNR(_ info: CellInfo) throws -> Cell {
-        let cell = Cell(context: self.context)
+    private func parseNR(_ info: CellInfo) throws -> CCTCellProperties {
+        var cell = CCTCellProperties()
         
         // Just a guess
         

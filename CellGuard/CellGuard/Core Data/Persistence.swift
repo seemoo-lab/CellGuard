@@ -6,68 +6,232 @@
 //
 
 import CoreData
+import OSLog
 
-struct PersistenceController {
+protocol Persistable {
+    func asDictionary() -> [String: Any]
+}
+
+class PersistenceController {
+    
+    // https://developer.apple.com/documentation/swiftui/loading_and_displaying_a_large_data_feed
+    // WWDC 2019: https://developer.apple.com/videos/play/wwdc2019/230/
+    // WWDC 2020: https://developer.apple.com/videos/play/wwdc2020/10017/
+    // WWDC 2021: https://developer.apple.com/videos/play/wwdc2021/10017/
+    
+    // TODO: Add a lot of comments
+    
+    private let logger = Logger(
+        subsystem: Bundle.main.bundleIdentifier!,
+        category: String(describing: PersistenceController.self)
+    )
+    
+    /// A shared persistence provider to use within the main app bundle.
     static let shared = PersistenceController()
 
-    static var preview: PersistenceController = {
-        let result = PersistenceController(inMemory: true)
-        let viewContext = result.container.viewContext
-        
-        let calendar = Calendar.current
-        
-        let newSource = CellSource(context: viewContext)
-        newSource.type = CellSourceType.tweak.rawValue
-        newSource.timestamp = Date()
-        
-        for _ in 0..<10 {
-            // TODO: One cell at multiple dates
-            let newCell = Cell(context: viewContext)
-            newCell.radio = "LTE"
-            newCell.mcc = 262
-            newCell.network = 2
-            newCell.area = Int32.random(in: 1..<5000)
-            newCell.cellId = Int64.random(in: 1..<50000)
-            newCell.source = newSource
-            newCell.timestamp = calendar.date(byAdding: .day, value: -Int.random(in: 0..<3), to: Date())
-            
-            let newItem = Item(context: viewContext)
-            newItem.timestamp = Date()
-        }
-        do {
-            try viewContext.save()
-        } catch {
-            // Replace this implementation with code to handle the error appropriately.
-            // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-            let nsError = error as NSError
-            fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-        }
-        return result
-    }()
+    /// A persistence provider to use with canvas previews.
+    static var preview = persistencePreview()
 
-    let container: NSPersistentContainer
+    private let inMemory: Bool
+    private var notificationToken: NSObjectProtocol?
 
     init(inMemory: Bool = false) {
-        container = NSPersistentContainer(name: "CellGuard")
-        if inMemory {
-            container.persistentStoreDescriptions.first!.url = URL(fileURLWithPath: "/dev/null")
+        self.inMemory = inMemory
+        
+        notificationToken = NotificationCenter.default.addObserver(forName: .NSPersistentStoreRemoteChange, object: nil, queue: nil) { note in
+            self.logger.debug("Received a persistent store remote change notification.")
+            Task {
+                self.fetchPersistentHistory()
+            }
         }
-        container.loadPersistentStores(completionHandler: { (storeDescription, error) in
+    }
+    
+    deinit {
+        if let observer = notificationToken {
+            NotificationCenter.default.removeObserver(observer)
+        }
+    }
+    
+    /// A persistent history token used for fetching transactions from the store.
+    private var lastToken: NSPersistentHistoryToken?
+    
+    /// A persistent container to set up the Core Data stack
+    lazy var container: NSPersistentContainer = {
+        let container = NSPersistentContainer(name: "CellGuard")
+        
+        guard let description = container.persistentStoreDescriptions.first else {
+            fatalError("Failed to retrieve a persistent store description.")
+        }
+        
+        if inMemory {
+            description.url = URL(fileURLWithPath: "/dev/null")
+        }
+        
+        // Enable persistent store remote change notification
+        description.setOption(true as NSNumber, forKey: NSPersistentStoreRemoteChangeNotificationPostOptionKey)
+        // Enable persistent history tracking
+        description.setOption(true as NSNumber, forKey: NSPersistentHistoryTrackingKey)
+        
+        container.loadPersistentStores { storeDescription, error in
             if let error = error as NSError? {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-
-                /*
-                 Typical reasons for an error here include:
-                 * The parent directory does not exist, cannot be created, or disallows writing.
-                 * The persistent store is not accessible, due to permissions or data protection when the device is locked.
-                 * The device is out of space.
-                 * The store could not be migrated to the current model version.
-                 Check the error message to determine what the actual problem was.
-                 */
                 fatalError("Unresolved error \(error), \(error.userInfo)")
             }
-        })
-        container.viewContext.automaticallyMergesChangesFromParent = true
+        }
+        
+        // We refresh the UI by consuming store changes via persistent history tracking
+        container.viewContext.automaticallyMergesChangesFromParent = false
+        container.viewContext.name = "viewContext"
+        container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+        container.viewContext.undoManager = nil
+        container.viewContext.shouldDeleteInaccessibleFaults = true
+        
+        return container
+    }()
+    
+    /// Creates and configures a private queue context.
+    private func newTaskContext() -> NSManagedObjectContext {
+        // Create a preview queue context.
+        let taskContext = container.newBackgroundContext()
+        taskContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+        // Set unused undoManager to nil for macOS (it is nil by default on iOS)
+        // to reduce resource requirements.
+        taskContext.undoManager = nil
+        return taskContext
+    }
+    
+    func importCells(from cells: [CCTCellProperties]) throws {
+        let taskContext = newTaskContext()
+        
+        taskContext.name = "importContext"
+        taskContext.transactionAuthor = "importCells"
+        
+        var success = false
+        
+        taskContext.performAndWait {
+            let source = CellSource(context: taskContext)
+            source.type = CellSourceType.tweak.rawValue
+            source.timestamp = Date()
+            
+            var index = 0
+            let total = cells.count
+            
+            let batchInsertRequest = NSBatchInsertRequest(entity: Cell.entity()) { dictionary in
+                guard index < total else { return true }
+                dictionary.addEntries(from: cells[index].asDictionary())
+                dictionary["source"] = source.objectID
+                index += 1
+                return false
+            }
+            if let fetchResult = try? taskContext.execute(batchInsertRequest),
+               let batchInsertResuklt = fetchResult as? NSBatchInsertResult {
+                success = batchInsertResuklt.result as? Bool ?? false
+            }
+        }
+        
+        if !success {
+            logger.debug("Failed to execute batch import request for cells.")
+            throw PersistenceError.batchInsertError
+        }
+        
+        logger.debug("Successfully inserted \(cells.count) cells.")
+    }
+    
+    func importLocations(from locations: [LDMLocation]) throws {
+        let taskContext = newTaskContext()
+        
+        taskContext.name = "importContext"
+        taskContext.transactionAuthor = "importLocations"
+        
+        var success = false
+        
+        taskContext.performAndWait {
+            var index = 0
+            let total = locations.count
+            
+            let batchInsertRequest = NSBatchInsertRequest(entity: Location.entity()) { dictionary in
+                guard index < total else { return true }
+                dictionary.addEntries(from: locations[index].asDictionary())
+                index += 1
+                return false
+            }
+            if let fetchResult = try? taskContext.execute(batchInsertRequest),
+               let batchInsertResuklt = fetchResult as? NSBatchInsertResult {
+                success = batchInsertResuklt.result as? Bool ?? false
+            }
+        }
+        
+        if !success {
+            logger.debug("Failed to execute batch import request for cells.")
+            throw PersistenceError.batchInsertError
+        }
+        
+        logger.debug("Successfully inserted \(locations.count) locations.")
+    }
+    
+    
+    func assignLocations() throws {
+        // TODO: Implement
+    }
+    
+    /// Synchronously deletes all records in the Core Data store.
+    func deleteAllData() {
+        let viewContext = container.viewContext
+        logger.debug("Start deleting all data from the store...")
+        
+        viewContext.perform {
+            // TODO: Delete all data
+        }
+        
+        logger.debug("Successfully deleted data.")
+    }
+    
+    func fetchPersistentHistory() {
+        do {
+            try fetchPersistentHistoryTransactionsAndChanges()
+        } catch {
+            logger.warning("Failed to fetch persistent history: \(error.localizedDescription)")
+        }
+    }
+    
+    func fetchPersistentHistoryTransactionsAndChanges() throws {
+        let taskContext = newTaskContext()
+        taskContext.name = "persistentHistoryContext"
+        logger.debug("Start fetching persistent history changes from the store...")
+        
+        var taskError: Error? = nil
+        
+        taskContext.performAndWait {
+            do {
+                let changeRequest = NSPersistentHistoryChangeRequest.fetchHistory(after: self.lastToken)
+                let historyResult = try taskContext.execute(changeRequest) as? NSPersistentHistoryResult
+                if let history = historyResult?.result as? [NSPersistentHistoryTransaction],
+                    !history.isEmpty {
+                        self.mergePersistentHistoryChanges(from: history)
+                        return
+                }
+                
+                logger.debug("No persistent history transactions found.")
+                throw PersistenceError.persistentHistoryChangeError
+            } catch {
+                taskError = error
+            }
+        }
+        
+        if let error = taskError {
+            throw error
+        }
+    }
+    
+    func mergePersistentHistoryChanges(from history: [NSPersistentHistoryTransaction]) {
+        logger.debug("Received \(history.count) persistent history transactions.")
+        
+        // Update view context with objectIDs from history change request.
+        let viewContext = container.viewContext
+        viewContext.perform {
+            for transaction in history {
+                viewContext.mergeChanges(fromContextDidSave: transaction.objectIDNotification())
+                self.lastToken = transaction.token
+            }
+        }
     }
 }

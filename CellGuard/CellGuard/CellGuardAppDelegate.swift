@@ -28,7 +28,7 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
         if let launchOptions = launchOptions {
             // https://developer.apple.com/documentation/corelocation/cllocationmanager/1423531-startmonitoringsignificantlocati
             if launchOptions[.location] != nil {
-                _ = LocationDataManger(extact: false)
+                _ = LocationDataManager(extact: false)
             }
         }
         
@@ -41,7 +41,7 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
             // queue.maxConcurrentOperationCount = 1
             // https://medium.com/snowdog-labs/managing-background-tasks-with-new-task-scheduler-in-ios-13-aaabdac0d95b
             
-            let collector = CCTCollector(client: CCTClient(queue: DispatchQueue.global()))
+            let collector = CCTProvider(client: CCTClient(queue: DispatchQueue.global()))
             
             // TODO: Should we allow to cancel the task somehow?
             // task.expirationHandler

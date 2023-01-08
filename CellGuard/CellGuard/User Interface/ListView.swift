@@ -27,23 +27,25 @@ struct ListView: View {
         }
         
         NavigationView {
-            List {
-                ForEach(itemsGroupedByDay.sorted(by: {$0.key > $1.key}), id: \.key) { key, cells in
-                    // TODO: Format day
-                    Section(header: Text(key, formatter: dateFormatter)) {
-                        ForEach(cells) { cell in
-                            NavigationLink {
-                                CellDetailsView(cell: cell)
-                            } label: {
-                                // TODO: Think of a better
-                                Text("\(cell.mcc) - \(cell.network) - \(cell.area as NSNumber, formatter: numberFormatter) - \(cell.cellId as NSNumber, formatter: numberFormatter)")
+            // Embed in a VStack to make items collapsible:
+            VStack {
+                List {
+                    ForEach(itemsGroupedByDay.sorted(by: {$0.key > $1.key}), id: \.key) { key, cells in
+                        Section(header: Text(key, formatter: dateFormatter)) {
+                            ForEach(cells, id: \.self) { cell in
+                                NavigationLink {
+                                    CellDetailsView(cell: cell)
+                                } label: {
+                                    // TODO: Think of a better
+                                    Text("\(cell.mcc) - \(cell.network) - \(cell.area as NSNumber, formatter: numberFormatter) - \(cell.cellId as NSNumber, formatter: numberFormatter)")
+                                }
                             }
-                        }
 
+                        }
                     }
                 }
+                .navigationTitle("List")
             }
-            .navigationTitle("List")
         }
     }
 }

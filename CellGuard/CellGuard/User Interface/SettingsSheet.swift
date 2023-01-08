@@ -33,6 +33,7 @@ struct SettingsSheet: View {
             // TODO: Delete all data
             List {
                 Section(header: Text("Permissions")) {
+                    // TODO: Open settings app on disable
                     Toggle("Local Network", isOn: $isPermissionLocalNetwork)
                         .onChange(of: isPermissionLocalNetwork) { value in
                             

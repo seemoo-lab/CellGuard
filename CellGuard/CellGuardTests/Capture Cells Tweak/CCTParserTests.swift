@@ -36,7 +36,7 @@ final class CCTParserTests: XCTestCase {
         let jsonData = try JSONSerialization.jsonObject(with: jsonFriendlyStr.data(using: .utf8)!) as! [CellSample]
 
         // Test whether the parser can successfully read all entities
-        let parser = CCTParser(context: PersistenceController.shared.container.viewContext)
+        let parser = CCTParser()
         
         do {
             try jsonData.forEach { sample in
