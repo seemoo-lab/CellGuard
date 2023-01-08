@@ -13,7 +13,24 @@ struct PersistenceController {
     static var preview: PersistenceController = {
         let result = PersistenceController(inMemory: true)
         let viewContext = result.container.viewContext
+        
+        let calendar = Calendar.current
+        
+        let newSource = CellSource(context: viewContext)
+        newSource.type = CellSourceType.tweak.rawValue
+        newSource.timestamp = Date()
+        
         for _ in 0..<10 {
+            // TODO: One cell at multiple dates
+            let newCell = Cell(context: viewContext)
+            newCell.radio = "LTE"
+            newCell.mcc = 262
+            newCell.network = 2
+            newCell.area = Int32.random(in: 1..<5000)
+            newCell.cellId = Int64.random(in: 1..<50000)
+            newCell.source = newSource
+            newCell.timestamp = calendar.date(byAdding: .day, value: -Int.random(in: 0..<3), to: Date())
+            
             let newItem = Item(context: viewContext)
             newItem.timestamp = Date()
         }

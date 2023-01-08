@@ -17,7 +17,15 @@ struct ContentView: View {
     private var items: FetchedResults<Item>
 
     var body: some View {
-        NavigationView {
+        
+        // TODO: Request location permissions
+        // TODO: Request notification permission
+        
+        // TODO: Build views for stuff & Connect locations to cells
+        
+        CGTabView()
+        
+        /* NavigationView {
             List {
                 ForEach(items) { item in
                     NavigationLink {
@@ -39,7 +47,7 @@ struct ContentView: View {
                 }
             }
             Text("Select an item")
-        }
+        } */
     }
 
     private func addItem() {

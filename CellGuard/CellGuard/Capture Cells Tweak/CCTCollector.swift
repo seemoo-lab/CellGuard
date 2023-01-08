@@ -16,20 +16,20 @@ struct CCTCollector {
     )
     
     private let client: CCTClient
-    private let parser = CCTParser(context: PersistenceController.shared.container.viewContext)
+    private let parser = CCTParser(context: PersistenceController.shared.container.newBackgroundContext())
     
     init(client: CCTClient) {
         self.client = client
     }
     
-    func collectAndStore(completion: @escaping (Result<Void, Error>) -> ()) {
+    func collectAndStore(completion: @escaping (Error?) -> ()) {
         client.collectCells() { result in
             do {
                 try store(samples: try result.get())
-                completion(.success(()))
+                completion(nil)
             } catch {
                 Self.logger.warning("Can't request cells from tweak: \(error)")
-                completion(.failure(error))
+                completion(error)
             }
         }
     }
@@ -37,7 +37,7 @@ struct CCTCollector {
     private func store(samples: [CellSample]) throws {
         let source = CellSource(context: parser.context)
         source.timestamp = Date()
-        source.type = "Tweak"
+        source.type = CellSourceType.tweak.rawValue
         
         _ = try samples.map {sample -> Cell? in
             do {
