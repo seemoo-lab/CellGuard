@@ -183,8 +183,8 @@
 			children = (
 				CFD023412961A10D00AA5A1C /* CellGuard.xcdatamodeld */,
 				CFD0233F2961A10D00AA5A1C /* Persistence.swift */,
-				CF0FDCC32969F4D200A6FFE2 /* CellSourceType.swift */,
 				CF0FDCC8296B310400A6FFE2 /* PersistencePreview.swift */,
+				CF0FDCC32969F4D200A6FFE2 /* CellSourceType.swift */,
 				CF0FDCCA296B466100A6FFE2 /* PersistenceError.swift */,
 			);
 			path = "Core Data";

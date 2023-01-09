@@ -19,9 +19,13 @@ struct CCTClient {
         category: String(describing: ALSClient.self)
     )
     
+    /// The port of the tweak
     private let port = 33066
+    
+    /// The queue used for processing incoming messages
     let queue: DispatchQueue
     
+    /// Connects to the tweak, fetches all cells, and converts them into a dictionary structure.
     func collectCells(completion: @escaping (Result<[CellSample], Error>) -> ()) {
         // https://stackoverflow.com/a/64242102
         
@@ -44,7 +48,6 @@ struct CCTClient {
             } else if let content = content {
                 // We've got a full response with data
                 completion(.init() {
-                    // TODO: Test it
                     try self.convert(data: content)
                 })
                 completed = true
@@ -58,6 +61,7 @@ struct CCTClient {
         connection.start(queue: self.queue)
     }
     
+    /// Converts data that has been received from the tweak into a dictionary.
     private func convert(data: Data) throws -> [CellSample]  {
         guard let string = String(data: data, encoding: .utf8) else {
             Self.logger.warning("Can't convert data \(data.debugDescription) to string")
@@ -70,6 +74,7 @@ struct CCTClient {
         return try JSONSerialization.jsonObject(with: jsonFriendlyStr.data(using: .utf8)!) as! [CellSample]
     }
 
+    /// Converts a NWConnection.State into a string for logging.
     private func connectionStateString(_ state: NWConnection.State) -> String {
         switch state {
         case .ready: return "Ready"

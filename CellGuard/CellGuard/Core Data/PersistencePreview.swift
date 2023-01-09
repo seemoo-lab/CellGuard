@@ -6,8 +6,9 @@
 //
 
 import Foundation
+import CoreData
 
-func persistencePreview() -> PersistenceController {
+func previewPersistenceController() -> PersistenceController {
     let result = PersistenceController(inMemory: true)
     let viewContext = result.container.viewContext
     

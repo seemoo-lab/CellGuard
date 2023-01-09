@@ -46,7 +46,7 @@ struct CCTProvider {
                 }
             }.compactMap { $0 }
             
-            try PersistenceController.shared.importCells(from: importCells)
+            try PersistenceController.shared.importCells(from: importCells, sourceType: .tweak)
         } catch {
             Self.logger.warning("Can't import cells: \(error)")
         }

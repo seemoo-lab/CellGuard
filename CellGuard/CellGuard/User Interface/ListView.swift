@@ -12,6 +12,8 @@ struct ListView: View {
     
     // https://developer.apple.com/documentation/swiftui/loading_and_displaying_a_large_data_feed
     
+    // TODO: https://developer.apple.com/documentation/SwiftUI/SectionedFetchRequest for iOS 14
+    
     @FetchRequest(
         sortDescriptors: [NSSortDescriptor(keyPath: \Cell.timestamp, ascending: true)],
         // TODO: Add predicate to only show cells from the tweak: NSPredicate(format: "source."),
@@ -20,6 +22,8 @@ struct ListView: View {
 
     
     var body: some View {
+        // Group cells by day.
+        // We're unable to compute this property in the database as the user can travel, therefore changing its timezone, and thus starting the day at a different time.
         let calendar = Calendar.current
         let itemsGroupedByDay = Dictionary(grouping: items.filter { $0.timestamp != nil }) { item in
             // TODO: Does this work in all timezones?
@@ -36,7 +40,8 @@ struct ListView: View {
                                 NavigationLink {
                                     CellDetailsView(cell: cell)
                                 } label: {
-                                    // TODO: Think of a better
+                                    // TODO: Think of a better representation
+                                    // -> Use navigation for each property
                                     Text("\(cell.mcc) - \(cell.network) - \(cell.area as NSNumber, formatter: numberFormatter) - \(cell.cellId as NSNumber, formatter: numberFormatter)")
                                 }
                             }
@@ -66,6 +71,6 @@ private let dateFormatter: DateFormatter = {
 struct ListView_Previews: PreviewProvider {
     static var previews: some View {
         ListView()
-            .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+           .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
     }
 }
