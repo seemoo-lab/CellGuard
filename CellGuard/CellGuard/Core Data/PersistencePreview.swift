@@ -28,9 +28,6 @@ func previewPersistenceController() -> PersistenceController {
         newCell.cellId = Int64.random(in: 1..<50000)
         newCell.source = newSource
         newCell.timestamp = calendar.date(byAdding: .day, value: -Int.random(in: 0..<3), to: Date())
-        
-        let newItem = Item(context: viewContext)
-        newItem.timestamp = Date()
     }
     do {
         try viewContext.save()

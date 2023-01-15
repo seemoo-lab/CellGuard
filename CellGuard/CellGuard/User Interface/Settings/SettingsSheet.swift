@@ -20,9 +20,21 @@ struct SettingsSheet: View {
         self.tapDone = tapDone
     }
     
+    @EnvironmentObject var locationManager: LocationDataManager
+    
     @State private var isPermissionLocalNetwork = false
-    @State private var isPermissionAlwaysLocation = false
     @State private var isPermissionNotifications = false
+    
+    private var isPermissionAlwaysLocation: Binding<Bool> { Binding(
+        get: { locationManager.authorizationStatus == .authorizedAlways },
+        set: { value in
+            if value && locationManager.authorizationStatus == .notDetermined {
+                locationManager.requestAuthorization()
+            } else {
+                openAppSettings()
+            }
+        }
+    )}
     
     @State private var showAlert: AlertIdentifiable? = nil
     
@@ -36,15 +48,16 @@ struct SettingsSheet: View {
                     // TODO: Open settings app on disable
                     Toggle("Local Network", isOn: $isPermissionLocalNetwork)
                         .onChange(of: isPermissionLocalNetwork) { value in
-                            
+                            if !value {
+                                openAppSettings()
+                            }
                         }
-                    Toggle("Location (Always)", isOn: $isPermissionAlwaysLocation)
-                        .onChange(of: isPermissionAlwaysLocation) { value in
-                            
-                        }
+                    Toggle("Location (Always)", isOn: isPermissionAlwaysLocation)
                     Toggle("Notifications", isOn: $isPermissionNotifications)
                         .onChange(of: isPermissionNotifications) { value in
-                            
+                            if !value {
+                                openAppSettings()
+                            }
                         }
                 }
                 
@@ -116,5 +129,6 @@ struct SettingsSheet_Previews: PreviewProvider {
         SettingsSheet {
             // doing nothing
         }
+        .environmentObject(LocationDataManager(extact: true))
     }
 }

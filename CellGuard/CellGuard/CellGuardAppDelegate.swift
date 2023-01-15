@@ -5,9 +5,10 @@
 //  Created by Lukas Arnold on 02.01.23.
 //
 
-import Foundation
-import UIKit
 import BackgroundTasks
+import Foundation
+import OSLog
+import UIKit
 
 class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
     
@@ -16,6 +17,11 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
     // https://holyswift.app/new-backgroundtask-in-swiftui-and-how-to-test-it/
     
     static let cellRefreshTaskIdentifier = "de.tu-darmstadt.seemoo.CellGuard.refresh.cells"
+    
+    private static let logger = Logger(
+        subsystem: Bundle.main.bundleIdentifier!,
+        category: String(describing: CellGuardAppDelegate.self)
+    )
     
     func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
         // Assign our own scene delegate to every scene
@@ -41,7 +47,7 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
             // queue.maxConcurrentOperationCount = 1
             // https://medium.com/snowdog-labs/managing-background-tasks-with-new-task-scheduler-in-ios-13-aaabdac0d95b
             
-            let collector = CCTProvider(client: CCTClient(queue: DispatchQueue.global()))
+            let collector = CCTCollector(client: CCTClient(queue: DispatchQueue.global()))
             
             // TODO: Should we allow to cancel the task somehow?
             // task.expirationHandler
@@ -50,6 +56,21 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
                 task.setTaskCompleted(success: error == nil)
             }
         }
+        
+        // Schedule a timer to continously poll the latest cells while the app is active
+        let timer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { timer in
+            let collector = CCTCollector(client: CCTClient(queue: .global(qos: .userInitiated)))
+            
+            collector.collectAndStore { error in
+                if let error = error {
+                    Self.logger.warning("Failed to collect & store cells in scheduled timer: \(error)")
+                }
+            }
+            
+            // TODO: Fetch & Store ALS data
+        }
+        // We allow the timer a high tolerance of 50% as our collector is not time critical
+        timer.tolerance = 30
                         
         // Notifications? https://www.hackingwithswift.com/books/ios-swiftui/scheduling-local-notifications
         

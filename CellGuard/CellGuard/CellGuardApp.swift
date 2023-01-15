@@ -12,11 +12,13 @@ struct CellGuardApp: App {
     @UIApplicationDelegateAdaptor(CellGuardAppDelegate.self) var appDelegate
     
     let persistenceController = PersistenceController.shared
+    let locationManager = LocationDataManager(extact: true)
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            CGTabView()
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
+                .environmentObject(locationManager)
         }
     }
 }

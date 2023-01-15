@@ -28,7 +28,7 @@ struct SummaryView: View {
                             // person.crop.circle
                             // gear
                             // ellipsis.circle
-                            Label("Settings", systemImage: "person.crop.circle")
+                            Label("Settings", systemImage: "ellipsis.circle")
                         }
                     }
                 }

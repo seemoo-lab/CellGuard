@@ -9,7 +9,7 @@ import Foundation
 import OSLog
 import CoreData
 
-struct CCTProvider {
+struct CCTCollector {
     
     private static let logger = Logger(
         subsystem: Bundle.main.bundleIdentifier!,

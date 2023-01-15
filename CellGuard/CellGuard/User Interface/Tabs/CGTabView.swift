@@ -50,5 +50,6 @@ struct CGTabView: View {
 struct CGTabView_Previews: PreviewProvider {
     static var previews: some View {
         CGTabView()
+            .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
     }
 }

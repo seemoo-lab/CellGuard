@@ -9,7 +9,7 @@ import Foundation
 import CoreLocation
 import OSLog
 
-class LocationDataManager : NSObject, CLLocationManagerDelegate {
+class LocationDataManager : NSObject, CLLocationManagerDelegate, ObservableObject {
     
     private static let logger = Logger(
         subsystem: Bundle.main.bundleIdentifier!,
@@ -18,6 +18,8 @@ class LocationDataManager : NSObject, CLLocationManagerDelegate {
     private let locationManager = CLLocationManager()
     
     let extact: Bool
+    
+    @Published var authorizationStatus: CLAuthorizationStatus = .notDetermined
     
     // TODO: Initialize in app
     init(extact: Bool) {
@@ -42,12 +44,14 @@ class LocationDataManager : NSObject, CLLocationManagerDelegate {
         // https://developer.apple.com/documentation/corelocation/handling_location_updates_in_the_background
         
         Self.logger.log("Authorization: \(manager.authorizationStatus.rawValue)")
-        if manager.authorizationStatus == .notDetermined {
-            manager.requestAlwaysAuthorization()
-        } else if manager.authorizationStatus == .authorizedAlways {
-            self.resumeLocationUpdates(extact: self.extact)
+        authorizationStatus = manager.authorizationStatus
+        if manager.authorizationStatus == .authorizedAlways {
+            resumeLocationUpdates()
         }
-        // TODO: Handle other casees -> Callback to show specific views
+    }
+    
+    func requestAuthorization() {
+        locationManager.requestAlwaysAuthorization()
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
@@ -70,7 +74,7 @@ class LocationDataManager : NSObject, CLLocationManagerDelegate {
         Self.logger.warning("Location Error: \(error)")
     }
     
-    private func resumeLocationUpdates(extact: Bool) {
+    private func resumeLocationUpdates() {
         // TODO: Do these function calls clash?
         if extact {
             locationManager.startUpdatingLocation()

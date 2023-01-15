@@ -40,6 +40,7 @@ class PersistenceController {
     init(inMemory: Bool = false) {
         self.inMemory = inMemory
         
+        // It's better to directly initialize the container instead of using a lazy variable
         // Create a persistent container responsible for storing the data on disk
         container = NSPersistentContainer(name: "CellGuard")
         
