@@ -15,6 +15,14 @@ enum ALSClientError: Error {
     case httpNoData(URLResponse?)
 }
 
+enum ALSTechnology {
+    case GSM
+    case SCDMA
+    case LTE
+    case NR
+    case CDMA
+}
+
 struct ALSLocation {
     var latitude = 0.0
     var longitude = 0.0
@@ -22,52 +30,131 @@ struct ALSLocation {
     var reach = 0
     var score = 0
     
-    init(fromProto proto: AlsProto_ALSLocationResponse.ResponseCellLocation) {
+    init(fromProto proto: AlsProto_Location) {
         self.latitude = Double(proto.latitude) * pow(10, -8)
         self.longitude = Double(proto.longitude) * pow(10, -8)
         self.accuracy = Int(proto.accuracy)
         self.reach = Int(proto.reach)
         self.score = Int(proto.score)
     }
+    
+    func isValid() -> Bool {
+        return self.accuracy > 0
+    }
 }
 
 struct ALSCell {
-    var mcc = 0
-    var mnc = 0
-    var tac = 0
-    var cellId = 0
+    var technology: ALSTechnology
+    var country = 0
+    var network = 0
+    var area = 0
+    var cell: Int64 = 0
     var location: ALSLocation? = nil
     
     func hasCellId() -> Bool {
-        return self.cellId >= 0
+        return self.cell >= 0
     }
     
     func isValid() -> Bool {
-        // TODO: Implement correctly
-        return true;
+        return location?.isValid() ?? false
     }
     
-    init(mcc: Int, mnc: Int, tac: Int, cellId: Int) {
-        self.mcc = mcc
-        self.mnc = mnc
-        self.tac = tac
-        self.cellId = cellId
+    init(technology: ALSTechnology, country: Int, network: Int, area: Int, cell: Int64) {
+        self.technology = technology
+        self.country = country
+        self.network = network
+        self.area = area
+        self.cell = cell
     }
     
-    init(fromProto proto: AlsProto_ALSLocationResponse.ResponseCell) {
-        self.mcc = Int(proto.mcc)
-        self.mnc = Int(proto.mnc)
-        self.tac = Int(proto.tacID)
-        self.cellId = Int(proto.cellID)
+    init(fromGsmProto proto: AlsProto_GsmCell) {
+        self.technology = .GSM
+        self.country = Int(proto.mcc)
+        self.network = Int(proto.mnc)
+        self.area = Int(proto.lacID)
+        self.cell = Int64(proto.cellID)
         self.location = ALSLocation(fromProto: proto.location)
     }
     
-    func toProto() -> AlsProto_ALSLocationRequest.RequestCell {
-        AlsProto_ALSLocationRequest.RequestCell.with {
-            $0.mcc = Int32(self.mcc)
-            $0.mnc = Int32(self.mnc)
-            $0.tacID = Int32(self.tac)
-            $0.cellID = Int64(self.cellId)
+    init(fromScdmaProto proto: AlsProto_ScdmaCell) {
+        self.technology = .SCDMA
+        self.country = Int(proto.mcc)
+        self.network = Int(proto.mnc)
+        self.area = Int(proto.lacID)
+        self.cell = Int64(proto.cellID)
+        self.location = ALSLocation(fromProto: proto.location)
+    }
+    
+    init(fromLteProto proto: AlsProto_LteCell) {
+        self.technology = .LTE
+        self.country = Int(proto.mcc)
+        self.network = Int(proto.mnc)
+        self.area = Int(proto.tacID)
+        self.cell = Int64(proto.cellID)
+        self.location = ALSLocation(fromProto: proto.location)
+    }
+    
+    init(fromNRProto proto: AlsProto_Nr5GCell) {
+        self.technology = .NR
+        self.country = Int(proto.mcc)
+        self.network = Int(proto.mnc)
+        self.area = Int(proto.tacID)
+        self.cell = Int64(proto.cellID)
+        self.location = ALSLocation(fromProto: proto.location)
+    }
+    
+    init(fromCdmaProto proto: AlsProto_CdmaCell) {
+        self.technology = .CDMA
+        self.country = Int(proto.mcc)
+        self.network = Int(proto.sid)
+        self.area = Int(proto.nid)
+        self.cell = Int64(proto.bsid)
+        self.location = ALSLocation(fromProto: proto.location)
+    }
+    
+    
+    func toGsmProto() -> AlsProto_GsmCell {
+        AlsProto_GsmCell.with {
+            $0.mcc = Int32(self.country)
+            $0.mnc = Int32(self.network)
+            $0.lacID = Int32(self.area)
+            $0.cellID = Int64(self.cell)
+        }
+    }
+    
+    func toScdmaProto() -> AlsProto_ScdmaCell {
+        AlsProto_ScdmaCell.with {
+            $0.mcc = Int32(self.country)
+            $0.mnc = Int32(self.network)
+            $0.lacID = Int32(self.area)
+            $0.cellID = Int32(self.cell)
+        }
+    }
+    
+    func toLteProto() -> AlsProto_LteCell {
+        AlsProto_LteCell.with {
+            $0.mcc = Int32(self.country)
+            $0.mnc = Int32(self.network)
+            $0.tacID = Int32(self.area)
+            $0.cellID = Int32(self.cell)
+        }
+    }
+    
+    func toNRProto() -> AlsProto_Nr5GCell {
+        AlsProto_Nr5GCell.with {
+            $0.mcc = Int32(self.country)
+            $0.mnc = Int32(self.network)
+            $0.tacID = Int32(self.area)
+            $0.cellID = Int64(self.cell)
+        }
+    }
+    
+    func toCDMAProto() -> AlsProto_CdmaCell {
+        AlsProto_CdmaCell.with {
+            $0.mcc = Int32(self.country)
+            $0.sid = Int32(self.network)
+            $0.nid = Int32(self.area)
+            $0.bsid = Int32(self.cell)
         }
     }
 }
@@ -98,10 +185,21 @@ struct ALSClient {
     ///   - completion: called upon success with a list of nearby cells
     func requestCells(origin: ALSCell, completion: @escaping (Result<[ALSCell], Error>)->()) {
         let protoRequest = AlsProto_ALSLocationRequest.with {
-            $0.cell = origin.toProto()
-            $0.unknown3 = 0
-            $0.unknown4 = 1
-            $0.unknown31 = 1
+            switch (origin.technology) {
+            case .GSM:
+                $0.gsmCells = [origin.toGsmProto()]
+            case .SCDMA:
+                $0.scdmaCells = [origin.toScdmaProto()]
+            case .LTE:
+                $0.lteCells = [origin.toLteProto()]
+            case .NR:
+                $0.nr5Gcells = [origin.toNRProto()]
+            case .CDMA:
+                $0.cdmaCells = [origin.toCDMAProto()]
+            }
+            $0.numberOfSurroundingCells = 0
+            $0.numberOfSurroundingWifis = 1
+            $0.surroundingWifiBands = [Int32(1)]
         }
         
         let data: Data;
@@ -116,7 +214,13 @@ struct ALSClient {
         sendHttpRequest(protoData: data) { result in
             do {
                 let protoResponse = try AlsProto_ALSLocationResponse(serializedData: try result.get())
-                completion(.success(protoResponse.cells.map { ALSCell(fromProto: $0) }));
+                var cells: [ALSCell] = []
+                cells.append(contentsOf: protoResponse.gsmCells.map {ALSCell(fromGsmProto: $0)})
+                cells.append(contentsOf: protoResponse.scdmaCells.map {ALSCell(fromScdmaProto: $0)})
+                cells.append(contentsOf: protoResponse.lteCells.map {ALSCell(fromLteProto: $0)})
+                cells.append(contentsOf: protoResponse.nr5Gcells.map {ALSCell(fromNRProto: $0)})
+                cells.append(contentsOf: protoResponse.cdmaCells.map {ALSCell(fromCdmaProto: $0)})
+                completion(.success(cells))
             } catch {
                 Self.logger.warning("Can't decode proto response: \(error)")
                 completion(.failure(error))

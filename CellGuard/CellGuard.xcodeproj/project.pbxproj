@@ -21,6 +21,7 @@
 		CF320F5529620B16009BAD18 /* CCTParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF320F5429620B16009BAD18 /* CCTParser.swift */; };
 		CF320F5729621C42009BAD18 /* CCTClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF320F5629621C42009BAD18 /* CCTClientTests.swift */; };
 		CF320F59296225F9009BAD18 /* CCTResponse.txt in Resources */ = {isa = PBXBuildFile; fileRef = CF320F582962208B009BAD18 /* CCTResponse.txt */; };
+		CF53DB42297473E8005DCD10 /* CoreLocationALS.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF53DB41297473E8005DCD10 /* CoreLocationALS.pb.swift */; };
 		CF5CBB8D29687CBB001CE9BE /* CCTParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5CBB8C29687CBB001CE9BE /* CCTParserTests.swift */; };
 		CF5CBB9529689FFE001CE9BE /* CellGuardSceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5CBB9429689FFE001CE9BE /* CellGuardSceneDelegate.swift */; };
 		CF5CBB9B2968B84B001CE9BE /* LocalNetworkPermissionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5CBB9A2968B84B001CE9BE /* LocalNetworkPermissionView.swift */; };
@@ -38,7 +39,6 @@
 		CFD023682961AB9900AA5A1C /* CCTClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD023672961AB9900AA5A1C /* CCTClient.swift */; };
 		CFD0236A2961ABA100AA5A1C /* ALSClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD023692961ABA100AA5A1C /* ALSClient.swift */; };
 		CFD0236D2961AD1500AA5A1C /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = CFD0236C2961AD1500AA5A1C /* SwiftProtobuf */; };
-		CFD0236F2961AE8300AA5A1C /* CoreLocationALS.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD0236E2961AE8300AA5A1C /* CoreLocationALS.pb.swift */; };
 		CFD023742961DF7400AA5A1C /* ALSClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD023732961DF7400AA5A1C /* ALSClientTests.swift */; };
 		CFE4462B29705F0C006F2CF4 /* ListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFE4462A29705F0C006F2CF4 /* ListView.swift */; };
 /* End PBXBuildFile section */
@@ -76,6 +76,7 @@
 		CF320F5629621C42009BAD18 /* CCTClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CCTClientTests.swift; sourceTree = "<group>"; };
 		CF320F582962208B009BAD18 /* CCTResponse.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CCTResponse.txt; sourceTree = "<group>"; };
 		CF320F5A29622B6D009BAD18 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		CF53DB41297473E8005DCD10 /* CoreLocationALS.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreLocationALS.pb.swift; sourceTree = "<group>"; };
 		CF5CBB8C29687CBB001CE9BE /* CCTParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CCTParserTests.swift; sourceTree = "<group>"; };
 		CF5CBB9429689FFE001CE9BE /* CellGuardSceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellGuardSceneDelegate.swift; sourceTree = "<group>"; };
 		CF5CBB9A2968B84B001CE9BE /* LocalNetworkPermissionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalNetworkPermissionView.swift; sourceTree = "<group>"; };
@@ -95,7 +96,6 @@
 		CFD023582961A10E00AA5A1C /* CellGuardUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellGuardUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		CFD023672961AB9900AA5A1C /* CCTClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CCTClient.swift; sourceTree = "<group>"; };
 		CFD023692961ABA100AA5A1C /* ALSClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ALSClient.swift; sourceTree = "<group>"; };
-		CFD0236E2961AE8300AA5A1C /* CoreLocationALS.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreLocationALS.pb.swift; sourceTree = "<group>"; };
 		CFD023732961DF7400AA5A1C /* ALSClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ALSClientTests.swift; sourceTree = "<group>"; };
 		CFE4462A29705F0C006F2CF4 /* ListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -280,7 +280,7 @@
 		CFD023652961AB6E00AA5A1C /* Apple Location Service */ = {
 			isa = PBXGroup;
 			children = (
-				CFD0236E2961AE8300AA5A1C /* CoreLocationALS.pb.swift */,
+				CF53DB41297473E8005DCD10 /* CoreLocationALS.pb.swift */,
 				CFD023692961ABA100AA5A1C /* ALSClient.swift */,
 			);
 			path = "Apple Location Service";
@@ -447,6 +447,7 @@
 				CF320F5529620B16009BAD18 /* CCTParser.swift in Sources */,
 				CF5CBB9B2968B84B001CE9BE /* LocalNetworkPermissionView.swift in Sources */,
 				CFB8B291296359CC00503189 /* CCTCollector.swift in Sources */,
+				CF53DB42297473E8005DCD10 /* CoreLocationALS.pb.swift in Sources */,
 				CF0FDCC42969F4D200A6FFE2 /* CellSourceType.swift in Sources */,
 				CFD023432961A10D00AA5A1C /* CellGuard.xcdatamodeld in Sources */,
 				CF0FDCB529698E1500A6FFE2 /* SummaryView.swift in Sources */,
@@ -459,7 +460,6 @@
 				CF0FDCC9296B310400A6FFE2 /* PersistencePreview.swift in Sources */,
 				CFD0236A2961ABA100AA5A1C /* ALSClient.swift in Sources */,
 				CF0FDCCB296B466100A6FFE2 /* PersistenceError.swift in Sources */,
-				CFD0236F2961AE8300AA5A1C /* CoreLocationALS.pb.swift in Sources */,
 				CF0FDCCD296B480B00A6FFE2 /* LDMLocation.swift in Sources */,
 				CFB8B2882963417B00503189 /* LocationDataManager.swift in Sources */,
 				CF5CBB9529689FFE001CE9BE /* CellGuardSceneDelegate.swift in Sources */,

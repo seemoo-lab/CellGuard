@@ -20,457 +20,843 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
   typealias Version = _2
 }
 
+struct AlsProto_Location {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  /// Formula: latitude * pow(10, -8)
+  var latitude: Int64 {
+    get {return _latitude ?? 0}
+    set {_latitude = newValue}
+  }
+  /// Returns true if `latitude` has been explicitly set.
+  var hasLatitude: Bool {return self._latitude != nil}
+  /// Clears the value of `latitude`. Subsequent reads from it will return its default value.
+  mutating func clearLatitude() {self._latitude = nil}
+
+  /// Formula: longitude * pow(10, -8)
+  var longitude: Int64 {
+    get {return _longitude ?? 0}
+    set {_longitude = newValue}
+  }
+  /// Returns true if `longitude` has been explicitly set.
+  var hasLongitude: Bool {return self._longitude != nil}
+  /// Clears the value of `longitude`. Subsequent reads from it will return its default value.
+  mutating func clearLongitude() {self._longitude = nil}
+
+  /// Unit: meters
+  var accuracy: Int32 {
+    get {return _accuracy ?? 0}
+    set {_accuracy = newValue}
+  }
+  /// Returns true if `accuracy` has been explicitly set.
+  var hasAccuracy: Bool {return self._accuracy != nil}
+  /// Clears the value of `accuracy`. Subsequent reads from it will return its default value.
+  mutating func clearAccuracy() {self._accuracy = nil}
+
+  /// Observed value: 0
+  var locationType: Int32 {
+    get {return _locationType ?? 0}
+    set {_locationType = newValue}
+  }
+  /// Returns true if `locationType` has been explicitly set.
+  var hasLocationType: Bool {return self._locationType != nil}
+  /// Clears the value of `locationType`. Subsequent reads from it will return its default value.
+  mutating func clearLocationType() {self._locationType = nil}
+
+  /// Unit: meters, only set for Wifi APs
+  var altitude: Int32 {
+    get {return _altitude ?? 0}
+    set {_altitude = newValue}
+  }
+  /// Returns true if `altitude` has been explicitly set.
+  var hasAltitude: Bool {return self._altitude != nil}
+  /// Clears the value of `altitude`. Subsequent reads from it will return its default value.
+  mutating func clearAltitude() {self._altitude = nil}
+
+  /// Unit: meters, only set for Wifi APs
+  var verticalAccuracy: Int32 {
+    get {return _verticalAccuracy ?? 0}
+    set {_verticalAccuracy = newValue}
+  }
+  /// Returns true if `verticalAccuracy` has been explicitly set.
+  var hasVerticalAccuracy: Bool {return self._verticalAccuracy != nil}
+  /// Clears the value of `verticalAccuracy`. Subsequent reads from it will return its default value.
+  mutating func clearVerticalAccuracy() {self._verticalAccuracy = nil}
+
+  /// Unit: meters
+  var reach: UInt32 {
+    get {return _reach ?? 0}
+    set {_reach = newValue}
+  }
+  /// Returns true if `reach` has been explicitly set.
+  var hasReach: Bool {return self._reach != nil}
+  /// Clears the value of `reach`. Subsequent reads from it will return its default value.
+  mutating func clearReach() {self._reach = nil}
+
+  /// Assumption: How often the wifi / cell was seen by Apple devices?
+  var score: Int32 {
+    get {return _score ?? 0}
+    set {_score = newValue}
+  }
+  /// Returns true if `score` has been explicitly set.
+  var hasScore: Bool {return self._score != nil}
+  /// Clears the value of `score`. Subsequent reads from it will return its default value.
+  mutating func clearScore() {self._score = nil}
+
+  /// The field is never set and its function is unknown
+  var infoMask: UInt32 {
+    get {return _infoMask ?? 0}
+    set {_infoMask = newValue}
+  }
+  /// Returns true if `infoMask` has been explicitly set.
+  var hasInfoMask: Bool {return self._infoMask != nil}
+  /// Clears the value of `infoMask`. Subsequent reads from it will return its default value.
+  mutating func clearInfoMask() {self._infoMask = nil}
+
+  var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  init() {}
+
+  fileprivate var _latitude: Int64? = nil
+  fileprivate var _longitude: Int64? = nil
+  fileprivate var _accuracy: Int32? = nil
+  fileprivate var _locationType: Int32? = nil
+  fileprivate var _altitude: Int32? = nil
+  fileprivate var _verticalAccuracy: Int32? = nil
+  fileprivate var _reach: UInt32? = nil
+  fileprivate var _score: Int32? = nil
+  fileprivate var _infoMask: UInt32? = nil
+}
+
+/// We're able to confirm our assumptions with a field test.
+struct AlsProto_WirelessAP {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  /// The MAC address of the Wifi router
+  var macID: String {
+    get {return _macID ?? String()}
+    set {_macID = newValue}
+  }
+  /// Returns true if `macID` has been explicitly set.
+  var hasMacID: Bool {return self._macID != nil}
+  /// Clears the value of `macID`. Subsequent reads from it will return its default value.
+  mutating func clearMacID() {self._macID = nil}
+
+  /// Location of the wireless access point, only set in responses
+  var location: AlsProto_Location {
+    get {return _location ?? AlsProto_Location()}
+    set {_location = newValue}
+  }
+  /// Returns true if `location` has been explicitly set.
+  var hasLocation: Bool {return self._location != nil}
+  /// Clears the value of `location`. Subsequent reads from it will return its default value.
+  mutating func clearLocation() {self._location = nil}
+
+  /// The channel number of the Wifi, only set in responses
+  /// See https://en.wikipedia.org/wiki/List_of_WLAN_channels
+  var channel: UInt32 {
+    get {return _channel ?? 0}
+    set {_channel = newValue}
+  }
+  /// Returns true if `channel` has been explicitly set.
+  var hasChannel: Bool {return self._channel != nil}
+  /// Clears the value of `channel`. Subsequent reads from it will return its default value.
+  mutating func clearChannel() {self._channel = nil}
+
+  var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  init() {}
+
+  fileprivate var _macID: String? = nil
+  fileprivate var _location: AlsProto_Location? = nil
+  fileprivate var _channel: UInt32? = nil
+}
+
+struct AlsProto_Nr5GCell {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  /// Mobile Country Code
+  /// See https://en.wikipedia.org/wiki/Mobile_country_code
+  var mcc: Int32 {
+    get {return _mcc ?? 0}
+    set {_mcc = newValue}
+  }
+  /// Returns true if `mcc` has been explicitly set.
+  var hasMcc: Bool {return self._mcc != nil}
+  /// Clears the value of `mcc`. Subsequent reads from it will return its default value.
+  mutating func clearMcc() {self._mcc = nil}
+
+  /// Mobile Network Code
+  /// See https://en.wikipedia.org/wiki/List_of_mobile_network_operators_of_Europe
+  var mnc: Int32 {
+    get {return _mnc ?? 0}
+    set {_mnc = newValue}
+  }
+  /// Returns true if `mnc` has been explicitly set.
+  var hasMnc: Bool {return self._mnc != nil}
+  /// Clears the value of `mnc`. Subsequent reads from it will return its default value.
+  mutating func clearMnc() {self._mnc = nil}
+
+  /// Unique number to identify a single cell within MCC + MNC + TAC.#
+  /// If the value is -1 the location is only a rough estimate for the whole area (TAC).
+  var cellID: Int64 {
+    get {return _cellID ?? 0}
+    set {_cellID = newValue}
+  }
+  /// Returns true if `cellID` has been explicitly set.
+  var hasCellID: Bool {return self._cellID != nil}
+  /// Clears the value of `cellID`. Subsequent reads from it will return its default value.
+  mutating func clearCellID() {self._cellID = nil}
+
+  /// Tracking Area Code
+  /// See https://ec.europa.eu/eurostat/cros/content/Glossary%3ALocation_Area_Code/Tracking_Area_Code_%28LAC/TAC%29_en
+  var tacID: Int32 {
+    get {return _tacID ?? 0}
+    set {_tacID = newValue}
+  }
+  /// Returns true if `tacID` has been explicitly set.
+  var hasTacID: Bool {return self._tacID != nil}
+  /// Clears the value of `tacID`. Subsequent reads from it will return its default value.
+  mutating func clearTacID() {self._tacID = nil}
+
+  /// Location of the cell, only set in responses
+  var location: AlsProto_Location {
+    get {return _location ?? AlsProto_Location()}
+    set {_location = newValue}
+  }
+  /// Returns true if `location` has been explicitly set.
+  var hasLocation: Bool {return self._location != nil}
+  /// Clears the value of `location`. Subsequent reads from it will return its default value.
+  mutating func clearLocation() {self._location = nil}
+
+  /// New Radio Absolute Radio Frequency Channel Number, only set for cells in responses
+  /// See https://www.cellmapper.net/arfcn?net=NR&ARFCN=0&MCC=222
+  /// See https://de.wikipedia.org/wiki/ARFCN
+  var nrarfcn: Int32 {
+    get {return _nrarfcn ?? 0}
+    set {_nrarfcn = newValue}
+  }
+  /// Returns true if `nrarfcn` has been explicitly set.
+  var hasNrarfcn: Bool {return self._nrarfcn != nil}
+  /// Clears the value of `nrarfcn`. Subsequent reads from it will return its default value.
+  mutating func clearNrarfcn() {self._nrarfcn = nil}
+
+  var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  init() {}
+
+  fileprivate var _mcc: Int32? = nil
+  fileprivate var _mnc: Int32? = nil
+  fileprivate var _cellID: Int64? = nil
+  fileprivate var _tacID: Int32? = nil
+  fileprivate var _location: AlsProto_Location? = nil
+  fileprivate var _nrarfcn: Int32? = nil
+}
+
+/// SCDMA is mainly used in China.
+/// See: https://www.electronics-notes.com/articles/connectivity/3g-umts/td-scdma.php
+struct AlsProto_ScdmaCell {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  /// Mobile Country Code
+  /// See https://en.wikipedia.org/wiki/Mobile_country_code
+  var mcc: Int32 {
+    get {return _mcc ?? 0}
+    set {_mcc = newValue}
+  }
+  /// Returns true if `mcc` has been explicitly set.
+  var hasMcc: Bool {return self._mcc != nil}
+  /// Clears the value of `mcc`. Subsequent reads from it will return its default value.
+  mutating func clearMcc() {self._mcc = nil}
+
+  /// Mobile Network Code
+  /// See https://en.wikipedia.org/wiki/List_of_mobile_network_operators_of_Europe
+  var mnc: Int32 {
+    get {return _mnc ?? 0}
+    set {_mnc = newValue}
+  }
+  /// Returns true if `mnc` has been explicitly set.
+  var hasMnc: Bool {return self._mnc != nil}
+  /// Clears the value of `mnc`. Subsequent reads from it will return its default value.
+  mutating func clearMnc() {self._mnc = nil}
+
+  /// Unique number to identify a single cell within MCC + MNC + TAC.#
+  /// If the value is -1 the location is only a rough estimate for the whole area (LAC).
+  var cellID: Int32 {
+    get {return _cellID ?? 0}
+    set {_cellID = newValue}
+  }
+  /// Returns true if `cellID` has been explicitly set.
+  var hasCellID: Bool {return self._cellID != nil}
+  /// Clears the value of `cellID`. Subsequent reads from it will return its default value.
+  mutating func clearCellID() {self._cellID = nil}
+
+  /// Location Area Code
+  /// See https://ec.europa.eu/eurostat/cros/content/Glossary%3ALocation_Area_Code/Tracking_Area_Code_%28LAC/TAC%29_en
+  var lacID: Int32 {
+    get {return _lacID ?? 0}
+    set {_lacID = newValue}
+  }
+  /// Returns true if `lacID` has been explicitly set.
+  var hasLacID: Bool {return self._lacID != nil}
+  /// Clears the value of `lacID`. Subsequent reads from it will return its default value.
+  mutating func clearLacID() {self._lacID = nil}
+
+  /// Location of the cell, only set for responses
+  var location: AlsProto_Location {
+    get {return _location ?? AlsProto_Location()}
+    set {_location = newValue}
+  }
+  /// Returns true if `location` has been explicitly set.
+  var hasLocation: Bool {return self._location != nil}
+  /// Clears the value of `location`. Subsequent reads from it will return its default value.
+  mutating func clearLocation() {self._location = nil}
+
+  /// Absolute Radio Frequency Channel Number, only set for cells in responses
+  /// See https://www.cellmapper.net/arfcn?net=NR&ARFCN=0&MCC=222
+  /// See https://de.wikipedia.org/wiki/ARFCN
+  var arfcn: Int32 {
+    get {return _arfcn ?? 0}
+    set {_arfcn = newValue}
+  }
+  /// Returns true if `arfcn` has been explicitly set.
+  var hasArfcn: Bool {return self._arfcn != nil}
+  /// Clears the value of `arfcn`. Subsequent reads from it will return its default value.
+  mutating func clearArfcn() {self._arfcn = nil}
+
+  /// Primary Scrambling Code, only set for cells in responses
+  /// See https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=9119377
+  var psc: Int32 {
+    get {return _psc ?? 0}
+    set {_psc = newValue}
+  }
+  /// Returns true if `psc` has been explicitly set.
+  var hasPsc: Bool {return self._psc != nil}
+  /// Clears the value of `psc`. Subsequent reads from it will return its default value.
+  mutating func clearPsc() {self._psc = nil}
+
+  var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  init() {}
+
+  fileprivate var _mcc: Int32? = nil
+  fileprivate var _mnc: Int32? = nil
+  fileprivate var _cellID: Int32? = nil
+  fileprivate var _lacID: Int32? = nil
+  fileprivate var _location: AlsProto_Location? = nil
+  fileprivate var _arfcn: Int32? = nil
+  fileprivate var _psc: Int32? = nil
+}
+
+/// The message class is also used for UTMS cells.
+/// We're able to confirm our assumptions with a field test.
+struct AlsProto_LteCell {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  /// Mobile Country Code
+  /// See https://en.wikipedia.org/wiki/Mobile_country_code
+  var mcc: Int32 {
+    get {return _mcc ?? 0}
+    set {_mcc = newValue}
+  }
+  /// Returns true if `mcc` has been explicitly set.
+  var hasMcc: Bool {return self._mcc != nil}
+  /// Clears the value of `mcc`. Subsequent reads from it will return its default value.
+  mutating func clearMcc() {self._mcc = nil}
+
+  /// Mobile Network Code
+  /// See https://en.wikipedia.org/wiki/List_of_mobile_network_operators_of_Europe
+  var mnc: Int32 {
+    get {return _mnc ?? 0}
+    set {_mnc = newValue}
+  }
+  /// Returns true if `mnc` has been explicitly set.
+  var hasMnc: Bool {return self._mnc != nil}
+  /// Clears the value of `mnc`. Subsequent reads from it will return its default value.
+  mutating func clearMnc() {self._mnc = nil}
+
+  /// Unique number to identify a single cell within MCC + MNC + TAC.#
+  /// If the value is -1 the location is only a rough estimate for the whole area (TAC).
+  var cellID: Int32 {
+    get {return _cellID ?? 0}
+    set {_cellID = newValue}
+  }
+  /// Returns true if `cellID` has been explicitly set.
+  var hasCellID: Bool {return self._cellID != nil}
+  /// Clears the value of `cellID`. Subsequent reads from it will return its default value.
+  mutating func clearCellID() {self._cellID = nil}
+
+  /// Tracking Area Code
+  /// See https://ec.europa.eu/eurostat/cros/content/Glossary%3ALocation_Area_Code/Tracking_Area_Code_%28LAC/TAC%29_en
+  var tacID: Int32 {
+    get {return _tacID ?? 0}
+    set {_tacID = newValue}
+  }
+  /// Returns true if `tacID` has been explicitly set.
+  var hasTacID: Bool {return self._tacID != nil}
+  /// Clears the value of `tacID`. Subsequent reads from it will return its default value.
+  mutating func clearTacID() {self._tacID = nil}
+
+  /// Location of the cell, only set for responses
+  var location: AlsProto_Location {
+    get {return _location ?? AlsProto_Location()}
+    set {_location = newValue}
+  }
+  /// Returns true if `location` has been explicitly set.
+  var hasLocation: Bool {return self._location != nil}
+  /// Clears the value of `location`. Subsequent reads from it will return its default value.
+  mutating func clearLocation() {self._location = nil}
+
+  /// UTRA Absolute Radio Frequency Channel Number, only set for cells in responses
+  /// See https://www.cellmapper.net/arfcn?net=NR&ARFCN=0&MCC=222
+  /// See https://de.wikipedia.org/wiki/ARFCN
+  var uarfcn: Int32 {
+    get {return _uarfcn ?? 0}
+    set {_uarfcn = newValue}
+  }
+  /// Returns true if `uarfcn` has been explicitly set.
+  var hasUarfcn: Bool {return self._uarfcn != nil}
+  /// Clears the value of `uarfcn`. Subsequent reads from it will return its default value.
+  mutating func clearUarfcn() {self._uarfcn = nil}
+
+  /// Number with unknown meaning, only sometimes set for cells in responses.
+  /// According to https://3gpp.guru it could be a protocol identifier?
+  var pid: Int32 {
+    get {return _pid ?? 0}
+    set {_pid = newValue}
+  }
+  /// Returns true if `pid` has been explicitly set.
+  var hasPid: Bool {return self._pid != nil}
+  /// Clears the value of `pid`. Subsequent reads from it will return its default value.
+  mutating func clearPid() {self._pid = nil}
+
+  var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  init() {}
+
+  fileprivate var _mcc: Int32? = nil
+  fileprivate var _mnc: Int32? = nil
+  fileprivate var _cellID: Int32? = nil
+  fileprivate var _tacID: Int32? = nil
+  fileprivate var _location: AlsProto_Location? = nil
+  fileprivate var _uarfcn: Int32? = nil
+  fileprivate var _pid: Int32? = nil
+}
+
+/// We're able to confirm our assumptions with a field test.
+struct AlsProto_GsmCell {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  /// Mobile Country Code
+  /// See https://en.wikipedia.org/wiki/Mobile_country_code
+  var mcc: Int32 {
+    get {return _mcc ?? 0}
+    set {_mcc = newValue}
+  }
+  /// Returns true if `mcc` has been explicitly set.
+  var hasMcc: Bool {return self._mcc != nil}
+  /// Clears the value of `mcc`. Subsequent reads from it will return its default value.
+  mutating func clearMcc() {self._mcc = nil}
+
+  /// Mobile Network Code
+  /// See https://en.wikipedia.org/wiki/List_of_mobile_network_operators_of_Europe
+  var mnc: Int32 {
+    get {return _mnc ?? 0}
+    set {_mnc = newValue}
+  }
+  /// Returns true if `mnc` has been explicitly set.
+  var hasMnc: Bool {return self._mnc != nil}
+  /// Clears the value of `mnc`. Subsequent reads from it will return its default value.
+  mutating func clearMnc() {self._mnc = nil}
+
+  /// Unique number to identify a single cell within MCC + MNC + TAC.#
+  /// If the value is -1 the location is only a rough estimate for the whole area (LAC).
+  var cellID: Int64 {
+    get {return _cellID ?? 0}
+    set {_cellID = newValue}
+  }
+  /// Returns true if `cellID` has been explicitly set.
+  var hasCellID: Bool {return self._cellID != nil}
+  /// Clears the value of `cellID`. Subsequent reads from it will return its default value.
+  mutating func clearCellID() {self._cellID = nil}
+
+  /// Location Area Code
+  /// See https://ec.europa.eu/eurostat/cros/content/Glossary%3ALocation_Area_Code/Tracking_Area_Code_%28LAC/TAC%29_en
+  var lacID: Int32 {
+    get {return _lacID ?? 0}
+    set {_lacID = newValue}
+  }
+  /// Returns true if `lacID` has been explicitly set.
+  var hasLacID: Bool {return self._lacID != nil}
+  /// Clears the value of `lacID`. Subsequent reads from it will return its default value.
+  mutating func clearLacID() {self._lacID = nil}
+
+  /// Location of the cell, only set for responses
+  var location: AlsProto_Location {
+    get {return _location ?? AlsProto_Location()}
+    set {_location = newValue}
+  }
+  /// Returns true if `location` has been explicitly set.
+  var hasLocation: Bool {return self._location != nil}
+  /// Clears the value of `location`. Subsequent reads from it will return its default value.
+  mutating func clearLocation() {self._location = nil}
+
+  /// Absolute Radio Frequency Channel Number, only set for cells in responses
+  /// See https://www.cellmapper.net/arfcn?net=NR&ARFCN=0&MCC=222
+  /// See https://de.wikipedia.org/wiki/ARFCN
+  var arfcn: Int32 {
+    get {return _arfcn ?? 0}
+    set {_arfcn = newValue}
+  }
+  /// Returns true if `arfcn` has been explicitly set.
+  var hasArfcn: Bool {return self._arfcn != nil}
+  /// Clears the value of `arfcn`. Subsequent reads from it will return its default value.
+  mutating func clearArfcn() {self._arfcn = nil}
+
+  /// Primary Scrambling Code, only set for cells in responses
+  /// See https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=9119377
+  var psc: Int32 {
+    get {return _psc ?? 0}
+    set {_psc = newValue}
+  }
+  /// Returns true if `psc` has been explicitly set.
+  var hasPsc: Bool {return self._psc != nil}
+  /// Clears the value of `psc`. Subsequent reads from it will return its default value.
+  mutating func clearPsc() {self._psc = nil}
+
+  var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  init() {}
+
+  fileprivate var _mcc: Int32? = nil
+  fileprivate var _mnc: Int32? = nil
+  fileprivate var _cellID: Int64? = nil
+  fileprivate var _lacID: Int32? = nil
+  fileprivate var _location: AlsProto_Location? = nil
+  fileprivate var _arfcn: Int32? = nil
+  fileprivate var _psc: Int32? = nil
+}
+
+struct AlsProto_CdmaCell {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  /// Mobile Country Code
+  /// See https://en.wikipedia.org/wiki/Mobile_country_code
+  var mcc: Int32 {
+    get {return _storage._mcc ?? 0}
+    set {_uniqueStorage()._mcc = newValue}
+  }
+  /// Returns true if `mcc` has been explicitly set.
+  var hasMcc: Bool {return _storage._mcc != nil}
+  /// Clears the value of `mcc`. Subsequent reads from it will return its default value.
+  mutating func clearMcc() {_uniqueStorage()._mcc = nil}
+
+  /// System Identification (Number) which is worldwide unique
+  /// See https://en.wikipedia.org/wiki/System_identification_number
+  var sid: Int32 {
+    get {return _storage._sid ?? 0}
+    set {_uniqueStorage()._sid = newValue}
+  }
+  /// Returns true if `sid` has been explicitly set.
+  var hasSid: Bool {return _storage._sid != nil}
+  /// Clears the value of `sid`. Subsequent reads from it will return its default value.
+  mutating func clearSid() {_uniqueStorage()._sid = nil}
+
+  /// Network Identification (Number)
+  /// See https://wiki.opencellid.org/wiki/Public:CDMA
+  var nid: Int32 {
+    get {return _storage._nid ?? 0}
+    set {_uniqueStorage()._nid = newValue}
+  }
+  /// Returns true if `nid` has been explicitly set.
+  var hasNid: Bool {return _storage._nid != nil}
+  /// Clears the value of `nid`. Subsequent reads from it will return its default value.
+  mutating func clearNid() {_uniqueStorage()._nid = nil}
+
+  /// Basestation Identification (Number)
+  /// See https://wiki.opencellid.org/wiki/Public:CDMA
+  var bsid: Int32 {
+    get {return _storage._bsid ?? 0}
+    set {_uniqueStorage()._bsid = newValue}
+  }
+  /// Returns true if `bsid` has been explicitly set.
+  var hasBsid: Bool {return _storage._bsid != nil}
+  /// Clears the value of `bsid`. Subsequent reads from it will return its default value.
+  mutating func clearBsid() {_uniqueStorage()._bsid = nil}
+
+  /// Location of the cell, only set for responses
+  var location: AlsProto_Location {
+    get {return _storage._location ?? AlsProto_Location()}
+    set {_uniqueStorage()._location = newValue}
+  }
+  /// Returns true if `location` has been explicitly set.
+  var hasLocation: Bool {return _storage._location != nil}
+  /// Clears the value of `location`. Subsequent reads from it will return its default value.
+  mutating func clearLocation() {_uniqueStorage()._location = nil}
+
+  /// Assumption: Zone Identification of the cell
+  var zoneid: Int32 {
+    get {return _storage._zoneid ?? 0}
+    set {_uniqueStorage()._zoneid = newValue}
+  }
+  /// Returns true if `zoneid` has been explicitly set.
+  var hasZoneid: Bool {return _storage._zoneid != nil}
+  /// Clears the value of `zoneid`. Subsequent reads from it will return its default value.
+  mutating func clearZoneid() {_uniqueStorage()._zoneid = nil}
+
+  /// The frequency band of the cell, only set for cells in responses
+  /// https://en.wikipedia.org/wiki/CDMA_frequency_bands
+  var bandclass: Int32 {
+    get {return _storage._bandclass ?? 0}
+    set {_uniqueStorage()._bandclass = newValue}
+  }
+  /// Returns true if `bandclass` has been explicitly set.
+  var hasBandclass: Bool {return _storage._bandclass != nil}
+  /// Clears the value of `bandclass`. Subsequent reads from it will return its default value.
+  mutating func clearBandclass() {_uniqueStorage()._bandclass = nil}
+
+  /// Assumption: The frequency channel of the cell, only set for cells in responses
+  var channel: Int32 {
+    get {return _storage._channel ?? 0}
+    set {_uniqueStorage()._channel = newValue}
+  }
+  /// Returns true if `channel` has been explicitly set.
+  var hasChannel: Bool {return _storage._channel != nil}
+  /// Clears the value of `channel`. Subsequent reads from it will return its default value.
+  mutating func clearChannel() {_uniqueStorage()._channel = nil}
+
+  /// Number to identify a basestation
+  /// See https://en.wikipedia.org/wiki/List_of_CDMA_terminology
+  var pnoffset: Int32 {
+    get {return _storage._pnoffset ?? 0}
+    set {_uniqueStorage()._pnoffset = newValue}
+  }
+  /// Returns true if `pnoffset` has been explicitly set.
+  var hasPnoffset: Bool {return _storage._pnoffset != nil}
+  /// Clears the value of `pnoffset`. Subsequent reads from it will return its default value.
+  mutating func clearPnoffset() {_uniqueStorage()._pnoffset = nil}
+
+  var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  init() {}
+
+  fileprivate var _storage = _StorageClass.defaultInstance
+}
+
+/// Request to Apple's servers for retrieving location information.
+/// If you're requesting nearby cells, only pass a single cell of a single type to the request.
+/// If you're requesting nearby Wifi APs, you can send multiple MACs.
+///
+/// See: locationd Objective-C method: -[ALSLocationRequest writeTo:]
 struct AlsProto_ALSLocationRequest {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  var unknown3: Int32 {
-    get {return _unknown3 ?? 0}
-    set {_unknown3 = newValue}
-  }
-  /// Returns true if `unknown3` has been explicitly set.
-  var hasUnknown3: Bool {return self._unknown3 != nil}
-  /// Clears the value of `unknown3`. Subsequent reads from it will return its default value.
-  mutating func clearUnknown3() {self._unknown3 = nil}
+  /// A single GSM cell the iPhone is currently connected to.
+  /// Do not specify cells of other types or any Wifi AP.
+  var gsmCells: [AlsProto_GsmCell] = []
 
-  var unknown4: Int32 {
-    get {return _unknown4 ?? 0}
-    set {_unknown4 = newValue}
-  }
-  /// Returns true if `unknown4` has been explicitly set.
-  var hasUnknown4: Bool {return self._unknown4 != nil}
-  /// Clears the value of `unknown4`. Subsequent reads from it will return its default value.
-  mutating func clearUnknown4() {self._unknown4 = nil}
+  /// Multiple Wifi APs in proximity.
+  /// Do not specify cells.
+  var wirelessAps: [AlsProto_WirelessAP] = []
 
-  var cell: AlsProto_ALSLocationRequest.RequestCell {
-    get {return _cell ?? AlsProto_ALSLocationRequest.RequestCell()}
-    set {_cell = newValue}
+  /// This value is always set to 0.
+  /// We could observe this for LTE, GSM, and Wifi requests.
+  var numberOfSurroundingCells: Int32 {
+    get {return _numberOfSurroundingCells ?? 0}
+    set {_numberOfSurroundingCells = newValue}
   }
-  /// Returns true if `cell` has been explicitly set.
-  var hasCell: Bool {return self._cell != nil}
-  /// Clears the value of `cell`. Subsequent reads from it will return its default value.
-  mutating func clearCell() {self._cell = nil}
+  /// Returns true if `numberOfSurroundingCells` has been explicitly set.
+  var hasNumberOfSurroundingCells: Bool {return self._numberOfSurroundingCells != nil}
+  /// Clears the value of `numberOfSurroundingCells`. Subsequent reads from it will return its default value.
+  mutating func clearNumberOfSurroundingCells() {self._numberOfSurroundingCells = nil}
 
-  var unknown31: Int32 {
-    get {return _unknown31 ?? 0}
-    set {_unknown31 = newValue}
+  /// This value is set for LTE and GSM requests to 1.
+  /// It is set for Wifi requests to 100.
+  var numberOfSurroundingWifis: Int32 {
+    get {return _numberOfSurroundingWifis ?? 0}
+    set {_numberOfSurroundingWifis = newValue}
   }
-  /// Returns true if `unknown31` has been explicitly set.
-  var hasUnknown31: Bool {return self._unknown31 != nil}
-  /// Clears the value of `unknown31`. Subsequent reads from it will return its default value.
-  mutating func clearUnknown31() {self._unknown31 = nil}
+  /// Returns true if `numberOfSurroundingWifis` has been explicitly set.
+  var hasNumberOfSurroundingWifis: Bool {return self._numberOfSurroundingWifis != nil}
+  /// Clears the value of `numberOfSurroundingWifis`. Subsequent reads from it will return its default value.
+  mutating func clearNumberOfSurroundingWifis() {self._numberOfSurroundingWifis = nil}
+
+  /// Never set presumably because it's transmitted through the custom header
+  var appBundleID: String {
+    get {return _appBundleID ?? String()}
+    set {_appBundleID = newValue}
+  }
+  /// Returns true if `appBundleID` has been explicitly set.
+  var hasAppBundleID: Bool {return self._appBundleID != nil}
+  /// Clears the value of `appBundleID`. Subsequent reads from it will return its default value.
+  mutating func clearAppBundleID() {self._appBundleID = nil}
+
+  /// A single CDMA cell the iPhone is currently connected to.
+  /// Do not specify cells of other types or any Wifi AP.
+  var cdmaCells: [AlsProto_CdmaCell] = []
+
+  /// A single CDMA-EVDO cell the iPhone is currently connected to.
+  /// Do not specify cells of other types or any Wifi AP.
+  var cdmaEvdoCells: [AlsProto_CdmaCell] = []
+
+  /// Assumption: This value is never set even when requesting CDMA cells.
+  var numberOfSurroundingCdmaCells: Int32 {
+    get {return _numberOfSurroundingCdmaCells ?? 0}
+    set {_numberOfSurroundingCdmaCells = newValue}
+  }
+  /// Returns true if `numberOfSurroundingCdmaCells` has been explicitly set.
+  var hasNumberOfSurroundingCdmaCells: Bool {return self._numberOfSurroundingCdmaCells != nil}
+  /// Clears the value of `numberOfSurroundingCdmaCells`. Subsequent reads from it will return its default value.
+  mutating func clearNumberOfSurroundingCdmaCells() {self._numberOfSurroundingCdmaCells = nil}
+
+  /// Assumption: This value is never set even when requesting CDMA-EVDO cells.
+  var numberOfSurroundingCdmaEvdoCells: Int32 {
+    get {return _numberOfSurroundingCdmaEvdoCells ?? 0}
+    set {_numberOfSurroundingCdmaEvdoCells = newValue}
+  }
+  /// Returns true if `numberOfSurroundingCdmaEvdoCells` has been explicitly set.
+  var hasNumberOfSurroundingCdmaEvdoCells: Bool {return self._numberOfSurroundingCdmaEvdoCells != nil}
+  /// Clears the value of `numberOfSurroundingCdmaEvdoCells`. Subsequent reads from it will return its default value.
+  mutating func clearNumberOfSurroundingCdmaEvdoCells() {self._numberOfSurroundingCdmaEvdoCells = nil}
+
+  /// A single LTE cell the iPhone is currently connected to.
+  /// Do not specify cells of other types or any Wifi AP.
+  var lteCells: [AlsProto_LteCell] = []
+
+  /// This value is never set even when requesting LTE cells.
+  var numberOfSurroundingLteCells: Int32 {
+    get {return _numberOfSurroundingLteCells ?? 0}
+    set {_numberOfSurroundingLteCells = newValue}
+  }
+  /// Returns true if `numberOfSurroundingLteCells` has been explicitly set.
+  var hasNumberOfSurroundingLteCells: Bool {return self._numberOfSurroundingLteCells != nil}
+  /// Clears the value of `numberOfSurroundingLteCells`. Subsequent reads from it will return its default value.
+  mutating func clearNumberOfSurroundingLteCells() {self._numberOfSurroundingLteCells = nil}
+
+  /// A single SCDMA cell the iPhone is currently connected to.
+  /// Do not specify cells of other types or any Wifi AP.
+  var scdmaCells: [AlsProto_ScdmaCell] = []
+
+  /// Assumption: This value is never set even when requesting SCDMA cells.
+  var numberOfSurroundingScdmaCells: Int32 {
+    get {return _numberOfSurroundingScdmaCells ?? 0}
+    set {_numberOfSurroundingScdmaCells = newValue}
+  }
+  /// Returns true if `numberOfSurroundingScdmaCells` has been explicitly set.
+  var hasNumberOfSurroundingScdmaCells: Bool {return self._numberOfSurroundingScdmaCells != nil}
+  /// Clears the value of `numberOfSurroundingScdmaCells`. Subsequent reads from it will return its default value.
+  mutating func clearNumberOfSurroundingScdmaCells() {self._numberOfSurroundingScdmaCells = nil}
+
+  /// A single Nr5G cell the iPhone is currently connected to.
+  /// Do not specify cells of other types or any Wifi AP.
+  var nr5Gcells: [AlsProto_Nr5GCell] = []
+
+  /// Assumption: This value is never set even when requesting Nr5G cells.
+  var numberOfSurroundingNr5Gcells: Int32 {
+    get {return _numberOfSurroundingNr5Gcells ?? 0}
+    set {_numberOfSurroundingNr5Gcells = newValue}
+  }
+  /// Returns true if `numberOfSurroundingNr5Gcells` has been explicitly set.
+  var hasNumberOfSurroundingNr5Gcells: Bool {return self._numberOfSurroundingNr5Gcells != nil}
+  /// Clears the value of `numberOfSurroundingNr5Gcells`. Subsequent reads from it will return its default value.
+  mutating func clearNumberOfSurroundingNr5Gcells() {self._numberOfSurroundingNr5Gcells = nil}
+
+  /// Assumption for values:
+  /// 1 = k2dot4GHZ
+  /// 2 = k5GHZ
+  /// The value is always set to k2dot4GHZ (even for cell request).
+  var surroundingWifiBands: [Int32] = []
 
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  struct RequestCell {
-    // SwiftProtobuf.Message conformance is added in an extension below. See the
-    // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-    // methods supported on all messages.
-
-    /// https://en.wikipedia.org/wiki/Mobile_country_code
-    var mcc: Int32 {
-      get {return _mcc ?? 0}
-      set {_mcc = newValue}
-    }
-    /// Returns true if `mcc` has been explicitly set.
-    var hasMcc: Bool {return self._mcc != nil}
-    /// Clears the value of `mcc`. Subsequent reads from it will return its default value.
-    mutating func clearMcc() {self._mcc = nil}
-
-    /// Germany: https://de.wikipedia.org/wiki/Mobilfunknetzkennzahl
-    var mnc: Int32 {
-      get {return _mnc ?? 0}
-      set {_mnc = newValue}
-    }
-    /// Returns true if `mnc` has been explicitly set.
-    var hasMnc: Bool {return self._mnc != nil}
-    /// Clears the value of `mnc`. Subsequent reads from it will return its default value.
-    mutating func clearMnc() {self._mnc = nil}
-
-    /// https://en.wikipedia.org/wiki/GSM_Cell_ID
-    /// If cellID == Long.MAX_VALUE -> only rough location for tacID
-    var cellID: Int64 {
-      get {return _cellID ?? 0}
-      set {_cellID = newValue}
-    }
-    /// Returns true if `cellID` has been explicitly set.
-    var hasCellID: Bool {return self._cellID != nil}
-    /// Clears the value of `cellID`. Subsequent reads from it will return its default value.
-    mutating func clearCellID() {self._cellID = nil}
-
-    /// http://wiki.opencellid.org/wiki/FAQ#What_is_the_difference_between_the_LAC_and_TAC_in_the_LTE_Modem_Status.3F
-    /// https://ec.europa.eu/eurostat/cros/content/Glossary%3ALocation_Area_Code/Tracking_Area_Code_%28LAC/TAC%29_en
-    var tacID: Int32 {
-      get {return _tacID ?? 0}
-      set {_tacID = newValue}
-    }
-    /// Returns true if `tacID` has been explicitly set.
-    var hasTacID: Bool {return self._tacID != nil}
-    /// Clears the value of `tacID`. Subsequent reads from it will return its default value.
-    mutating func clearTacID() {self._tacID = nil}
-
-    var unknownFields = SwiftProtobuf.UnknownStorage()
-
-    init() {}
-
-    fileprivate var _mcc: Int32? = nil
-    fileprivate var _mnc: Int32? = nil
-    fileprivate var _cellID: Int64? = nil
-    fileprivate var _tacID: Int32? = nil
-  }
-
   init() {}
 
-  fileprivate var _unknown3: Int32? = nil
-  fileprivate var _unknown4: Int32? = nil
-  fileprivate var _cell: AlsProto_ALSLocationRequest.RequestCell? = nil
-  fileprivate var _unknown31: Int32? = nil
+  fileprivate var _numberOfSurroundingCells: Int32? = nil
+  fileprivate var _numberOfSurroundingWifis: Int32? = nil
+  fileprivate var _appBundleID: String? = nil
+  fileprivate var _numberOfSurroundingCdmaCells: Int32? = nil
+  fileprivate var _numberOfSurroundingCdmaEvdoCells: Int32? = nil
+  fileprivate var _numberOfSurroundingLteCells: Int32? = nil
+  fileprivate var _numberOfSurroundingScdmaCells: Int32? = nil
+  fileprivate var _numberOfSurroundingNr5Gcells: Int32? = nil
 }
 
+/// Response from Apple's servers for a ALSLocationRequest.
+/// Depending on the request only one of the repeated values is used.
+///
+/// See: locationd Objective-C method: -[ALSLocationResponse readFrom:]
 struct AlsProto_ALSLocationResponse {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  /// List of nearby cell towers with location data
-  var cells: [AlsProto_ALSLocationResponse.ResponseCell] = []
+  /// List of nearby GSM cells with location data
+  var gsmCells: [AlsProto_GsmCell] = []
+
+  /// List of nearby wireless access points with location data
+  var wirelessAps: [AlsProto_WirelessAP] = []
+
+  /// List of nearby CDMA & CDMA-EVDO cells with location data
+  var cdmaCells: [AlsProto_CdmaCell] = []
+
+  /// List of nearby LTE / UMTS cells with location data
+  var lteCells: [AlsProto_LteCell] = []
+
+  /// List of nearby SCDMA cells with location data
+  var scdmaCells: [AlsProto_ScdmaCell] = []
+
+  /// List of nearby Nr5G cells with location data
+  var nr5Gcells: [AlsProto_Nr5GCell] = []
 
   var unknownFields = SwiftProtobuf.UnknownStorage()
-
-  struct ResponseCellLocation {
-    // SwiftProtobuf.Message conformance is added in an extension below. See the
-    // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-    // methods supported on all messages.
-
-    /// X * pow(10, -8)
-    var latitude: Int64 {
-      get {return _latitude ?? 0}
-      set {_latitude = newValue}
-    }
-    /// Returns true if `latitude` has been explicitly set.
-    var hasLatitude: Bool {return self._latitude != nil}
-    /// Clears the value of `latitude`. Subsequent reads from it will return its default value.
-    mutating func clearLatitude() {self._latitude = nil}
-
-    /// X * pow(10, -8)
-    var longitude: Int64 {
-      get {return _longitude ?? 0}
-      set {_longitude = newValue}
-    }
-    /// Returns true if `longitude` has been explicitly set.
-    var hasLongitude: Bool {return self._longitude != nil}
-    /// Clears the value of `longitude`. Subsequent reads from it will return its default value.
-    mutating func clearLongitude() {self._longitude = nil}
-
-    /// in meters
-    var accuracy: Int32 {
-      get {return _accuracy ?? 0}
-      set {_accuracy = newValue}
-    }
-    /// Returns true if `accuracy` has been explicitly set.
-    var hasAccuracy: Bool {return self._accuracy != nil}
-    /// Clears the value of `accuracy`. Subsequent reads from it will return its default value.
-    mutating func clearAccuracy() {self._accuracy = nil}
-
-    /// only observed value: 0
-    var locationType: Int32 {
-      get {return _locationType ?? 0}
-      set {_locationType = newValue}
-    }
-    /// Returns true if `locationType` has been explicitly set.
-    var hasLocationType: Bool {return self._locationType != nil}
-    /// Clears the value of `locationType`. Subsequent reads from it will return its default value.
-    mutating func clearLocationType() {self._locationType = nil}
-
-    /// in meters
-    var reach: Int32 {
-      get {return _reach ?? 0}
-      set {_reach = newValue}
-    }
-    /// Returns true if `reach` has been explicitly set.
-    var hasReach: Bool {return self._reach != nil}
-    /// Clears the value of `reach`. Subsequent reads from it will return its default value.
-    mutating func clearReach() {self._reach = nil}
-
-    /// TODO: How often the cell was seen by Apple devices?
-    var score: Int32 {
-      get {return _score ?? 0}
-      set {_score = newValue}
-    }
-    /// Returns true if `score` has been explicitly set.
-    var hasScore: Bool {return self._score != nil}
-    /// Clears the value of `score`. Subsequent reads from it will return its default value.
-    mutating func clearScore() {self._score = nil}
-
-    var unknownFields = SwiftProtobuf.UnknownStorage()
-
-    init() {}
-
-    fileprivate var _latitude: Int64? = nil
-    fileprivate var _longitude: Int64? = nil
-    fileprivate var _accuracy: Int32? = nil
-    fileprivate var _locationType: Int32? = nil
-    fileprivate var _reach: Int32? = nil
-    fileprivate var _score: Int32? = nil
-  }
-
-  struct ResponseCell {
-    // SwiftProtobuf.Message conformance is added in an extension below. See the
-    // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-    // methods supported on all messages.
-
-    /// https://en.wikipedia.org/wiki/Mobile_country_code
-    var mcc: Int32 {
-      get {return _mcc ?? 0}
-      set {_mcc = newValue}
-    }
-    /// Returns true if `mcc` has been explicitly set.
-    var hasMcc: Bool {return self._mcc != nil}
-    /// Clears the value of `mcc`. Subsequent reads from it will return its default value.
-    mutating func clearMcc() {self._mcc = nil}
-
-    /// Germany: https://de.wikipedia.org/wiki/Mobilfunknetzkennzahl
-    var mnc: Int32 {
-      get {return _mnc ?? 0}
-      set {_mnc = newValue}
-    }
-    /// Returns true if `mnc` has been explicitly set.
-    var hasMnc: Bool {return self._mnc != nil}
-    /// Clears the value of `mnc`. Subsequent reads from it will return its default value.
-    mutating func clearMnc() {self._mnc = nil}
-
-    /// https://en.wikipedia.org/wiki/GSM_Cell_ID
-    /// If cellID == -1 -> only rough location for tacID
-    var cellID: Int64 {
-      get {return _cellID ?? 0}
-      set {_cellID = newValue}
-    }
-    /// Returns true if `cellID` has been explicitly set.
-    var hasCellID: Bool {return self._cellID != nil}
-    /// Clears the value of `cellID`. Subsequent reads from it will return its default value.
-    mutating func clearCellID() {self._cellID = nil}
-
-    /// http://wiki.opencellid.org/wiki/FAQ#What_is_the_difference_between_the_LAC_and_TAC_in_the_LTE_Modem_Status.3F
-    /// https://ec.europa.eu/eurostat/cros/content/Glossary%3ALocation_Area_Code/Tracking_Area_Code_%28LAC/TAC%29_en
-    var tacID: Int32 {
-      get {return _tacID ?? 0}
-      set {_tacID = newValue}
-    }
-    /// Returns true if `tacID` has been explicitly set.
-    var hasTacID: Bool {return self._tacID != nil}
-    /// Clears the value of `tacID`. Subsequent reads from it will return its default value.
-    mutating func clearTacID() {self._tacID = nil}
-
-    var location: AlsProto_ALSLocationResponse.ResponseCellLocation {
-      get {return _location ?? AlsProto_ALSLocationResponse.ResponseCellLocation()}
-      set {_location = newValue}
-    }
-    /// Returns true if `location` has been explicitly set.
-    var hasLocation: Bool {return self._location != nil}
-    /// Clears the value of `location`. Subsequent reads from it will return its default value.
-    mutating func clearLocation() {self._location = nil}
-
-    var unknown6: Int32 {
-      get {return _unknown6 ?? 0}
-      set {_unknown6 = newValue}
-    }
-    /// Returns true if `unknown6` has been explicitly set.
-    var hasUnknown6: Bool {return self._unknown6 != nil}
-    /// Clears the value of `unknown6`. Subsequent reads from it will return its default value.
-    mutating func clearUnknown6() {self._unknown6 = nil}
-
-    var unknown7: Int32 {
-      get {return _unknown7 ?? 0}
-      set {_unknown7 = newValue}
-    }
-    /// Returns true if `unknown7` has been explicitly set.
-    var hasUnknown7: Bool {return self._unknown7 != nil}
-    /// Clears the value of `unknown7`. Subsequent reads from it will return its default value.
-    mutating func clearUnknown7() {self._unknown7 = nil}
-
-    var unknownFields = SwiftProtobuf.UnknownStorage()
-
-    init() {}
-
-    fileprivate var _mcc: Int32? = nil
-    fileprivate var _mnc: Int32? = nil
-    fileprivate var _cellID: Int64? = nil
-    fileprivate var _tacID: Int32? = nil
-    fileprivate var _location: AlsProto_ALSLocationResponse.ResponseCellLocation? = nil
-    fileprivate var _unknown6: Int32? = nil
-    fileprivate var _unknown7: Int32? = nil
-  }
 
   init() {}
 }
 
 #if swift(>=5.5) && canImport(_Concurrency)
+extension AlsProto_Location: @unchecked Sendable {}
+extension AlsProto_WirelessAP: @unchecked Sendable {}
+extension AlsProto_Nr5GCell: @unchecked Sendable {}
+extension AlsProto_ScdmaCell: @unchecked Sendable {}
+extension AlsProto_LteCell: @unchecked Sendable {}
+extension AlsProto_GsmCell: @unchecked Sendable {}
+extension AlsProto_CdmaCell: @unchecked Sendable {}
 extension AlsProto_ALSLocationRequest: @unchecked Sendable {}
-extension AlsProto_ALSLocationRequest.RequestCell: @unchecked Sendable {}
 extension AlsProto_ALSLocationResponse: @unchecked Sendable {}
-extension AlsProto_ALSLocationResponse.ResponseCellLocation: @unchecked Sendable {}
-extension AlsProto_ALSLocationResponse.ResponseCell: @unchecked Sendable {}
 #endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 
 fileprivate let _protobuf_package = "als_proto"
 
-extension AlsProto_ALSLocationRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  static let protoMessageName: String = _protobuf_package + ".ALSLocationRequest"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    3: .same(proto: "unknown3"),
-    4: .same(proto: "unknown4"),
-    25: .same(proto: "cell"),
-    31: .same(proto: "unknown31"),
-  ]
-
-  public var isInitialized: Bool {
-    if self._unknown3 == nil {return false}
-    return true
-  }
-
-  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    while let fieldNumber = try decoder.nextFieldNumber() {
-      // The use of inline closures is to circumvent an issue where the compiler
-      // allocates stack space for every case branch when no optimizations are
-      // enabled. https://github.com/apple/swift-protobuf/issues/1034
-      switch fieldNumber {
-      case 3: try { try decoder.decodeSingularInt32Field(value: &self._unknown3) }()
-      case 4: try { try decoder.decodeSingularInt32Field(value: &self._unknown4) }()
-      case 25: try { try decoder.decodeSingularMessageField(value: &self._cell) }()
-      case 31: try { try decoder.decodeSingularInt32Field(value: &self._unknown31) }()
-      default: break
-      }
-    }
-  }
-
-  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    // The use of inline closures is to circumvent an issue where the compiler
-    // allocates stack space for every if/case branch local when no optimizations
-    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
-    // https://github.com/apple/swift-protobuf/issues/1182
-    try { if let v = self._unknown3 {
-      try visitor.visitSingularInt32Field(value: v, fieldNumber: 3)
-    } }()
-    try { if let v = self._unknown4 {
-      try visitor.visitSingularInt32Field(value: v, fieldNumber: 4)
-    } }()
-    try { if let v = self._cell {
-      try visitor.visitSingularMessageField(value: v, fieldNumber: 25)
-    } }()
-    try { if let v = self._unknown31 {
-      try visitor.visitSingularInt32Field(value: v, fieldNumber: 31)
-    } }()
-    try unknownFields.traverse(visitor: &visitor)
-  }
-
-  static func ==(lhs: AlsProto_ALSLocationRequest, rhs: AlsProto_ALSLocationRequest) -> Bool {
-    if lhs._unknown3 != rhs._unknown3 {return false}
-    if lhs._unknown4 != rhs._unknown4 {return false}
-    if lhs._cell != rhs._cell {return false}
-    if lhs._unknown31 != rhs._unknown31 {return false}
-    if lhs.unknownFields != rhs.unknownFields {return false}
-    return true
-  }
-}
-
-extension AlsProto_ALSLocationRequest.RequestCell: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  static let protoMessageName: String = AlsProto_ALSLocationRequest.protoMessageName + ".RequestCell"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "mcc"),
-    2: .same(proto: "mnc"),
-    3: .same(proto: "cellId"),
-    4: .same(proto: "tacId"),
-  ]
-
-  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    while let fieldNumber = try decoder.nextFieldNumber() {
-      // The use of inline closures is to circumvent an issue where the compiler
-      // allocates stack space for every case branch when no optimizations are
-      // enabled. https://github.com/apple/swift-protobuf/issues/1034
-      switch fieldNumber {
-      case 1: try { try decoder.decodeSingularInt32Field(value: &self._mcc) }()
-      case 2: try { try decoder.decodeSingularInt32Field(value: &self._mnc) }()
-      case 3: try { try decoder.decodeSingularInt64Field(value: &self._cellID) }()
-      case 4: try { try decoder.decodeSingularInt32Field(value: &self._tacID) }()
-      default: break
-      }
-    }
-  }
-
-  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    // The use of inline closures is to circumvent an issue where the compiler
-    // allocates stack space for every if/case branch local when no optimizations
-    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
-    // https://github.com/apple/swift-protobuf/issues/1182
-    try { if let v = self._mcc {
-      try visitor.visitSingularInt32Field(value: v, fieldNumber: 1)
-    } }()
-    try { if let v = self._mnc {
-      try visitor.visitSingularInt32Field(value: v, fieldNumber: 2)
-    } }()
-    try { if let v = self._cellID {
-      try visitor.visitSingularInt64Field(value: v, fieldNumber: 3)
-    } }()
-    try { if let v = self._tacID {
-      try visitor.visitSingularInt32Field(value: v, fieldNumber: 4)
-    } }()
-    try unknownFields.traverse(visitor: &visitor)
-  }
-
-  static func ==(lhs: AlsProto_ALSLocationRequest.RequestCell, rhs: AlsProto_ALSLocationRequest.RequestCell) -> Bool {
-    if lhs._mcc != rhs._mcc {return false}
-    if lhs._mnc != rhs._mnc {return false}
-    if lhs._cellID != rhs._cellID {return false}
-    if lhs._tacID != rhs._tacID {return false}
-    if lhs.unknownFields != rhs.unknownFields {return false}
-    return true
-  }
-}
-
-extension AlsProto_ALSLocationResponse: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  static let protoMessageName: String = _protobuf_package + ".ALSLocationResponse"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    22: .same(proto: "cells"),
-  ]
-
-  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    while let fieldNumber = try decoder.nextFieldNumber() {
-      // The use of inline closures is to circumvent an issue where the compiler
-      // allocates stack space for every case branch when no optimizations are
-      // enabled. https://github.com/apple/swift-protobuf/issues/1034
-      switch fieldNumber {
-      case 22: try { try decoder.decodeRepeatedMessageField(value: &self.cells) }()
-      default: break
-      }
-    }
-  }
-
-  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if !self.cells.isEmpty {
-      try visitor.visitRepeatedMessageField(value: self.cells, fieldNumber: 22)
-    }
-    try unknownFields.traverse(visitor: &visitor)
-  }
-
-  static func ==(lhs: AlsProto_ALSLocationResponse, rhs: AlsProto_ALSLocationResponse) -> Bool {
-    if lhs.cells != rhs.cells {return false}
-    if lhs.unknownFields != rhs.unknownFields {return false}
-    return true
-  }
-}
-
-extension AlsProto_ALSLocationResponse.ResponseCellLocation: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  static let protoMessageName: String = AlsProto_ALSLocationResponse.protoMessageName + ".ResponseCellLocation"
+extension AlsProto_Location: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = _protobuf_package + ".Location"
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "latitude"),
     2: .same(proto: "longitude"),
     3: .same(proto: "accuracy"),
     4: .same(proto: "locationType"),
+    5: .same(proto: "altitude"),
+    6: .same(proto: "verticalAccuracy"),
     11: .same(proto: "reach"),
     12: .same(proto: "score"),
+    13: .same(proto: "infoMask"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -483,8 +869,11 @@ extension AlsProto_ALSLocationResponse.ResponseCellLocation: SwiftProtobuf.Messa
       case 2: try { try decoder.decodeSingularInt64Field(value: &self._longitude) }()
       case 3: try { try decoder.decodeSingularInt32Field(value: &self._accuracy) }()
       case 4: try { try decoder.decodeSingularInt32Field(value: &self._locationType) }()
-      case 11: try { try decoder.decodeSingularInt32Field(value: &self._reach) }()
+      case 5: try { try decoder.decodeSingularInt32Field(value: &self._altitude) }()
+      case 6: try { try decoder.decodeSingularInt32Field(value: &self._verticalAccuracy) }()
+      case 11: try { try decoder.decodeSingularUInt32Field(value: &self._reach) }()
       case 12: try { try decoder.decodeSingularInt32Field(value: &self._score) }()
+      case 13: try { try decoder.decodeSingularUInt32Field(value: &self._infoMask) }()
       default: break
       }
     }
@@ -507,37 +896,96 @@ extension AlsProto_ALSLocationResponse.ResponseCellLocation: SwiftProtobuf.Messa
     try { if let v = self._locationType {
       try visitor.visitSingularInt32Field(value: v, fieldNumber: 4)
     } }()
+    try { if let v = self._altitude {
+      try visitor.visitSingularInt32Field(value: v, fieldNumber: 5)
+    } }()
+    try { if let v = self._verticalAccuracy {
+      try visitor.visitSingularInt32Field(value: v, fieldNumber: 6)
+    } }()
     try { if let v = self._reach {
-      try visitor.visitSingularInt32Field(value: v, fieldNumber: 11)
+      try visitor.visitSingularUInt32Field(value: v, fieldNumber: 11)
     } }()
     try { if let v = self._score {
       try visitor.visitSingularInt32Field(value: v, fieldNumber: 12)
     } }()
+    try { if let v = self._infoMask {
+      try visitor.visitSingularUInt32Field(value: v, fieldNumber: 13)
+    } }()
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  static func ==(lhs: AlsProto_ALSLocationResponse.ResponseCellLocation, rhs: AlsProto_ALSLocationResponse.ResponseCellLocation) -> Bool {
+  static func ==(lhs: AlsProto_Location, rhs: AlsProto_Location) -> Bool {
     if lhs._latitude != rhs._latitude {return false}
     if lhs._longitude != rhs._longitude {return false}
     if lhs._accuracy != rhs._accuracy {return false}
     if lhs._locationType != rhs._locationType {return false}
+    if lhs._altitude != rhs._altitude {return false}
+    if lhs._verticalAccuracy != rhs._verticalAccuracy {return false}
     if lhs._reach != rhs._reach {return false}
     if lhs._score != rhs._score {return false}
+    if lhs._infoMask != rhs._infoMask {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
 }
 
-extension AlsProto_ALSLocationResponse.ResponseCell: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  static let protoMessageName: String = AlsProto_ALSLocationResponse.protoMessageName + ".ResponseCell"
+extension AlsProto_WirelessAP: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = _protobuf_package + ".WirelessAP"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "macID"),
+    2: .same(proto: "location"),
+    3: .same(proto: "channel"),
+  ]
+
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularStringField(value: &self._macID) }()
+      case 2: try { try decoder.decodeSingularMessageField(value: &self._location) }()
+      case 3: try { try decoder.decodeSingularUInt32Field(value: &self._channel) }()
+      default: break
+      }
+    }
+  }
+
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    try { if let v = self._macID {
+      try visitor.visitSingularStringField(value: v, fieldNumber: 1)
+    } }()
+    try { if let v = self._location {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
+    } }()
+    try { if let v = self._channel {
+      try visitor.visitSingularUInt32Field(value: v, fieldNumber: 3)
+    } }()
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  static func ==(lhs: AlsProto_WirelessAP, rhs: AlsProto_WirelessAP) -> Bool {
+    if lhs._macID != rhs._macID {return false}
+    if lhs._location != rhs._location {return false}
+    if lhs._channel != rhs._channel {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension AlsProto_Nr5GCell: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = _protobuf_package + ".Nr5GCell"
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "mcc"),
     2: .same(proto: "mnc"),
-    3: .same(proto: "cellId"),
-    4: .same(proto: "tacId"),
+    3: .same(proto: "cellID"),
+    4: .same(proto: "tacID"),
     5: .same(proto: "location"),
-    6: .same(proto: "unknown6"),
-    7: .same(proto: "unknown7"),
+    6: .same(proto: "nrarfcn"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -551,8 +999,7 @@ extension AlsProto_ALSLocationResponse.ResponseCell: SwiftProtobuf.Message, Swif
       case 3: try { try decoder.decodeSingularInt64Field(value: &self._cellID) }()
       case 4: try { try decoder.decodeSingularInt32Field(value: &self._tacID) }()
       case 5: try { try decoder.decodeSingularMessageField(value: &self._location) }()
-      case 6: try { try decoder.decodeSingularInt32Field(value: &self._unknown6) }()
-      case 7: try { try decoder.decodeSingularInt32Field(value: &self._unknown7) }()
+      case 6: try { try decoder.decodeSingularInt32Field(value: &self._nrarfcn) }()
       default: break
       }
     }
@@ -578,23 +1025,555 @@ extension AlsProto_ALSLocationResponse.ResponseCell: SwiftProtobuf.Message, Swif
     try { if let v = self._location {
       try visitor.visitSingularMessageField(value: v, fieldNumber: 5)
     } }()
-    try { if let v = self._unknown6 {
+    try { if let v = self._nrarfcn {
       try visitor.visitSingularInt32Field(value: v, fieldNumber: 6)
-    } }()
-    try { if let v = self._unknown7 {
-      try visitor.visitSingularInt32Field(value: v, fieldNumber: 7)
     } }()
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  static func ==(lhs: AlsProto_ALSLocationResponse.ResponseCell, rhs: AlsProto_ALSLocationResponse.ResponseCell) -> Bool {
+  static func ==(lhs: AlsProto_Nr5GCell, rhs: AlsProto_Nr5GCell) -> Bool {
     if lhs._mcc != rhs._mcc {return false}
     if lhs._mnc != rhs._mnc {return false}
     if lhs._cellID != rhs._cellID {return false}
     if lhs._tacID != rhs._tacID {return false}
     if lhs._location != rhs._location {return false}
-    if lhs._unknown6 != rhs._unknown6 {return false}
-    if lhs._unknown7 != rhs._unknown7 {return false}
+    if lhs._nrarfcn != rhs._nrarfcn {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension AlsProto_ScdmaCell: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = _protobuf_package + ".ScdmaCell"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "mcc"),
+    2: .same(proto: "mnc"),
+    3: .same(proto: "cellID"),
+    4: .same(proto: "lacID"),
+    5: .same(proto: "location"),
+    6: .same(proto: "arfcn"),
+    7: .same(proto: "psc"),
+  ]
+
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularInt32Field(value: &self._mcc) }()
+      case 2: try { try decoder.decodeSingularInt32Field(value: &self._mnc) }()
+      case 3: try { try decoder.decodeSingularInt32Field(value: &self._cellID) }()
+      case 4: try { try decoder.decodeSingularInt32Field(value: &self._lacID) }()
+      case 5: try { try decoder.decodeSingularMessageField(value: &self._location) }()
+      case 6: try { try decoder.decodeSingularInt32Field(value: &self._arfcn) }()
+      case 7: try { try decoder.decodeSingularInt32Field(value: &self._psc) }()
+      default: break
+      }
+    }
+  }
+
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    try { if let v = self._mcc {
+      try visitor.visitSingularInt32Field(value: v, fieldNumber: 1)
+    } }()
+    try { if let v = self._mnc {
+      try visitor.visitSingularInt32Field(value: v, fieldNumber: 2)
+    } }()
+    try { if let v = self._cellID {
+      try visitor.visitSingularInt32Field(value: v, fieldNumber: 3)
+    } }()
+    try { if let v = self._lacID {
+      try visitor.visitSingularInt32Field(value: v, fieldNumber: 4)
+    } }()
+    try { if let v = self._location {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 5)
+    } }()
+    try { if let v = self._arfcn {
+      try visitor.visitSingularInt32Field(value: v, fieldNumber: 6)
+    } }()
+    try { if let v = self._psc {
+      try visitor.visitSingularInt32Field(value: v, fieldNumber: 7)
+    } }()
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  static func ==(lhs: AlsProto_ScdmaCell, rhs: AlsProto_ScdmaCell) -> Bool {
+    if lhs._mcc != rhs._mcc {return false}
+    if lhs._mnc != rhs._mnc {return false}
+    if lhs._cellID != rhs._cellID {return false}
+    if lhs._lacID != rhs._lacID {return false}
+    if lhs._location != rhs._location {return false}
+    if lhs._arfcn != rhs._arfcn {return false}
+    if lhs._psc != rhs._psc {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension AlsProto_LteCell: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = _protobuf_package + ".LteCell"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "mcc"),
+    2: .same(proto: "mnc"),
+    3: .same(proto: "cellID"),
+    4: .same(proto: "tacID"),
+    5: .same(proto: "location"),
+    6: .same(proto: "uarfcn"),
+    7: .same(proto: "pid"),
+  ]
+
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularInt32Field(value: &self._mcc) }()
+      case 2: try { try decoder.decodeSingularInt32Field(value: &self._mnc) }()
+      case 3: try { try decoder.decodeSingularInt32Field(value: &self._cellID) }()
+      case 4: try { try decoder.decodeSingularInt32Field(value: &self._tacID) }()
+      case 5: try { try decoder.decodeSingularMessageField(value: &self._location) }()
+      case 6: try { try decoder.decodeSingularInt32Field(value: &self._uarfcn) }()
+      case 7: try { try decoder.decodeSingularInt32Field(value: &self._pid) }()
+      default: break
+      }
+    }
+  }
+
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    try { if let v = self._mcc {
+      try visitor.visitSingularInt32Field(value: v, fieldNumber: 1)
+    } }()
+    try { if let v = self._mnc {
+      try visitor.visitSingularInt32Field(value: v, fieldNumber: 2)
+    } }()
+    try { if let v = self._cellID {
+      try visitor.visitSingularInt32Field(value: v, fieldNumber: 3)
+    } }()
+    try { if let v = self._tacID {
+      try visitor.visitSingularInt32Field(value: v, fieldNumber: 4)
+    } }()
+    try { if let v = self._location {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 5)
+    } }()
+    try { if let v = self._uarfcn {
+      try visitor.visitSingularInt32Field(value: v, fieldNumber: 6)
+    } }()
+    try { if let v = self._pid {
+      try visitor.visitSingularInt32Field(value: v, fieldNumber: 7)
+    } }()
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  static func ==(lhs: AlsProto_LteCell, rhs: AlsProto_LteCell) -> Bool {
+    if lhs._mcc != rhs._mcc {return false}
+    if lhs._mnc != rhs._mnc {return false}
+    if lhs._cellID != rhs._cellID {return false}
+    if lhs._tacID != rhs._tacID {return false}
+    if lhs._location != rhs._location {return false}
+    if lhs._uarfcn != rhs._uarfcn {return false}
+    if lhs._pid != rhs._pid {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension AlsProto_GsmCell: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = _protobuf_package + ".GsmCell"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "mcc"),
+    2: .same(proto: "mnc"),
+    3: .same(proto: "cellID"),
+    4: .same(proto: "lacID"),
+    5: .same(proto: "location"),
+    6: .same(proto: "arfcn"),
+    7: .same(proto: "psc"),
+  ]
+
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularInt32Field(value: &self._mcc) }()
+      case 2: try { try decoder.decodeSingularInt32Field(value: &self._mnc) }()
+      case 3: try { try decoder.decodeSingularInt64Field(value: &self._cellID) }()
+      case 4: try { try decoder.decodeSingularInt32Field(value: &self._lacID) }()
+      case 5: try { try decoder.decodeSingularMessageField(value: &self._location) }()
+      case 6: try { try decoder.decodeSingularInt32Field(value: &self._arfcn) }()
+      case 7: try { try decoder.decodeSingularInt32Field(value: &self._psc) }()
+      default: break
+      }
+    }
+  }
+
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    try { if let v = self._mcc {
+      try visitor.visitSingularInt32Field(value: v, fieldNumber: 1)
+    } }()
+    try { if let v = self._mnc {
+      try visitor.visitSingularInt32Field(value: v, fieldNumber: 2)
+    } }()
+    try { if let v = self._cellID {
+      try visitor.visitSingularInt64Field(value: v, fieldNumber: 3)
+    } }()
+    try { if let v = self._lacID {
+      try visitor.visitSingularInt32Field(value: v, fieldNumber: 4)
+    } }()
+    try { if let v = self._location {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 5)
+    } }()
+    try { if let v = self._arfcn {
+      try visitor.visitSingularInt32Field(value: v, fieldNumber: 6)
+    } }()
+    try { if let v = self._psc {
+      try visitor.visitSingularInt32Field(value: v, fieldNumber: 7)
+    } }()
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  static func ==(lhs: AlsProto_GsmCell, rhs: AlsProto_GsmCell) -> Bool {
+    if lhs._mcc != rhs._mcc {return false}
+    if lhs._mnc != rhs._mnc {return false}
+    if lhs._cellID != rhs._cellID {return false}
+    if lhs._lacID != rhs._lacID {return false}
+    if lhs._location != rhs._location {return false}
+    if lhs._arfcn != rhs._arfcn {return false}
+    if lhs._psc != rhs._psc {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension AlsProto_CdmaCell: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = _protobuf_package + ".CdmaCell"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "mcc"),
+    2: .same(proto: "sid"),
+    3: .same(proto: "nid"),
+    4: .same(proto: "bsid"),
+    5: .same(proto: "location"),
+    6: .same(proto: "zoneid"),
+    7: .same(proto: "bandclass"),
+    8: .same(proto: "channel"),
+    9: .same(proto: "pnoffset"),
+  ]
+
+  fileprivate class _StorageClass {
+    var _mcc: Int32? = nil
+    var _sid: Int32? = nil
+    var _nid: Int32? = nil
+    var _bsid: Int32? = nil
+    var _location: AlsProto_Location? = nil
+    var _zoneid: Int32? = nil
+    var _bandclass: Int32? = nil
+    var _channel: Int32? = nil
+    var _pnoffset: Int32? = nil
+
+    static let defaultInstance = _StorageClass()
+
+    private init() {}
+
+    init(copying source: _StorageClass) {
+      _mcc = source._mcc
+      _sid = source._sid
+      _nid = source._nid
+      _bsid = source._bsid
+      _location = source._location
+      _zoneid = source._zoneid
+      _bandclass = source._bandclass
+      _channel = source._channel
+      _pnoffset = source._pnoffset
+    }
+  }
+
+  fileprivate mutating func _uniqueStorage() -> _StorageClass {
+    if !isKnownUniquelyReferenced(&_storage) {
+      _storage = _StorageClass(copying: _storage)
+    }
+    return _storage
+  }
+
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    _ = _uniqueStorage()
+    try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
+      while let fieldNumber = try decoder.nextFieldNumber() {
+        // The use of inline closures is to circumvent an issue where the compiler
+        // allocates stack space for every case branch when no optimizations are
+        // enabled. https://github.com/apple/swift-protobuf/issues/1034
+        switch fieldNumber {
+        case 1: try { try decoder.decodeSingularInt32Field(value: &_storage._mcc) }()
+        case 2: try { try decoder.decodeSingularInt32Field(value: &_storage._sid) }()
+        case 3: try { try decoder.decodeSingularInt32Field(value: &_storage._nid) }()
+        case 4: try { try decoder.decodeSingularInt32Field(value: &_storage._bsid) }()
+        case 5: try { try decoder.decodeSingularMessageField(value: &_storage._location) }()
+        case 6: try { try decoder.decodeSingularInt32Field(value: &_storage._zoneid) }()
+        case 7: try { try decoder.decodeSingularInt32Field(value: &_storage._bandclass) }()
+        case 8: try { try decoder.decodeSingularInt32Field(value: &_storage._channel) }()
+        case 9: try { try decoder.decodeSingularInt32Field(value: &_storage._pnoffset) }()
+        default: break
+        }
+      }
+    }
+  }
+
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every if/case branch local when no optimizations
+      // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+      // https://github.com/apple/swift-protobuf/issues/1182
+      try { if let v = _storage._mcc {
+        try visitor.visitSingularInt32Field(value: v, fieldNumber: 1)
+      } }()
+      try { if let v = _storage._sid {
+        try visitor.visitSingularInt32Field(value: v, fieldNumber: 2)
+      } }()
+      try { if let v = _storage._nid {
+        try visitor.visitSingularInt32Field(value: v, fieldNumber: 3)
+      } }()
+      try { if let v = _storage._bsid {
+        try visitor.visitSingularInt32Field(value: v, fieldNumber: 4)
+      } }()
+      try { if let v = _storage._location {
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 5)
+      } }()
+      try { if let v = _storage._zoneid {
+        try visitor.visitSingularInt32Field(value: v, fieldNumber: 6)
+      } }()
+      try { if let v = _storage._bandclass {
+        try visitor.visitSingularInt32Field(value: v, fieldNumber: 7)
+      } }()
+      try { if let v = _storage._channel {
+        try visitor.visitSingularInt32Field(value: v, fieldNumber: 8)
+      } }()
+      try { if let v = _storage._pnoffset {
+        try visitor.visitSingularInt32Field(value: v, fieldNumber: 9)
+      } }()
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  static func ==(lhs: AlsProto_CdmaCell, rhs: AlsProto_CdmaCell) -> Bool {
+    if lhs._storage !== rhs._storage {
+      let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
+        let _storage = _args.0
+        let rhs_storage = _args.1
+        if _storage._mcc != rhs_storage._mcc {return false}
+        if _storage._sid != rhs_storage._sid {return false}
+        if _storage._nid != rhs_storage._nid {return false}
+        if _storage._bsid != rhs_storage._bsid {return false}
+        if _storage._location != rhs_storage._location {return false}
+        if _storage._zoneid != rhs_storage._zoneid {return false}
+        if _storage._bandclass != rhs_storage._bandclass {return false}
+        if _storage._channel != rhs_storage._channel {return false}
+        if _storage._pnoffset != rhs_storage._pnoffset {return false}
+        return true
+      }
+      if !storagesAreEqual {return false}
+    }
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension AlsProto_ALSLocationRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = _protobuf_package + ".ALSLocationRequest"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "gsmCells"),
+    2: .same(proto: "wirelessAPs"),
+    3: .same(proto: "numberOfSurroundingCells"),
+    4: .same(proto: "numberOfSurroundingWifis"),
+    5: .same(proto: "appBundleId"),
+    21: .same(proto: "cdmaCells"),
+    22: .same(proto: "cdmaEvdoCells"),
+    23: .same(proto: "numberOfSurroundingCdmaCells"),
+    24: .same(proto: "numberOfSurroundingCdmaEvdoCells"),
+    25: .same(proto: "lteCells"),
+    26: .same(proto: "numberOfSurroundingLteCells"),
+    27: .same(proto: "scdmaCells"),
+    28: .same(proto: "numberOfSurroundingScdmaCells"),
+    29: .same(proto: "nr5GCells"),
+    30: .same(proto: "numberOfSurroundingNr5GCells"),
+    31: .same(proto: "surroundingWifiBands"),
+  ]
+
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeRepeatedMessageField(value: &self.gsmCells) }()
+      case 2: try { try decoder.decodeRepeatedMessageField(value: &self.wirelessAps) }()
+      case 3: try { try decoder.decodeSingularInt32Field(value: &self._numberOfSurroundingCells) }()
+      case 4: try { try decoder.decodeSingularInt32Field(value: &self._numberOfSurroundingWifis) }()
+      case 5: try { try decoder.decodeSingularStringField(value: &self._appBundleID) }()
+      case 21: try { try decoder.decodeRepeatedMessageField(value: &self.cdmaCells) }()
+      case 22: try { try decoder.decodeRepeatedMessageField(value: &self.cdmaEvdoCells) }()
+      case 23: try { try decoder.decodeSingularInt32Field(value: &self._numberOfSurroundingCdmaCells) }()
+      case 24: try { try decoder.decodeSingularInt32Field(value: &self._numberOfSurroundingCdmaEvdoCells) }()
+      case 25: try { try decoder.decodeRepeatedMessageField(value: &self.lteCells) }()
+      case 26: try { try decoder.decodeSingularInt32Field(value: &self._numberOfSurroundingLteCells) }()
+      case 27: try { try decoder.decodeRepeatedMessageField(value: &self.scdmaCells) }()
+      case 28: try { try decoder.decodeSingularInt32Field(value: &self._numberOfSurroundingScdmaCells) }()
+      case 29: try { try decoder.decodeRepeatedMessageField(value: &self.nr5Gcells) }()
+      case 30: try { try decoder.decodeSingularInt32Field(value: &self._numberOfSurroundingNr5Gcells) }()
+      case 31: try { try decoder.decodeRepeatedInt32Field(value: &self.surroundingWifiBands) }()
+      default: break
+      }
+    }
+  }
+
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    if !self.gsmCells.isEmpty {
+      try visitor.visitRepeatedMessageField(value: self.gsmCells, fieldNumber: 1)
+    }
+    if !self.wirelessAps.isEmpty {
+      try visitor.visitRepeatedMessageField(value: self.wirelessAps, fieldNumber: 2)
+    }
+    try { if let v = self._numberOfSurroundingCells {
+      try visitor.visitSingularInt32Field(value: v, fieldNumber: 3)
+    } }()
+    try { if let v = self._numberOfSurroundingWifis {
+      try visitor.visitSingularInt32Field(value: v, fieldNumber: 4)
+    } }()
+    try { if let v = self._appBundleID {
+      try visitor.visitSingularStringField(value: v, fieldNumber: 5)
+    } }()
+    if !self.cdmaCells.isEmpty {
+      try visitor.visitRepeatedMessageField(value: self.cdmaCells, fieldNumber: 21)
+    }
+    if !self.cdmaEvdoCells.isEmpty {
+      try visitor.visitRepeatedMessageField(value: self.cdmaEvdoCells, fieldNumber: 22)
+    }
+    try { if let v = self._numberOfSurroundingCdmaCells {
+      try visitor.visitSingularInt32Field(value: v, fieldNumber: 23)
+    } }()
+    try { if let v = self._numberOfSurroundingCdmaEvdoCells {
+      try visitor.visitSingularInt32Field(value: v, fieldNumber: 24)
+    } }()
+    if !self.lteCells.isEmpty {
+      try visitor.visitRepeatedMessageField(value: self.lteCells, fieldNumber: 25)
+    }
+    try { if let v = self._numberOfSurroundingLteCells {
+      try visitor.visitSingularInt32Field(value: v, fieldNumber: 26)
+    } }()
+    if !self.scdmaCells.isEmpty {
+      try visitor.visitRepeatedMessageField(value: self.scdmaCells, fieldNumber: 27)
+    }
+    try { if let v = self._numberOfSurroundingScdmaCells {
+      try visitor.visitSingularInt32Field(value: v, fieldNumber: 28)
+    } }()
+    if !self.nr5Gcells.isEmpty {
+      try visitor.visitRepeatedMessageField(value: self.nr5Gcells, fieldNumber: 29)
+    }
+    try { if let v = self._numberOfSurroundingNr5Gcells {
+      try visitor.visitSingularInt32Field(value: v, fieldNumber: 30)
+    } }()
+    if !self.surroundingWifiBands.isEmpty {
+      try visitor.visitRepeatedInt32Field(value: self.surroundingWifiBands, fieldNumber: 31)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  static func ==(lhs: AlsProto_ALSLocationRequest, rhs: AlsProto_ALSLocationRequest) -> Bool {
+    if lhs.gsmCells != rhs.gsmCells {return false}
+    if lhs.wirelessAps != rhs.wirelessAps {return false}
+    if lhs._numberOfSurroundingCells != rhs._numberOfSurroundingCells {return false}
+    if lhs._numberOfSurroundingWifis != rhs._numberOfSurroundingWifis {return false}
+    if lhs._appBundleID != rhs._appBundleID {return false}
+    if lhs.cdmaCells != rhs.cdmaCells {return false}
+    if lhs.cdmaEvdoCells != rhs.cdmaEvdoCells {return false}
+    if lhs._numberOfSurroundingCdmaCells != rhs._numberOfSurroundingCdmaCells {return false}
+    if lhs._numberOfSurroundingCdmaEvdoCells != rhs._numberOfSurroundingCdmaEvdoCells {return false}
+    if lhs.lteCells != rhs.lteCells {return false}
+    if lhs._numberOfSurroundingLteCells != rhs._numberOfSurroundingLteCells {return false}
+    if lhs.scdmaCells != rhs.scdmaCells {return false}
+    if lhs._numberOfSurroundingScdmaCells != rhs._numberOfSurroundingScdmaCells {return false}
+    if lhs.nr5Gcells != rhs.nr5Gcells {return false}
+    if lhs._numberOfSurroundingNr5Gcells != rhs._numberOfSurroundingNr5Gcells {return false}
+    if lhs.surroundingWifiBands != rhs.surroundingWifiBands {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension AlsProto_ALSLocationResponse: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = _protobuf_package + ".ALSLocationResponse"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "gsmCells"),
+    2: .same(proto: "wirelessAPs"),
+    21: .same(proto: "cdmaCells"),
+    22: .same(proto: "lteCells"),
+    23: .same(proto: "scdmaCells"),
+    24: .same(proto: "nr5GCells"),
+  ]
+
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeRepeatedMessageField(value: &self.gsmCells) }()
+      case 2: try { try decoder.decodeRepeatedMessageField(value: &self.wirelessAps) }()
+      case 21: try { try decoder.decodeRepeatedMessageField(value: &self.cdmaCells) }()
+      case 22: try { try decoder.decodeRepeatedMessageField(value: &self.lteCells) }()
+      case 23: try { try decoder.decodeRepeatedMessageField(value: &self.scdmaCells) }()
+      case 24: try { try decoder.decodeRepeatedMessageField(value: &self.nr5Gcells) }()
+      default: break
+      }
+    }
+  }
+
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.gsmCells.isEmpty {
+      try visitor.visitRepeatedMessageField(value: self.gsmCells, fieldNumber: 1)
+    }
+    if !self.wirelessAps.isEmpty {
+      try visitor.visitRepeatedMessageField(value: self.wirelessAps, fieldNumber: 2)
+    }
+    if !self.cdmaCells.isEmpty {
+      try visitor.visitRepeatedMessageField(value: self.cdmaCells, fieldNumber: 21)
+    }
+    if !self.lteCells.isEmpty {
+      try visitor.visitRepeatedMessageField(value: self.lteCells, fieldNumber: 22)
+    }
+    if !self.scdmaCells.isEmpty {
+      try visitor.visitRepeatedMessageField(value: self.scdmaCells, fieldNumber: 23)
+    }
+    if !self.nr5Gcells.isEmpty {
+      try visitor.visitRepeatedMessageField(value: self.nr5Gcells, fieldNumber: 24)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  static func ==(lhs: AlsProto_ALSLocationResponse, rhs: AlsProto_ALSLocationResponse) -> Bool {
+    if lhs.gsmCells != rhs.gsmCells {return false}
+    if lhs.wirelessAps != rhs.wirelessAps {return false}
+    if lhs.cdmaCells != rhs.cdmaCells {return false}
+    if lhs.lteCells != rhs.lteCells {return false}
+    if lhs.scdmaCells != rhs.scdmaCells {return false}
+    if lhs.nr5Gcells != rhs.nr5Gcells {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

@@ -41,7 +41,7 @@ final class CCTParserTests: XCTestCase {
         do {
             try jsonData.forEach { sample in
                 print("Trying to parse: \(sample)")
-                let cell = try parser.parse(sample)
+                _ = try parser.parse(sample)
             }
             print("All items could be parsed successfully")
         } catch {
