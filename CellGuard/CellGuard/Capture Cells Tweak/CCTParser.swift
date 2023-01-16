@@ -28,7 +28,7 @@ enum CCTCellType: String {
 }
 
 /// A structure similar to the model "Cell".
-struct CCTCellProperties: Persistable {
+struct CCTCellProperties {
     
     var mcc: Int32?
     var network: Int32?
@@ -43,18 +43,18 @@ struct CCTCellProperties: Persistable {
     
     var json: String?
     
-    func asDictionary() -> [String: Any] {
-        return [
-            "mcc": mcc as Any,
-            "network": network as Any,
-            "area": area as Any,
-            "cellId": cellId as Any,
-            "radio": radio as Any,
-            "band": band as Any,
-            "neighbourRadio": neighbourRadio as Any,
-            "timestmap": timestamp as Any,
-            "json": json as Any
-        ]
+    func applyTo(tweakCell: TweakCell) {
+        tweakCell.country = self.mcc ?? 0
+        tweakCell.network = self.network ?? 0
+        tweakCell.area = self.area ?? 0
+        tweakCell.cell = self.cellId ?? 0
+        
+        tweakCell.technology = self.radio
+        tweakCell.band = self.band ?? 0
+        tweakCell.neighbourTechnology = neighbourRadio
+        
+        tweakCell.collected = self.timestamp
+        tweakCell.json = self.json
     }
 
 }

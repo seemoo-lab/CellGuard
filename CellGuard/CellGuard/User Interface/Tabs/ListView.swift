@@ -56,13 +56,13 @@ enum ListViewLevel {
     func extractValue(cell: Cell) -> Int64 {
         switch self {
         case .country:
-            return Int64(cell.mcc)
+            return Int64(cell.country)
         case .network:
             return Int64(cell.network)
         case .area:
             return Int64(cell.area)
         case .cell:
-            return cell.cellId
+            return cell.cell
         }
     }
 }
@@ -81,7 +81,7 @@ struct LevelListView: View {
     
     private let level: ListViewLevel
     private let selectors: [ListViewLevel : Int64]
-    @FetchRequest private var items: FetchedResults<Cell>
+    @FetchRequest private var items: FetchedResults<TweakCell>
     
     init() {
         self.init(level: .country, selectors: [:])
@@ -92,7 +92,7 @@ struct LevelListView: View {
         self.selectors = selectors
         
         // https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/Predicates/Articles/pSyntax.html#//apple_ref/doc/uid/TP40001795-SW1
-        var predicates = [NSPredicate(format: "source.type == %@", CellSourceType.tweak.rawValue)]
+        var predicates: [NSPredicate] = []
         
         selectors.forEach { selectorLevel, selectorValue in
             // It's very important to convert non-strings to NSObjects, otherwise the app crashes
@@ -102,7 +102,7 @@ struct LevelListView: View {
         
         // https://www.hackingwithswift.com/books/ios-swiftui/dynamically-filtering-fetchrequest-with-swiftui
         self._items = FetchRequest(
-            sortDescriptors: [NSSortDescriptor(keyPath: \Cell.timestamp, ascending: true)],
+            sortDescriptors: [NSSortDescriptor(keyPath: \TweakCell.collected, ascending: true)],
             predicate: NSCompoundPredicate(andPredicateWithSubpredicates: predicates),
             animation: .default
         )
@@ -111,8 +111,8 @@ struct LevelListView: View {
     var body: some View {
         // Group cells by day.
         // We're unable to compute this property in the database as the user can travel, therefore changing its timezone, and thus starting the day at a different time.
-        let itemsGroupedByDay = Dictionary(grouping: items.filter { $0.timestamp != nil }) { item in
-            Calendar.current.startOfDay(for: item.timestamp!)
+        let itemsGroupedByDay = Dictionary(grouping: items.filter { $0.collected != nil }) { item in
+            Calendar.current.startOfDay(for: item.collected!)
         }.sorted(by: {$0.key > $1.key})
         
         // TODO: Ensure cells are only listed once per day
@@ -144,15 +144,15 @@ struct LevelListView: View {
         return formatter
     }()
     
-    private func removeDuplicates<T: Hashable>(cells: [Cell], key: (Cell) -> T) -> [Cell] {
-        var unique: [T : Cell] = [:]
+    private func removeDuplicates<T: Hashable>(cells: [TweakCell], key: (TweakCell) -> T) -> [Cell] {
+        var unique: [T : TweakCell] = [:]
         for cell in cells {
             if unique[key(cell)] == nil {
                 unique[key(cell)] = cell
             }
         }
         
-        return unique.values.sorted(by: {$0.timestamp! > $1.timestamp!})
+        return unique.values.sorted(by: {$0.collected! > $1.collected!})
     }
 }
 

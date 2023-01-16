@@ -8,8 +8,11 @@
 import CoreData
 import OSLog
 
-protocol Persistable {
-    func asDictionary() -> [String: Any]
+// TODO: Maybe use later
+protocol Persistable<T> {
+    associatedtype T
+    
+    func applyTo(_ object: T)
 }
 
 class PersistenceController {
@@ -110,32 +113,35 @@ class PersistenceController {
     // MCC -> Country Name
     // MCC, MNC -> Network Operator Name
     
-    /// Uses `NSBatchInsertRequest` (BIR) to import cell properties into the Core Data store on a private queue.
-    /// All cells are linked to a source with the given type and optional an mcc.
-    func importCells(from cells: [CCTCellProperties], sourceType: CellSourceType, mcc: Int32 = 0) throws {
+    /// Uses `NSBatchInsertRequest` (BIR) to import tweak cell properties into the Core Data store on a private queue.
+    func importCollectedCells(from cells: [CCTCellProperties]) throws {
         let taskContext = newTaskContext()
         
         taskContext.name = "importContext"
-        taskContext.transactionAuthor = "import" + sourceType.rawValue.capitalized
+        taskContext.transactionAuthor = "importTweakCells"
         
         var success = false
         
         taskContext.performAndWait {
-            let source = CellSource(context: taskContext)
-            source.type = sourceType.rawValue
-            source.timestamp = Date()
-            source.mcc = mcc
-            
             var index = 0
             let total = cells.count
             
-            let batchInsertRequest = NSBatchInsertRequest(entity: Cell.entity()) { dictionary in
+            let importedDate = Date()
+            
+            let batchInsertRequest = NSBatchInsertRequest(entity: TweakCell.entity(), managedObjectHandler: { cell in
                 guard index < total else { return true }
-                dictionary.addEntries(from: cells[index].asDictionary())
-                dictionary["source"] = source.objectID
+                
+                
+                if let cell = cell as? TweakCell {
+                    cells[index].applyTo(tweakCell: cell)
+                    cell.imported = importedDate
+                    cell.status = CellStatus.imported.rawValue
+                }
+                    
                 index += 1
                 return false
-            }
+            })
+            
             if let fetchResult = try? taskContext.execute(batchInsertRequest),
                let batchInsertResuklt = fetchResult as? NSBatchInsertResult {
                 success = batchInsertResuklt.result as? Bool ?? false
@@ -143,11 +149,54 @@ class PersistenceController {
         }
         
         if !success {
-            logger.debug("Failed to execute batch import request for cells.")
+            logger.debug("Failed to execute batch import request for tweak cells.")
             throw PersistenceError.batchInsertError
         }
         
-        logger.debug("Successfully inserted \(cells.count) cells.")
+        logger.debug("Successfully inserted \(cells.count) tweak cells.")
+    }
+    
+    /// Uses `NSBatchInsertRequest` (BIR) to import ALS cell properties into the Core Data store on a private queue.
+    func importALSCells(from cells: [ALSQueryCell]) throws {
+        let taskContext = newTaskContext()
+        
+        taskContext.name = "importContext"
+        taskContext.transactionAuthor = "importALSCells"
+        
+        var success = false
+        
+        taskContext.performAndWait {
+            var index = 0
+            let total = cells.count
+            
+            let importedDate = Date()
+            
+            let batchInsertRequest = NSBatchInsertRequest(entity: ALSCell.entity(), managedObjectHandler: { cell in
+                guard index < total else { return true }
+                
+                
+                if let cell = cell as? ALSCell {
+                    cells[index].applyTo(alsCell: cell)
+                    cell.imported = importedDate
+                }
+                
+                index += 1
+                return false
+            })
+            
+            if let fetchResult = try? taskContext.execute(batchInsertRequest),
+               let batchInsertResult = fetchResult as? NSBatchInsertResult {
+                success = batchInsertResult.result as? Bool ?? false
+            }
+        }
+        
+        if !success {
+            logger.debug("Failed to execute batch import request for ALS cells.")
+            throw PersistenceError.batchInsertError
+        }
+        
+        logger.debug("Successfully inserted \(cells.count) ALS cells.")
+
     }
     
     /// Uses `NSBatchInsertRequest` (BIR) to import locations into the Core Data store on a private queue.
@@ -163,15 +212,22 @@ class PersistenceController {
             var index = 0
             let total = locations.count
             
-            let batchInsertRequest = NSBatchInsertRequest(entity: Location.entity()) { dictionary in
+            let importedDate = Date()
+            
+            let batchInsertRequest = NSBatchInsertRequest(entity: Location.entity(), managedObjectHandler: { location in
                 guard index < total else { return true }
-                dictionary.addEntries(from: locations[index].asDictionary())
+                
+                if let location = location as? Location {
+                    locations[index].applyTo(location: location)
+                    location.imported = importedDate
+                }
+                
                 index += 1
                 return false
-            }
+            })
             if let fetchResult = try? taskContext.execute(batchInsertRequest),
-               let batchInsertResuklt = fetchResult as? NSBatchInsertResult {
-                success = batchInsertResuklt.result as? Bool ?? false
+               let batchInsertResult = fetchResult as? NSBatchInsertResult {
+                success = batchInsertResult.result as? Bool ?? false
             }
         }
         
@@ -187,6 +243,14 @@ class PersistenceController {
     /// Uses `NSBatchUpdateRequest` (BIR) to assign locations stored in Core Data  to cells on a private queue.
     func assignLocations() throws {
         // TODO: Implement
+        
+        // Fetch all tweak cells without location
+        
+        // Fetch locations in date range
+        
+        // Assign each tweak cell location with min (tweakCell.collected - location.timestamp) which is greater or equal to zero
+        
+        // Save everything
     }
     
     /// Synchronously deletes all records in the Core Data store.
@@ -231,8 +295,10 @@ class PersistenceController {
                         return
                 }
                 
+                // This is normal at the first start of the app and doesn't require an exception
                 logger.debug("No persistent history transactions found.")
-                throw PersistenceError.persistentHistoryChangeError
+                // throw PersistenceError.persistentHistoryChangeError
+                return
             } catch {
                 taskError = error
             }

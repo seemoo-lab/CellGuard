@@ -33,7 +33,7 @@ struct CCTClient {
         let connection = NWConnection(host: "127.0.0.1", port: nwPort, using: NWParameters.tcp)
         
         connection.stateUpdateHandler = { state in
-            Self.logger.trace("Connection State: \(self.connectionStateString(state))")
+            Self.logger.trace("Connection State: \(String(describing: state))")
         }
         
         var completed = false
@@ -72,19 +72,6 @@ struct CCTClient {
         
         // We're using JSONSerilization because the JSONDecoder requires specific type information that we can't provide
         return try JSONSerialization.jsonObject(with: jsonFriendlyStr.data(using: .utf8)!) as! [CellSample]
-    }
-
-    /// Converts a NWConnection.State into a string for logging.
-    private func connectionStateString(_ state: NWConnection.State) -> String {
-        switch state {
-        case .ready: return "Ready"
-        case .preparing: return "Preparing"
-        case .setup: return "Setup"
-        case .waiting(let error): return "Waiting: \(error)"
-        case .cancelled: return "Cancelled"
-        case .failed(let error): return "Failed: \(error)"
-        default: return "Unknown"
-        }
     }
     
 }

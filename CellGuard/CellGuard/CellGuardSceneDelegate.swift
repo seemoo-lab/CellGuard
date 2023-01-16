@@ -15,6 +15,11 @@ class CellGuardSceneDelegate: NSObject, UIWindowSceneDelegate, ObservableObject 
     
     // https://developer.apple.com/documentation/uikit/app_and_environment/scenes/preparing_your_ui_to_run_in_the_background/using_background_tasks_to_update_your_app
     
+    func sceneDidBecomeActive(_ scene: UIScene) {
+        // Update the notification permission when the app is opened again
+        CGNotificationManager.shared.updateAuthorizationStatus()
+    }
+    
     func sceneDidEnterBackground(_ scene: UIScene) {
         scheduleAppRefresh()
     }

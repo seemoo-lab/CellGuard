@@ -9,7 +9,7 @@ import Foundation
 import CoreLocation
 
 /// A structure similar to the model "Location".
-struct LDMLocation: Persistable {
+struct LDMLocation {
     
     init(from location: CLLocation) {
         self.coordinateLatitude = location.coordinate.latitude
@@ -31,15 +31,15 @@ struct LDMLocation: Persistable {
     
     var timestamp: Date?
     
-    func asDictionary() -> [String : Any] {
-        return [
-            "coordinateLatitude": coordinateLatitude as Any,
-            "coordinateLongitude": coordinateLongitude as Any,
-            "horizontalAccuracy": horizontalAccuracy as Any,
-            "altitude": altitude as Any,
-            "verticalAccuracy": verticalAccuracy as Any,
-            "timestamp": timestamp as Any
-        ]
+    func applyTo(location: Location) {
+        location.latitude = self.coordinateLatitude ?? 0
+        location.longitude = self.coordinateLongitude ?? 0
+        location.horizontalAccuracy = self.horizontalAccuracy ?? 0
+        
+        location.altitude = self.altitude ?? 0
+        location.verticalAccuracy = self.verticalAccuracy ?? 0
+        
+        location.collected = self.timestamp
     }
     
 }

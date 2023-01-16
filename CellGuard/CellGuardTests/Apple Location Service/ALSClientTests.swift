@@ -27,7 +27,7 @@ final class ALSClientTests: XCTestCase {
         
         let client = ALSClient()
         let cells = try await withCheckedThrowingContinuation { continuation in
-            client.requestCells(origin: ALSCell(technology: .LTE, country: 262, network: 2, area: 46452, cell: 15669002)) { result in
+            client.requestCells(origin: ALSQueryCell(technology: .LTE, country: 262, network: 2, area: 46452, cell: 15669002)) { result in
                 continuation.resume(with: result)
             }
         }
@@ -46,7 +46,7 @@ final class ALSClientTests: XCTestCase {
         
         let client = ALSClient()
         let cells = try await withCheckedThrowingContinuation { continuation in
-            client.requestCells(origin: ALSCell(technology: .GSM, country: 262, network: 2, area: 566, cell: 4461)) { result in
+            client.requestCells(origin: ALSQueryCell(technology: .GSM, country: 262, network: 2, area: 566, cell: 4461)) { result in
                 continuation.resume(with: result)
             }
         }

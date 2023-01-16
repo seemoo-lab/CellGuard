@@ -13,13 +13,15 @@ class LocationDataManager : NSObject, CLLocationManagerDelegate, ObservableObjec
     
     private static let logger = Logger(
         subsystem: Bundle.main.bundleIdentifier!,
-        category: String(describing: ALSClient.self)
+        category: String(describing: LocationDataManager.self)
     )
     private let locationManager = CLLocationManager()
     
     let extact: Bool
     
     @Published var authorizationStatus: CLAuthorizationStatus = .notDetermined
+    
+    var authorizationCompletion: ((Bool) -> Void)?
     
     // TODO: Initialize in app
     init(extact: Bool) {
@@ -43,15 +45,33 @@ class LocationDataManager : NSObject, CLLocationManagerDelegate, ObservableObjec
         // https://developer.apple.com/documentation/corelocation/requesting_authorization_to_use_location_services
         // https://developer.apple.com/documentation/corelocation/handling_location_updates_in_the_background
         
-        Self.logger.log("Authorization: \(manager.authorizationStatus.rawValue)")
+        Self.logger.log("Authorization: \(self.describe(authorizationStatus: manager.authorizationStatus))")
         authorizationStatus = manager.authorizationStatus
+        
+        if authorizationStatus == .authorizedWhenInUse && authorizationCompletion != nil {
+            // The second part of the request the always authorization, see below in requestAuthorization()
+            locationManager.requestAlwaysAuthorization()
+            return
+        }
+        
+        authorizationCompletion?(authorizationStatus == .authorizedAlways)
+        authorizationCompletion = nil
+        
+        // More information about the always status which is also temporarily granted if only requestAlwaysAuthorization is called:
+        // https://developer.apple.com/forums/thread/117256?page=2
         if manager.authorizationStatus == .authorizedAlways {
             resumeLocationUpdates()
         }
     }
     
-    func requestAuthorization() {
-        locationManager.requestAlwaysAuthorization()
+    func requestAuthorization(completion: @escaping (Bool) -> Void) {
+        // The callback is not executed if the user selects "Allow Once" during the first prompt
+        // as we're unable to request always location access and can't detect this case.
+        self.authorizationCompletion = completion
+        // First we have to request, when in use authorization.
+        // When we've got the permission, we can request always authorization.
+        // https://developer.apple.com/documentation/corelocation/cllocationmanager/1620551-requestalwaysauthorization
+        locationManager.requestWhenInUseAuthorization()
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
@@ -75,7 +95,6 @@ class LocationDataManager : NSObject, CLLocationManagerDelegate, ObservableObjec
     }
     
     private func resumeLocationUpdates() {
-        // TODO: Do these function calls clash?
         if extact {
             locationManager.startUpdatingLocation()
         }
@@ -83,5 +102,18 @@ class LocationDataManager : NSObject, CLLocationManagerDelegate, ObservableObjec
         // https://developer.apple.com/documentation/corelocation/cllocationmanager/1423531-startmonitoringsignificantlocati
         locationManager.startMonitoringSignificantLocationChanges()
         locationManager.startMonitoringVisits()
+    }
+    
+    private func describe(authorizationStatus: CLAuthorizationStatus) -> String {
+        switch (authorizationStatus) {
+        case .notDetermined: return "notDetermined"
+        case .restricted: return "restricted"
+        case .denied: return "denied"
+        case .authorizedAlways: return "authorizedAlways"
+        case .authorizedWhenInUse: return "authorizedWhenInUse"
+        
+        default:
+            return "unknwon (\(authorizationStatus.rawValue)"
+        }
     }
 }

@@ -13,21 +13,18 @@ func previewPersistenceController() -> PersistenceController {
     let viewContext = result.container.viewContext
     
     let calendar = Calendar.current
-    
-    let newSource = CellSource(context: viewContext)
-    newSource.type = CellSourceType.tweak.rawValue
-    newSource.timestamp = Date()
+    let importedDate = Date()
     
     for _ in 0..<10 {
         // TODO: One cell at multiple dates
-        let newCell = Cell(context: viewContext)
-        newCell.radio = "LTE"
-        newCell.mcc = 262
+        let newCell = TweakCell(context: viewContext)
+        newCell.technology = "LTE"
+        newCell.country = 262
         newCell.network = 2
         newCell.area = Int32.random(in: 1..<5000)
-        newCell.cellId = Int64.random(in: 1..<50000)
-        newCell.source = newSource
-        newCell.timestamp = calendar.date(byAdding: .day, value: -Int.random(in: 0..<3), to: Date())
+        newCell.cell = Int64.random(in: 1..<50000)
+        newCell.collected = calendar.date(byAdding: .day, value: -Int.random(in: 0..<3), to: Date())
+        newCell.imported = importedDate
     }
     do {
         try viewContext.save()

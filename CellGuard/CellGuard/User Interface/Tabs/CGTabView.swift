@@ -13,16 +13,18 @@ struct CGTabView: View {
     // Map: map.fill
     // Details: magnifyingglass or chart.bar.fill or cellularbars
     
-    @State private var showingIntroduction = true
+    @EnvironmentObject var locationManager: LocationDataManager
+    @EnvironmentObject var networkAuthorization: LocalNetworkAuthorization
+    @EnvironmentObject var notificationManager: CGNotificationManager
+    
+    // Only show the introduction if it never has been shown before
+    @State private var showingIntroduction = !UserDefaults.standard.bool(forKey: UserDefaultsKeys.introductionShown.rawValue)
     @State private var showingSettings = false
     
     var body: some View {
-        let showSettings = {
-            showingSettings = true
-        }
-        
-        TabView {
-            SummaryView(showSettings: showSettings)
+        // If the introduction already was shown, we check on every start if we still have accesss to the local network        
+        return TabView {
+            SummaryView(showSettings: { showingSettings = true })
                 .tabItem {
                     Label("Summary", systemImage: "shield.fill")
                 }
@@ -38,6 +40,16 @@ struct CGTabView: View {
         .sheet(isPresented: $showingIntroduction) {
             WelcomeSheet {
                 self.showingIntroduction = false
+                
+                // Only show the introduction sheet once
+                UserDefaults.standard.set(true, forKey: UserDefaultsKeys.introductionShown.rawValue)
+                
+                // Request permissions after the introduction sheet has been closed
+                networkAuthorization.requestAuthorization { _ in
+                    notificationManager.requestAuthorization { _ in
+                        locationManager.requestAuthorization { _ in }
+                    }
+                }
             }
         }.sheet(isPresented: $showingSettings) {
             SettingsSheet {
@@ -51,5 +63,8 @@ struct CGTabView_Previews: PreviewProvider {
     static var previews: some View {
         CGTabView()
             .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+            .environmentObject(LocationDataManager(extact: true))
+            .environmentObject(LocalNetworkAuthorization(checkNow: true))
+            .environmentObject(CGNotificationManager.shared)
     }
 }

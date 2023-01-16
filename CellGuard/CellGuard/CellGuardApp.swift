@@ -13,12 +13,18 @@ struct CellGuardApp: App {
     
     let persistenceController = PersistenceController.shared
     let locationManager = LocationDataManager(extact: true)
+    let networkAuthorization = LocalNetworkAuthorization(
+        checkNow: UserDefaults.standard.bool(forKey: UserDefaultsKeys.introductionShown.rawValue)
+    )
+    let notificationManager = CGNotificationManager.shared
 
     var body: some Scene {
         WindowGroup {
             CGTabView()
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
                 .environmentObject(locationManager)
+                .environmentObject(networkAuthorization)
+                .environmentObject(notificationManager)
         }
     }
 }

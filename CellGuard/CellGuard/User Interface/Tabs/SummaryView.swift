@@ -41,5 +41,8 @@ struct SummaryView_Previews: PreviewProvider {
         SummaryView {
             // doing nothing
         }
+        .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+        .environmentObject(LocationDataManager(extact: true))
+        .environmentObject(LocalNetworkAuthorization(checkNow: true))
     }
 }

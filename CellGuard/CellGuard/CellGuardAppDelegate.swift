@@ -17,6 +17,7 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
     // https://holyswift.app/new-backgroundtask-in-swiftui-and-how-to-test-it/
     
     static let cellRefreshTaskIdentifier = "de.tu-darmstadt.seemoo.CellGuard.refresh.cells"
+    static let alsRequestTaskIdentifier = "de.tu-darmstadt.seemoo.CellGuard.processing.als"
     
     private static let logger = Logger(
         subsystem: Bundle.main.bundleIdentifier!,
@@ -57,8 +58,12 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
             }
         }
         
+        BGTaskScheduler.shared.register(forTaskWithIdentifier: Self.alsRequestTaskIdentifier, using: nil) { task in
+            // TODO: Implement stuff
+        }
+        
         // Schedule a timer to continously poll the latest cells while the app is active
-        let timer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { timer in
+        let collectTimer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { timer in
             let collector = CCTCollector(client: CCTClient(queue: .global(qos: .userInitiated)))
             
             collector.collectAndStore { error in
@@ -70,7 +75,11 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
             // TODO: Fetch & Store ALS data
         }
         // We allow the timer a high tolerance of 50% as our collector is not time critical
-        timer.tolerance = 30
+        collectTimer.tolerance = 30
+        
+        let checkTimer = Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { timer in
+            // TODO: Implement
+        }
                         
         // Notifications? https://www.hackingwithswift.com/books/ios-swiftui/scheduling-local-notifications
         

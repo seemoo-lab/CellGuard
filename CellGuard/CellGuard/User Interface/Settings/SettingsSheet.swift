@@ -21,15 +21,49 @@ struct SettingsSheet: View {
     }
     
     @EnvironmentObject var locationManager: LocationDataManager
+    @EnvironmentObject var networkAuthorization: LocalNetworkAuthorization
+    @EnvironmentObject var notificationManager: CGNotificationManager
     
-    @State private var isPermissionLocalNetwork = false
-    @State private var isPermissionNotifications = false
+    private var isPermissionNotifications: Binding<Bool> { Binding(
+        get: { notificationManager.authorizationStatus == .authorized },
+        set: { value in
+            if value {
+                notificationManager.requestAuthorization() { result in
+                    if !result {
+                        openAppSettings()
+                        // TODO: Update auth status once the app regains focus from settings
+                    }
+                }
+            } else {
+                openAppSettings()
+            }
+        }
+    )}
+    
+    private var isPermissionLocalNetwork: Binding<Bool> { Binding(
+        get: { networkAuthorization.lastResult ?? false },
+        set: { value in
+            if value {
+                networkAuthorization.requestAuthorization() { result in
+                    if !result {
+                        openAppSettings()
+                    }
+                }
+            } else {
+                openAppSettings()
+            }
+        }
+    )}
     
     private var isPermissionAlwaysLocation: Binding<Bool> { Binding(
         get: { locationManager.authorizationStatus == .authorizedAlways },
         set: { value in
             if value && locationManager.authorizationStatus == .notDetermined {
-                locationManager.requestAuthorization()
+                locationManager.requestAuthorization() { result in
+                    if !result {
+                        openAppSettings()
+                    }
+                }
             } else {
                 openAppSettings()
             }
@@ -46,24 +80,16 @@ struct SettingsSheet: View {
             List {
                 Section(header: Text("Permissions")) {
                     // TODO: Open settings app on disable
-                    Toggle("Local Network", isOn: $isPermissionLocalNetwork)
-                        .onChange(of: isPermissionLocalNetwork) { value in
-                            if !value {
-                                openAppSettings()
-                            }
-                        }
+                    Toggle("Local Network", isOn: isPermissionLocalNetwork)
+                        // The permission can't be revoked once granted
+                        .disabled(isPermissionLocalNetwork.wrappedValue)
                     Toggle("Location (Always)", isOn: isPermissionAlwaysLocation)
-                    Toggle("Notifications", isOn: $isPermissionNotifications)
-                        .onChange(of: isPermissionNotifications) { value in
-                            if !value {
-                                openAppSettings()
-                            }
-                        }
+                    Toggle("Notifications", isOn: isPermissionNotifications)
                 }
                 
                 Section(header: Text("Cell Databases")) {
                     Text("Apple Location Service")
-                    Button {
+                    /* Button {
                         self.showAlertNotImplemented()
                     } label: {
                         Text("OpenCellid Database")
@@ -73,7 +99,7 @@ struct SettingsSheet: View {
                         self.showAlertNotImplemented()
                     } label: {
                         Text("Mozilla Location Service")
-                    }
+                    } */
                 }
                 
                 Section(header: Text("Collected Data")) {
@@ -130,5 +156,7 @@ struct SettingsSheet_Previews: PreviewProvider {
             // doing nothing
         }
         .environmentObject(LocationDataManager(extact: true))
+        .environmentObject(LocalNetworkAuthorization(checkNow: true))
+        .environmentObject(CGNotificationManager.shared)
     }
 }
