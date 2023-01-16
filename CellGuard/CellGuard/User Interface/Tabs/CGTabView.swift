@@ -46,8 +46,8 @@ struct CGTabView: View {
                 
                 // Request permissions after the introduction sheet has been closed
                 networkAuthorization.requestAuthorization { _ in
-                    notificationManager.requestAuthorization { _ in
-                        locationManager.requestAuthorization { _ in }
+                    locationManager.requestAuthorization { _ in
+                        notificationManager.requestAuthorization { _ in }
                     }
                 }
             }

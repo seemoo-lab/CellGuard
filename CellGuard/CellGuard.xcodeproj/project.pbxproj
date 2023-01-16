@@ -20,6 +20,7 @@
 		CF2A1C1529754AA400E8B61C /* LocalNetworkAuthorization.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2A1C1429754AA400E8B61C /* LocalNetworkAuthorization.swift */; };
 		CF2A1C182975562800E8B61C /* UserDefaultsKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2A1C172975562800E8B61C /* UserDefaultsKeys.swift */; };
 		CF2A1C1B2975670000E8B61C /* CGNotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2A1C1A2975670000E8B61C /* CGNotificationManager.swift */; };
+		CF2A1C1D2975C71000E8B61C /* BackgroundState.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2A1C1C2975C71000E8B61C /* BackgroundState.swift */; };
 		CF320F5529620B16009BAD18 /* CCTParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF320F5429620B16009BAD18 /* CCTParser.swift */; };
 		CF320F5729621C42009BAD18 /* CCTClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF320F5629621C42009BAD18 /* CCTClientTests.swift */; };
 		CF320F59296225F9009BAD18 /* CCTResponse.txt in Resources */ = {isa = PBXBuildFile; fileRef = CF320F582962208B009BAD18 /* CCTResponse.txt */; };
@@ -76,6 +77,7 @@
 		CF2A1C1429754AA400E8B61C /* LocalNetworkAuthorization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalNetworkAuthorization.swift; sourceTree = "<group>"; };
 		CF2A1C172975562800E8B61C /* UserDefaultsKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsKeys.swift; sourceTree = "<group>"; };
 		CF2A1C1A2975670000E8B61C /* CGNotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CGNotificationManager.swift; sourceTree = "<group>"; };
+		CF2A1C1C2975C71000E8B61C /* BackgroundState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundState.swift; sourceTree = "<group>"; };
 		CF320F5429620B16009BAD18 /* CCTParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CCTParser.swift; sourceTree = "<group>"; };
 		CF320F5629621C42009BAD18 /* CCTClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CCTClientTests.swift; sourceTree = "<group>"; };
 		CF320F582962208B009BAD18 /* CCTResponse.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CCTResponse.txt; sourceTree = "<group>"; };
@@ -133,6 +135,7 @@
 		CF0FDCBE2969A3DB00A6FFE2 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				CF2A1C1C2975C71000E8B61C /* BackgroundState.swift */,
 				CF0FDCBF2969A3E500A6FFE2 /* LargeButton.swift */,
 			);
 			path = Helpers;
@@ -474,6 +477,7 @@
 				CFD023432961A10D00AA5A1C /* CellGuard.xcdatamodeld in Sources */,
 				CF2A1C1B2975670000E8B61C /* CGNotificationManager.swift in Sources */,
 				CF0FDCB529698E1500A6FFE2 /* SummaryView.swift in Sources */,
+				CF2A1C1D2975C71000E8B61C /* BackgroundState.swift in Sources */,
 				CF0FDCC22969AC1100A6FFE2 /* SettingsSheet.swift in Sources */,
 				CFD023682961AB9900AA5A1C /* CCTClient.swift in Sources */,
 				CFB8B28A2963498200503189 /* CellGuardAppDelegate.swift in Sources */,
@@ -656,7 +660,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = CellGuard;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "CellGuard connects to the local network to receive data from its accompanying tweak";
-				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "CellGuard accesses your location to check for malicious cells, please select 'Always Allow'";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "CellGuard accesses your location to check for malicious cells, please select 'Change to Always Allow'";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "CellGuard accesses your location to check for malicious cells, please select 'Allow While Using App'";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -692,7 +696,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = CellGuard;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "CellGuard connects to the local network to receive data from its accompanying tweak";
-				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "CellGuard accesses your location to check for malicious cells, please select 'Always Allow'";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "CellGuard accesses your location to check for malicious cells, please select 'Change to Always Allow'";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "CellGuard accesses your location to check for malicious cells, please select 'Allow While Using App'";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;

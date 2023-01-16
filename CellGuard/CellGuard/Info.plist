@@ -7,8 +7,6 @@
 		<string>de.tu-darmstadt.seemoo.CellGuard.refresh.cells</string>
 		<string>de.tu-darmstadt.seemoo.CellGuard.processing.als</string>
 	</array>
-	<key>CFBundleGetInfoString</key>
-	<string></string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
