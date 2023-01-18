@@ -36,7 +36,7 @@ struct CCTCellProperties {
     var cellId: Int64?
     
     var radio: String?
-    var band: Int32?
+    var frequency: Int32?
     var neighbourRadio: String?
     
     var timestamp: Date?
@@ -50,7 +50,7 @@ struct CCTCellProperties {
         tweakCell.cell = self.cellId ?? 0
         
         tweakCell.technology = self.radio
-        tweakCell.band = self.band ?? 0
+        tweakCell.frequency = self.frequency ?? 0
         tweakCell.neighbourTechnology = neighbourRadio
         
         tweakCell.collected = self.timestamp
@@ -157,7 +157,7 @@ struct CCTParser {
         cell.cellId = info["CellId"] as? Int64 ?? 0
         
         // We're using ARFCN here as BandInfo is always 0
-        cell.band = info["ARFCN"] as? Int32 ?? 0
+        cell.frequency = info["ARFCN"] as? Int32 ?? 0
         
         return cell
     }
@@ -176,7 +176,7 @@ struct CCTParser {
         cell.area = info["LAC"] as? Int32 ?? 0
         cell.cellId = info["CellId"] as? Int64 ?? 0
         
-        cell.band = info["BandInfo"] as? Int32 ?? 0
+        cell.frequency = info["BandInfo"] as? Int32 ?? 0
         
         return cell
     }
@@ -203,7 +203,7 @@ struct CCTParser {
         cell.area = info["PNOffset"] as? Int32 ?? 0
         cell.cellId = info["BaseStationId"] as? Int64 ?? 0
         
-        cell.band = info["BandClass"] as? Int32 ?? 0
+        cell.frequency = info["BandClass"] as? Int32 ?? 0
         
         return cell
     }
@@ -217,7 +217,7 @@ struct CCTParser {
         cell.area = info["TAC"] as? Int32 ?? 0
         cell.cellId = info["CellId"] as? Int64 ?? 0
         
-        cell.band = info["BandInfo"] as? Int32 ?? 0
+        cell.frequency = info["BandInfo"] as? Int32 ?? 0
         
         return cell
     }
@@ -232,7 +232,7 @@ struct CCTParser {
         cell.area = info["TAC"] as? Int32 ?? 0
         cell.cellId = info["CellId"] as? Int64 ?? 0
         
-        cell.band = info["BandInfo"] as? Int32 ?? 0
+        cell.frequency = info["BandInfo"] as? Int32 ?? 0
 
         return cell
     }

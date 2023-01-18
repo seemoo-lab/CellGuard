@@ -15,13 +15,14 @@ class LocationDataManager : NSObject, CLLocationManagerDelegate, ObservableObjec
         subsystem: Bundle.main.bundleIdentifier!,
         category: String(describing: LocationDataManager.self)
     )
+    
     private let locationManager = CLLocationManager()
+    private var authorizationCompletion: ((Bool) -> Void)?
     
     let extact: Bool
     
     @Published var authorizationStatus: CLAuthorizationStatus = .notDetermined
-    
-    var authorizationCompletion: ((Bool) -> Void)?
+    @Published var lastLocation: CLLocation?
     
     // TODO: Initialize in app
     init(extact: Bool) {
@@ -96,6 +97,10 @@ class LocationDataManager : NSObject, CLLocationManagerDelegate, ObservableObjec
             try PersistenceController.shared.importLocations(from: importLocations)
         } catch {
             Self.logger.warning("Can't save locations: \(error)\nLocations: \(locations)")
+        }
+        
+        if !locations.isEmpty {
+            self.lastLocation = locations.last
         }
     }
     

@@ -32,7 +32,7 @@ class PersistenceController {
     static let shared = PersistenceController()
 
     /// A persistence provider to use with canvas previews.
-    static let preview = previewPersistenceController()
+    static let preview = PersistencePreview.controller()
 
     private let inMemory: Bool
     private var notificationToken: NSObjectProtocol?
@@ -241,7 +241,7 @@ class PersistenceController {
     
     
     /// Uses `NSBatchUpdateRequest` (BIR) to assign locations stored in Core Data  to cells on a private queue.
-    func assignLocations() throws {
+    func assignLocationsToTweakCells() throws {
         // TODO: Implement
         
         // Fetch all tweak cells without location
@@ -251,6 +251,10 @@ class PersistenceController {
         // Assign each tweak cell location with min (tweakCell.collected - location.timestamp) which is greater or equal to zero
         
         // Save everything
+    }
+    
+    func verifyTweakCells() throws {
+        
     }
     
     /// Synchronously deletes all records in the Core Data store.

@@ -30,13 +30,13 @@ enum ListViewLevel {
     var column: String {
         switch self {
         case .country:
-            return "mcc"
+            return "country"
         case .network:
             return "network"
         case .area:
             return "area"
         case .cell:
-            return "cellId"
+            return "cell"
         }
     }
     
@@ -81,18 +81,28 @@ struct LevelListView: View {
     
     private let level: ListViewLevel
     private let selectors: [ListViewLevel : Int64]
+    private let day: Date?
     @FetchRequest private var items: FetchedResults<TweakCell>
     
     init() {
         self.init(level: .country, selectors: [:])
     }
     
-    init(level: ListViewLevel, selectors: [ListViewLevel : Int64]) {
+    init(level: ListViewLevel, selectors: [ListViewLevel : Int64], day: Date? = nil) {
         self.level = level
         self.selectors = selectors
+        self.day = day
+        
+        // TODO: Use enum
+        // TODO: Select by date
         
         // https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/Predicates/Articles/pSyntax.html#//apple_ref/doc/uid/TP40001795-SW1
         var predicates: [NSPredicate] = []
+        
+        if let day = self.day {
+            let nextDay = day.addingTimeInterval(60 * 60 * 24)
+            predicates.append(NSPredicate(format: "collected => %@ and collected <= %@", day as NSDate, nextDay as NSDate))
+        }
         
         selectors.forEach { selectorLevel, selectorValue in
             // It's very important to convert non-strings to NSObjects, otherwise the app crashes
@@ -121,11 +131,7 @@ struct LevelListView: View {
         VStack {
             List {
                 ForEach(itemsGroupedByDay, id: \.key) { key, cells in
-                    Section(header: Text(key, formatter: self.dateFormatter)) {
-                        /* ForEach(cells, id: \.self) { cell in
-                            ListBodyElement(level: level, selectors: selectors, cell: cell)
-                        } */
-                        
+                    Section(header: Text(key, formatter: mediumDateFormatter)) {
                         ForEach(removeDuplicates(cells: cells, key: { level.extractValue(cell: $0) }), id: \.self) { cell in
                             ListBodyElement(level: level, selectors: selectors, cell: cell)
                         }
@@ -137,14 +143,7 @@ struct LevelListView: View {
         .navigationBarTitleDisplayMode(level == .country ? .automatic : .inline)
     }
     
-    private let dateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .medium
-        formatter.timeStyle = .none
-        return formatter
-    }()
-    
-    private func removeDuplicates<T: Hashable>(cells: [TweakCell], key: (TweakCell) -> T) -> [Cell] {
+    private func removeDuplicates<T: Hashable>(cells: [TweakCell], key: (TweakCell) -> T) -> [TweakCell] {
         var unique: [T : TweakCell] = [:]
         for cell in cells {
             if unique[key(cell)] == nil {
@@ -160,7 +159,7 @@ private struct ListBodyElement: View {
     
     let level: ListViewLevel
     let selectors: [ListViewLevel : Int64]
-    let cell: Cell
+    let cell: TweakCell
     
     var body: some View {
         var newSelectors = selectors
@@ -170,18 +169,12 @@ private struct ListBodyElement: View {
             if level == .cell {
                 CellDetailsView(cell: cell)
             } else {
-                LevelListView(level: level.next, selectors: newSelectors)
+                LevelListView(level: level.next, selectors: selectors, day: Calendar.current.startOfDay(for: cell.collected!))
             }
         } label: {
-            Text("\(level.extractValue(cell: cell) as NSNumber, formatter: numberFormatter)")
+            Text("\(level.extractValue(cell: cell) as NSNumber, formatter: plainNumberFormatter)")
         }
     }
-    
-    private let numberFormatter: NumberFormatter = {
-        let formatter = NumberFormatter()
-        formatter.usesSignificantDigits = false
-        return formatter
-    }()
     
 }
 

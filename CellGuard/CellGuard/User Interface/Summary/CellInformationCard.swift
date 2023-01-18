@@ -8,10 +8,18 @@
 import SwiftUI
 import MapKit
 
-struct CellInformationView: View {
+struct CellInformationCard: View {
     
     let dateFormatter = RelativeDateTimeFormatter()
     let cell: TweakCell
+    
+    private let techFormatter: CellTechnologyFormatter
+    
+    init(cell: TweakCell) {
+        self.cell = cell
+        // TODO: Ensure that
+        self.techFormatter = CellTechnologyFormatter.from(technology: cell.technology)
+    }
     
     var body: some View {
         let status = CellStatus(rawValue: cell.status ?? CellStatus.imported.rawValue)
@@ -38,19 +46,18 @@ struct CellInformationView: View {
             .padding(EdgeInsets(top: 20, leading: 20, bottom: 10, trailing: 20))
             
             HStack {
-                CellInformationItem(title: "MCC", number: cell.country)
-                CellInformationItem(title: "MNC", number: cell.network)
+                CellInformationItem(title: techFormatter.country(), number: cell.country)
+                CellInformationItem(title: techFormatter.network(), number: cell.network)
                 // TODO: Adapt
-                CellInformationItem(title: "TAC", number: cell.area)
-                CellInformationItem(title: "Cell", number: cell.cell)
+                CellInformationItem(title: techFormatter.area(), number: cell.area)
+                CellInformationItem(title: techFormatter.cell(), number: cell.cell)
             }
             .padding(EdgeInsets(top: 5, leading: 20, bottom: 10, trailing: 20))
             
             // TODO: Store correct bands
             HStack {
                 CellInformationItem(title: "Technology", text: cell.technology)
-                // TODO: Adapt
-                CellInformationItem(title: "AFRCN", number: cell.band)
+                CellInformationItem(title: techFormatter.frequency(), number: cell.frequency)
                 CellInformationItem(
                     title: "Date",
                     text: dateFormatter.localizedString(for: cell.collected ?? cell.imported ?? Date(), relativeTo: Date())
@@ -58,8 +65,8 @@ struct CellInformationView: View {
             }
             .padding(EdgeInsets(top: 5, leading: 20, bottom: cell.location == nil ? 25 : 10, trailing: 20))
             
-            if let location = cell.location {
-                CellInformationMap(coordinate: CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude))
+            if cell.location != nil {
+                CellInformationMap(cell: cell)
                     .frame(height: 200)
             }
         }
@@ -85,12 +92,12 @@ private struct CellInformationItem: View {
     
     init(title: String, number: Int32) {
         self.title = title
-        self.text = self.numberFormatter.string(from: number as NSNumber)
+        self.text = plainNumberFormatter.string(from: number as NSNumber)
     }
     
     init(title: String, number: Int64) {
         self.title = title
-        self.text = self.numberFormatter.string(from: number as NSNumber)
+        self.text = plainNumberFormatter.string(from: number as NSNumber)
     }
     
     init(title: String, text: String?) {
@@ -107,22 +114,14 @@ private struct CellInformationItem: View {
         .padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
     }
     
-    private let numberFormatter: NumberFormatter = {
-        let formatter = NumberFormatter()
-        formatter.usesSignificantDigits = false
-        return formatter
-    }()
-    
 }
 
 private struct CoordinateIdentifable: Identifiable {
     
     let index: Int
-    let coordinate: CLLocationCoordinate2D
     
-    init(_ index: Int, _ coordinate: CLLocationCoordinate2D) {
+    init(_ index: Int) {
         self.index = index
-        self.coordinate = coordinate
     }
     
     var id: Int {
@@ -132,21 +131,23 @@ private struct CoordinateIdentifable: Identifiable {
 
 private struct CellInformationMap: View {
     
-    var coordinate: CLLocationCoordinate2D
+    let cell: Cell
     
     var body: some View {
         Map(
             coordinateRegion: .constant(region),
             interactionModes: MapInteractionModes(),
             showsUserLocation: true,
-            annotationItems: [CoordinateIdentifable(0, coordinate)],
-            annotationContent: { MapMarker(coordinate: $0.coordinate, tint: .red) }
+            annotationItems: [CoordinateIdentifable(0)],
+            annotationContent: { _ in CellTowerMapAnnotation.create(cell: cell) }
         )
     }
     
     var region: MKCoordinateRegion {
-        MKCoordinateRegion(
-            center: coordinate,
+        let location = cell.location!
+        
+        return MKCoordinateRegion(
+            center: CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude),
             span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
         )
     }
@@ -155,7 +156,7 @@ private struct CellInformationMap: View {
 
 struct CellInformation_Previews: PreviewProvider {
     static var previews: some View {
-        CellInformationView(cell: exampleCell())
+        CellInformationCard(cell: exampleCell())
             .previewDisplayName("iPhone 14 Pro")
         
         /* CellInformationView(cell: exampleCell())
@@ -176,7 +177,7 @@ struct CellInformation_Previews: PreviewProvider {
         let cell = TweakCell(context: PersistenceController.preview.container.viewContext)
         cell.status = CellStatus.imported.rawValue
         cell.technology = "LTE"
-        cell.band = 1600
+        cell.frequency = 1600
         
         cell.country = 262
         cell.network = 2

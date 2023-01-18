@@ -44,13 +44,13 @@ enum RiskLevel: Equatable {
         switch (self) {
         case .Unknown: return .gray
         case .Low: return .green
-        case .Medium: return .yellow
+        case .Medium: return .orange
         case .High: return .red
         }
     }
 }
 
-struct RiskIndicatorView: View {
+struct RiskIndicatorCard: View {
     
     let risk: RiskLevel
     let onTap: (RiskLevel) -> Void
@@ -93,13 +93,13 @@ struct RiskIndicatorView: View {
 
 struct RiskIndicator_Previews: PreviewProvider {
     static var previews: some View {
-        RiskIndicatorView(risk: .Unknown, onTap: { _ in })
+        RiskIndicatorCard(risk: .Unknown, onTap: { _ in })
             .previewDisplayName("Unknown")
-        RiskIndicatorView(risk: .Low, onTap: { _ in })
+        RiskIndicatorCard(risk: .Low, onTap: { _ in })
             .previewDisplayName("Low")
-        RiskIndicatorView(risk: .Medium(cause: .Permissions), onTap: { _ in })
+        RiskIndicatorCard(risk: .Medium(cause: .Permissions), onTap: { _ in })
             .previewDisplayName("Medium")
-        RiskIndicatorView(risk: .High(count: 3), onTap: { _ in })
+        RiskIndicatorCard(risk: .High(count: 3), onTap: { _ in })
             .previewDisplayName("High")
     }
 }

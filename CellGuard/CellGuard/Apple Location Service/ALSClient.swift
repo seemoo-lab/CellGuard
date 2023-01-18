@@ -52,7 +52,7 @@ struct ALSQueryCell {
     var cell: Int64 = 0
     
     var location: ALSLocation? = nil
-    var band: Int32? = nil
+    var frequency: Int32? = nil
     
     func hasCellId() -> Bool {
         return self.cell >= 0
@@ -77,7 +77,7 @@ struct ALSQueryCell {
         self.area = proto.lacID
         self.cell = proto.cellID
         self.location = ALSLocation(fromProto: proto.location)
-        self.band = proto.arfcn
+        self.frequency = proto.arfcn
     }
     
     init(fromScdmaProto proto: AlsProto_ScdmaCell) {
@@ -87,7 +87,7 @@ struct ALSQueryCell {
         self.area = proto.lacID
         self.cell = Int64(proto.cellID)
         self.location = ALSLocation(fromProto: proto.location)
-        self.band = proto.arfcn
+        self.frequency = proto.arfcn
     }
     
     init(fromLteProto proto: AlsProto_LteCell) {
@@ -97,7 +97,7 @@ struct ALSQueryCell {
         self.area = proto.tacID
         self.cell = Int64(proto.cellID)
         self.location = ALSLocation(fromProto: proto.location)
-        self.band = proto.uarfcn
+        self.frequency = proto.uarfcn
     }
     
     init(fromNRProto proto: AlsProto_Nr5GCell) {
@@ -107,7 +107,7 @@ struct ALSQueryCell {
         self.area = proto.tacID
         self.cell = proto.cellID
         self.location = ALSLocation(fromProto: proto.location)
-        self.band = proto.nrarfcn
+        self.frequency = proto.nrarfcn
     }
     
     init(fromCdmaProto proto: AlsProto_CdmaCell) {
@@ -117,7 +117,7 @@ struct ALSQueryCell {
         self.area = proto.nid
         self.cell = Int64(proto.bsid)
         self.location = ALSLocation(fromProto: proto.location)
-        self.band = proto.bandclass
+        self.frequency = proto.bandclass
     }
     
     
@@ -172,7 +172,7 @@ struct ALSQueryCell {
         alsCell.area = self.area
         alsCell.cell = self.cell
         
-        alsCell.band = self.band ?? -1
+        alsCell.frequency = self.frequency ?? -1
         alsCell.technology = self.technology.rawValue
     }
 }

@@ -11,4 +11,12 @@ enum CellStatus: String {
     case imported
     case verified
     case failed
+    
+    func humanDescription() -> String {
+        switch (self) {
+        case .imported: return "Pending"
+        case .verified: return "Verified"
+        case .failed: return "Failed"
+        }
+    }
 }

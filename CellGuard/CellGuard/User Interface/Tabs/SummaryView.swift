@@ -26,14 +26,14 @@ struct SummaryView: View {
             // TODO: Currenctly connected to ...
             
             ScrollView {
-                RiskIndicatorView(risk: determineRisk(), onTap: { risk in
+                RiskIndicatorCard(risk: determineRisk(), onTap: { risk in
                     // TODO: Do something
                     if risk == .Medium(cause: .Permissions) {
                         showSettings()
                     }
                 })
                 if !tweakCells.isEmpty {
-                    CellInformationView(cell: tweakCells[0])
+                    CellInformationCard(cell: tweakCells[0])
                 }
             }
             .navigationTitle("Summary")
