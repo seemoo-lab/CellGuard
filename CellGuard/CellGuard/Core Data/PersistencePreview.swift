@@ -23,6 +23,7 @@ struct PersistencePreview {
     static func tweakCell(context: NSManagedObjectContext, imported: Date) -> TweakCell {
         let cell = TweakCell(context: context)
         cell.technology = "LTE"
+        cell.status = CellStatus.imported.rawValue
         cell.country = 262
         cell.network = 2
         cell.area = Int32.random(in: 1..<5000)
