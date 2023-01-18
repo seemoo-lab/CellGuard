@@ -79,7 +79,7 @@ struct CellDetailsView: View {
                 let lastCell = dateTweakCells.sorted(by: { $0.collected! < $1.collected! }).last
                 
                 Section(header: Text("Recorded Measurements")) {
-                    CellDetailsRows("Number", tweakCells.count)
+                    CellDetailsRows("Count", tweakCells.count)
                     if let firstCell = firstCell {
                         CellDetailsRows("First Seen", mediumDateTimeFormatter.string(from: firstCell.collected!))
                     }
@@ -116,7 +116,7 @@ struct CellDetailsView: View {
     
     private func generateMapAnnotations(cell: Cell) -> MapAnnotation<AnyView> {
         if let alsCell = cell as? ALSCell {
-            return CellTowerMapAnnotation.create(cell: alsCell)
+            return CellTowerIcon.asAnnotation(cell: alsCell)
         } else if let tweakCell = cell as? TweakCell {
             return MapAnnotation(coordinate: toCL(location: tweakCell.location!)) {
                 AnyView(Circle()

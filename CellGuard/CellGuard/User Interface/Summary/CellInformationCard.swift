@@ -139,7 +139,7 @@ private struct CellInformationMap: View {
             interactionModes: MapInteractionModes(),
             showsUserLocation: true,
             annotationItems: [CoordinateIdentifable(0)],
-            annotationContent: { _ in CellTowerMapAnnotation.create(cell: cell) }
+            annotationContent: { _ in CellTowerIcon.asAnnotation(cell: cell) }
         )
     }
     

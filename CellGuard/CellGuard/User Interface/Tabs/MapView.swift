@@ -11,6 +11,8 @@ import MapKit
 
 struct MapView: View {
     
+    // let onTap: (ALSCell) -> ()
+    
     @EnvironmentObject
     private var locationManager: LocationDataManager
     
@@ -25,46 +27,33 @@ struct MapView: View {
     
     var body: some View {
         let location = locationManager.lastLocation ?? CLLocation(latitude: 49.8726737, longitude: 8.6516291)
-        Map(
-            coordinateRegion: .constant(
-                MKCoordinateRegion(
-                    center: location.coordinate,
-                    span: MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02))),
-            showsUserLocation: true,
-            userTrackingMode: $userTrackingMode,
-            annotationItems: alsCells,
-            annotationContent: { alsCell in
-                CellTowerMapAnnotation.create(cell: alsCell) {
-                    print("Hey")
+        NavigationView {
+            Map(
+                coordinateRegion: .constant(
+                    MKCoordinateRegion(
+                        center: location.coordinate,
+                        span: MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02))),
+                showsUserLocation: true,
+                userTrackingMode: $userTrackingMode,
+                annotationItems: alsCells,
+                annotationContent: { alsCell in
+                    CellTowerIcon.asAnnotation(cell: alsCell) {
+                        CellDetailsView(cell: alsCell)
+                    }
                 }
-            }
-        )
-        .ignoresSafeArea()
+            ).ignoresSafeArea()
+        }
     }
 }
 
-struct CellTowerMapAnnotation: View {
+struct CellTowerIcon: View {
     let cell: Cell
-    let onTap: (() -> Void)?
     
-    private init(cell: Cell, onTap: (() -> Void)?) {
+    private init(cell: Cell) {
         self.cell = cell
-        self.onTap = onTap
     }
     
     var body: some View {
-        if onTap != nil {
-            Button {
-                onTap?()
-            } label: {
-                antennaIcon
-            }
-        } else {
-            antennaIcon
-        }
-    }
-    
-    var antennaIcon: some View {
         Image(systemName: "antenna.radiowaves.left.and.right")
             .foregroundColor(color())
             .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5))
@@ -74,7 +63,7 @@ struct CellTowerMapAnnotation: View {
                 .shadow(radius: 2)
             )
     }
-    
+
     private func color() -> Color {
         // TODO: Add more colors
         switch (cell.network % 5) {
@@ -93,12 +82,26 @@ struct CellTowerMapAnnotation: View {
         }
     }
     
-    public static func create(cell: Cell, onTap: (() -> Void)? = nil) -> MapAnnotation<AnyView> {
+    public static func asAnnotation(cell: Cell) -> MapAnnotation<AnyView> {
         return MapAnnotation(coordinate: CLLocationCoordinate2D(
             latitude: cell.location?.latitude ?? 0,
             longitude: cell.location?.longitude ?? 0
         )) {
-            AnyView(CellTowerMapAnnotation(cell: cell, onTap: onTap))
+            AnyView(CellTowerIcon(cell: cell))
+        }
+    }
+    
+    public static func asAnnotation<Destination: View>(cell: Cell, destination: () -> Destination)
+        -> MapAnnotation<NavigationLink<CellTowerIcon, Destination>> {
+        return MapAnnotation(coordinate: CLLocationCoordinate2D(
+            latitude: cell.location?.latitude ?? 0,
+            longitude: cell.location?.longitude ?? 0
+        )) {
+            NavigationLink {
+                destination()
+            } label: {
+                CellTowerIcon(cell: cell)
+            }
         }
     }
     
