@@ -16,7 +16,7 @@ struct CCTClient {
     
     private static let logger = Logger(
         subsystem: Bundle.main.bundleIdentifier!,
-        category: String(describing: ALSClient.self)
+        category: String(describing: CCTClient.self)
     )
     
     /// The port of the tweak

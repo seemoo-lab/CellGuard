@@ -99,7 +99,7 @@ class PersistenceController {
     private var lastToken: NSPersistentHistoryToken?
     
     /// Creates and configures a private queue context.
-    private func newTaskContext() -> NSManagedObjectContext {
+    func newTaskContext() -> NSManagedObjectContext {
         // Create a preview queue context.
         let taskContext = container.newBackgroundContext()
         taskContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
@@ -157,7 +157,7 @@ class PersistenceController {
     }
     
     /// Uses `NSBatchInsertRequest` (BIR) to import ALS cell properties into the Core Data store on a private queue.
-    func importALSCells(from cells: [ALSQueryCell]) throws {
+    func importALSCells(from cells: [ALSQueryCell], source: NSManagedObjectID) throws {
         let taskContext = newTaskContext()
         
         taskContext.name = "importContext"
@@ -171,9 +171,15 @@ class PersistenceController {
             
             let importedDate = Date()
             
+            guard let tweakCell = try? taskContext.existingObject(with: source) as? TweakCell else {
+                self.logger.warning("Can't get tweak cell (\(source)) from its object ID")
+                return
+            }
+            tweakCell.status = CellStatus.verified.rawValue
+
+            
             let batchInsertRequest = NSBatchInsertRequest(entity: ALSCell.entity(), managedObjectHandler: { cell in
                 guard index < total else { return true }
-                
                 
                 if let cell = cell as? ALSCell {
                     cells[index].applyTo(alsCell: cell)
@@ -187,6 +193,36 @@ class PersistenceController {
             if let fetchResult = try? taskContext.execute(batchInsertRequest),
                let batchInsertResult = fetchResult as? NSBatchInsertResult {
                 success = batchInsertResult.result as? Bool ?? false
+                if !success {
+                    return
+                }
+            }
+            
+            let verifyFetchRequest = NSFetchRequest<ALSCell>()
+            verifyFetchRequest.entity = ALSCell.entity()
+            verifyFetchRequest.fetchLimit = 1
+            verifyFetchRequest.predicate = NSPredicate(
+                format: "technology = %@ and country = %@ and network = %@ and area = %@ and cell = %@",
+                tweakCell.technology ?? "" as NSString, tweakCell.country as NSNumber, tweakCell.network as NSNumber,
+                tweakCell.area as NSNumber, tweakCell.cell as NSNumber)
+            
+            do {
+                let verifyCells = try verifyFetchRequest.execute()
+                if let verifyCell = verifyCells.first {
+                    tweakCell.verification = verifyCell
+                } else {
+                    self.logger.warning("Can't assign a verification cell for tweak cell: \(tweakCell)")
+                }
+            } catch {
+                self.logger.warning("Can't execute a fetch request for getting a verfication cell for tweak cell: \(tweakCell)")
+            }
+            
+            if success {
+                do {
+                    try taskContext.save()
+                } catch {
+                    success = false
+                }
             }
         }
         

@@ -59,7 +59,7 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
         }
         
         BGTaskScheduler.shared.register(forTaskWithIdentifier: Self.alsRequestTaskIdentifier, using: nil) { task in
-            // TODO: Implement stuff
+            // TODO: Verify in larger batches
         }
         
         // Schedule a timer to continously poll the latest cells while the app is active
@@ -77,9 +77,12 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
         // We allow the timer a high tolerance of 50% as our collector is not time critical
         collectTimer.tolerance = 30
         
+        // TODO: Only enable if no tests are running
+        
         let checkTimer = Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { timer in
-            // TODO: Implement
+            ALSVerifier().verify(n: 10) { _ in }
         }
+        checkTimer.tolerance = 0.5
                         
         // Notifications? https://www.hackingwithswift.com/books/ios-swiftui/scheduling-local-notifications
         

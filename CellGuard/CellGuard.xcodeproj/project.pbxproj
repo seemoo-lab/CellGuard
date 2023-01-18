@@ -32,6 +32,8 @@
 		CF5CBB9529689FFE001CE9BE /* CellGuardSceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5CBB9429689FFE001CE9BE /* CellGuardSceneDelegate.swift */; };
 		CF5EF9202977FACA00C4F50A /* Formatters.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5EF91F2977FACA00C4F50A /* Formatters.swift */; };
 		CF5EF9222977FCF800C4F50A /* CellTechnologyFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5EF9212977FCF800C4F50A /* CellTechnologyFormatter.swift */; };
+		CF5EF9242978538E00C4F50A /* ALSVerifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5EF9232978538E00C4F50A /* ALSVerifier.swift */; };
+		CF5EF9262978689B00C4F50A /* ALSVerifierTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5EF9252978689B00C4F50A /* ALSVerifierTests.swift */; };
 		CFB8B2882963417B00503189 /* LocationDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB8B2872963417B00503189 /* LocationDataManager.swift */; };
 		CFB8B28A2963498200503189 /* CellGuardAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB8B2892963498200503189 /* CellGuardAppDelegate.swift */; };
 		CFB8B291296359CC00503189 /* CCTCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB8B290296359CC00503189 /* CCTCollector.swift */; };
@@ -94,6 +96,8 @@
 		CF5CBB9429689FFE001CE9BE /* CellGuardSceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellGuardSceneDelegate.swift; sourceTree = "<group>"; };
 		CF5EF91F2977FACA00C4F50A /* Formatters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Formatters.swift; sourceTree = "<group>"; };
 		CF5EF9212977FCF800C4F50A /* CellTechnologyFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellTechnologyFormatter.swift; sourceTree = "<group>"; };
+		CF5EF9232978538E00C4F50A /* ALSVerifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ALSVerifier.swift; sourceTree = "<group>"; };
+		CF5EF9252978689B00C4F50A /* ALSVerifierTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ALSVerifierTests.swift; sourceTree = "<group>"; };
 		CFB8B2872963417B00503189 /* LocationDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationDataManager.swift; sourceTree = "<group>"; };
 		CFB8B2892963498200503189 /* CellGuardAppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellGuardAppDelegate.swift; sourceTree = "<group>"; };
 		CFB8B290296359CC00503189 /* CCTCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CCTCollector.swift; sourceTree = "<group>"; };
@@ -149,13 +153,6 @@
 				CF5EF9212977FCF800C4F50A /* CellTechnologyFormatter.swift */,
 			);
 			path = Helpers;
-			sourceTree = "<group>";
-		};
-		CF2A1C1629754D8F00E8B61C /* Verification */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Verification;
 			sourceTree = "<group>";
 		};
 		CF2A1C19297566CE00E8B61C /* Notifications */ = {
@@ -216,6 +213,7 @@
 			isa = PBXGroup;
 			children = (
 				CFD023732961DF7400AA5A1C /* ALSClientTests.swift */,
+				CF5EF9252978689B00C4F50A /* ALSVerifierTests.swift */,
 			);
 			path = "Apple Location Service";
 			sourceTree = "<group>";
@@ -283,7 +281,6 @@
 				CF2A1C19297566CE00E8B61C /* Notifications */,
 				CFD0233C2961A10D00AA5A1C /* Preview Content */,
 				CF5CBB962968B7E1001CE9BE /* User Interface */,
-				CF2A1C1629754D8F00E8B61C /* Verification */,
 				CFD0233A2961A10D00AA5A1C /* Assets.xcassets */,
 				CFD023362961A10D00AA5A1C /* CellGuardApp.swift */,
 				CFB8B2892963498200503189 /* CellGuardAppDelegate.swift */,
@@ -326,6 +323,7 @@
 			children = (
 				CF53DB41297473E8005DCD10 /* CoreLocationALS.pb.swift */,
 				CFD023692961ABA100AA5A1C /* ALSClient.swift */,
+				CF5EF9232978538E00C4F50A /* ALSVerifier.swift */,
 			);
 			path = "Apple Location Service";
 			sourceTree = "<group>";
@@ -495,6 +493,7 @@
 				CF320F5529620B16009BAD18 /* CCTParser.swift in Sources */,
 				CFB8B291296359CC00503189 /* CCTCollector.swift in Sources */,
 				CF53DB42297473E8005DCD10 /* CoreLocationALS.pb.swift in Sources */,
+				CF5EF9242978538E00C4F50A /* ALSVerifier.swift in Sources */,
 				CFD023432961A10D00AA5A1C /* CellGuard.xcdatamodeld in Sources */,
 				CF2A1C1B2975670000E8B61C /* CGNotificationManager.swift in Sources */,
 				CF0FDCB529698E1500A6FFE2 /* SummaryView.swift in Sources */,
@@ -525,6 +524,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF5EF9262978689B00C4F50A /* ALSVerifierTests.swift in Sources */,
 				CFD0234D2961A10E00AA5A1C /* CellGuardTests.swift in Sources */,
 				CF5CBB8D29687CBB001CE9BE /* CCTParserTests.swift in Sources */,
 				CFD023742961DF7400AA5A1C /* ALSClientTests.swift in Sources */,

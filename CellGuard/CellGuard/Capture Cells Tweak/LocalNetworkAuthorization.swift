@@ -17,7 +17,7 @@ public class LocalNetworkAuthorization: NSObject, ObservableObject {
     
     private static let logger = Logger(
         subsystem: Bundle.main.bundleIdentifier!,
-        category: String(describing: ALSClient.self)
+        category: String(describing: LocalNetworkAuthorization.self)
     )
     
     private var browser: NWBrowser?

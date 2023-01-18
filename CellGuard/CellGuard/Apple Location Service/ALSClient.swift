@@ -13,6 +13,7 @@ import OSLog
 enum ALSClientError: Error {
     case httpStatus(URLResponse?)
     case httpNoData(URLResponse?)
+    case noCells(Data)
 }
 
 enum ALSTechnology: String {
@@ -43,7 +44,7 @@ struct ALSLocation {
     }
 }
 
-struct ALSQueryCell {
+struct ALSQueryCell: CustomStringConvertible {
     var technology: ALSTechnology
     
     var country: Int32 = 0
@@ -175,6 +176,12 @@ struct ALSQueryCell {
         alsCell.frequency = self.frequency ?? -1
         alsCell.technology = self.technology.rawValue
     }
+    
+    var description: String {
+        "ALSQueryCell(technology=\(self.technology), country=\(self.country), network=\(self.network)," +
+        "area=\(self.area), cell=\(self.cell), " +
+        "location=\(String(describing: self.location)), frequency=\(String(describing: self.frequency)))"
+    }
 }
 
 
@@ -217,7 +224,7 @@ struct ALSClient {
             }
             $0.numberOfSurroundingCells = 0
             $0.numberOfSurroundingWifis = 1
-            $0.surroundingWifiBands = [Int32(1)]
+            $0.surroundingWifiBands = [1]
         }
         
         let data: Data;
@@ -238,7 +245,11 @@ struct ALSClient {
                 cells.append(contentsOf: protoResponse.lteCells.map {ALSQueryCell(fromLteProto: $0)})
                 cells.append(contentsOf: protoResponse.nr5Gcells.map {ALSQueryCell(fromNRProto: $0)})
                 cells.append(contentsOf: protoResponse.cdmaCells.map {ALSQueryCell(fromCdmaProto: $0)})
-                completion(.success(cells))
+                if !cells.isEmpty {
+                    completion(.success(cells))
+                } else {
+                    completion(.failure(ALSClientError.noCells(try result.get())))
+                }
             } catch {
                 Self.logger.warning("Can't decode proto response: \(error)")
                 completion(.failure(error))
@@ -280,8 +291,12 @@ struct ALSClient {
             }
             // Check the response body
             if let data = data {
-                // If response data is provided, drop the first bytes because they also contain a binary TLV header in the format start + end + start + end + size, and invoke the callback.
-                completion(.success(data.dropFirst(10)))
+                if !data.isEmpty {
+                    // If response data is provided, drop the first bytes because they also contain a binary TLV header in the format start + end + start + end + size, and invoke the callback.
+                    completion(.success(data.dropFirst(10)))
+                } else {
+                    completion(.failure(ALSClientError.httpNoData(response)))
+                }
             } else {
                 completion(.failure(ALSClientError.httpNoData(response)))
             }

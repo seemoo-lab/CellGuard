@@ -13,7 +13,7 @@ struct CCTCollector {
     
     private static let logger = Logger(
         subsystem: Bundle.main.bundleIdentifier!,
-        category: String(describing: ALSClient.self)
+        category: String(describing: CCTCollector.self)
     )
     
     private let parser: CCTParser = CCTParser()
