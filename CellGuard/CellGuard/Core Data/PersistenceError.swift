@@ -10,4 +10,5 @@ import Foundation
 enum PersistenceError: Error {
     case batchInsertError
     case persistentHistoryChangeError
+    case objectIdNotFoundError
 }

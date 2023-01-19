@@ -26,42 +26,26 @@ struct ALSVerifier {
     func verify(n: Int, completion: (Error?) -> Void) {
         Self.logger.debug("Verifing at max \(n) tweak cell(s)...")
         
-        var queryCells: [NSManagedObjectID : ALSQueryCell] = [:]
-        var fetchError: Error? = nil
-        persistence.newTaskContext().performAndWait {
-            let request = NSFetchRequest<TweakCell>()
-            request.entity = TweakCell.entity()
-            request.fetchLimit = n
-            request.predicate = NSPredicate(format: "status == %@", CellStatus.imported.rawValue)
-            request.sortDescriptors = [NSSortDescriptor(keyPath: \TweakCell.collected, ascending: true)]
-            request.returnsObjectsAsFaults = false
-            do {
-                let tweakCells = try request.execute()
-                queryCells = Dictionary(uniqueKeysWithValues: tweakCells.map { ($0.objectID, queryCell(from: $0)) })
-            } catch {
-                fetchError = error
-            }
+        let queryCells: [NSManagedObjectID : ALSQueryCell]
+        do {
+            queryCells = try persistence.fetchLatestUnverfiedTweakCells(count: n)
+        } catch {
+            completion(error)
+            return
         }
         
         Self.logger.debug("Selected \(queryCells.count) tweak cell(s) for verification")
-        
-        if let fetchError = fetchError {
-            Self.logger.warning("Can't fetch \(n) tweak cells with status == import: \(fetchError)")
-            completion(fetchError)
-            return
-        }
         
         // TODO: Search for query cells in database first before requesting?
         
         // We're using a dispatch group to provide a callback when all operations are finished
         let group = DispatchGroup()
-        
         queryCells.forEach { objectID, queryCell in
             group.enter()
             client.requestCells(
                 origin: queryCell,
                 completion: { result in
-                    processQueriedCells(result: result, cellId: objectID)
+                    processQueriedCells(result: result, source: objectID)
                     group.leave()
                 }
             )
@@ -76,12 +60,8 @@ struct ALSVerifier {
             completion(nil)
         }
     }
-    
-    func verify(cells: [TweakCell], completion: (Error?) -> Void) {
-        
-    }
-    
-    private func processQueriedCells(result: Result<[ALSQueryCell], Error>, cellId: NSManagedObjectID) {
+
+    private func processQueriedCells(result: Result<[ALSQueryCell], Error>, source: NSManagedObjectID) {
         switch (result) {
         case .failure(let error):
             Self.logger.warning("Can't fetch ALS cells for tweak cell: \(error)")
@@ -96,43 +76,18 @@ struct ALSVerifier {
             if !(queryCells.first?.isValid() ?? false) {
                 
                 // If not, set the status of the origin cell to failed
-                let context = persistence.newTaskContext()
-                context.performAndWait {
-                    // TODO: Does this work?
-                    if let tweakCell = context.object(with: cellId) as? TweakCell {
-                        tweakCell.status = CellStatus.failed.rawValue
-                        do {
-                            try context.save()
-                        } catch {
-                            Self.logger.warning("Can't save tweak cell (\(tweakCell) with status == failed: \(error)")
-                        }
-                    } else {
-                        Self.logger.warning("Can't apply status == failed to tweak cell with object ID: \(cellId)")
-                    }
-                }
+                try? persistence.storeCellStatus(cellId: source, status: .failed)
                 
                 return
             }
             
             // If yes, import the cells
             do {
-                try persistence.importALSCells(from: queryCells, source: cellId)
+                try persistence.importALSCells(from: queryCells, source: source)
             } catch {
                 Self.logger.warning("Can't import ALS cells \(queryCells): \(error)")
             }
         }
     }
-    
-    private func queryCell(from cell: TweakCell) -> ALSQueryCell {
-        let technology = ALSTechnology(rawValue: cell.technology ?? "LTE") ?? .LTE
         
-        return ALSQueryCell(
-            technology: technology,
-            country: cell.country,
-            network: cell.network,
-            area: cell.area,
-            cell: cell.cell
-        )
-    }
-    
 }

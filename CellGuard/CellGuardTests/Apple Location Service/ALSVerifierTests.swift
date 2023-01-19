@@ -43,15 +43,15 @@ final class ALSVerifierTests: XCTestCase {
         }
     }
     
-    private func createTweakCell(context: NSManagedObjectContext, cellIdAdd: Int64 = 0) {
+    private func createTweakCell(context: NSManagedObjectContext, area: Int32, cell cellId: Int64) {
         context.performAndWait {
             let cell = TweakCell(context: context)
             
             cell.technology = ALSTechnology.LTE.rawValue
             cell.country = 262
             cell.network = 2
-            cell.area = 46452
-            cell.cell = 15669002 + cellIdAdd
+            cell.area = area
+            cell.cell = cellId
             
             cell.status = CellStatus.imported.rawValue
             cell.imported = Date()
@@ -77,6 +77,17 @@ final class ALSVerifierTests: XCTestCase {
         }
     }
     
+    private func assertALSCellCount(assert: @escaping (Int) -> ()) {
+        let alsFetchRequest = NSFetchRequest<ALSCell>()
+        alsFetchRequest.entity = ALSCell.entity()
+        do {
+            let alsCells = try alsFetchRequest.execute()
+            assert(alsCells.count)
+        } catch {
+            XCTFail(error.localizedDescription)
+        }
+    }
+    
     func testVerifyValid() async throws {
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct results.
@@ -86,19 +97,14 @@ final class ALSVerifierTests: XCTestCase {
         
         let context = PersistenceController.shared.newTaskContext()
         
-        createTweakCell(context: context)
+        createTweakCell(context: context, area: 46452, cell: 15669002)
         
         try await verify(n: 1)
         
         context.performAndWait {
-            let alsFetchRequest = NSFetchRequest<ALSCell>()
-            alsFetchRequest.entity = ALSCell.entity()
-            do {
-                let alsCells = try alsFetchRequest.execute()
-                XCTAssertGreaterThan(alsCells.count, 0)
-            } catch {
-                XCTFail(error.localizedDescription)
-            }
+            assertALSCellCount(assert: { count in
+                XCTAssertGreaterThan(count, 0)
+            })
             
             let tweakFetchRequest = NSFetchRequest<TweakCell>()
             tweakFetchRequest.entity = TweakCell.entity()
@@ -121,19 +127,14 @@ final class ALSVerifierTests: XCTestCase {
     func testVerifyFail() async throws {
         let context = PersistenceController.shared.newTaskContext()
         
-        createTweakCell(context: context, cellIdAdd: 99)
+        createTweakCell(context: context, area: 46452, cell: 15669002 + 99)
         
         try await verify(n: 1)
         
         context.performAndWait {
-            let alsFetchRequest = NSFetchRequest<ALSCell>()
-            alsFetchRequest.entity = ALSCell.entity()
-            do {
-                let alsCells = try alsFetchRequest.execute()
-                XCTAssertEqual(alsCells.count, 0)
-            } catch {
-                XCTFail(error.localizedDescription)
-            }
+            assertALSCellCount(assert: { count in
+                XCTAssertEqual(count, 0)
+            })
             
             let tweakFetchRequest = NSFetchRequest<TweakCell>()
             tweakFetchRequest.entity = TweakCell.entity()
@@ -152,7 +153,50 @@ final class ALSVerifierTests: XCTestCase {
     }
     
     func testVerifyMultiple() async throws {
+        let context = PersistenceController.shared.newTaskContext()
         
+        createTweakCell(context: context, area: 46452, cell: 15669002)
+        createTweakCell(context: context, area: 46452, cell: 15669002 + 99)
+        createTweakCell(context: context, area: 45711, cell: 12941845)
+        
+        try await verify(n: 5)
+        
+        context.performAndWait {
+            assertALSCellCount(assert: { count in
+                XCTAssertGreaterThan(count, 0)
+            })
+            
+            do {
+                // Test failed tweak cell
+                let failedFetchRequest = NSFetchRequest<TweakCell>()
+                failedFetchRequest.entity = TweakCell.entity()
+                failedFetchRequest.predicate = NSPredicate(format: "status = %@", CellStatus.failed.rawValue)
+
+                let failedTweakCells = try failedFetchRequest.execute()
+                XCTAssertEqual(failedTweakCells.count, 1)
+                
+                let failedTweakCell = failedTweakCells.first!
+                XCTAssertNil(failedTweakCell.verification)
+                XCTAssertEqual(failedTweakCell.status, CellStatus.failed.rawValue)
+                
+                // Test verified tweak cell
+                let verifiedFetchRequest = NSFetchRequest<TweakCell>()
+                verifiedFetchRequest.entity = TweakCell.entity()
+                verifiedFetchRequest.predicate = NSPredicate(format: "status = %@", CellStatus.verified.rawValue)
+                
+                let verifiedTweakCells = try verifiedFetchRequest.execute()
+                XCTAssertEqual(verifiedTweakCells.count, 2)
+                
+                verifiedTweakCells.forEach { verifiedTweakCell in
+                    XCTAssertNotNil(verifiedTweakCell.verification)
+                    XCTAssertEqual(verifiedTweakCell.status, CellStatus.verified.rawValue)
+
+                }
+            } catch {
+                XCTFail(error.localizedDescription)
+            }
+
+        }
     }
 
 }

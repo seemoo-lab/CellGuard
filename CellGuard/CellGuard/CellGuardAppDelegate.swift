@@ -32,14 +32,28 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
     }
     
     func application(_ application: UIApplication, willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+        trackLocationIfBackground(launchOptions)
+        registerSchedulers()
+        
+        if !isTestRun {
+            startTasks()
+        }
+        
+        return true
+    }
+    
+    private func trackLocationIfBackground(_ launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) {
+        // Only initialize the location manager if the app was excliptly launched in the background to track locations.
+        // Otherwise it was initialized in CellGuardApp as environment variable
         if let launchOptions = launchOptions {
             // https://developer.apple.com/documentation/corelocation/cllocationmanager/1423531-startmonitoringsignificantlocati
             if launchOptions[.location] != nil {
                 _ = LocationDataManager(extact: false)
             }
         }
-        
-        
+    }
+    
+    private func registerSchedulers() {
         // Register a background refresh task to poll the tweak continuously in the background
         // https://developer.apple.com/documentation/uikit/app_and_environment/scenes/preparing_your_ui_to_run_in_the_background/using_background_tasks_to_update_your_app
         BGTaskScheduler.shared.register(forTaskWithIdentifier: Self.cellRefreshTaskIdentifier, using: nil) { task in
@@ -61,7 +75,9 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
         BGTaskScheduler.shared.register(forTaskWithIdentifier: Self.alsRequestTaskIdentifier, using: nil) { task in
             // TODO: Verify in larger batches
         }
-        
+    }
+    
+    private func startTasks() {
         // Schedule a timer to continously poll the latest cells while the app is active
         let collectTimer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { timer in
             let collector = CCTCollector(client: CCTClient(queue: .global(qos: .userInitiated)))
@@ -69,24 +85,20 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
             collector.collectAndStore { error in
                 if let error = error {
                     Self.logger.warning("Failed to collect & store cells in scheduled timer: \(error)")
+                } else {
+                    // TODO: Assign locations
                 }
             }
-            
-            // TODO: Fetch & Store ALS data
         }
         // We allow the timer a high tolerance of 50% as our collector is not time critical
         collectTimer.tolerance = 30
-        
-        // TODO: Only enable if no tests are running
-        
+                
         let checkTimer = Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { timer in
             ALSVerifier().verify(n: 10) { _ in }
         }
-        checkTimer.tolerance = 0.5
-                        
-        // Notifications? https://www.hackingwithswift.com/books/ios-swiftui/scheduling-local-notifications
-        
-        return true
+        // We allow only allow a lower tolerance for check timer as it is executed in short intervals
+        checkTimer.tolerance = 1
+
     }
     
 }

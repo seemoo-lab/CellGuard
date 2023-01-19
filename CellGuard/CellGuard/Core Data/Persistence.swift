@@ -275,6 +275,68 @@ class PersistenceController {
         logger.debug("Successfully inserted \(locations.count) locations.")
     }
     
+    func fetchLatestUnverfiedTweakCells(count: Int) throws -> [NSManagedObjectID : ALSQueryCell]  {
+        var queryCells: [NSManagedObjectID : ALSQueryCell] = [:]
+        var fetchError: Error? = nil
+        newTaskContext().performAndWait {
+            let request = NSFetchRequest<TweakCell>()
+            request.entity = TweakCell.entity()
+            request.fetchLimit = count
+            request.predicate = NSPredicate(format: "status == %@", CellStatus.imported.rawValue)
+            request.sortDescriptors = [NSSortDescriptor(keyPath: \TweakCell.collected, ascending: true)]
+            request.returnsObjectsAsFaults = false
+            do {
+                let tweakCells = try request.execute()
+                queryCells = Dictionary(uniqueKeysWithValues: tweakCells.map { ($0.objectID, queryCell(from: $0)) })
+            } catch {
+                fetchError = error
+            }
+        }
+        
+        if let fetchError = fetchError {
+            logger.debug("Failed to fetch the latest \(count) unverified cells: \(fetchError)")
+            throw fetchError
+        }
+        
+        return queryCells
+    }
+    
+    private func queryCell(from cell: TweakCell) -> ALSQueryCell {
+        let technology = ALSTechnology(rawValue: cell.technology ?? "LTE") ?? .LTE
+        
+        return ALSQueryCell(
+            technology: technology,
+            country: cell.country,
+            network: cell.network,
+            area: cell.area,
+            cell: cell.cell
+        )
+    }
+    
+    func storeCellStatus(cellId: NSManagedObjectID, status: CellStatus) throws {
+        let context = newTaskContext()
+        var saveError: Error? = nil
+        context.performAndWait {
+            if let tweakCell = context.object(with: cellId) as? TweakCell {
+                tweakCell.status = status.rawValue
+                do {
+                    try context.save()
+                } catch {
+                    self.logger.warning("Can't save tweak cell (\(tweakCell)) with status == \(status.rawValue): \(error)")
+                    saveError = error
+                }
+            } else {
+                self.logger.warning("Can't apply status == \(status.rawValue) to tweak cell with object ID: \(cellId)")
+                saveError = PersistenceError.objectIdNotFoundError
+            }
+        }
+        
+        if let saveError = saveError {
+            throw saveError
+        }
+    }
+
+    
     
     /// Uses `NSBatchUpdateRequest` (BIR) to assign locations stored in Core Data  to cells on a private queue.
     func assignLocationsToTweakCells() throws {
@@ -287,10 +349,6 @@ class PersistenceController {
         // Assign each tweak cell location with min (tweakCell.collected - location.timestamp) which is greater or equal to zero
         
         // Save everything
-    }
-    
-    func verifyTweakCells() throws {
-        
     }
     
     /// Synchronously deletes all records in the Core Data store.
