@@ -10,9 +10,7 @@ import CoreData
 
 struct PersistencePreview {
     
-    static func location(context: NSManagedObjectContext, error: Double) -> Location {
-        let location = Location(context: context)
-        
+    static func location<T: Location>(location: T, error: Double) -> T {
         location.latitude = 49.8726737 + Double.random(in: -error..<error)
         location.longitude = 8.6516291 + Double.random(in: -error..<error)
         location.horizontalAccuracy = 2 + Double.random(in: -0.5..<0.5)
@@ -30,7 +28,7 @@ struct PersistencePreview {
         cell.cell = Int64.random(in: 1..<50000)
         cell.collected = Calendar.current.date(byAdding: .day, value: -Int.random(in: 0..<3), to: Date())
         cell.imported = imported
-        cell.location = location(context: context, error: 0.005)
+        cell.location = location(location: UserLocation(context: context), error: 0.005)
         cell.location?.imported = cell.imported
         
         return cell
@@ -45,7 +43,7 @@ struct PersistencePreview {
         cell.cell = alsCell.cell
         cell.collected = Calendar.current.date(byAdding: .day, value: -Int.random(in: 0..<3), to: Date())
         cell.imported = Calendar.current.date(byAdding: .hour, value: -Int.random(in: 0..<24), to: alsCell.imported!)
-        cell.location = location(context: context, error: 0.01)
+        cell.location = location(location: UserLocation(context: context), error: 0.01)
         cell.location?.imported = cell.imported
         
         return cell
@@ -60,7 +58,7 @@ struct PersistencePreview {
         cell.area = Int32.random(in: 1..<5000)
         cell.cell = Int64.random(in: 1..<50000)
         cell.imported = Calendar.current.date(byAdding: .day, value: -Int.random(in: 0..<3), to: Date())
-        cell.location = location(context: context, error: 0.005)
+        cell.location = location(location: ALSLocation(context: context), error: 0.005)
         cell.location?.imported = cell.imported
         
         for _ in 0...Int.random(in: 2..<7) {

@@ -49,7 +49,9 @@ struct CCTCellProperties {
         tweakCell.area = self.area ?? 0
         tweakCell.cell = self.cellId ?? 0
         
-        tweakCell.technology = self.radio
+        tweakCell.preciseTechnology = self.radio
+        tweakCell.technology = ALSTechnology.from(cctTechnology: self.radio ?? "").rawValue
+        
         tweakCell.frequency = self.frequency ?? 0
         tweakCell.neighbourTechnology = neighbourRadio
         

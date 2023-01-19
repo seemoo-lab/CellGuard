@@ -153,6 +153,8 @@ class PersistenceController {
             throw PersistenceError.batchInsertError
         }
         
+        try? assignLocationsToTweakCells()
+        
         logger.debug("Successfully inserted \(cells.count) tweak cells.")
     }
     
@@ -166,37 +168,28 @@ class PersistenceController {
         var success = false
         
         taskContext.performAndWait {
+            let importedDate = Date()
+            
+            // We can't use a BatchInsertRequest because it doesn't support relationships
+            // See: https://developer.apple.com/forums/thread/676651
+            cells.forEach { queryCell in
+                let cell = ALSCell(context: taskContext)
+                cell.imported = importedDate
+                queryCell.applyTo(alsCell: cell)
+                
+                if let queryLocation = queryCell.location {
+                    let location = ALSLocation(context: taskContext)
+                    queryLocation.applyTo(location: location)
+                    cell.location = location
+                }
+            }
+            
+            // Get the tweak cell managed object from its ID
             guard let tweakCell = try? taskContext.existingObject(with: source) as? TweakCell else {
                 self.logger.warning("Can't get tweak cell (\(source)) from its object ID")
                 return
             }
             tweakCell.status = CellStatus.verified.rawValue
-
-            // Build the batch insert request for ALS cells
-            var index = 0
-            let total = cells.count
-            let importedDate = Date()
-            
-            let batchInsertRequest = NSBatchInsertRequest(entity: ALSCell.entity(), managedObjectHandler: { cell in
-                guard index < total else { return true }
-                
-                if let cell = cell as? ALSCell {
-                    cells[index].applyTo(alsCell: cell)
-                    cell.imported = importedDate
-                }
-                
-                index += 1
-                return false
-            })
-            
-            // Execute the batch insert request
-            if let fetchResult = try? taskContext.execute(batchInsertRequest),
-               let batchInsertResult = fetchResult as? NSBatchInsertResult {
-                if !(batchInsertResult.result as? Bool ?? false) {
-                    logger.warning("Failed to execute batch import request for ALS cells: \(batchInsertResult)")
-                    return
-                }
-            }
 
             // Fetch the verification cell for the tweak cell and assign it
             do {
@@ -230,7 +223,7 @@ class PersistenceController {
     }
     
     /// Uses `NSBatchInsertRequest` (BIR) to import locations into the Core Data store on a private queue.
-    func importLocations(from locations: [LDMLocation]) throws {
+    func importUserLocations(from locations: [LDMLocation]) throws {
         let taskContext = newTaskContext()
         
         taskContext.name = "importContext"
@@ -244,10 +237,10 @@ class PersistenceController {
             
             let importedDate = Date()
             
-            let batchInsertRequest = NSBatchInsertRequest(entity: Location.entity(), managedObjectHandler: { location in
+            let batchInsertRequest = NSBatchInsertRequest(entity: UserLocation.entity(), managedObjectHandler: { location in
                 guard index < total else { return true }
                 
-                if let location = location as? Location {
+                if let location = location as? UserLocation {
                     locations[index].applyTo(location: location)
                     location.imported = importedDate
                 }
@@ -338,12 +331,7 @@ class PersistenceController {
         let fetchRequest = NSFetchRequest<ALSCell>()
         fetchRequest.entity = ALSCell.entity()
         fetchRequest.fetchLimit = 1
-        fetchRequest.predicate = NSPredicate(
-            format: "technology = %@ and country = %@ and network = %@ and area = %@ and cell = %@",
-            alsTechnology(tweakTechnology: tweakCell.technology).rawValue as NSString,
-            tweakCell.country as NSNumber, tweakCell.network as NSNumber,
-            tweakCell.area as NSNumber, tweakCell.cell as NSNumber
-        )
+        fetchRequest.predicate = sameCellPredicate(cell: tweakCell)
         
         do {
             let result = try fetchRequest.execute()
@@ -354,25 +342,21 @@ class PersistenceController {
         }
     }
     
-    private func alsTechnology(tweakTechnology: String?) -> ALSTechnology {
-        guard let tweakTechnology = tweakTechnology?.uppercased() else {
-            return .LTE
-        }
-        
-        if tweakTechnology == "UMTS" {
-            return .LTE
-        }
-        
-        return ALSTechnology(rawValue: tweakTechnology) ?? .LTE
-    }
-    
     private func queryCell(from cell: TweakCell) -> ALSQueryCell {
         return ALSQueryCell(
-            technology: alsTechnology(tweakTechnology: cell.technology),
+            technology: ALSTechnology(rawValue: cell.technology ?? "") ?? .LTE,
             country: cell.country,
             network: cell.network,
             area: cell.area,
             cell: cell.cell
+        )
+    }
+    
+    func sameCellPredicate(cell: Cell) -> NSPredicate {
+        return NSPredicate(
+            format: "technology = %@ and country = %@ and network = %@ and area = %@ and cell = %@",
+            cell.technology ?? "", cell.country as NSNumber, cell.network as NSNumber,
+            cell.area as NSNumber, cell.cell as NSNumber
         )
     }
     
@@ -402,20 +386,106 @@ class PersistenceController {
             throw saveError
         }
     }
-
-    
     
     /// Uses `NSBatchUpdateRequest` (BIR) to assign locations stored in Core Data  to cells on a private queue.
     func assignLocationsToTweakCells() throws {
-        // TODO: Implement
+        let taskContext = newTaskContext()
         
-        // Fetch all tweak cells without location
+        taskContext.name = "updateContext"
+        taskContext.transactionAuthor = "assignLocationsToTweakCells"
         
-        // Fetch locations in date range
+        var successful: Int = 0
+        var count: Int = 0
+        var contextError: Error?
         
-        // Assign each tweak cell location with min (tweakCell.collected - location.timestamp) which is greater or equal to zero
+        taskContext.performAndWait {
+            // Fetch all tweak cells without location
+            let cellFetchRequest = NSFetchRequest<TweakCell>()
+            cellFetchRequest.entity = TweakCell.entity()
+            // TODO: Collected in the last 14 days
+            cellFetchRequest.predicate = NSPredicate(format: "location == nil and collected != nil")
+            
+            let cells: [TweakCell]
+            do {
+                cells = try cellFetchRequest.execute()
+            } catch {
+                self.logger.warning("Can't fetch tweak cells without any location: \(error)")
+                contextError = error
+                return
+            }
+            
+            if cells.isEmpty {
+                self.logger.debug("There are no tweak cells without location data")
+                return
+            }
+            count = cells.count
+            
+            let calendar = Calendar.current
+            
+            let min = cells.min { $0.collected! < $1.collected! }?.collected
+            let max = cells.max { $0.collected! < $1.collected! }?.collected
+            
+            let minDay = calendar.date(byAdding: .day, value: -1, to: min!)!
+            let maxDay = calendar.date(byAdding: .day, value: 1, to: max!)!
+            
+            // Fetch locations in date range with a margin of one day
+            let locationFetchRequest = NSFetchRequest<UserLocation>()
+            locationFetchRequest.entity = UserLocation.entity()
+            locationFetchRequest.predicate = NSPredicate(format: "import > %@ and imported < %@ and collected != nil", minDay as NSDate, maxDay as NSDate)
+            
+            let locations: [UserLocation]
+            do {
+                locations = try locationFetchRequest.execute()
+            } catch {
+                self.logger.warning("Can't fetch user locations with in \(minDay) - \(maxDay): \(error)")
+                contextError = error
+                return
+            }
+            
+            if locations.isEmpty {
+                self.logger.debug("There no user locations which can be assigned to \(cells.count) tweak cells")
+                return
+            }
+            
+            // Assign each tweak cell location with min (tweakCell.collected - location.timestamp) which is greater or equal to zero
+            let collectedLocationMap: [Date : UserLocation] = Dictionary(uniqueKeysWithValues: locations.map { ($0.collected!, $0) })
+            let collectedDates = collectedLocationMap.keys
+            
+            cells.forEach { cell in
+                let lastLocationBefore = collectedDates
+                    .filter { $0 > cell.collected! }
+                    .max(by: { $0 < $1 })
+                
+                // If we've got no location (because it could be older than a day), we'll dont set it
+                guard let lastLocationBefore = lastLocationBefore else {
+                    return
+                }
+                
+                // If the location is older than a day, we'll skip it
+                if cell.collected!.timeIntervalSince(lastLocationBefore) > 60 * 60 * 24 {
+                    // TODO: Somehow mark the cell not to scan it again?
+                    return
+                }
+                
+                // If not, we'll assign it
+                cell.location = collectedLocationMap[lastLocationBefore]
+                successful += 1
+            }
+            
+            // Save everything
+            do {
+                try taskContext.save()
+            } catch {
+                contextError = error
+                self.logger.debug("Can't save context with \(locations.count) locations assigned to \(cells.count) tweak cells: \(error)")
+            }
+        }
         
-        // Save everything
+        if let contextError = contextError {
+            throw contextError
+        }
+        
+        self.logger.debug("Successfully assigned user locations to \(successful) tweak cells of out \(count) cells.")
     }
     
     /// Synchronously deletes all records in the Core Data store.

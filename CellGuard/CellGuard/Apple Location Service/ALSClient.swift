@@ -22,9 +22,17 @@ enum ALSTechnology: String {
     case LTE
     case NR
     case CDMA
+    
+    public static func from(cctTechnology: String) -> ALSTechnology {
+        if cctTechnology == "UMTS" {
+            return .LTE
+        }
+            
+        return ALSTechnology(rawValue: cctTechnology) ?? .LTE
+    }
 }
 
-struct ALSLocation {
+struct ALSQueryLocation {
     var latitude = 0.0
     var longitude = 0.0
     var accuracy = 0
@@ -42,6 +50,14 @@ struct ALSLocation {
     func isValid() -> Bool {
         return self.accuracy > 0
     }
+    
+    func applyTo(location: ALSLocation) {
+        location.latitude = latitude
+        location.longitude = longitude
+        location.horizontalAccuracy = Double(accuracy)
+        location.reach = Int32(reach)
+        location.score = Int32(score)
+    }
 }
 
 struct ALSQueryCell: CustomStringConvertible {
@@ -52,7 +68,7 @@ struct ALSQueryCell: CustomStringConvertible {
     var area: Int32 = 0
     var cell: Int64 = 0
     
-    var location: ALSLocation? = nil
+    var location: ALSQueryLocation? = nil
     var frequency: Int32? = nil
     
     func hasCellId() -> Bool {
@@ -77,7 +93,7 @@ struct ALSQueryCell: CustomStringConvertible {
         self.network = proto.mnc
         self.area = proto.lacID
         self.cell = proto.cellID
-        self.location = ALSLocation(fromProto: proto.location)
+        self.location = ALSQueryLocation(fromProto: proto.location)
         self.frequency = proto.arfcn
     }
     
@@ -87,7 +103,7 @@ struct ALSQueryCell: CustomStringConvertible {
         self.network = proto.mnc
         self.area = proto.lacID
         self.cell = Int64(proto.cellID)
-        self.location = ALSLocation(fromProto: proto.location)
+        self.location = ALSQueryLocation(fromProto: proto.location)
         self.frequency = proto.arfcn
     }
     
@@ -97,7 +113,7 @@ struct ALSQueryCell: CustomStringConvertible {
         self.network = proto.mnc
         self.area = proto.tacID
         self.cell = Int64(proto.cellID)
-        self.location = ALSLocation(fromProto: proto.location)
+        self.location = ALSQueryLocation(fromProto: proto.location)
         self.frequency = proto.uarfcn
     }
     
@@ -107,7 +123,7 @@ struct ALSQueryCell: CustomStringConvertible {
         self.network = proto.mnc
         self.area = proto.tacID
         self.cell = proto.cellID
-        self.location = ALSLocation(fromProto: proto.location)
+        self.location = ALSQueryLocation(fromProto: proto.location)
         self.frequency = proto.nrarfcn
     }
     
@@ -117,7 +133,7 @@ struct ALSQueryCell: CustomStringConvertible {
         self.network = proto.sid
         self.area = proto.nid
         self.cell = Int64(proto.bsid)
-        self.location = ALSLocation(fromProto: proto.location)
+        self.location = ALSQueryLocation(fromProto: proto.location)
         self.frequency = proto.bandclass
     }
     

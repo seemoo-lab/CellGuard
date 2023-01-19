@@ -20,19 +20,14 @@ struct CellDetailsView: View {
         self.cell = cell
         self.techFormatter = CellTechnologyFormatter.from(technology: cell.technology)
         
-        let sameCellPred = NSPredicate(
-            format: "country = %@ and network = %@ and area = %@ and cell = %@ and location != nil",
-            cell.country as NSNumber, cell.network as NSNumber, cell.area as NSNumber, cell.cell as NSNumber
-        )
-        
         self._alsCells = FetchRequest(
             sortDescriptors: [NSSortDescriptor(keyPath: \ALSCell.imported, ascending: true)],
-            predicate: sameCellPred,
+            predicate: PersistenceController.shared.sameCellPredicate(cell: cell),
             animation: .default
         )
         self._tweakCells = FetchRequest(
             sortDescriptors: [NSSortDescriptor(keyPath: \TweakCell.collected, ascending: true)],
-            predicate: sameCellPred,
+            predicate: PersistenceController.shared.sameCellPredicate(cell: cell),
             animation: .default
         )
     }
@@ -42,16 +37,7 @@ struct CellDetailsView: View {
             // TODO: Map with all points
             
             if !alsCells.isEmpty || !tweakCells.isEmpty {
-                Map(
-                    coordinateRegion: .constant(MKCoordinateRegion(
-                        center: middleLocation()!,
-                        span: MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02))),
-                    showsUserLocation: true,
-                    annotationItems: concatFetchedCells(),
-                    annotationContent: generateMapAnnotations
-                )
-                .frame(height: 200)
-                .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+                CellDetailsMap(alsCells: alsCells, tweakCells: tweakCells)
             }
             
             Section(header: Text("Cellular Technology")) {
@@ -70,6 +56,9 @@ struct CellDetailsView: View {
                 CellDetailsRows("Status", cellStatusDescription())
                 if let alsImported = alsCells.first?.imported {
                     CellDetailsRows("Fetched", mediumDateTimeFormatter.string(from: alsImported))
+                }
+                if let reach = alsCells.first?.location?.reach {
+                    CellDetailsRows("Reach", "\(reach)m")
                 }
             }
             
@@ -90,19 +79,57 @@ struct CellDetailsView: View {
             }
             
             // TODO: If tweak cell, show button for JSON data
-            
         }
         .navigationTitle("\(cell.technology ?? "Unknwon") Cell")
     }
     
-    private func middleLocation() -> CLLocationCoordinate2D? {
-        if let alsCell = alsCells.first {
-            return toCL(location: alsCell.location!)
+    private func cellStatusDescription() -> String {
+        if cell is ALSCell {
+            return "Verified"
+        } else if let tweakCell = cell as? TweakCell {
+            if tweakCell.status != nil, let status = CellStatus(rawValue: tweakCell.status!) {
+                return status.humanDescription()
+            }
         }
-        if let tweakCell = tweakCells.first {
-            return toCL(location: tweakCell.location!)
+        
+        return "Unkown"
+    }
+
+}
+
+// TODO: Extract into own file & Include reach
+struct CellDetailsMap: View {
+    
+    let alsCells: FetchedResults<ALSCell>
+    let tweakCells: FetchedResults<TweakCell>
+    
+    var body: some View {
+        Map(
+            coordinateRegion: .constant(MKCoordinateRegion(
+                center: middleLocation(),
+                span: MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02))),
+            showsUserLocation: true,
+            annotationItems: concatFetchedCells(),
+            annotationContent: generateMapAnnotations
+        )
+        .frame(height: 200)
+        .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+
+    }
+    
+    private func middleLocation() -> CLLocationCoordinate2D {
+        if let alsCell = alsCells.first,
+           let location = alsCell.location {
+            return toCL(location: location)
         }
-        return nil
+        if let tweakCell = tweakCells.first,
+           let location = tweakCell.location {
+            return toCL(location: location)
+        }
+        return CLLocationCoordinate2D(
+            latitude: 49.8726737,
+            longitude: 8.6516291
+        )
     }
     
     private func concatFetchedCells() -> [Cell] {
@@ -117,8 +144,9 @@ struct CellDetailsView: View {
     private func generateMapAnnotations(cell: Cell) -> MapAnnotation<AnyView> {
         if let alsCell = cell as? ALSCell {
             return CellTowerIcon.asAnnotation(cell: alsCell)
-        } else if let tweakCell = cell as? TweakCell {
-            return MapAnnotation(coordinate: toCL(location: tweakCell.location!)) {
+        } else if let tweakCell = cell as? TweakCell,
+                  let location = tweakCell.location {
+            return MapAnnotation(coordinate: toCL(location: location)) {
                 AnyView(Circle()
                     .size(CGSize(width: 10, height: 10))
                     .foregroundColor(.blue)
@@ -127,22 +155,10 @@ struct CellDetailsView: View {
             }
         } else {
             return MapAnnotation(coordinate: CLLocationCoordinate2D(), content: {
-                AnyView(Text(""))
+                AnyView(EmptyView())
             })
         }
 
-    }
-    
-    private func cellStatusDescription() -> String {
-        if cell is ALSCell {
-            return "Verified"
-        } else if let tweakCell = cell as? TweakCell {
-            if tweakCell.status != nil, let status = CellStatus(rawValue: tweakCell.status!) {
-                return status.humanDescription()
-            }
-        }
-        
-        return "Unkown"
     }
     
     private func toCL(location: Location) -> CLLocationCoordinate2D {
@@ -151,7 +167,7 @@ struct CellDetailsView: View {
             longitude: location.longitude
         )
     }
-
+    
 }
 
 private struct CellDetailsRows: View {

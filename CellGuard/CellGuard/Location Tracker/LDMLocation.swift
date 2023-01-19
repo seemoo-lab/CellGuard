@@ -31,7 +31,7 @@ struct LDMLocation {
     
     var timestamp: Date?
     
-    func applyTo(location: Location) {
+    func applyTo(location: UserLocation) {
         location.latitude = self.coordinateLatitude ?? 0
         location.longitude = self.coordinateLongitude ?? 0
         location.horizontalAccuracy = self.horizontalAccuracy ?? 0

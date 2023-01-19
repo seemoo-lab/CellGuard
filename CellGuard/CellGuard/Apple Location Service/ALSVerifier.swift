@@ -70,7 +70,7 @@ struct ALSVerifier {
         
         // Notify the completion handler
         if timeResult == .timedOut {
-            Self.logger.warning("Fetch operation for \(n) tweak timed out after \(n * 3)s")
+            Self.logger.warning("Fetch operation for \(n) tweak cells timed out after \(n * 3)s")
             completion(ALSVerifierError.timeout(seconds: n * 3))
         } else {
             Self.logger.debug("Checked the verification status of \(n) tweak cells")

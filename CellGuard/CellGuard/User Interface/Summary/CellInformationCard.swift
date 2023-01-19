@@ -13,12 +13,27 @@ struct CellInformationCard: View {
     let dateFormatter = RelativeDateTimeFormatter()
     let cell: TweakCell
     
+    @FetchRequest private var alsCells: FetchedResults<ALSCell>
+    @FetchRequest private var tweakCells: FetchedResults<TweakCell>
+    
     private let techFormatter: CellTechnologyFormatter
     
     init(cell: TweakCell) {
         self.cell = cell
         // TODO: Ensure that
         self.techFormatter = CellTechnologyFormatter.from(technology: cell.technology)
+        
+        self._alsCells = FetchRequest(
+            sortDescriptors: [NSSortDescriptor(keyPath: \ALSCell.imported, ascending: true)],
+            predicate: PersistenceController.shared.sameCellPredicate(cell: cell),
+            animation: .default
+        )
+        self._tweakCells = FetchRequest(
+            sortDescriptors: [NSSortDescriptor(keyPath: \TweakCell.collected, ascending: true)],
+            predicate: PersistenceController.shared.sameCellPredicate(cell: cell),
+            animation: .default
+        )
+
     }
     
     var body: some View {
@@ -65,8 +80,8 @@ struct CellInformationCard: View {
             }
             .padding(EdgeInsets(top: 5, leading: 20, bottom: cell.location == nil ? 25 : 10, trailing: 20))
             
-            if cell.location != nil {
-                CellInformationMap(cell: cell)
+            if !alsCells.isEmpty || !tweakCells.isEmpty {
+                CellDetailsMap(alsCells: alsCells, tweakCells: tweakCells)
                     .frame(height: 200)
             }
         }
@@ -129,31 +144,6 @@ private struct CoordinateIdentifable: Identifiable {
     }
 }
 
-private struct CellInformationMap: View {
-    
-    let cell: Cell
-    
-    var body: some View {
-        Map(
-            coordinateRegion: .constant(region),
-            interactionModes: MapInteractionModes(),
-            showsUserLocation: true,
-            annotationItems: [CoordinateIdentifable(0)],
-            annotationContent: { _ in CellTowerIcon.asAnnotation(cell: cell) }
-        )
-    }
-    
-    var region: MKCoordinateRegion {
-        let location = cell.location!
-        
-        return MKCoordinateRegion(
-            center: CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude),
-            span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
-        )
-    }
-    
-}
-
 struct CellInformation_Previews: PreviewProvider {
     static var previews: some View {
         CellInformationCard(cell: exampleCell())
@@ -167,7 +157,7 @@ struct CellInformation_Previews: PreviewProvider {
     private static func exampleCell() -> TweakCell {
         let context = PersistenceController.preview.container.viewContext
         
-        let location = Location(context: context)
+        let location = UserLocation(context: context)
         location.latitude = 49.8726737
         location.longitude = 8.6516291
         location.horizontalAccuracy = 2

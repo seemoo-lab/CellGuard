@@ -46,10 +46,11 @@ struct MapView: View {
     }
 }
 
+// TODO: Allow to scale elements
 struct CellTowerIcon: View {
-    let cell: Cell
+    let cell: ALSCell
     
-    private init(cell: Cell) {
+    private init(cell: ALSCell) {
         self.cell = cell
     }
     
@@ -82,7 +83,7 @@ struct CellTowerIcon: View {
         }
     }
     
-    public static func asAnnotation(cell: Cell) -> MapAnnotation<AnyView> {
+    public static func asAnnotation(cell: ALSCell) -> MapAnnotation<AnyView> {
         return MapAnnotation(coordinate: CLLocationCoordinate2D(
             latitude: cell.location?.latitude ?? 0,
             longitude: cell.location?.longitude ?? 0
@@ -91,7 +92,7 @@ struct CellTowerIcon: View {
         }
     }
     
-    public static func asAnnotation<Destination: View>(cell: Cell, destination: () -> Destination)
+    public static func asAnnotation<Destination: View>(cell: ALSCell, destination: () -> Destination)
         -> MapAnnotation<NavigationLink<CellTowerIcon, Destination>> {
         return MapAnnotation(coordinate: CLLocationCoordinate2D(
             latitude: cell.location?.latitude ?? 0,

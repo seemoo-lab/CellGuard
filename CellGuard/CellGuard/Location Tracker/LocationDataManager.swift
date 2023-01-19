@@ -60,9 +60,7 @@ class LocationDataManager : NSObject, CLLocationManagerDelegate, ObservableObjec
             // If the dialogue is show, the app is in background.
             // If not, we open the app settings.
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
-                print("After 0.5s: \(BackgroundState.shared.inBackground)")
                 if !BackgroundState.shared.inBackground {
-                    print("Alright")
                     self.authorizationCompletion?(false)
                     self.authorizationCompletion = nil
                 }
@@ -94,7 +92,7 @@ class LocationDataManager : NSObject, CLLocationManagerDelegate, ObservableObjec
         let importLocations = locations.map { LDMLocation(from: $0) }
         
         do {
-            try PersistenceController.shared.importLocations(from: importLocations)
+            try PersistenceController.shared.importUserLocations(from: importLocations)
         } catch {
             Self.logger.warning("Can't save locations: \(error)\nLocations: \(locations)")
         }

@@ -77,12 +77,12 @@ final class ALSVerifierTests: XCTestCase {
         }
     }
     
-    private func assertALSCellCount(assert: @escaping (Int) -> ()) {
+    private func assertALSCellCount(assert: @escaping ([ALSCell]) -> ()) {
         let alsFetchRequest = NSFetchRequest<ALSCell>()
         alsFetchRequest.entity = ALSCell.entity()
         do {
             let alsCells = try alsFetchRequest.execute()
-            assert(alsCells.count)
+            assert(alsCells)
         } catch {
             XCTFail(error.localizedDescription)
         }
@@ -102,8 +102,11 @@ final class ALSVerifierTests: XCTestCase {
         try await verify(n: 1)
         
         context.performAndWait {
-            assertALSCellCount(assert: { count in
-                XCTAssertGreaterThan(count, 0)
+            assertALSCellCount(assert: { cells in
+                XCTAssertGreaterThan(cells.count, 0)
+                cells.forEach { cell in
+                    XCTAssertNotNil(cell.location)
+                }
             })
             
             let tweakFetchRequest = NSFetchRequest<TweakCell>()
@@ -120,8 +123,6 @@ final class ALSVerifierTests: XCTestCase {
             }
 
         }
-        
-
     }
     
     func testVerifyFail() async throws {
@@ -132,8 +133,8 @@ final class ALSVerifierTests: XCTestCase {
         try await verify(n: 1)
         
         context.performAndWait {
-            assertALSCellCount(assert: { count in
-                XCTAssertEqual(count, 0)
+            assertALSCellCount(assert: { cells in
+                XCTAssertEqual(cells.count, 0)
             })
             
             let tweakFetchRequest = NSFetchRequest<TweakCell>()
@@ -162,8 +163,11 @@ final class ALSVerifierTests: XCTestCase {
         try await verify(n: 5)
         
         context.performAndWait {
-            assertALSCellCount(assert: { count in
-                XCTAssertGreaterThan(count, 0)
+            assertALSCellCount(assert: { cells in
+                XCTAssertGreaterThan(cells.count, 0)
+                cells.forEach { cell in
+                    XCTAssertNotNil(cell.location)
+                }
             })
             
             do {
@@ -208,9 +212,12 @@ final class ALSVerifierTests: XCTestCase {
         
         var firstALSCount = 0
         context.performAndWait {
-            assertALSCellCount(assert: { count in
-                XCTAssertGreaterThan(count, 0)
-                firstALSCount = count
+            assertALSCellCount(assert: { cells in
+                XCTAssertGreaterThan(cells.count, 0)
+                firstALSCount = cells.count
+                cells.forEach { cell in
+                    XCTAssertNotNil(cell.location)
+                }
             })
             
             let tweakFetchRequest = NSFetchRequest<TweakCell>()
@@ -233,8 +240,8 @@ final class ALSVerifierTests: XCTestCase {
         try await verify(n: 1)
         
         context.performAndWait {
-            assertALSCellCount(assert: { count in
-                XCTAssertEqual(count, firstALSCount)
+            assertALSCellCount(assert: { cells in
+                XCTAssertEqual(cells.count, firstALSCount)
             })
             
             let tweakFetchRequest = NSFetchRequest<TweakCell>()
