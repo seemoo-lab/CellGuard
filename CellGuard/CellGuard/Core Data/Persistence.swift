@@ -160,6 +160,10 @@ class PersistenceController {
     
     /// Uses `NSBatchInsertRequest` (BIR) to import ALS cell properties into the Core Data store on a private queue.
     func importALSCells(from cells: [ALSQueryCell], source: NSManagedObjectID) throws {
+        // TODO: Add a constraint for technology,country,network,area,cell
+        // Apparently this is not possible with parent entities. ):
+        // See: https://developer.apple.com/forums/thread/36775
+        
         let taskContext = newTaskContext()
         
         taskContext.name = "importContext"
@@ -173,6 +177,21 @@ class PersistenceController {
             // We can't use a BatchInsertRequest because it doesn't support relationships
             // See: https://developer.apple.com/forums/thread/676651
             cells.forEach { queryCell in
+                // Don't add the check if it already exists
+                let existFetchRequets = NSFetchRequest<ALSCell>()
+                existFetchRequets.entity = ALSCell.entity()
+                existFetchRequets.predicate = sameCellPredicate(queryCell: queryCell)
+                do {
+                    // TODO: Update the date of existing cell
+                    if try taskContext.count(for: existFetchRequets) > 0 {
+                        return
+                    }
+                } catch {
+                    self.logger.warning("Can't check if ALS cells (\(queryCell)) already exists: \(error)")
+                    return
+                }
+                
+                // The cell don't exists, so we can add it
                 let cell = ALSCell(context: taskContext)
                 cell.imported = importedDate
                 queryCell.applyTo(alsCell: cell)
@@ -360,6 +379,14 @@ class PersistenceController {
         )
     }
     
+    func sameCellPredicate(queryCell cell: ALSQueryCell) -> NSPredicate {
+        return NSPredicate(
+            format: "technology = %@ and country = %@ and network = %@ and area = %@ and cell = %@",
+            cell.technology.rawValue, cell.country as NSNumber, cell.network as NSNumber,
+            cell.area as NSNumber, cell.cell as NSNumber
+        )
+    }
+    
     func storeCellStatus(cellId: NSManagedObjectID, status: CellStatus) throws {
         let taskContext = newTaskContext()
         
@@ -422,6 +449,7 @@ class PersistenceController {
             
             let calendar = Calendar.current
             
+            // TODO: Check if this does work correctly
             let min = cells.min { $0.collected! < $1.collected! }?.collected
             let max = cells.max { $0.collected! < $1.collected! }?.collected
             
@@ -431,7 +459,7 @@ class PersistenceController {
             // Fetch locations in date range with a margin of one day
             let locationFetchRequest = NSFetchRequest<UserLocation>()
             locationFetchRequest.entity = UserLocation.entity()
-            locationFetchRequest.predicate = NSPredicate(format: "import > %@ and imported < %@ and collected != nil", minDay as NSDate, maxDay as NSDate)
+            locationFetchRequest.predicate = NSPredicate(format: "imported > %@ and imported < %@ and collected != nil", minDay as NSDate, maxDay as NSDate)
             
             let locations: [UserLocation]
             do {
@@ -448,7 +476,13 @@ class PersistenceController {
             }
             
             // Assign each tweak cell location with min (tweakCell.collected - location.timestamp) which is greater or equal to zero
-            let collectedLocationMap: [Date : UserLocation] = Dictionary(uniqueKeysWithValues: locations.map { ($0.collected!, $0) })
+            // TODO: Prevent duplicate keys
+            var seenDates = Set<Date>()
+            let uniqueLocationsKV = locations
+                .filter { seenDates.insert( $0.collected!).inserted }
+                .map { ($0.collected!, $0) }
+            
+            let collectedLocationMap: [Date : UserLocation] = Dictionary(uniqueKeysWithValues: uniqueLocationsKV)
             let collectedDates = collectedLocationMap.keys
             
             cells.forEach { cell in

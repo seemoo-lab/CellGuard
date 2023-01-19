@@ -103,18 +103,26 @@ struct CellDetailsMap: View {
     let alsCells: FetchedResults<ALSCell>
     let tweakCells: FetchedResults<TweakCell>
     
+    @State private var coordinateRegion: MKCoordinateRegion = MKCoordinateRegion(
+        center: CLLocationCoordinate2D(latitude: 49.8726737, longitude: 8.6516291),
+        span: MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02)
+    )
+    
     var body: some View {
         Map(
-            coordinateRegion: .constant(MKCoordinateRegion(
-                center: middleLocation(),
-                span: MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02))),
+            coordinateRegion: $coordinateRegion,
             showsUserLocation: true,
             annotationItems: concatFetchedCells(),
             annotationContent: generateMapAnnotations
         )
         .frame(height: 200)
         .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
-
+        .onAppear {
+            coordinateRegion = MKCoordinateRegion(
+                center: middleLocation(),
+                span: MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02)
+            )
+        }
     }
     
     private func middleLocation() -> CLLocationCoordinate2D {

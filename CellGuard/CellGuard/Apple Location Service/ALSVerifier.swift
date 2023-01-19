@@ -66,14 +66,14 @@ struct ALSVerifier {
         }
         
         // Wait for all tasks to finish with a timeout of n * 3 seconds
-        let timeResult = group.wait(wallTimeout: DispatchWallTime.now() + DispatchTimeInterval.seconds(n * 3))
+        let timeResult = group.wait(wallTimeout: DispatchWallTime.now() + DispatchTimeInterval.seconds(queryCells.count * 3))
         
         // Notify the completion handler
         if timeResult == .timedOut {
-            Self.logger.warning("Fetch operation for \(n) tweak cells timed out after \(n * 3)s")
+            Self.logger.warning("Fetch operation for \(queryCells.count) tweak cells timed out after \(queryCells.count * 3)s")
             completion(ALSVerifierError.timeout(seconds: n * 3))
         } else {
-            Self.logger.debug("Checked the verification status of \(n) tweak cells")
+            Self.logger.debug("Checked the verification status of \(queryCells.count) tweak cells")
             completion(nil)
         }
     }

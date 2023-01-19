@@ -22,17 +22,16 @@ struct MapView: View {
     )
     private var alsCells: FetchedResults<ALSCell>
     
-    @State
-    private var userTrackingMode = MapUserTrackingMode.follow
+    @State private var userTrackingMode = MapUserTrackingMode.follow
+    @State private var coordinateRegion: MKCoordinateRegion = MKCoordinateRegion(
+        center: CLLocationCoordinate2D(latitude: 49.8726737, longitude: 8.6516291),
+        span: MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02)
+    )
     
     var body: some View {
-        let location = locationManager.lastLocation ?? CLLocation(latitude: 49.8726737, longitude: 8.6516291)
         NavigationView {
             Map(
-                coordinateRegion: .constant(
-                    MKCoordinateRegion(
-                        center: location.coordinate,
-                        span: MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02))),
+                coordinateRegion: $coordinateRegion,
                 showsUserLocation: true,
                 userTrackingMode: $userTrackingMode,
                 annotationItems: alsCells,
@@ -42,6 +41,13 @@ struct MapView: View {
                     }
                 }
             ).ignoresSafeArea()
+        }.onAppear {
+            let location = locationManager.lastLocation ?? CLLocation(latitude: 49.8726737, longitude: 8.6516291)
+            
+            coordinateRegion = MKCoordinateRegion(
+                center: location.coordinate,
+                span: MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02)
+            )
         }
     }
 }

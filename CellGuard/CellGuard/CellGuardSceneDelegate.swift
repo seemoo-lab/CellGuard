@@ -28,6 +28,8 @@ class CellGuardSceneDelegate: NSObject, UIWindowSceneDelegate, ObservableObject 
     
     func sceneDidEnterBackground(_ scene: UIScene) {
         scheduleAppRefresh()
+        
+        // TODO: Disable exact location measurement
     }
     
     private func scheduleAppRefresh() {

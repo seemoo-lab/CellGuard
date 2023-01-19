@@ -129,11 +129,15 @@ struct LevelListView: View {
         
         // Embed in a VStack to make items collapsible:
         VStack {
-            List {
-                ForEach(itemsGroupedByDay, id: \.key) { key, cells in
-                    Section(header: Text(key, formatter: mediumDateFormatter)) {
-                        ForEach(removeDuplicates(cells: cells, key: { level.extractValue(cell: $0) }), id: \.self) { cell in
-                            ListBodyElement(level: level, selectors: selectors, cell: cell)
+            if itemsGroupedByDay.isEmpty {
+                Text("Nothing collected so far")
+            } else {
+                List {
+                    ForEach(itemsGroupedByDay, id: \.key) { key, cells in
+                        Section(header: Text(key, formatter: mediumDateFormatter)) {
+                            ForEach(removeDuplicates(cells: cells, key: { level.extractValue(cell: $0) }), id: \.self) { cell in
+                                ListBodyElement(level: level, selectors: selectors, cell: cell)
+                            }
                         }
                     }
                 }

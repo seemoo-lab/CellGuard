@@ -78,20 +78,26 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
     }
     
     private func startTasks() {
+        let collector = CCTCollector(client: CCTClient(queue: .global(qos: .userInitiated)))
+        
         // Schedule a timer to continously poll the latest cells while the app is active
         let collectTimer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { timer in
-            let collector = CCTCollector(client: CCTClient(queue: .global(qos: .userInitiated)))
-            
             collector.collectAndStore { error in
                 if let error = error {
                     Self.logger.warning("Failed to collect & store cells in scheduled timer: \(error)")
-                } else {
-                    // TODO: Assign locations
                 }
             }
         }
         // We allow the timer a high tolerance of 50% as our collector is not time critical
         collectTimer.tolerance = 30
+        // We also start a task to instantly fetch te latest cells
+        Task {
+            collector.collectAndStore { error in
+                if let error = error {
+                    Self.logger.warning("Failed to collect & store cells in initialization request: \(error)")
+                }
+            }
+        }
                 
         let checkTimer = Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { timer in
             ALSVerifier().verify(n: 10)
