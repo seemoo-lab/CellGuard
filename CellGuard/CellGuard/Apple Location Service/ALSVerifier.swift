@@ -23,9 +23,14 @@ struct ALSVerifier {
     private let persistence = PersistenceController.shared
     private let client = ALSClient()
     
+    func verify(n: Int) {
+        self.verify(n: n) { _ in }
+    }
+    
     func verify(n: Int, completion: (Error?) -> Void) {
         Self.logger.debug("Verifing at max \(n) tweak cell(s)...")
         
+        // Fetch n of the latest unverified cells
         let queryCells: [NSManagedObjectID : ALSQueryCell]
         do {
             queryCells = try persistence.fetchLatestUnverfiedTweakCells(count: n)
@@ -36,12 +41,21 @@ struct ALSVerifier {
         
         Self.logger.debug("Selected \(queryCells.count) tweak cell(s) for verification")
         
-        // TODO: Search for query cells in database first before requesting?
-        
         // We're using a dispatch group to provide a callback when all operations are finished
         let group = DispatchGroup()
         queryCells.forEach { objectID, queryCell in
+            // Signal the wait group to incrase its size by one
             group.enter()
+            
+            // Try to find the coresponding ALS cell in our database
+            if let existing = try? persistence.assignExistingALSIfPossible(to: objectID), existing {
+                Self.logger.info("Verified tweak cell using the local ALS database: \(queryCell)")
+                group.leave()
+                return
+            }
+            
+            // If we can't find the cell in our database, we'll query ALS
+            Self.logger.info("Requesting tweak cell from the remote ALS database: \(queryCell)")
             client.requestCells(
                 origin: queryCell,
                 completion: { result in
@@ -51,7 +65,10 @@ struct ALSVerifier {
             )
         }
         
+        // Wait for all tasks to finish with a timeout of n * 3 seconds
         let timeResult = group.wait(wallTimeout: DispatchWallTime.now() + DispatchTimeInterval.seconds(n * 3))
+        
+        // Notify the completion handler
         if timeResult == .timedOut {
             Self.logger.warning("Fetch operation for \(n) tweak timed out after \(n * 3)s")
             completion(ALSVerifierError.timeout(seconds: n * 3))

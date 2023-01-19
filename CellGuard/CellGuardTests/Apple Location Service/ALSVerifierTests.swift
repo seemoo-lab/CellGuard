@@ -198,5 +198,61 @@ final class ALSVerifierTests: XCTestCase {
 
         }
     }
+    
+    func testVerifyExisting() async throws {
+        let context = PersistenceController.shared.newTaskContext()
+        
+        createTweakCell(context: context, area: 46452, cell: 15669002)
+        
+        try await verify(n: 1)
+        
+        var firstALSCount = 0
+        context.performAndWait {
+            assertALSCellCount(assert: { count in
+                XCTAssertGreaterThan(count, 0)
+                firstALSCount = count
+            })
+            
+            let tweakFetchRequest = NSFetchRequest<TweakCell>()
+            tweakFetchRequest.entity = TweakCell.entity()
+            do {
+                let tweakCells = try tweakFetchRequest.execute()
+                XCTAssertEqual(tweakCells.count, 1)
+                
+                let tweakCell = tweakCells.first!
+                XCTAssertNotNil(tweakCell.verification)
+                XCTAssertEqual(tweakCell.status, CellStatus.verified.rawValue)
+            } catch {
+                XCTFail(error.localizedDescription)
+            }
+
+        }
+        
+        createTweakCell(context: context, area: 46452, cell: 15669002)
+        
+        try await verify(n: 1)
+        
+        context.performAndWait {
+            assertALSCellCount(assert: { count in
+                XCTAssertEqual(count, firstALSCount)
+            })
+            
+            let tweakFetchRequest = NSFetchRequest<TweakCell>()
+            tweakFetchRequest.entity = TweakCell.entity()
+            do {
+                let tweakCells = try tweakFetchRequest.execute()
+                XCTAssertEqual(tweakCells.count, 2)
+                
+                tweakCells.forEach { tweakCell in
+                    XCTAssertNotNil(tweakCell.verification)
+                    XCTAssertEqual(tweakCell.status, CellStatus.verified.rawValue)
+                }
+            } catch {
+                XCTFail(error.localizedDescription)
+            }
+
+        }
+
+    }
 
 }

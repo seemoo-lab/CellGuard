@@ -166,17 +166,16 @@ class PersistenceController {
         var success = false
         
         taskContext.performAndWait {
-            var index = 0
-            let total = cells.count
-            
-            let importedDate = Date()
-            
             guard let tweakCell = try? taskContext.existingObject(with: source) as? TweakCell else {
                 self.logger.warning("Can't get tweak cell (\(source)) from its object ID")
                 return
             }
             tweakCell.status = CellStatus.verified.rawValue
 
+            // Build the batch insert request for ALS cells
+            var index = 0
+            let total = cells.count
+            let importedDate = Date()
             
             let batchInsertRequest = NSBatchInsertRequest(entity: ALSCell.entity(), managedObjectHandler: { cell in
                 guard index < total else { return true }
@@ -190,44 +189,39 @@ class PersistenceController {
                 return false
             })
             
+            // Execute the batch insert request
             if let fetchResult = try? taskContext.execute(batchInsertRequest),
                let batchInsertResult = fetchResult as? NSBatchInsertResult {
-                success = batchInsertResult.result as? Bool ?? false
-                if !success {
+                if !(batchInsertResult.result as? Bool ?? false) {
+                    logger.warning("Failed to execute batch import request for ALS cells: \(batchInsertResult)")
                     return
                 }
             }
-            
-            let verifyFetchRequest = NSFetchRequest<ALSCell>()
-            verifyFetchRequest.entity = ALSCell.entity()
-            verifyFetchRequest.fetchLimit = 1
-            verifyFetchRequest.predicate = NSPredicate(
-                format: "technology = %@ and country = %@ and network = %@ and area = %@ and cell = %@",
-                tweakCell.technology ?? "" as NSString, tweakCell.country as NSNumber, tweakCell.network as NSNumber,
-                tweakCell.area as NSNumber, tweakCell.cell as NSNumber)
-            
+
+            // Fetch the verification cell for the tweak cell and assign it
             do {
-                let verifyCells = try verifyFetchRequest.execute()
-                if let verifyCell = verifyCells.first {
+                let verifyCell = try fetchALSCell(from: tweakCell, context: taskContext)
+                if let verifyCell = verifyCell {
                     tweakCell.verification = verifyCell
                 } else {
                     self.logger.warning("Can't assign a verification cell for tweak cell: \(tweakCell)")
+                    return
                 }
             } catch {
                 self.logger.warning("Can't execute a fetch request for getting a verfication cell for tweak cell: \(tweakCell)")
+                return
             }
             
-            if success {
-                do {
-                    try taskContext.save()
-                } catch {
-                    success = false
-                }
+            // Save the task context
+            do {
+                try taskContext.save()
+                success = true
+            } catch {
+                self.logger.warning("Can't save tweak cell with successful verification: \(error)")
             }
         }
         
         if !success {
-            logger.debug("Failed to execute batch import request for ALS cells.")
             throw PersistenceError.batchInsertError
         }
         
@@ -294,18 +288,87 @@ class PersistenceController {
         }
         
         if let fetchError = fetchError {
-            logger.debug("Failed to fetch the latest \(count) unverified cells: \(fetchError)")
+            logger.warning("Can't to fetch the latest \(count) unverified cells: \(fetchError)")
             throw fetchError
         }
         
         return queryCells
     }
     
-    private func queryCell(from cell: TweakCell) -> ALSQueryCell {
-        let technology = ALSTechnology(rawValue: cell.technology ?? "LTE") ?? .LTE
+    func assignExistingALSIfPossible(to tweakCellID: NSManagedObjectID) throws -> Bool {
+        let taskContext = newTaskContext()
         
+        taskContext.name = "updateContext"
+        taskContext.transactionAuthor = "assignExistingALSIfPossible"
+        
+        var fetchError: Error?
+        var found = false
+        
+        taskContext.performAndWait {
+            do {
+                guard let tweakCell = taskContext.object(with: tweakCellID) as? TweakCell else {
+                    return
+                }
+                
+                guard let alsCell = try fetchALSCell(from: tweakCell, context: taskContext) else {
+                    return
+                }
+                
+                found = true
+                
+                tweakCell.status = CellStatus.verified.rawValue
+                tweakCell.verification = alsCell
+                
+                try taskContext.save()
+            } catch {
+                fetchError = error
+            }
+        }
+        
+        if let fetchError = fetchError {
+            logger.warning(
+                "Can't fetch or save for assinging an existing ALS cell to a tweak cell (\(tweakCellID) if possible: \(fetchError)")
+            throw fetchError
+        }
+        
+        return found
+    }
+    
+    private func fetchALSCell(from tweakCell: TweakCell, context: NSManagedObjectContext) throws -> ALSCell? {
+        let fetchRequest = NSFetchRequest<ALSCell>()
+        fetchRequest.entity = ALSCell.entity()
+        fetchRequest.fetchLimit = 1
+        fetchRequest.predicate = NSPredicate(
+            format: "technology = %@ and country = %@ and network = %@ and area = %@ and cell = %@",
+            alsTechnology(tweakTechnology: tweakCell.technology).rawValue as NSString,
+            tweakCell.country as NSNumber, tweakCell.network as NSNumber,
+            tweakCell.area as NSNumber, tweakCell.cell as NSNumber
+        )
+        
+        do {
+            let result = try fetchRequest.execute()
+            return result.first
+        } catch {
+            self.logger.warning("Can't fetch ALS cell for tweak cell (\(tweakCell)): \(error)")
+            throw error
+        }
+    }
+    
+    private func alsTechnology(tweakTechnology: String?) -> ALSTechnology {
+        guard let tweakTechnology = tweakTechnology?.uppercased() else {
+            return .LTE
+        }
+        
+        if tweakTechnology == "UMTS" {
+            return .LTE
+        }
+        
+        return ALSTechnology(rawValue: tweakTechnology) ?? .LTE
+    }
+    
+    private func queryCell(from cell: TweakCell) -> ALSQueryCell {
         return ALSQueryCell(
-            technology: technology,
+            technology: alsTechnology(tweakTechnology: cell.technology),
             country: cell.country,
             network: cell.network,
             area: cell.area,
@@ -314,13 +377,17 @@ class PersistenceController {
     }
     
     func storeCellStatus(cellId: NSManagedObjectID, status: CellStatus) throws {
-        let context = newTaskContext()
+        let taskContext = newTaskContext()
+        
+        taskContext.name = "updateContext"
+        taskContext.transactionAuthor = "storeCellStatus"
+        
         var saveError: Error? = nil
-        context.performAndWait {
-            if let tweakCell = context.object(with: cellId) as? TweakCell {
+        taskContext.performAndWait {
+            if let tweakCell = taskContext.object(with: cellId) as? TweakCell {
                 tweakCell.status = status.rawValue
                 do {
-                    try context.save()
+                    try taskContext.save()
                 } catch {
                     self.logger.warning("Can't save tweak cell (\(tweakCell)) with status == \(status.rawValue): \(error)")
                     saveError = error

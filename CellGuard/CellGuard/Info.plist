@@ -5,7 +5,7 @@
 	<key>BGTaskSchedulerPermittedIdentifiers</key>
 	<array>
 		<string>de.tu-darmstadt.seemoo.CellGuard.refresh.cells</string>
-		<string>de.tu-darmstadt.seemoo.CellGuard.processing.als</string>
+		<string>de.tu-darmstadt.seemoo.CellGuard.processing.verify</string>
 	</array>
 	<key>MKDirectionsApplicationSupportedModes</key>
 	<array/>

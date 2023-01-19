@@ -17,7 +17,7 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
     // https://holyswift.app/new-backgroundtask-in-swiftui-and-how-to-test-it/
     
     static let cellRefreshTaskIdentifier = "de.tu-darmstadt.seemoo.CellGuard.refresh.cells"
-    static let alsRequestTaskIdentifier = "de.tu-darmstadt.seemoo.CellGuard.processing.als"
+    static let verifyTaskIdentifier = "de.tu-darmstadt.seemoo.CellGuard.processing.verify"
     
     private static let logger = Logger(
         subsystem: Bundle.main.bundleIdentifier!,
@@ -72,8 +72,8 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
             }
         }
         
-        BGTaskScheduler.shared.register(forTaskWithIdentifier: Self.alsRequestTaskIdentifier, using: nil) { task in
-            // TODO: Verify in larger batches
+        BGTaskScheduler.shared.register(forTaskWithIdentifier: Self.verifyTaskIdentifier, using: nil) { task in
+            ALSVerifier().verify(n: 100)
         }
     }
     
@@ -94,11 +94,13 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
         collectTimer.tolerance = 30
                 
         let checkTimer = Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { timer in
-            ALSVerifier().verify(n: 10) { _ in }
+            ALSVerifier().verify(n: 10)
         }
         // We allow only allow a lower tolerance for check timer as it is executed in short intervals
         checkTimer.tolerance = 1
 
+        // TODO: Add task to reguarly delete old ALS cells (>= 90 days) to force a refresh
+        // -> Then, also reset the status of the associated tweak cells
     }
     
 }
