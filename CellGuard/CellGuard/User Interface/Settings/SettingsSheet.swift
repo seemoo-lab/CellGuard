@@ -41,6 +41,8 @@ struct SettingsSheet: View {
     )}
     
     private var isPermissionLocalNetwork: Binding<Bool> { Binding(
+        // TODO: Sometimes crashes here
+        // Thread 1: Fatal error: No ObservableObject of type LocalNetworkAuthorization found. A View.environmentObject(_:) for LocalNetworkAuthorization may be missing as an ancestor of this view.
         get: { networkAuthorization.lastResult ?? false },
         set: { value in
             if value {
@@ -122,6 +124,7 @@ struct SettingsSheet: View {
                     }
                 }
             }
+            .listStyle(.insetGrouped)
             .navigationTitle(Text("Settings"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -155,7 +158,7 @@ struct SettingsSheet_Previews: PreviewProvider {
         SettingsSheet {
             // doing nothing
         }
-        .environmentObject(LocationDataManager(extact: true))
+        .environmentObject(LocationDataManager.shared)
         .environmentObject(LocalNetworkAuthorization(checkNow: true))
         .environmentObject(CGNotificationManager.shared)
     }

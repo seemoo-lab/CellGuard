@@ -24,12 +24,15 @@ class CellGuardSceneDelegate: NSObject, UIWindowSceneDelegate, ObservableObject 
     func sceneDidBecomeActive(_ scene: UIScene) {
         // Update the notification permission when the app is opened again
         CGNotificationManager.shared.updateAuthorizationStatus()
+        LocationDataManager.shared.enterForeground()
     }
     
     func sceneDidEnterBackground(_ scene: UIScene) {
+        // Schedule the background refresh & processing tasks
         scheduleAppRefresh()
         
-        // TODO: Disable exact location measurement
+        // Disable exact location measurement when the app moves in the background
+        LocationDataManager.shared.enterBackgorund()
     }
     
     private func scheduleAppRefresh() {

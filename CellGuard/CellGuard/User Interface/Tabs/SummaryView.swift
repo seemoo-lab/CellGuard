@@ -101,7 +101,7 @@ struct SummaryView_Previews: PreviewProvider {
             // doing nothing
         }
         .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
-        .environmentObject(LocationDataManager(extact: true))
+        .environmentObject(LocationDataManager.shared)
         .environmentObject(LocalNetworkAuthorization(checkNow: true))
         .environmentObject(CGNotificationManager.shared)
     }

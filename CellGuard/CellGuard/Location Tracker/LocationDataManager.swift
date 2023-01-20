@@ -16,23 +16,22 @@ class LocationDataManager : NSObject, CLLocationManagerDelegate, ObservableObjec
         category: String(describing: LocationDataManager.self)
     )
     
+    public static var shared = LocationDataManager()
+    
     private let locationManager = CLLocationManager()
     private var authorizationCompletion: ((Bool) -> Void)?
-    
-    let extact: Bool
+    private var background = true
     
     @Published var authorizationStatus: CLAuthorizationStatus = .notDetermined
     @Published var lastLocation: CLLocation?
     
     // TODO: Initialize in app
-    init(extact: Bool) {
-        self.extact = extact
-        
+    private override init() {
         super.init()
         
         locationManager.delegate = self
         locationManager.allowsBackgroundLocationUpdates = true
-        locationManager.showsBackgroundLocationIndicator = true
+        locationManager.showsBackgroundLocationIndicator = false
         // Properties that could be interesting
         // https://developer.apple.com/documentation/corelocation/cllocationmanager/1620553-pauseslocationupdatesautomatical
         // https://developer.apple.com/documentation/corelocation/cllocationmanager/1620567-activitytype
@@ -111,7 +110,7 @@ class LocationDataManager : NSObject, CLLocationManagerDelegate, ObservableObjec
     }
     
     private func resumeLocationUpdates() {
-        if extact {
+        if !background {
             locationManager.startUpdatingLocation()
         }
         
@@ -131,5 +130,18 @@ class LocationDataManager : NSObject, CLLocationManagerDelegate, ObservableObjec
         default:
             return "unknwon (\(authorizationStatus.rawValue)"
         }
+    }
+    
+    func enterForeground() {
+        background = false
+        if locationManager.authorizationStatus == .authorizedAlways ||
+        locationManager.authorizationStatus == .authorizedWhenInUse {
+            locationManager.startUpdatingLocation()
+        }
+    }
+    
+    func enterBackgorund() {
+        background = true
+        locationManager.stopUpdatingLocation()
     }
 }

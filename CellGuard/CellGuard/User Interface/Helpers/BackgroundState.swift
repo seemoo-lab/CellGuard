@@ -19,6 +19,7 @@ class BackgroundState: ObservableObject {
     )
     
     @Published var inBackground = false
+    @Published var phase = ScenePhase.active
     
     private init() {
         
@@ -26,6 +27,7 @@ class BackgroundState: ObservableObject {
     
     func update(from phase: ScenePhase) {
         self.inBackground = phase != .active
+        self.phase = phase
         Self.logger.debug("Scene Phase Update: \(String(describing: phase)) -> inBackground = \(self.inBackground)")
     }
     

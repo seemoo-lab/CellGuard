@@ -118,6 +118,6 @@ struct MapView_Previews: PreviewProvider {
     static var previews: some View {
         MapView()
             .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
-            .environmentObject(LocationDataManager(extact: true))
+            .environmentObject(LocationDataManager.shared)
     }
 }

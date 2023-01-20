@@ -37,42 +37,27 @@ struct CellInformationCard: View {
     }
     
     var body: some View {
-        let status = CellStatus(rawValue: cell.status ?? CellStatus.imported.rawValue)
-        
-        // TODO: Also display as card
         VStack {
             HStack {
                 Text("Active Cell")
                     .font(.title2)
                     .bold()
                 Spacer()
-                if status == .verified {
-                    Image(systemName: "lock.shield")
-                        .font(.title2)
-                        .foregroundColor(.green)
-                } else if status == .failed {
-                    Image(systemName: "exclamationmark.shield")
-                        .font(.title2)
-                        .foregroundColor(.red)
-                } else {
-                    ProgressView()
-                }
+                CellStatusIcon(text: cell.status)
             }
             .padding(EdgeInsets(top: 20, leading: 20, bottom: 10, trailing: 20))
             
             HStack {
                 CellInformationItem(title: techFormatter.country(), number: cell.country)
                 CellInformationItem(title: techFormatter.network(), number: cell.network)
-                // TODO: Adapt
                 CellInformationItem(title: techFormatter.area(), number: cell.area)
                 CellInformationItem(title: techFormatter.cell(), number: cell.cell)
             }
-            .padding(EdgeInsets(top: 5, leading: 20, bottom: 10, trailing: 20))
+            .padding(EdgeInsets(top: 5, leading: 15, bottom: 10, trailing: 15))
             
-            // TODO: Store correct bands
             HStack {
                 CellInformationItem(title: "Technology", text: cell.technology)
-                CellInformationItem(title: techFormatter.frequency(), number: cell.frequency)
+                // CellInformationItem(title: techFormatter.frequency(), number: cell.frequency)
                 CellInformationItem(
                     title: "Date",
                     text: dateFormatter.localizedString(for: cell.collected ?? cell.imported ?? Date(), relativeTo: Date())

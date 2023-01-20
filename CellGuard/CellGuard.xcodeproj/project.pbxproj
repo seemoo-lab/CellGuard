@@ -36,6 +36,8 @@
 		CF5EF9262978689B00C4F50A /* ALSVerifierTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5EF9252978689B00C4F50A /* ALSVerifierTests.swift */; };
 		CF5EF92829793F7500C4F50A /* TestDetection.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5EF92729793F7500C4F50A /* TestDetection.swift */; };
 		CF5EF92A2979B8D800C4F50A /* LocationSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5EF9292979B8D800C4F50A /* LocationSource.swift */; };
+		CFB51832297AD3C80006C690 /* CellJSONDataView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB51831297AD3C80006C690 /* CellJSONDataView.swift */; };
+		CFB51834297AEFA80006C690 /* CellStatusIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB51833297AEFA80006C690 /* CellStatusIcon.swift */; };
 		CFB8B2882963417B00503189 /* LocationDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB8B2872963417B00503189 /* LocationDataManager.swift */; };
 		CFB8B28A2963498200503189 /* CellGuardAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB8B2892963498200503189 /* CellGuardAppDelegate.swift */; };
 		CFB8B291296359CC00503189 /* CCTCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB8B290296359CC00503189 /* CCTCollector.swift */; };
@@ -102,6 +104,8 @@
 		CF5EF9252978689B00C4F50A /* ALSVerifierTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ALSVerifierTests.swift; sourceTree = "<group>"; };
 		CF5EF92729793F7500C4F50A /* TestDetection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestDetection.swift; sourceTree = "<group>"; };
 		CF5EF9292979B8D800C4F50A /* LocationSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationSource.swift; sourceTree = "<group>"; };
+		CFB51831297AD3C80006C690 /* CellJSONDataView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellJSONDataView.swift; sourceTree = "<group>"; };
+		CFB51833297AEFA80006C690 /* CellStatusIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellStatusIcon.swift; sourceTree = "<group>"; };
 		CFB8B2872963417B00503189 /* LocationDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationDataManager.swift; sourceTree = "<group>"; };
 		CFB8B2892963498200503189 /* CellGuardAppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellGuardAppDelegate.swift; sourceTree = "<group>"; };
 		CFB8B290296359CC00503189 /* CCTCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CCTCollector.swift; sourceTree = "<group>"; };
@@ -199,6 +203,8 @@
 			isa = PBXGroup;
 			children = (
 				CF0FDCC62969F8D300A6FFE2 /* CellDetailsView.swift */,
+				CFB51831297AD3C80006C690 /* CellJSONDataView.swift */,
+				CFB51833297AEFA80006C690 /* CellStatusIcon.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -497,7 +503,9 @@
 				CF2A1C222975DB8100E8B61C /* CellInformationCard.swift in Sources */,
 				CF0FDCC72969F8D300A6FFE2 /* CellDetailsView.swift in Sources */,
 				CF5EF92829793F7500C4F50A /* TestDetection.swift in Sources */,
+				CFB51832297AD3C80006C690 /* CellJSONDataView.swift in Sources */,
 				CF320F5529620B16009BAD18 /* CCTParser.swift in Sources */,
+				CFB51834297AEFA80006C690 /* CellStatusIcon.swift in Sources */,
 				CFB8B291296359CC00503189 /* CCTCollector.swift in Sources */,
 				CF53DB42297473E8005DCD10 /* CoreLocationALS.pb.swift in Sources */,
 				CF5EF9242978538E00C4F50A /* ALSVerifier.swift in Sources */,

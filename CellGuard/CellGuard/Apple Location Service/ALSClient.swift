@@ -23,12 +23,22 @@ enum ALSTechnology: String {
     case NR
     case CDMA
     
+    private static let logger = Logger(
+        subsystem: Bundle.main.bundleIdentifier!,
+        category: String(describing: ALSClient.self)
+    )
+    
     public static func from(cctTechnology: String) -> ALSTechnology {
         if cctTechnology == "UMTS" {
             return .LTE
         }
+        
+        guard let alsTechnology = ALSTechnology(rawValue: cctTechnology) else {
+            logger.warning("Unable to find the according ALS technology for '\(cctTechnology)'")
+            return .LTE
+        }
             
-        return ALSTechnology(rawValue: cctTechnology) ?? .LTE
+        return alsTechnology
     }
 }
 

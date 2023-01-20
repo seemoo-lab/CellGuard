@@ -43,6 +43,13 @@ struct CellDetailsView: View {
             Section(header: Text("Cellular Technology")) {
                 CellDetailsRows("Technology", cell.technology ?? "Unknwon")
                 CellDetailsRows(techFormatter.frequency(), cell.frequency)
+                if let tweakCell = cell as? TweakCell {
+                    NavigationLink {
+                        CellJSONDataView(cell: tweakCell)
+                    } label: {
+                        Text("View Details")
+                    }
+                }
             }
             
             Section(header: Text("Cell Identification")) {
@@ -80,6 +87,7 @@ struct CellDetailsView: View {
             
             // TODO: If tweak cell, show button for JSON data
         }
+        .listStyle(.insetGrouped)
         .navigationTitle("\(cell.technology ?? "Unknwon") Cell")
     }
     

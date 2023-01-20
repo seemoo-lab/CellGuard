@@ -35,7 +35,8 @@ struct CCTCellProperties {
     var area: Int32?
     var cellId: Int64?
     
-    var radio: String?
+    var technology: ALSTechnology?
+    var preciseTechnology: String?
     var frequency: Int32?
     var neighbourRadio: String?
     
@@ -49,8 +50,8 @@ struct CCTCellProperties {
         tweakCell.area = self.area ?? 0
         tweakCell.cell = self.cellId ?? 0
         
-        tweakCell.preciseTechnology = self.radio
-        tweakCell.technology = ALSTechnology.from(cctTechnology: self.radio ?? "").rawValue
+        tweakCell.technology = (self.technology ?? .LTE).rawValue
+        tweakCell.preciseTechnology = self.preciseTechnology
         
         tweakCell.frequency = self.frequency ?? 0
         tweakCell.neighbourTechnology = neighbourRadio
@@ -86,7 +87,7 @@ struct CCTParser {
         }
         
         if let neighborCell = neighborCell {
-            servingCell.neighbourRadio = neighborCell.radio
+            servingCell.neighbourRadio = neighborCell.preciseTechnology
         }
         
         // We're using JSONSerilization because the JSONDecoder requires specific type information that we can't provide
@@ -111,28 +112,37 @@ struct CCTParser {
         switch (rat) {
         case "RadioAccessTechnologyGSM":
             cell = try parseGSM(info)
+            cell.technology = .GSM
         case "RadioAccessTechnologyUMTS":
             cell = try parseUTMS(info)
+            cell.technology = .LTE
         case "RadioAccessTechnologyUTRAN":
             // UMTS Terrestrial Radio Access Network
             // https://en.wikipedia.org/wiki/UMTS_Terrestrial_Radio_Access_Network
             cell = try parseUTMS(info)
+            cell.technology = .LTE
         case "RadioAccessTechnologyCDMA1x":
             // https://en.wikipedia.org/wiki/CDMA2000
             cell = try parseCDMA(info)
+            cell.technology = .CDMA
         case "RadioAccessTechnologyCDMAEVDO":
             // CDMA2000 1x Evolution-Data Optimized
             cell = try parseCDMA(info)
+            cell.technology = .CDMA
         case "RadioAccessTechnologyCDMAHybrid":
             cell = try parseCDMA(info)
+            cell.technology = .CDMA
         case "RadioAccessTechnologyLTE":
             cell = try parseLTE(info)
+            cell.technology = .LTE
         case "RadioAccessTechnologyTDSCDMA":
             // Special version of UMTS WCDMA in China
             // https://www.electronics-notes.com/articles/connectivity/3g-umts/td-scdma.php
             cell = try parseUTMS(info)
+            cell.technology = .SCDMA
         case "RadioAccessTechnologyNR":
             cell = try parseNR(info)
+            cell.technology = .NR
         default:
             throw CCTParserError.unknownRAT(rat)
         }
@@ -144,14 +154,15 @@ struct CCTParser {
         guard let cellType = CCTCellType(rawValue: cellType) else {
             throw CCTParserError.unknownCellType(cellType)
         }
-         
-        cell.radio = rat
+        
+        cell.preciseTechnology = rat
         
         return (cell, cellType)
     }
     
     private func parseGSM(_ info: CellInfo) throws -> CCTCellProperties {
         var cell = CCTCellProperties()
+        cell.technology = .GSM
         
         cell.mcc = info["MCC"] as? Int32 ?? 0
         cell.network = info["MNC"] as? Int32 ?? 0

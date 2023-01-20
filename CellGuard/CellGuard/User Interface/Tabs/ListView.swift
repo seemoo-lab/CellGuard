@@ -141,6 +141,7 @@ struct LevelListView: View {
                         }
                     }
                 }
+                .listStyle(.insetGrouped)
             }
         }
         .navigationTitle(level == .country ? "List" : level.name)
@@ -173,9 +174,10 @@ private struct ListBodyElement: View {
             if level == .cell {
                 CellDetailsView(cell: cell)
             } else {
-                LevelListView(level: level.next, selectors: selectors, day: Calendar.current.startOfDay(for: cell.collected!))
+                LevelListView(level: level.next, selectors: newSelectors, day: Calendar.current.startOfDay(for: cell.collected!))
             }
         } label: {
+            // TODO: Add status icon on cell level
             Text("\(level.extractValue(cell: cell) as NSNumber, formatter: plainNumberFormatter)")
         }
     }

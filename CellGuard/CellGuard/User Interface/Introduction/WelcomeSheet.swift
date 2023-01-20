@@ -28,9 +28,9 @@ struct WelcomeSheet: View {
                     size: 30
                 )
                 WelcomeInformation(
-                    icon: "checkerboard.shield",
+                    icon: "shield",
                     title: "Verify Connections",
-                    description: "Verify that cells in use are genuine with multiple databases",
+                    description: "Verify that cells in use are genuine with Apple's location database",
                     size: 30
                 )
                 WelcomeInformation(

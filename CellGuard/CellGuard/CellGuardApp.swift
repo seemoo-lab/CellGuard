@@ -13,7 +13,7 @@ struct CellGuardApp: App {
     @Environment(\.scenePhase) var scenePhase
     
     let persistenceController = PersistenceController.shared
-    let locationManager = LocationDataManager(extact: true)
+    let locationManager = LocationDataManager.shared
     let networkAuthorization = LocalNetworkAuthorization(
         checkNow: UserDefaults.standard.bool(forKey: UserDefaultsKeys.introductionShown.rawValue)
     )
