@@ -16,7 +16,7 @@ private enum ShownSheet: Identifiable {
     }
 }
 
-struct CGTabView: View {
+struct CompositeTabView: View {
     
     // Summary: shield.fill or exclamationmark.shield.fill
     // Map: map.fill
@@ -82,7 +82,7 @@ struct CGTabView: View {
 
 struct CGTabView_Previews: PreviewProvider {
     static var previews: some View {
-        CGTabView()
+        CompositeTabView()
             .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
             .environmentObject(LocationDataManager.shared)
             .environmentObject(LocalNetworkAuthorization(checkNow: true))

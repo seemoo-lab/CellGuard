@@ -22,7 +22,7 @@ struct CellGuardApp: App {
 
     var body: some Scene {
         WindowGroup {
-            CGTabView()
+            CompositeTabView()
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
                 .environmentObject(locationManager)
                 .environmentObject(networkAuthorization)

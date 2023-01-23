@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		CF0FDCB529698E1500A6FFE2 /* SummaryTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0FDCB429698E1500A6FFE2 /* SummaryTabView.swift */; };
 		CF0FDCB729699E5100A6FFE2 /* MapTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0FDCB629699E5100A6FFE2 /* MapTabView.swift */; };
-		CF0FDCBB29699E8A00A6FFE2 /* CGTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0FDCBA29699E8A00A6FFE2 /* CGTabView.swift */; };
+		CF0FDCBB29699E8A00A6FFE2 /* CompositeTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0FDCBA29699E8A00A6FFE2 /* CompositeTabView.swift */; };
 		CF0FDCBD2969A21000A6FFE2 /* WelcomeSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0FDCBC2969A21000A6FFE2 /* WelcomeSheet.swift */; };
 		CF0FDCC02969A3E500A6FFE2 /* LargeButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0FDCBF2969A3E500A6FFE2 /* LargeButton.swift */; };
 		CF0FDCC22969AC1100A6FFE2 /* SettingsSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0FDCC12969AC1100A6FFE2 /* SettingsSheet.swift */; };
@@ -53,6 +53,18 @@
 		CFD0236A2961ABA100AA5A1C /* ALSClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD023692961ABA100AA5A1C /* ALSClient.swift */; };
 		CFD0236D2961AD1500AA5A1C /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = CFD0236C2961AD1500AA5A1C /* SwiftProtobuf */; };
 		CFD023742961DF7400AA5A1C /* ALSClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD023732961DF7400AA5A1C /* ALSClientTests.swift */; };
+		CFDF5D6F297EF05D000708A8 /* MultiCellMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFDF5D6E297EF05D000708A8 /* MultiCellMap.swift */; };
+		CFDF5D71297EF0C6000708A8 /* CellAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFDF5D70297EF0C6000708A8 /* CellAnnotation.swift */; };
+		CFDF5D73297EF0E4000708A8 /* CellAnnotationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFDF5D72297EF0E4000708A8 /* CellAnnotationView.swift */; };
+		CFDF5D75297EF127000708A8 /* CellClusterAnnotationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFDF5D74297EF127000708A8 /* CellClusterAnnotationView.swift */; };
+		CFDF5D77297EF1E8000708A8 /* LocationAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFDF5D76297EF1E8000708A8 /* LocationAnnotation.swift */; };
+		CFDF5D79297EF1EF000708A8 /* LocationAnnotationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFDF5D78297EF1EF000708A8 /* LocationAnnotationView.swift */; };
+		CFDF5D7B297EF71F000708A8 /* CellClusterAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFDF5D7A297EF71F000708A8 /* CellClusterAnnotation.swift */; };
+		CFDF5D7D297EF76C000708A8 /* LocationClusterAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFDF5D7C297EF76C000708A8 /* LocationClusterAnnotation.swift */; };
+		CFDF5D7F297F05A0000708A8 /* SingleCellMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFDF5D7E297F05A0000708A8 /* SingleCellMap.swift */; };
+		CFDF5D81297F05F1000708A8 /* CellMapDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFDF5D80297F05F1000708A8 /* CellMapDelegate.swift */; };
+		CFDF5D83297F0736000708A8 /* CommonCellMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFDF5D82297F0736000708A8 /* CommonCellMap.swift */; };
+		CFDF5D85297F09D3000708A8 /* DatabaseAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFDF5D84297F09D3000708A8 /* DatabaseAnnotation.swift */; };
 		CFE4462B29705F0C006F2CF4 /* ListTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFE4462A29705F0C006F2CF4 /* ListTabView.swift */; };
 /* End PBXBuildFile section */
 
@@ -76,7 +88,7 @@
 /* Begin PBXFileReference section */
 		CF0FDCB429698E1500A6FFE2 /* SummaryTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SummaryTabView.swift; sourceTree = "<group>"; };
 		CF0FDCB629699E5100A6FFE2 /* MapTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapTabView.swift; sourceTree = "<group>"; };
-		CF0FDCBA29699E8A00A6FFE2 /* CGTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CGTabView.swift; sourceTree = "<group>"; };
+		CF0FDCBA29699E8A00A6FFE2 /* CompositeTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompositeTabView.swift; sourceTree = "<group>"; };
 		CF0FDCBC2969A21000A6FFE2 /* WelcomeSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeSheet.swift; sourceTree = "<group>"; };
 		CF0FDCBF2969A3E500A6FFE2 /* LargeButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LargeButton.swift; sourceTree = "<group>"; };
 		CF0FDCC12969AC1100A6FFE2 /* SettingsSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsSheet.swift; sourceTree = "<group>"; };
@@ -123,6 +135,18 @@
 		CFD023672961AB9900AA5A1C /* CCTClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CCTClient.swift; sourceTree = "<group>"; };
 		CFD023692961ABA100AA5A1C /* ALSClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ALSClient.swift; sourceTree = "<group>"; };
 		CFD023732961DF7400AA5A1C /* ALSClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ALSClientTests.swift; sourceTree = "<group>"; };
+		CFDF5D6E297EF05D000708A8 /* MultiCellMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiCellMap.swift; sourceTree = "<group>"; };
+		CFDF5D70297EF0C6000708A8 /* CellAnnotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellAnnotation.swift; sourceTree = "<group>"; };
+		CFDF5D72297EF0E4000708A8 /* CellAnnotationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellAnnotationView.swift; sourceTree = "<group>"; };
+		CFDF5D74297EF127000708A8 /* CellClusterAnnotationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellClusterAnnotationView.swift; sourceTree = "<group>"; };
+		CFDF5D76297EF1E8000708A8 /* LocationAnnotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationAnnotation.swift; sourceTree = "<group>"; };
+		CFDF5D78297EF1EF000708A8 /* LocationAnnotationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationAnnotationView.swift; sourceTree = "<group>"; };
+		CFDF5D7A297EF71F000708A8 /* CellClusterAnnotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellClusterAnnotation.swift; sourceTree = "<group>"; };
+		CFDF5D7C297EF76C000708A8 /* LocationClusterAnnotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationClusterAnnotation.swift; sourceTree = "<group>"; };
+		CFDF5D7E297F05A0000708A8 /* SingleCellMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleCellMap.swift; sourceTree = "<group>"; };
+		CFDF5D80297F05F1000708A8 /* CellMapDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellMapDelegate.swift; sourceTree = "<group>"; };
+		CFDF5D82297F0736000708A8 /* CommonCellMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonCellMap.swift; sourceTree = "<group>"; };
+		CFDF5D84297F09D3000708A8 /* DatabaseAnnotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseAnnotation.swift; sourceTree = "<group>"; };
 		CFE4462A29705F0C006F2CF4 /* ListTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListTabView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -183,7 +207,7 @@
 		CF4EE5DE296C512D0069BA5A /* Tabs */ = {
 			isa = PBXGroup;
 			children = (
-				CF0FDCBA29699E8A00A6FFE2 /* CGTabView.swift */,
+				CF0FDCBA29699E8A00A6FFE2 /* CompositeTabView.swift */,
 				CF0FDCB429698E1500A6FFE2 /* SummaryTabView.swift */,
 				CF0FDCB629699E5100A6FFE2 /* MapTabView.swift */,
 				CFE4462A29705F0C006F2CF4 /* ListTabView.swift */,
@@ -364,6 +388,18 @@
 		CFDF5D6D297EEED4000708A8 /* Map */ = {
 			isa = PBXGroup;
 			children = (
+				CFDF5D82297F0736000708A8 /* CommonCellMap.swift */,
+				CFDF5D7E297F05A0000708A8 /* SingleCellMap.swift */,
+				CFDF5D6E297EF05D000708A8 /* MultiCellMap.swift */,
+				CFDF5D80297F05F1000708A8 /* CellMapDelegate.swift */,
+				CFDF5D84297F09D3000708A8 /* DatabaseAnnotation.swift */,
+				CFDF5D70297EF0C6000708A8 /* CellAnnotation.swift */,
+				CFDF5D72297EF0E4000708A8 /* CellAnnotationView.swift */,
+				CFDF5D7A297EF71F000708A8 /* CellClusterAnnotation.swift */,
+				CFDF5D74297EF127000708A8 /* CellClusterAnnotationView.swift */,
+				CFDF5D76297EF1E8000708A8 /* LocationAnnotation.swift */,
+				CFDF5D7C297EF76C000708A8 /* LocationClusterAnnotation.swift */,
+				CFDF5D78297EF1EF000708A8 /* LocationAnnotationView.swift */,
 			);
 			path = Map;
 			sourceTree = "<group>";
@@ -505,19 +541,28 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CFDF5D73297EF0E4000708A8 /* CellAnnotationView.swift in Sources */,
+				CFDF5D7B297EF71F000708A8 /* CellClusterAnnotation.swift in Sources */,
 				CFD023402961A10D00AA5A1C /* Persistence.swift in Sources */,
+				CFDF5D85297F09D3000708A8 /* DatabaseAnnotation.swift in Sources */,
 				CF2A1C1529754AA400E8B61C /* LocalNetworkAuthorization.swift in Sources */,
+				CFDF5D77297EF1E8000708A8 /* LocationAnnotation.swift in Sources */,
 				CF2A1C182975562800E8B61C /* UserDefaultsKeys.swift in Sources */,
 				CF2A1C222975DB8100E8B61C /* CellInformationCard.swift in Sources */,
 				CF0FDCC72969F8D300A6FFE2 /* CellDetailsView.swift in Sources */,
+				CFDF5D6F297EF05D000708A8 /* MultiCellMap.swift in Sources */,
 				CF5EF92829793F7500C4F50A /* TestDetection.swift in Sources */,
 				CFB51832297AD3C80006C690 /* CellJSONDataView.swift in Sources */,
+				CFDF5D79297EF1EF000708A8 /* LocationAnnotationView.swift in Sources */,
 				CF320F5529620B16009BAD18 /* CCTParser.swift in Sources */,
+				CFDF5D83297F0736000708A8 /* CommonCellMap.swift in Sources */,
+				CFDF5D75297EF127000708A8 /* CellClusterAnnotationView.swift in Sources */,
 				CFB51834297AEFA80006C690 /* CellStatusIcon.swift in Sources */,
 				CFB8B291296359CC00503189 /* CCTCollector.swift in Sources */,
 				CF53DB42297473E8005DCD10 /* CoreLocationALS.pb.swift in Sources */,
 				CF5EF9242978538E00C4F50A /* ALSVerifier.swift in Sources */,
 				CFD023432961A10D00AA5A1C /* CellGuard.xcdatamodeld in Sources */,
+				CFDF5D7F297F05A0000708A8 /* SingleCellMap.swift in Sources */,
 				CF5EF92A2979B8D800C4F50A /* LocationSource.swift in Sources */,
 				CF2A1C1B2975670000E8B61C /* CGNotificationManager.swift in Sources */,
 				CF0FDCB529698E1500A6FFE2 /* SummaryTabView.swift in Sources */,
@@ -527,8 +572,11 @@
 				CFB8B28A2963498200503189 /* CellGuardAppDelegate.swift in Sources */,
 				CF0FDCB729699E5100A6FFE2 /* MapTabView.swift in Sources */,
 				CF0FDCC02969A3E500A6FFE2 /* LargeButton.swift in Sources */,
+				CFDF5D7D297EF76C000708A8 /* LocationClusterAnnotation.swift in Sources */,
+				CFDF5D71297EF0C6000708A8 /* CellAnnotation.swift in Sources */,
 				CF2A1C202975CDD200E8B61C /* RiskIndicatorCard.swift in Sources */,
 				CF5EF9202977FACA00C4F50A /* Formatters.swift in Sources */,
+				CFDF5D81297F05F1000708A8 /* CellMapDelegate.swift in Sources */,
 				CFE4462B29705F0C006F2CF4 /* ListTabView.swift in Sources */,
 				CF0FDCC9296B310400A6FFE2 /* PersistencePreview.swift in Sources */,
 				CFD0236A2961ABA100AA5A1C /* ALSClient.swift in Sources */,
@@ -539,7 +587,7 @@
 				CF5CBB9529689FFE001CE9BE /* CellGuardSceneDelegate.swift in Sources */,
 				CFD023372961A10D00AA5A1C /* CellGuardApp.swift in Sources */,
 				CF0FDCBD2969A21000A6FFE2 /* WelcomeSheet.swift in Sources */,
-				CF0FDCBB29699E8A00A6FFE2 /* CGTabView.swift in Sources */,
+				CF0FDCBB29699E8A00A6FFE2 /* CompositeTabView.swift in Sources */,
 				CF5EF9222977FCF800C4F50A /* CellTechnologyFormatter.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

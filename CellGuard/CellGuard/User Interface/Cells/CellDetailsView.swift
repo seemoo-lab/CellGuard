@@ -36,8 +36,10 @@ struct CellDetailsView: View {
         List {
             // TODO: Map with all points
             
-            if !alsCells.isEmpty || !tweakCells.isEmpty {
-                CellDetailsMap(alsCells: alsCells, tweakCells: tweakCells)
+            if SingleCellMap.hasAnyLocation(alsCells, tweakCells) {
+                SingleCellMap(alsCells: alsCells, tweakCells: tweakCells)
+                    .frame(height: 200)
+                    .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
             }
             
             Section(header: Text("Cellular Technology")) {
@@ -103,91 +105,6 @@ struct CellDetailsView: View {
         return "Unkown"
     }
 
-}
-
-// TODO: Extract into own file & Include reach
-struct CellDetailsMap: View {
-    
-    let alsCells: FetchedResults<ALSCell>
-    let tweakCells: FetchedResults<TweakCell>
-    
-    @State private var coordinateRegion: MKCoordinateRegion = MKCoordinateRegion(
-        center: CLLocationCoordinate2D(latitude: 49.8726737, longitude: 8.6516291),
-        span: MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02)
-    )
-    
-    var body: some View {
-        Map(
-            coordinateRegion: $coordinateRegion,
-            showsUserLocation: true,
-            annotationItems: concatFetchedCells(),
-            annotationContent: generateMapAnnotations
-        )
-        .frame(height: 200)
-        .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
-        .onAppear {
-            // TODO: When is this called?
-            // Refresh the map once we get more infomation?
-            coordinateRegion = MKCoordinateRegion(
-                center: middleLocation(),
-                span: MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02)
-            )
-        }
-    }
-    
-    private func middleLocation() -> CLLocationCoordinate2D {
-        if let alsCell = alsCells.first,
-           let location = alsCell.location {
-            return toCL(location: location)
-        }
-        // TODO: Only show if we've got any location
-        // TODO: Iterate through all tweak cells to find any location
-        if let tweakCell = tweakCells.first,
-           let location = tweakCell.location {
-            return toCL(location: location)
-        }
-        return CLLocationCoordinate2D(
-            latitude: 49.8726737,
-            longitude: 8.6516291
-        )
-    }
-    
-    private func concatFetchedCells() -> [Cell] {
-        var cells: [Cell] = []
-        
-        cells.append(contentsOf: alsCells.map { $0 as Cell })
-        cells.append(contentsOf: tweakCells.map { $0 as Cell})
-        
-        return cells
-    }
-    
-    private func generateMapAnnotations(cell: Cell) -> MapAnnotation<AnyView> {
-        if let alsCell = cell as? ALSCell {
-            return CellTowerIcon.asAnnotation(cell: alsCell)
-        } else if let tweakCell = cell as? TweakCell,
-                  let location = tweakCell.location {
-            return MapAnnotation(coordinate: toCL(location: location)) {
-                AnyView(Circle()
-                    .size(CGSize(width: 10, height: 10))
-                    .foregroundColor(.blue)
-                    .shadow(radius: 2)
-                )
-            }
-        } else {
-            return MapAnnotation(coordinate: CLLocationCoordinate2D(), content: {
-                AnyView(EmptyView())
-            })
-        }
-
-    }
-    
-    private func toCL(location: Location) -> CLLocationCoordinate2D {
-        return CLLocationCoordinate2D(
-            latitude: location.latitude,
-            longitude: location.longitude
-        )
-    }
-    
 }
 
 private struct CellDetailsRows: View {

@@ -65,9 +65,10 @@ struct CellInformationCard: View {
             }
             .padding(EdgeInsets(top: 5, leading: 20, bottom: cell.location == nil ? 25 : 10, trailing: 20))
             
-            if !alsCells.isEmpty || !tweakCells.isEmpty {
-                CellDetailsMap(alsCells: alsCells, tweakCells: tweakCells)
+            if SingleCellMap.hasAnyLocation(alsCells, tweakCells) {
+                SingleCellMap(alsCells: alsCells, tweakCells: tweakCells)
                     .frame(height: 200)
+                    .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
             }
         }
         .frame(maxWidth: .infinity)
