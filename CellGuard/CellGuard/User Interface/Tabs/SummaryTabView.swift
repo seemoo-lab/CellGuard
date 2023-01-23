@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct SummaryView: View {
+struct SummaryTabView: View {
     
     let showSettings: () -> Void
     
@@ -97,7 +97,7 @@ struct SummaryView: View {
 
 struct SummaryView_Previews: PreviewProvider {
     static var previews: some View {
-        SummaryView {
+        SummaryTabView {
             // doing nothing
         }
         .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)

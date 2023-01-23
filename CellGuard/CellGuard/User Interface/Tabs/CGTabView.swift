@@ -31,15 +31,15 @@ struct CGTabView: View {
     var body: some View {
         // If the introduction already was shown, we check on every start if we still have accesss to the local network
         return TabView {
-            SummaryView(showSettings: { showingSheet = .settings })
+            SummaryTabView(showSettings: { showingSheet = .settings })
                 .tabItem {
                     Label("Summary", systemImage: "shield.fill")
                 }
-            MapView()
+            MapTabView()
                 .tabItem {
                     Label("Map", systemImage: "map.fill")
                 }
-            ListView()
+            ListTabView()
                 .tabItem {
                     Label("List", systemImage: "list.bullet")
                 }

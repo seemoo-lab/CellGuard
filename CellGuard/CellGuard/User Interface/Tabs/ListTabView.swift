@@ -67,7 +67,7 @@ enum ListViewLevel {
     }
 }
 
-struct ListView: View {
+struct ListTabView: View {
     
     var body: some View {
         NavigationView {
@@ -186,7 +186,7 @@ private struct ListBodyElement: View {
 
 struct ListView_Previews: PreviewProvider {
     static var previews: some View {
-        ListView()
+        ListTabView()
             .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
     }
 }

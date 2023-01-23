@@ -10,7 +10,7 @@ import UIKit
 import MapKit
 import CoreData
 
-struct MapView: View {
+struct MapTabView: View {
     
     @Environment(\.managedObjectContext)
     private var managedContext: NSManagedObjectContext
@@ -103,22 +103,6 @@ struct ALSCellMap: UIViewRepresentable {
         let cellAnnotations = uiView.annotations
             .map { $0 as? CellAnnotation }
             .compactMap { $0 }
-        
-        // TODO: Which solution is better?
-        
-        /* let newIDMap = Dictionary(
-            uniqueKeysWithValues: alsCells.map { (CellIdentifier(cell: $0), $0) }
-        )
-        let oldIDSet = Set(cellAnnotations.map { $0.identifier })
-
-        // Remove annotation which we're removed from the query result
-        uiView.removeAnnotations(cellAnnotations
-            .filter { !newIDMap.keys.contains($0.identifier) })
-        
-        // Add the new annotations
-        uiView.addAnnotations(newIDMap
-            .filter { !oldIDSet.contains($0.key) }
-            .map { CellAnnotation(cell: $0.value) }) */
         
         let newIDMap = Dictionary(
             uniqueKeysWithValues: alsCells.map { ($0.objectID, $0) }
@@ -398,7 +382,7 @@ struct CellTowerIcon: View {
 
 struct MapView_Previews: PreviewProvider {
     static var previews: some View {
-        MapView()
+        MapTabView()
             .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
             .environmentObject(LocationDataManager.shared)
     }
