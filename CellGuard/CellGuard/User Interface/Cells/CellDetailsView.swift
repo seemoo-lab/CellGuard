@@ -126,6 +126,8 @@ struct CellDetailsMap: View {
         .frame(height: 200)
         .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
         .onAppear {
+            // TODO: When is this called?
+            // Refresh the map once we get more infomation?
             coordinateRegion = MKCoordinateRegion(
                 center: middleLocation(),
                 span: MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02)
@@ -138,6 +140,8 @@ struct CellDetailsMap: View {
            let location = alsCell.location {
             return toCL(location: location)
         }
+        // TODO: Only show if we've got any location
+        // TODO: Iterate through all tweak cells to find any location
         if let tweakCell = tweakCells.first,
            let location = tweakCell.location {
             return toCL(location: location)

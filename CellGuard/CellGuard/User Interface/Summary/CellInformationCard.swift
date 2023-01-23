@@ -79,9 +79,6 @@ struct CellInformationCard: View {
         )
         // .foregroundColor(.white)
         .padding()
-        
-
-        // TODO: Put map below
     }
 }
 

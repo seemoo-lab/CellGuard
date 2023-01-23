@@ -41,8 +41,6 @@ struct SettingsSheet: View {
     )}
     
     private var isPermissionLocalNetwork: Binding<Bool> { Binding(
-        // TODO: Sometimes crashes here
-        // Thread 1: Fatal error: No ObservableObject of type LocalNetworkAuthorization found. A View.environmentObject(_:) for LocalNetworkAuthorization may be missing as an ancestor of this view.
         get: { networkAuthorization.lastResult ?? false },
         set: { value in
             if value {
