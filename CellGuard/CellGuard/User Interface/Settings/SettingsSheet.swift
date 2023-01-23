@@ -12,6 +12,16 @@ struct AlertIdentifiable: Identifiable {
     let alert: Alert
 }
 
+struct URLIdentfiable: Identifiable {
+    let id: String
+    let url: URL
+    
+    init(url: URL) {
+        self.id = url.absoluteString
+        self.url = url
+    }
+}
+
 struct SettingsSheet: View {
     
     let tapDone: () -> ()
@@ -71,6 +81,7 @@ struct SettingsSheet: View {
     )}
     
     @State private var showAlert: AlertIdentifiable? = nil
+    @State private var shareURL: URLIdentfiable? = nil
     
     var body: some View {
         NavigationView {
@@ -104,7 +115,13 @@ struct SettingsSheet: View {
                 
                 Section(header: Text("Collected Data")) {
                     Button {
-                        self.showAlertNotImplemented()
+                        // TODO: Run in background, disable export button & add spinner to it
+                        let exporter = PersistenceExporter()
+                        if let url = exporter.share() {
+                            self.shareURL = URLIdentfiable(url: url)
+                        } else {
+                            // TODO: Show error
+                        }
                     } label: {
                         Text("Export Data")
                     }
@@ -131,6 +148,9 @@ struct SettingsSheet: View {
                         Text("Done").bold()
                     }
                 }
+            }
+            .sheet(item: $shareURL) { url in
+                ActivityViewController(activityItems: [url.url])
             }
             .alert(item: $showAlert) { $0.alert }
         }

@@ -65,6 +65,8 @@
 		CFDF5D81297F05F1000708A8 /* CellMapDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFDF5D80297F05F1000708A8 /* CellMapDelegate.swift */; };
 		CFDF5D83297F0736000708A8 /* CommonCellMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFDF5D82297F0736000708A8 /* CommonCellMap.swift */; };
 		CFDF5D85297F09D3000708A8 /* DatabaseAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFDF5D84297F09D3000708A8 /* DatabaseAnnotation.swift */; };
+		CFDF5D87297F190A000708A8 /* PersistenceExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFDF5D86297F190A000708A8 /* PersistenceExporter.swift */; };
+		CFDF5D89297F340E000708A8 /* ActivityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFDF5D88297F340E000708A8 /* ActivityViewController.swift */; };
 		CFE4462B29705F0C006F2CF4 /* ListTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFE4462A29705F0C006F2CF4 /* ListTabView.swift */; };
 /* End PBXBuildFile section */
 
@@ -147,6 +149,8 @@
 		CFDF5D80297F05F1000708A8 /* CellMapDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellMapDelegate.swift; sourceTree = "<group>"; };
 		CFDF5D82297F0736000708A8 /* CommonCellMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonCellMap.swift; sourceTree = "<group>"; };
 		CFDF5D84297F09D3000708A8 /* DatabaseAnnotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseAnnotation.swift; sourceTree = "<group>"; };
+		CFDF5D86297F190A000708A8 /* PersistenceExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceExporter.swift; sourceTree = "<group>"; };
+		CFDF5D88297F340E000708A8 /* ActivityViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityViewController.swift; sourceTree = "<group>"; };
 		CFE4462A29705F0C006F2CF4 /* ListTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListTabView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -219,6 +223,7 @@
 			isa = PBXGroup;
 			children = (
 				CF0FDCC12969AC1100A6FFE2 /* SettingsSheet.swift */,
+				CFDF5D88297F340E000708A8 /* ActivityViewController.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -283,6 +288,7 @@
 				CF0FDCC8296B310400A6FFE2 /* PersistencePreview.swift */,
 				CF0FDCCA296B466100A6FFE2 /* PersistenceError.swift */,
 				CF5EF9292979B8D800C4F50A /* LocationSource.swift */,
+				CFDF5D86297F190A000708A8 /* PersistenceExporter.swift */,
 			);
 			path = "Core Data";
 			sourceTree = "<group>";
@@ -565,6 +571,7 @@
 				CFDF5D7F297F05A0000708A8 /* SingleCellMap.swift in Sources */,
 				CF5EF92A2979B8D800C4F50A /* LocationSource.swift in Sources */,
 				CF2A1C1B2975670000E8B61C /* CGNotificationManager.swift in Sources */,
+				CFDF5D87297F190A000708A8 /* PersistenceExporter.swift in Sources */,
 				CF0FDCB529698E1500A6FFE2 /* SummaryTabView.swift in Sources */,
 				CF2A1C1D2975C71000E8B61C /* BackgroundState.swift in Sources */,
 				CF0FDCC22969AC1100A6FFE2 /* SettingsSheet.swift in Sources */,
@@ -573,6 +580,7 @@
 				CF0FDCB729699E5100A6FFE2 /* MapTabView.swift in Sources */,
 				CF0FDCC02969A3E500A6FFE2 /* LargeButton.swift in Sources */,
 				CFDF5D7D297EF76C000708A8 /* LocationClusterAnnotation.swift in Sources */,
+				CFDF5D89297F340E000708A8 /* ActivityViewController.swift in Sources */,
 				CFDF5D71297EF0C6000708A8 /* CellAnnotation.swift in Sources */,
 				CF2A1C202975CDD200E8B61C /* RiskIndicatorCard.swift in Sources */,
 				CF5EF9202977FACA00C4F50A /* Formatters.swift in Sources */,

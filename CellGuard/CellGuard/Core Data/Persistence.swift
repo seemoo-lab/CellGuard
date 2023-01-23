@@ -429,7 +429,6 @@ class PersistenceController {
             // Fetch all tweak cells without location
             let cellFetchRequest = NSFetchRequest<TweakCell>()
             cellFetchRequest.entity = TweakCell.entity()
-            // TODO: Collected in the last 14 days
             cellFetchRequest.predicate = NSPredicate(format: "location == nil and collected != nil")
             
             let cells: [TweakCell]
@@ -476,7 +475,6 @@ class PersistenceController {
             }
             
             // Assign each tweak cell location with min (tweakCell.collected - location.timestamp) which is greater or equal to zero
-            // TODO: Prevent duplicate keys
             var seenDates = Set<Date>()
             let uniqueLocationsKV = locations
                 .filter { seenDates.insert( $0.collected!).inserted }
@@ -523,16 +521,34 @@ class PersistenceController {
     }
     
     /// Synchronously deletes all records in the Core Data store.
-    func deleteAllData() {
+    func deleteAllData() -> Bool {
         let viewContext = container.viewContext
         logger.debug("Start deleting all data from the store...")
         
-        viewContext.perform {
-            // TODO: Delete all data
-            // See: https://www.advancedswift.com/batch-delete-everything-core-data-swift/#delete-everything-delete-all-objects-reset-core-data
+        // TODO: Test
+        
+        var successful = false
+        viewContext.performAndWait {
+            let fetchCells = NSFetchRequest<NSFetchRequestResult>()
+            fetchCells.entity = Cell.entity()
+            let deleteCells = NSBatchDeleteRequest(fetchRequest: fetchCells)
+            
+            let fetchLocations = NSFetchRequest<NSFetchRequestResult>()
+            fetchLocations.entity = Location.entity()
+            let deleteLocations = NSBatchDeleteRequest(fetchRequest: fetchLocations)
+            
+            do {
+                try viewContext.persistentStoreCoordinator?.execute(deleteCells, with: viewContext)
+                try viewContext.persistentStoreCoordinator?.execute(deleteLocations, with: viewContext)
+            } catch {
+                self.logger.warning("Failed to delete all data: \(error)")
+            }
+            
+            successful = true
+            logger.debug("Successfully deleted all data.")
         }
         
-        logger.debug("Successfully deleted data.")
+        return successful
     }
     
     /// Fetches persistent history into the view context.
