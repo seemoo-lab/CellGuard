@@ -17,7 +17,6 @@ struct SummaryTabView: View {
     
     @FetchRequest(sortDescriptors: [NSSortDescriptor(keyPath: \TweakCell.collected, ascending: false)])
     private var tweakCells: FetchedResults<TweakCell>
-    
     @FetchRequest private var failedCells: FetchedResults<TweakCell>
     @FetchRequest private var unknownCells: FetchedResults<TweakCell>
     

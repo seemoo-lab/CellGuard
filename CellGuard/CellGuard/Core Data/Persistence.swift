@@ -242,13 +242,15 @@ class PersistenceController {
     }
     
     /// Uses `NSBatchInsertRequest` (BIR) to import locations into the Core Data store on a private queue.
-    func importUserLocations(from locations: [LDMLocation]) throws {
+    func importUserLocations(from locations: [TrackedUserLocation]) throws {
         let taskContext = newTaskContext()
         
         taskContext.name = "importContext"
         taskContext.transactionAuthor = "importLocations"
         
         var success = false
+        
+        // TODO: Only import if the location is different by a margin with the last location
         
         taskContext.performAndWait {
             var index = 0
@@ -289,7 +291,7 @@ class PersistenceController {
             request.entity = TweakCell.entity()
             request.fetchLimit = count
             request.predicate = NSPredicate(format: "status == %@", CellStatus.imported.rawValue)
-            request.sortDescriptors = [NSSortDescriptor(keyPath: \TweakCell.collected, ascending: true)]
+            request.sortDescriptors = [NSSortDescriptor(keyPath: \TweakCell.collected, ascending: false)]
             request.returnsObjectsAsFaults = false
             do {
                 let tweakCells = try request.execute()

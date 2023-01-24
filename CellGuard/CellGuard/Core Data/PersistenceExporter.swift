@@ -61,6 +61,8 @@ struct PersistenceExporter {
             completion(.failure(error))
             return
         }
+        
+        Self.logger.debug("Exported data to file \(url)")
 
         return completion(.success(url))
     }
@@ -108,25 +110,18 @@ struct PersistenceExporter {
         var dict: [String: Any] = [:]
         
         // TODO: Think about cells without JSON data
-        dict["cells"] = tweakCells
+        dict[CellFileKeys.cells] = tweakCells
             .compactMap { $0.json?.data(using: .utf8) }
             // TODO: Print error for failures
             .compactMap { try? JSONSerialization.jsonObject(with: $0) }
         
-        // https://stackoverflow.com/a/50270620
-        dict["locations"] = userLocations
-            .map { location in [
-                "latitude": location.latitude,
-                "longitude": location.longitude,
-                "horizontalAccuracy": location.horizontalAccuracy,
-                "altitude": location.altitude,
-                "verticalAccuracy": location.verticalAccuracy,
-                "collected": location.collected?.timeIntervalSince1970 ?? 0,
-            ] }
+        dict[CellFileKeys.locations] = userLocations
+            .map { TrackedUserLocation(from: $0) }
+            .map { $0.toDictionary() }
         
         // https://developer.apple.com/documentation/uikit/uidevice?language=objc
         let device = UIDevice.current
-        dict["device"] = [
+        dict[CellFileKeys.device] = [
             "name": device.name,
             "systemName": device.systemName,
             "systemVersion": device.systemVersion,
@@ -136,7 +131,7 @@ struct PersistenceExporter {
             "identifierForVendor": device.identifierForVendor?.uuidString ?? "nil"
         ]
         
-        dict["date"] = Date().timeIntervalSince1970
+        dict[CellFileKeys.date] = Date().timeIntervalSince1970
         
         return try JSONSerialization.data(withJSONObject: dict)
     }

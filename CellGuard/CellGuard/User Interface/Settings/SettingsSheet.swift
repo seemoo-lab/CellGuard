@@ -7,27 +7,22 @@
 
 import SwiftUI
 
-struct AlertIdentifiable: Identifiable {
+private struct AlertIdentifiable: Identifiable {
     let id: String
     let alert: Alert
 }
 
-struct URLIdentfiable: Identifiable {
-    let id: String
-    let url: URL
-    
-    init(url: URL) {
-        self.id = url.absoluteString
-        self.url = url
-    }
+enum SettingsCloseReason {
+    case done
+    case delete
 }
 
 struct SettingsSheet: View {
     
-    let tapDone: () -> ()
+    let close: (SettingsCloseReason) -> ()
     
-    init(tapDone: @escaping () -> Void) {
-        self.tapDone = tapDone
+    init(close: @escaping (SettingsCloseReason) -> Void) {
+        self.close = close
     }
     
     @EnvironmentObject var locationManager: LocationDataManager
@@ -137,10 +132,15 @@ struct SettingsSheet: View {
                     
                     Button {
                         self.showAlert = AlertIdentifiable(id: "confirm-delete", alert: Alert(
-                            title: Text("Confirm Deletion"),
-                            message: Text("Delete all recorded data?"),
+                            title: Text("Delete Database"),
+                            message: Text("Delete all the app's data?"),
                             primaryButton: .cancel(),
-                            secondaryButton: .destructive(Text("Continue"))
+                            secondaryButton: .destructive(Text("Delete")) {
+                                // TODO: Handle error
+                                close(.delete)
+                                _ = PersistenceController.shared.deleteAllData()
+                                UserDefaults.standard.setValue(false, forKey: UserDefaultsKeys.introductionShown.rawValue)
+                            }
                         ))
                     } label: {
                         Text("Delete Data")
@@ -153,8 +153,11 @@ struct SettingsSheet: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem() {
-                    Button(action: self.tapDone) {
-                        Text("Done").bold()
+                    Button {
+                        close(.done)
+                    } label: {
+                        Text("Done")
+                            .bold()
                     }
                 }
             }
@@ -172,7 +175,7 @@ struct SettingsSheet: View {
     }
     
     private func showAlertNotImplemented() {
-        self.showAlert = AlertIdentifiable(id: "todo", alert: Alert(
+        self.showAlert = AlertIdentifiable(id: "not-yet-implemented", alert: Alert(
             title: Text("Not Yet Implemented"),
             message: Text("This feature is not yet implemented"),
             dismissButton: .default(Text("OK"))
@@ -182,7 +185,7 @@ struct SettingsSheet: View {
 
 struct SettingsSheet_Previews: PreviewProvider {
     static var previews: some View {
-        SettingsSheet {
+        SettingsSheet { _ in
             // doing nothing
         }
         .environmentObject(LocationDataManager.shared)

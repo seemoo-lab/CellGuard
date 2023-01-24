@@ -24,12 +24,12 @@ struct CellInformationCard: View {
         self.techFormatter = CellTechnologyFormatter.from(technology: cell.technology)
         
         self._alsCells = FetchRequest(
-            sortDescriptors: [NSSortDescriptor(keyPath: \ALSCell.imported, ascending: true)],
+            sortDescriptors: [NSSortDescriptor(keyPath: \ALSCell.imported, ascending: false)],
             predicate: PersistenceController.shared.sameCellPredicate(cell: cell),
             animation: .default
         )
         self._tweakCells = FetchRequest(
-            sortDescriptors: [NSSortDescriptor(keyPath: \TweakCell.collected, ascending: true)],
+            sortDescriptors: [NSSortDescriptor(keyPath: \TweakCell.collected, ascending: false)],
             predicate: PersistenceController.shared.sameCellPredicate(cell: cell),
             animation: .default
         )

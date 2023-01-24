@@ -112,7 +112,7 @@ struct LevelListView: View {
         
         // https://www.hackingwithswift.com/books/ios-swiftui/dynamically-filtering-fetchrequest-with-swiftui
         self._items = FetchRequest(
-            sortDescriptors: [NSSortDescriptor(keyPath: \TweakCell.collected, ascending: true)],
+            sortDescriptors: [NSSortDescriptor(keyPath: \TweakCell.collected, ascending: false)],
             predicate: NSCompoundPredicate(andPredicateWithSubpredicates: predicates),
             animation: .default
         )

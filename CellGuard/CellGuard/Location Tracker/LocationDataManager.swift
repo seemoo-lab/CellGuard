@@ -88,7 +88,7 @@ class LocationDataManager : NSObject, CLLocationManagerDelegate, ObservableObjec
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         Self.logger.log("New Locations: \(locations)")
         
-        let importLocations = locations.map { LDMLocation(from: $0) }
+        let importLocations = locations.map { TrackedUserLocation(from: $0) }
         
         do {
             try PersistenceController.shared.importUserLocations(from: importLocations)

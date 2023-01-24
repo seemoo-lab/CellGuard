@@ -27,10 +27,20 @@ struct CompositeTabView: View {
     @EnvironmentObject var notificationManager: CGNotificationManager
     
     @State private var showingSheet: ShownSheet?
+    @State private var showingImport: Bool = false
+    @State private var importURL: URLIdentfiable? = nil
     
     var body: some View {
+        if showingImport {
+            // https://swiftwithmajid.com/2021/11/25/mastering-progressview-in-swiftui/
+            return AnyView(ProgressView() {
+                Text("Importing")
+                    .font(.title)
+            })
+        }
+        
         // If the introduction already was shown, we check on every start if we still have accesss to the local network
-        return TabView {
+        return AnyView(TabView {
             SummaryTabView(showSettings: { showingSheet = .settings })
                 .tabItem {
                     Label("Summary", systemImage: "shield.fill")
@@ -63,8 +73,12 @@ struct CompositeTabView: View {
                     }
                 }
             case .settings:
-                SettingsSheet {
-                    self.showingSheet = nil
+                SettingsSheet { reason in
+                    if reason == .delete {
+                        self.showingSheet = .welcome
+                    } else {
+                        self.showingSheet = nil
+                    }
                 }
                 .environmentObject(self.locationManager)
                 .environmentObject(self.networkAuthorization)
@@ -77,6 +91,31 @@ struct CompositeTabView: View {
                 showingSheet = .welcome
             }
         }
+        .onOpenURL { url in
+            importURL = URLIdentfiable(url: url)
+        }
+        .alert(item: $importURL) { url in
+            let url = url.url
+            return Alert(
+                title: Text("Import Database"),
+                message: Text(
+                    "Import the selected CellGuard database? " +
+                    "This can result in incorrect analysis. " +
+                    "It is advertised to export your local database before."
+                ),
+                primaryButton: .cancel() {
+                    importURL = nil
+                },
+                secondaryButton: .destructive(Text("Import")) {
+                    showingImport = true
+                    PersistenceImporter.importInBackground(url: url) { result in
+                        // TODO: Handle result
+                        showingImport = false
+                    }
+                    importURL = nil
+                }
+            )
+        })
     }
 }
 

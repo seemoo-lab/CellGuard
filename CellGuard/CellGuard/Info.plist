@@ -7,18 +7,55 @@
 		<string>de.tu-darmstadt.seemoo.CellGuard.refresh.cells</string>
 		<string>de.tu-darmstadt.seemoo.CellGuard.processing.verify</string>
 	</array>
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>CellGuard Database</string>
+			<key>LSHandlerRank</key>
+			<string>Owner</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>de.tu-darmstadt.seemoo.CellGuard.export</string>
+			</array>
+		</dict>
+	</array>
 	<key>MKDirectionsApplicationSupportedModes</key>
 	<array/>
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_bonjour._tcp</string>
+		<string>_lnp._tcp</string>
+	</array>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
 		<string>location</string>
 		<string>processing</string>
 	</array>
-	<key>NSBonjourServices</key>
+	<key>UTExportedTypeDeclarations</key>
 	<array>
-		<string>_bonjour._tcp</string>
-		<string>_lnp._tcp</string>
+		<dict>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.json</string>
+			</array>
+			<key>UTTypeDescription</key>
+			<string>CellGuard Database</string>
+			<key>UTTypeIconFiles</key>
+			<array>
+				<string>CellFileTypeIcon</string>
+			</array>
+			<key>UTTypeIdentifier</key>
+			<string>de.tu-darmstadt.seemoo.CellGuard.export</string>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>cells</string>
+				</array>
+			</dict>
+		</dict>
 	</array>
 </dict>
 </plist>

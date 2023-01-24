@@ -19,7 +19,7 @@ struct MapTabView: View {
     private var locationManager: LocationDataManager
     
     @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \ALSCell.imported, ascending: true)],
+        sortDescriptors: [NSSortDescriptor(keyPath: \ALSCell.imported, ascending: false)],
         predicate: NSPredicate(format: "location != nil")
     )
     private var alsCells: FetchedResults<ALSCell>

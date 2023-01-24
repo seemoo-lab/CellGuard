@@ -26,6 +26,7 @@ class CellMapDelegate: NSObject, MKMapViewDelegate {
     
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
         if annotation is CellAnnotation {
+            // TODO: Sometimes red pins are shown instead of this
             return CellAnnotationView(annotation: annotation, reuseIdentifier: CellAnnotationView.ReuseID)
         } else if annotation is LocationAnnotation {
             return LocationAnnotationView(annotation: annotation, reuseIdentifier: LocationAnnotationView.ReuseID)
@@ -35,6 +36,7 @@ class CellMapDelegate: NSObject, MKMapViewDelegate {
             return LocationAnnotationView(annotation: annotation, reuseIdentifier: LocationAnnotationView.ReuseID)
         }
         
+        // TODO: When is this returned?
         return nil
     }
     
