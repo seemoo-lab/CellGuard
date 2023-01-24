@@ -32,6 +32,7 @@ public class LocalNetworkAuthorization: NSObject, ObservableObject {
         }
     }
     
+    // TODO: Handle
     @Published var lastResult: Bool?
     
     public func requestAuthorization(completion: @escaping (Bool) -> Void) {

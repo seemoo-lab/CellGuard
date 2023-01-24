@@ -8,7 +8,8 @@
 import UIKit
 import SwiftUI
 
-// https://stackoverflow.com/a/60137973
+// SwiftUI on iOS 14 doesn't allow to show the share, thus we have to resort back to UIKit.
+// Author: samwize (https://stackoverflow.com/a/60137973)
 
 struct ActivityViewController: UIViewControllerRepresentable {
     
@@ -19,7 +20,9 @@ struct ActivityViewController: UIViewControllerRepresentable {
     var presentationMode
     
     func makeUIViewController(context: UIViewControllerRepresentableContext<ActivityViewController>) -> UIActivityViewController {
+        // Create the share controller
         let controller = UIActivityViewController(activityItems: activityItems, applicationActivities: applicationActivities)
+        // Dismiss this view if the controller is dismissed
         controller.completionWithItemsHandler = { (activityType, completed, returnedItems, error) in
             self.presentationMode.wrappedValue.dismiss()
         }
@@ -27,7 +30,7 @@ struct ActivityViewController: UIViewControllerRepresentable {
     }
     
     func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {
-        
+        // Doing nothing
     }
     
 }

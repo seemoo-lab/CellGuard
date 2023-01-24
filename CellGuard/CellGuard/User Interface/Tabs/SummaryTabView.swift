@@ -43,11 +43,6 @@ struct SummaryTabView: View {
     
     var body: some View {
         NavigationView {
-            
-            // TODO: Detection status
-            // TODO: Permission status
-            // TODO: Currenctly connected to ...
-            
             ScrollView {
                 RiskIndicatorCard(risk: determineRisk(), onTap: { risk in
                     // TODO: Do something
@@ -65,9 +60,6 @@ struct SummaryTabView: View {
                     Button {
                         self.showSettings()
                     } label: {
-                        // person.crop.circle
-                        // gear
-                        // ellipsis.circle
                         Label("Settings", systemImage: "ellipsis.circle")
                     }
                 }
@@ -81,6 +73,7 @@ struct SummaryTabView: View {
             return .High(count: failedCells.count)
         }
         
+        // TODO: A condition is false at the start of the app, figure out which
         if locationManager.authorizationStatus != .authorizedAlways ||
             !(networkAuthorization.lastResult ?? true) ||
             notificationManager.authorizationStatus != .authorized {

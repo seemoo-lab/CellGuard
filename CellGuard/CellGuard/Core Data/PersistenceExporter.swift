@@ -22,10 +22,27 @@ struct PersistenceExporter {
         category: String(describing: PersistenceExporter.self)
     )
     
-    // TODO: Create JSON data -> Write to .cells files -> Share file
-    // https://stackoverflow.com/a/55092044
+    static func exportInBackground(completion: @escaping (Result<URL, Error>) -> Void) {
+        // See: https://www.hackingwithswift.com/read/9/4/back-to-the-main-thread-dispatchqueuemain
+        
+        // Run the export in the background
+        DispatchQueue.global(qos: .userInitiated).async {
+            let exporter = PersistenceExporter()
+            
+            exporter.export { result in
+                // Call the callback on the main queue
+                DispatchQueue.main.async {
+                    completion(result)
+                }
+            }
+        }
+    }
     
-    func share() -> URL? {
+    private init() {
+        
+    }
+    
+    private func export(completion: @escaping (Result<URL, Error>) -> Void) {
         let url = exportURL()
         
         let data: Data
@@ -33,17 +50,19 @@ struct PersistenceExporter {
             data = try fetchData()
         } catch {
             Self.logger.warning("Can't fetch data: \(error)")
-            return nil
+            completion(.failure(error))
+            return
         }
         
         do {
             try data.write(to: url)
         } catch {
             Self.logger.warning("Can't write data to \(url): \(error)")
-            return nil
+            completion(.failure(error))
+            return
         }
 
-        return url
+        return completion(.success(url))
     }
     
     private func fetchData() throws -> Data {
@@ -62,6 +81,8 @@ struct PersistenceExporter {
             do {
                 let cells = try fetchCells.execute()
                 let locations = try fetchLocations.execute()
+                
+                Self.logger.debug("Exporting \(cells.count) cells and \(locations.count) locations")
                 
                 // TODO: Why does the app crash and just doesn't report the error?
                 result = try toJSON(tweakCells: cells, userLocations: locations)

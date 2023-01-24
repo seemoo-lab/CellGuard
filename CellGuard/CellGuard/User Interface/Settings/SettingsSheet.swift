@@ -82,12 +82,11 @@ struct SettingsSheet: View {
     
     @State private var showAlert: AlertIdentifiable? = nil
     @State private var shareURL: URLIdentfiable? = nil
+    @State private var isExportInProgress = false
     
     var body: some View {
         NavigationView {
-            // TODO: Permissions
-            // TODO: Download databases
-            // TODO: Delete all data
+            // TODO: Download other databases databases
             List {
                 Section(header: Text("Permissions")) {
                     // TODO: Open settings app on disable
@@ -114,16 +113,26 @@ struct SettingsSheet: View {
                 }
                 
                 Section(header: Text("Collected Data")) {
-                    Button {
-                        // TODO: Run in background, disable export button & add spinner to it
-                        let exporter = PersistenceExporter()
-                        if let url = exporter.share() {
-                            self.shareURL = URLIdentfiable(url: url)
-                        } else {
-                            // TODO: Show error
+                    HStack {
+                        Button {
+                            isExportInProgress = true
+                            PersistenceExporter.exportInBackground { result in
+                                isExportInProgress = false
+                                do {
+                                    self.shareURL = URLIdentfiable(url: try result.get())
+                                } catch {
+                                    // TODO: Show error
+                                }
+                            }
+                        } label: {
+                            Text("Export Data")
                         }
-                    } label: {
-                        Text("Export Data")
+                        .disabled(isExportInProgress)
+                        
+                        if (isExportInProgress) {
+                            Spacer()
+                            ProgressView()
+                        }
                     }
                     
                     Button {
