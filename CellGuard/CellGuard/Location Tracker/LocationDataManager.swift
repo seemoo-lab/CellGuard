@@ -22,7 +22,7 @@ class LocationDataManager : NSObject, CLLocationManagerDelegate, ObservableObjec
     private var authorizationCompletion: ((Bool) -> Void)?
     private var background = true
     
-    @Published var authorizationStatus: CLAuthorizationStatus = .notDetermined
+    @Published var authorizationStatus: CLAuthorizationStatus? = nil
     @Published var lastLocation: CLLocation?
     
     // TODO: Initialize in app

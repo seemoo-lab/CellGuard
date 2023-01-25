@@ -18,7 +18,7 @@ class CGNotificationManager: ObservableObject {
         category: String(describing: CGNotificationManager.self)
     )
     
-    @Published var authorizationStatus = UNAuthorizationStatus.notDetermined
+    @Published var authorizationStatus: UNAuthorizationStatus? = nil
     
     private init() {
         

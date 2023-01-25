@@ -73,9 +73,9 @@ struct SummaryTabView: View {
         }
         
         // TODO: A condition is false at the start of the app, figure out which
-        if locationManager.authorizationStatus != .authorizedAlways ||
+        if (locationManager.authorizationStatus ?? .authorizedAlways) != .authorizedAlways ||
             !(networkAuthorization.lastResult ?? true) ||
-            notificationManager.authorizationStatus != .authorized {
+            (notificationManager.authorizationStatus ?? .authorized) != .authorized {
             return .Medium(cause: .Permissions)
         }
         
