@@ -95,3 +95,6 @@ xcuserdata
 
 # AppCode
 .idea
+
+# Theos
+.theos

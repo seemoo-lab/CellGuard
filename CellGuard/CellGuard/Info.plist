@@ -4,8 +4,8 @@
 <dict>
 	<key>BGTaskSchedulerPermittedIdentifiers</key>
 	<array>
-		<string>de.tu-darmstadt.seemoo.CellGuard.refresh.cells</string>
-		<string>de.tu-darmstadt.seemoo.CellGuard.processing.verify</string>
+		<string>de.tudarmstadt.seemoo.CellGuard.refresh.cells</string>
+		<string>de.tudarmstadt.seemoo.CellGuard.processing.verify</string>
 	</array>
 	<key>CFBundleDocumentTypes</key>
 	<array>
@@ -16,7 +16,7 @@
 			<string>Owner</string>
 			<key>LSItemContentTypes</key>
 			<array>
-				<string>de.tu-darmstadt.seemoo.CellGuard.export</string>
+				<string>de.tudarmstadt.seemoo.CellGuard.export</string>
 			</array>
 		</dict>
 	</array>
@@ -47,7 +47,7 @@
 				<string>CellFileTypeIcon</string>
 			</array>
 			<key>UTTypeIdentifier</key>
-			<string>de.tu-darmstadt.seemoo.CellGuard.export</string>
+			<string>de.tudarmstadt.seemoo.CellGuard.export</string>
 			<key>UTTypeTagSpecification</key>
 			<dict>
 				<key>public.filename-extension</key>

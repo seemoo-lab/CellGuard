@@ -16,8 +16,8 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
     // https://www.fivestars.blog/articles/app-delegate-scene-delegate-swiftui/
     // https://holyswift.app/new-backgroundtask-in-swiftui-and-how-to-test-it/
     
-    static let cellRefreshTaskIdentifier = "de.tu-darmstadt.seemoo.CellGuard.refresh.cells"
-    static let verifyTaskIdentifier = "de.tu-darmstadt.seemoo.CellGuard.processing.verify"
+    static let cellRefreshTaskIdentifier = "de.tudarmstadt.seemoo.CellGuard.refresh.cells"
+    static let verifyTaskIdentifier = "de.tudarmstadt.seemoo.CellGuard.processing.verify"
     
     private static let logger = Logger(
         subsystem: Bundle.main.bundleIdentifier!,

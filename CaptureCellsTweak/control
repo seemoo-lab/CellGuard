@@ -1,8 +1,8 @@
-Package: de.tu-darmstadt.seemoo.capturecells
+Package: de.tudarmstadt.seemoo.capturecells
 Name: Capture Cells
-Version: 0.0.1
+Version: 1.0.0
 Architecture: iphoneos-arm
-Description: An awesome MobileSubstrate tweak!
+Description: Captures the cellular base stations you've connected to and provides a TCP interface to query them
 Maintainer: Lukas Arnold
 Author: Lukas Arnold
 Section: Tweaks

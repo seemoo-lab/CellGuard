@@ -1,0 +1,4 @@
+#!/bin/sh
+
+# Update the UI cache to show the app instantly after its installation
+uicache -p /Applications/CellGuard.app

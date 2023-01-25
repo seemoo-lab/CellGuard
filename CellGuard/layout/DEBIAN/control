@@ -1,0 +1,9 @@
+Package: de.tudarmstadt.seemoo.cellguard
+Name: Cell Guard
+Version: 1.0
+Architecture: iphoneos-arm
+Description: Monitor and visualize cellular base stations collected by the accompanying tweak
+Maintainer: Lukas Arnold
+Author: Lukas Arnold
+Section: Utilities
+Depends: de.tudarmstadt.seemoo.capturecells
