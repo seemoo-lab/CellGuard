@@ -45,6 +45,7 @@
 		CFB8B2882963417B00503189 /* LocationDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB8B2872963417B00503189 /* LocationDataManager.swift */; };
 		CFB8B28A2963498200503189 /* CellGuardAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB8B2892963498200503189 /* CellGuardAppDelegate.swift */; };
 		CFB8B291296359CC00503189 /* CCTCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB8B290296359CC00503189 /* CCTCollector.swift */; };
+		CFCE7A8C29817E2500E28787 /* ALSTechnology.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFCE7A8B29817E2500E28787 /* ALSTechnology.swift */; };
 		CFD023372961A10D00AA5A1C /* CellGuardApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD023362961A10D00AA5A1C /* CellGuardApp.swift */; };
 		CFD0233B2961A10D00AA5A1C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CFD0233A2961A10D00AA5A1C /* Assets.xcassets */; };
 		CFD0233E2961A10D00AA5A1C /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CFD0233D2961A10D00AA5A1C /* Preview Assets.xcassets */; };
@@ -131,6 +132,7 @@
 		CFB8B2872963417B00503189 /* LocationDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationDataManager.swift; sourceTree = "<group>"; };
 		CFB8B2892963498200503189 /* CellGuardAppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellGuardAppDelegate.swift; sourceTree = "<group>"; };
 		CFB8B290296359CC00503189 /* CCTCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CCTCollector.swift; sourceTree = "<group>"; };
+		CFCE7A8B29817E2500E28787 /* ALSTechnology.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ALSTechnology.swift; sourceTree = "<group>"; };
 		CFD023332961A10D00AA5A1C /* CellGuard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CellGuard.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFD023362961A10D00AA5A1C /* CellGuardApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellGuardApp.swift; sourceTree = "<group>"; };
 		CFD0233A2961A10D00AA5A1C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -371,6 +373,7 @@
 				CF53DB41297473E8005DCD10 /* CoreLocationALS.pb.swift */,
 				CFD023692961ABA100AA5A1C /* ALSClient.swift */,
 				CF5EF9232978538E00C4F50A /* ALSVerifier.swift */,
+				CFCE7A8B29817E2500E28787 /* ALSTechnology.swift */,
 			);
 			path = "Apple Location Service";
 			sourceTree = "<group>";
@@ -556,6 +559,7 @@
 				CFDF5D7B297EF71F000708A8 /* CellClusterAnnotation.swift in Sources */,
 				CF93B852297FFEF9003F9FFE /* URLIdentifiable.swift in Sources */,
 				CFD023402961A10D00AA5A1C /* Persistence.swift in Sources */,
+				CFCE7A8C29817E2500E28787 /* ALSTechnology.swift in Sources */,
 				CFDF5D85297F09D3000708A8 /* DatabaseAnnotation.swift in Sources */,
 				CF2A1C1529754AA400E8B61C /* LocalNetworkAuthorization.swift in Sources */,
 				CFDF5D77297EF1E8000708A8 /* LocationAnnotation.swift in Sources */,

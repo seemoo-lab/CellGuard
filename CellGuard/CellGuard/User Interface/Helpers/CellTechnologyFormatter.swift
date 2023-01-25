@@ -6,6 +6,8 @@
 //
 
 import Foundation
+import UIKit
+import SwiftUI
 
 struct CellTechnologyFormatter {
     
@@ -54,6 +56,30 @@ struct CellTechnologyFormatter {
         }
     }
     
+    public func icon() -> Image {
+        return Image(systemName: "\(iconName()).square.fill")
+    }
+    
+    private func iconName() -> String {
+        switch (technology) {
+        case .CDMA: return "c"
+        case .GSM: return "g"
+        case .SCDMA: return "s"
+        case .LTE: return "l"
+        case .NR: return "n"
+        }
+    }
+    
+    func uiColor() -> Color {
+        switch (technology) {
+        case .CDMA: return .orange
+        case .GSM: return .green
+        case .SCDMA: return .pink
+        case .LTE: return .blue
+        case .NR: return .red
+        }
+    }
+    
     public static func from(technology: String?) -> CellTechnologyFormatter {
         // Return a default formatter if no technology is given
         guard var technology = technology?.uppercased() else {
@@ -71,6 +97,16 @@ struct CellTechnologyFormatter {
             // Return a default formatter if the technology is not found
             // TOOD: Print error
             return CellTechnologyFormatter(technology: .LTE)
+        }
+    }
+    
+    public static func mapColor(technology: ALSTechnology) -> UIColor {
+        switch (technology) {
+        case .CDMA: return .systemOrange
+        case .GSM: return .systemGreen
+        case .SCDMA: return .systemPink
+        case .LTE: return .systemBlue
+        case .NR: return .systemRed
         }
     }
     

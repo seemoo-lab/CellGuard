@@ -34,20 +34,9 @@ class CellAnnotationView: MKMarkerAnnotationView {
     
     private func colorFromTechnology() -> UIColor {
         guard let annotation = annotation as? CellAnnotation else {
-            return .red
+            return .systemGray
         }
         
-        switch (annotation.technology) {
-        case .GSM:
-            return .systemGreen
-        case .SCDMA:
-            return .systemPink
-        case .LTE:
-            return .systemBlue
-        case .NR:
-            return .systemRed
-        case .CDMA:
-            return .systemOrange
-        }
+        return CellTechnologyFormatter.mapColor(technology: annotation.technology)
     }
 }

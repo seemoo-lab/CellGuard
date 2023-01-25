@@ -93,9 +93,6 @@ struct LevelListView: View {
         self.selectors = selectors
         self.day = day
         
-        // TODO: Use enum
-        // TODO: Select by date
-        
         // https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/Predicates/Articles/pSyntax.html#//apple_ref/doc/uid/TP40001795-SW1
         var predicates: [NSPredicate] = []
         
@@ -170,6 +167,9 @@ private struct ListBodyElement: View {
         var newSelectors = selectors
         newSelectors[level] = level.extractValue(cell: cell)
         
+        let formatter = CellTechnologyFormatter.from(technology: cell.technology)
+        let text = Text("\(level.extractValue(cell: cell) as NSNumber, formatter: plainNumberFormatter)")
+        
         return NavigationLink {
             if level == .cell {
                 CellDetailsView(cell: cell)
@@ -177,8 +177,21 @@ private struct ListBodyElement: View {
                 LevelListView(level: level.next, selectors: newSelectors, day: Calendar.current.startOfDay(for: cell.collected!))
             }
         } label: {
-            // TODO: Add status icon on cell level
-            Text("\(level.extractValue(cell: cell) as NSNumber, formatter: plainNumberFormatter)")
+            // Show status icon only on cell level
+            if level == .cell {
+                HStack {
+                    formatter.icon()
+                        .resizable()
+                        .frame(width: 20, height: 20)
+                        .foregroundColor(formatter.uiColor())
+                    
+                    text
+                    
+                    Spacer()
+                }
+            } else {
+                text
+            }
         }
     }
     
