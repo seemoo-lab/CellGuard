@@ -1,5 +1,5 @@
 TARGET := iphone:clang:latest:14.0
-INSTALL_TARGET_PROCESSES = 'CommCenter'
+# INSTALL_TARGET_PROCESSES = 'CommCenter'
 
 
 include $(THEOS)/makefiles/common.mk
