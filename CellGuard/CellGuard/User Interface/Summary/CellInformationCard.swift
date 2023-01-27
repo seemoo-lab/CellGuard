@@ -5,8 +5,9 @@
 //  Created by Lukas Arnold on 16.01.23.
 //
 
-import SwiftUI
+import UIKit
 import MapKit
+import SwiftUI
 
 struct CellInformationCard: View {
     
@@ -15,6 +16,7 @@ struct CellInformationCard: View {
     
     @FetchRequest private var alsCells: FetchedResults<ALSCell>
     @FetchRequest private var tweakCells: FetchedResults<TweakCell>
+    @Environment(\.colorScheme) private var colorScheme
     
     private let techFormatter: CellTechnologyFormatter
     
@@ -75,7 +77,7 @@ struct CellInformationCard: View {
         .cornerRadius(10)
         .background(
             RoundedRectangle(cornerSize: CGSize(width: 10, height: 10))
-                .foregroundColor(.white)
+                .foregroundColor(colorScheme == .dark ? Color(UIColor.systemGray6) : .white)
                 .shadow(color: .black.opacity(0.2), radius: 8)
         )
         // .foregroundColor(.white)

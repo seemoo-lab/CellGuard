@@ -52,6 +52,7 @@ class CellClusterAnnotationView: MKAnnotationView {
             textSize = 18
         }
         
+        // TODO: Consider using not the color white when in dark mode
         let renderer = UIGraphicsImageRenderer(size: CGSize(width: drawSize, height: drawSize))
         return renderer.image { context in
             

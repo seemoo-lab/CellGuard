@@ -5,6 +5,7 @@
 //  Created by Lukas Arnold on 16.01.23.
 //
 
+import UIKit
 import SwiftUI
 
 enum RiskMediumCause: String {
@@ -13,6 +14,7 @@ enum RiskMediumCause: String {
 }
 
 enum RiskLevel: Equatable {
+    // TODO: Show number of cells to be verified
     case Unknown
     case Low
     case Medium(cause: RiskMediumCause)
@@ -40,9 +42,10 @@ enum RiskLevel: Equatable {
         }
     }
     
-    func color() -> Color {
+    func color(dark: Bool) -> Color {
+        // TODO: Less saturated colors for the dark mode
         switch (self) {
-        case .Unknown: return .gray
+        case .Unknown: return dark ? Color(UIColor.systemGray6) : .gray
         case .Low: return .green
         case .Medium: return .orange
         case .High: return .red
@@ -54,6 +57,8 @@ struct RiskIndicatorCard: View {
     
     let risk: RiskLevel
     let onTap: (RiskLevel) -> Void
+    
+    @Environment(\.colorScheme) private var colorScheme
     
     var body: some View {
         VStack {
@@ -80,7 +85,7 @@ struct RiskIndicatorCard: View {
         .padding()
         .background(
             RoundedRectangle(cornerSize: CGSize(width: 10, height: 10))
-                .foregroundColor(risk.color())
+                .foregroundColor(risk.color(dark: colorScheme == .dark))
                 .shadow(color: .black.opacity(0.2), radius: 8)
         )
         .foregroundColor(.white)
