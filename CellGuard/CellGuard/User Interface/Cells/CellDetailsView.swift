@@ -34,8 +34,6 @@ struct CellDetailsView: View {
     
     var body: some View {
         List {
-            // TODO: Map with all points
-            
             if SingleCellMap.hasAnyLocation(alsCells, tweakCells) {
                 SingleCellMap(alsCells: alsCells, tweakCells: tweakCells)
                     .frame(height: 200)
@@ -69,6 +67,9 @@ struct CellDetailsView: View {
                 if let reach = alsCells.first?.location?.reach {
                     CellDetailsRows("Reach", "\(reach)m")
                 }
+                if let score = alsCells.first?.location?.score {
+                    CellDetailsRows("Score", "\(score)")
+                }
             }
             
             if !tweakCells.isEmpty {
@@ -77,6 +78,7 @@ struct CellDetailsView: View {
                 let lastCell = dateTweakCells.sorted(by: { $0.collected! < $1.collected! }).last
                 
                 Section(header: Text("Recorded Measurements")) {
+                    // TODO: Show list of timestamps of all measurements which link to the recorded JSON data
                     CellDetailsRows("Count", tweakCells.count)
                     if let firstCell = firstCell {
                         CellDetailsRows("First Seen", mediumDateTimeFormatter.string(from: firstCell.collected!))
@@ -86,8 +88,6 @@ struct CellDetailsView: View {
                     }
                 }
             }
-            
-            // TODO: If tweak cell, show button for JSON data
         }
         .listStyle(.insetGrouped)
         .navigationTitle("\(cell.technology ?? "Unknwon") Cell")

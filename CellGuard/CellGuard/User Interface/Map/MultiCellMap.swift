@@ -42,6 +42,9 @@ struct MultiCellMap: UIViewRepresentable {
         
         mapView.delegate = context.coordinator
         
+        // TODO: Add user tracking button
+        // See: https://developer.apple.com/documentation/mapkit/mkusertrackingbutton
+        
         return mapView
     }
     

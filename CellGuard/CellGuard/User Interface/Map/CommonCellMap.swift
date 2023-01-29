@@ -20,18 +20,15 @@ struct CommonCellMap {
         // Single point annotations
         mapView.register(
             CellAnnotationView.self,
-            forAnnotationViewWithReuseIdentifier: MKMapViewDefaultAnnotationViewReuseIdentifier)
+            forAnnotationViewWithReuseIdentifier: CellAnnotationView.ReuseID)
         mapView.register(
             LocationAnnotation.self,
-            forAnnotationViewWithReuseIdentifier: MKMapViewDefaultAnnotationViewReuseIdentifier)
+            forAnnotationViewWithReuseIdentifier: LocationAnnotationView.ReuseID)
         
         // Cluster annotations
         mapView.register(
             CellClusterAnnotationView.self,
-            forAnnotationViewWithReuseIdentifier: MKMapViewDefaultClusterAnnotationViewReuseIdentifier)
-        mapView.register(
-            LocationAnnotation.self,
-            forAnnotationViewWithReuseIdentifier: MKMapViewDefaultClusterAnnotationViewReuseIdentifier)
+            forAnnotationViewWithReuseIdentifier: CellClusterAnnotationView.ReuseID)
     }
     
     private static func updateAnnotations<D: NSManagedObject, A: DatabaseAnnotation>(data: any Sequence<D>, uiView: MKMapView, create: (D) -> A?) {
@@ -74,6 +71,43 @@ struct CommonCellMap {
         
         updateAnnotations(data: locations, uiView: uiView) { location in
             LocationAnnotation(location: location)
+        }
+    }
+    
+    private static func updateOverlay<D: NSManagedObject, A: CellReachOverlay>(data: any Sequence<D>, uiView: MKMapView, create: (D) -> A?) {
+        // Pick all overlays of the given type
+        let presentOverlays = uiView.overlays
+            .map { $0 as? A }
+            .compactMap { $0 }
+        // Get the coreDataID from all annotations
+        let oldIDSet = Set(presentOverlays.map { $0.coreDataID })
+        
+        // Map the new data from the database into a dictionary of ID <-> Object
+        let newIDMap = Dictionary(
+            uniqueKeysWithValues: data
+                .map{ $0 as? D }
+                .compactMap { $0 }
+                .map { ($0.objectID, $0) }
+        )
+        
+        // Remove overlays which are on the map but are not part of the query result
+        let removeOverlays = presentOverlays
+            .filter { !newIDMap.keys.contains($0.coreDataID) }
+        uiView.removeOverlays(removeOverlays)
+        
+        // Add the new overlays which aren't displayed on the map but are part of the result
+        let addOverlays = newIDMap
+            .filter { !oldIDSet.contains($0.key) }
+            .map { create($0.value) }
+            .compactMap { $0 }
+        uiView.addOverlays(addOverlays)
+    }
+    
+    static func updateCellReachOverlay(data: FetchedResults<ALSCell>, uiView: MKMapView) {
+        let locations = Set(data.compactMap { $0.location })
+        
+        updateOverlay(data: locations, uiView: uiView) { location in
+            CellReachOverlay(location: location)
         }
     }
     

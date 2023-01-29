@@ -93,10 +93,14 @@ struct ALSVerifier {
             if !(queryCells.first?.isValid() ?? false) {
                 
                 // If not, set the status of the origin cell to failed
+                // TODO: Send a notification
                 try? persistence.storeCellStatus(cellId: source, status: .failed)
                 
                 return
             }
+            
+            // TODO: Check distance between user location (+ accuary) and cell location (+ reach)
+            // If this check fails, also send a notification and mark cell as failed
             
             // If yes, import the cells
             do {

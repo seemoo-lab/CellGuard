@@ -58,10 +58,15 @@ struct SingleCellMap: UIViewRepresentable {
     func updateUIView(_ uiView: MKMapView, context: Context) {
         CommonCellMap.updateCellAnnotations(data: alsCells, uiView: uiView)
         CommonCellMap.updateLocationAnnotations(data: tweakCells, uiView: uiView)
+        
+        // TODO: Enable reach overlay if performance has been improved
+        // CommonCellMap.updateCellReachOverlay(data: alsCells, uiView: uiView)
+        
+        // TODO: Update map region if the ALS cell annotation has changed
     }
     
     func makeCoordinator() -> CellMapDelegate {
-        return CellMapDelegate(onTap: { _ in })
+        return CellMapDelegate()
     }
     
     static func hasAnyLocation(_ alsCells: FetchedResults<ALSCell>, _ tweakCells: FetchedResults<TweakCell>) -> Bool {

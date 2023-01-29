@@ -12,13 +12,14 @@ class CellAnnotationView: MKMarkerAnnotationView {
     
     static let ReuseID = "cellAnnotation"
     
-    override init(annotation: MKAnnotation?, reuseIdentifier: String?) {
+    init(annotation: MKAnnotation?, reuseIdentifier: String?, calloutAccessory: Bool) {
         super.init(annotation: annotation, reuseIdentifier: reuseIdentifier)
         clusteringIdentifier = "cell"
-        // TODO: Should we animate? -> I guess no
         
         canShowCallout = true
-        rightCalloutAccessoryView = UIButton(type: .detailDisclosure)
+        if calloutAccessory {
+            rightCalloutAccessoryView = UIButton(type: .detailDisclosure)
+        }
     }
     
     required init?(coder aDecoder: NSCoder) {

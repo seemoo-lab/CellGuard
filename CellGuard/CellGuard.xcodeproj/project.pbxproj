@@ -17,6 +17,7 @@
 		CF0FDCC9296B310400A6FFE2 /* PersistencePreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0FDCC8296B310400A6FFE2 /* PersistencePreview.swift */; };
 		CF0FDCCB296B466100A6FFE2 /* PersistenceError.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0FDCCA296B466100A6FFE2 /* PersistenceError.swift */; };
 		CF0FDCCD296B480B00A6FFE2 /* TrackedUserLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0FDCCC296B480B00A6FFE2 /* TrackedUserLocation.swift */; };
+		CF1FAFB32986B11200106930 /* CellReachOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1FAFB22986B11200106930 /* CellReachOverlay.swift */; };
 		CF2A1C1529754AA400E8B61C /* LocalNetworkAuthorization.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2A1C1429754AA400E8B61C /* LocalNetworkAuthorization.swift */; };
 		CF2A1C182975562800E8B61C /* UserDefaultsKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2A1C172975562800E8B61C /* UserDefaultsKeys.swift */; };
 		CF2A1C1B2975670000E8B61C /* CGNotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2A1C1A2975670000E8B61C /* CGNotificationManager.swift */; };
@@ -103,6 +104,7 @@
 		CF0FDCC8296B310400A6FFE2 /* PersistencePreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistencePreview.swift; sourceTree = "<group>"; };
 		CF0FDCCA296B466100A6FFE2 /* PersistenceError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceError.swift; sourceTree = "<group>"; };
 		CF0FDCCC296B480B00A6FFE2 /* TrackedUserLocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackedUserLocation.swift; sourceTree = "<group>"; };
+		CF1FAFB22986B11200106930 /* CellReachOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellReachOverlay.swift; sourceTree = "<group>"; };
 		CF2A1C1429754AA400E8B61C /* LocalNetworkAuthorization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalNetworkAuthorization.swift; sourceTree = "<group>"; };
 		CF2A1C172975562800E8B61C /* UserDefaultsKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsKeys.swift; sourceTree = "<group>"; };
 		CF2A1C1A2975670000E8B61C /* CGNotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CGNotificationManager.swift; sourceTree = "<group>"; };
@@ -402,17 +404,18 @@
 			isa = PBXGroup;
 			children = (
 				CFDF5D82297F0736000708A8 /* CommonCellMap.swift */,
+				CFDF5D80297F05F1000708A8 /* CellMapDelegate.swift */,
 				CFDF5D7E297F05A0000708A8 /* SingleCellMap.swift */,
 				CFDF5D6E297EF05D000708A8 /* MultiCellMap.swift */,
-				CFDF5D80297F05F1000708A8 /* CellMapDelegate.swift */,
-				CFDF5D84297F09D3000708A8 /* DatabaseAnnotation.swift */,
 				CFDF5D70297EF0C6000708A8 /* CellAnnotation.swift */,
 				CFDF5D72297EF0E4000708A8 /* CellAnnotationView.swift */,
 				CFDF5D7A297EF71F000708A8 /* CellClusterAnnotation.swift */,
 				CFDF5D74297EF127000708A8 /* CellClusterAnnotationView.swift */,
+				CFDF5D84297F09D3000708A8 /* DatabaseAnnotation.swift */,
 				CFDF5D76297EF1E8000708A8 /* LocationAnnotation.swift */,
-				CFDF5D7C297EF76C000708A8 /* LocationClusterAnnotation.swift */,
 				CFDF5D78297EF1EF000708A8 /* LocationAnnotationView.swift */,
+				CFDF5D7C297EF76C000708A8 /* LocationClusterAnnotation.swift */,
+				CF1FAFB22986B11200106930 /* CellReachOverlay.swift */,
 			);
 			path = Map;
 			sourceTree = "<group>";
@@ -586,6 +589,7 @@
 				CF2A1C1D2975C71000E8B61C /* BackgroundState.swift in Sources */,
 				CF0FDCC22969AC1100A6FFE2 /* SettingsSheet.swift in Sources */,
 				CFD023682961AB9900AA5A1C /* CCTClient.swift in Sources */,
+				CF1FAFB32986B11200106930 /* CellReachOverlay.swift in Sources */,
 				CFB8B28A2963498200503189 /* CellGuardAppDelegate.swift in Sources */,
 				CF0FDCB729699E5100A6FFE2 /* MapTabView.swift in Sources */,
 				CF0FDCC02969A3E500A6FFE2 /* LargeButton.swift in Sources */,
