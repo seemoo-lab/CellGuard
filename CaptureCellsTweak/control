@@ -1,6 +1,6 @@
 Package: de.tudarmstadt.seemoo.capturecells
 Name: Capture Cells
-Version: 1.0.0
+Version: 1.0.1
 Architecture: iphoneos-arm
 Description: Captures the cellular base stations you've connected to and provides a TCP interface to query them
 Maintainer: Lukas Arnold

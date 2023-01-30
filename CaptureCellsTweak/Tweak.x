@@ -65,8 +65,8 @@ CCTManager* cctManager;
 %ctor {
 	// Affected processes: symptomsd, WirelessRadioManagerd, bluetoothd, CommCenter, nearbyd, locationd, and some other helpers
 	NSString* programName = [NSString stringWithUTF8String: argv[0]];
-	NSLog(@"Hello from tweak %@", programName);
 	if ([programName isEqualToString:@"/System/Library/Frameworks/CoreTelephony.framework/Support/CommCenter"]) {
+		NSLog(@"Hello from the capture cells tweak %@", programName);
 		cctManager = [[CCTManager alloc] init];
 		// Only enable the tweak for the process CommCenter
 		%init(CommCenter)
@@ -75,7 +75,7 @@ CCTManager* cctManager;
 }
 
 %dtor {
-	NSLog(@"Bye from tweak");
+	// NSLog(@"Bye from tweak");
 	if (cctManager != NULL) {
 		[cctManager close];
 	}

@@ -9,7 +9,7 @@ iOS Versions: 14.0 - 15.7 (?)
 ### Release
 
 ```bash
-gmake package
+FINALPACKAGE=1 gmake package
 ```
 
 ### Development
