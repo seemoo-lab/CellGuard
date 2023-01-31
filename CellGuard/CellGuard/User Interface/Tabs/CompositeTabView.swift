@@ -40,7 +40,7 @@ struct CompositeTabView: View {
         }
         
         // If the introduction already was shown, we check on every start if we still have accesss to the local network
-        return AnyView(TabView {
+        let view = TabView {
             SummaryTabView(showSettings: { showingSheet = .settings })
                 .tabItem {
                     Label("Summary", systemImage: "shield.fill")
@@ -53,6 +53,13 @@ struct CompositeTabView: View {
                 .tabItem {
                     Label("List", systemImage: "list.bullet")
                 }
+        }
+        // The tab bar on iOS 15 and above is by default translucent.
+        // However in the map tab, it doesn't switch from the transparent to its opaque mode.
+        // Therefore, we keep the tab for now always opaque.
+        .onAppear {
+            // TOOD: Change based on tap
+            CGTabBarAppearance.opaque()
         }
         // Multiple .sheet() statements on a single view are not supported in iOS 14
         // See: https://stackoverflow.com/a/63181811
@@ -115,11 +122,12 @@ struct CompositeTabView: View {
                     importURL = nil
                 }
             )
-        })
+        }
+        return AnyView(view)
     }
 }
 
-struct CGTabView_Previews: PreviewProvider {
+struct CompositeTabView_Previews: PreviewProvider {
     static var previews: some View {
         CompositeTabView()
             .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)

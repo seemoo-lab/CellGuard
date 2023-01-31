@@ -44,7 +44,8 @@ struct SummaryTabView: View {
         NavigationView {
             ScrollView {
                 RiskIndicatorCard(risk: determineRisk(), onTap: { risk in
-                    // TODO: Do something
+                    // TODO: .High -> Show list of bad cells
+                    // TODO: .Low -> Navigate to cell list
                     if risk == .Medium(cause: .Permissions) {
                         showSettings()
                     }

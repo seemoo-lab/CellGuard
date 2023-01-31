@@ -31,6 +31,7 @@
 		CF5AB2C02975458D00896ADC /* CellStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5AB2BF2975458D00896ADC /* CellStatus.swift */; };
 		CF5CBB8D29687CBB001CE9BE /* CCTParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5CBB8C29687CBB001CE9BE /* CCTParserTests.swift */; };
 		CF5CBB9529689FFE001CE9BE /* CellGuardSceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5CBB9429689FFE001CE9BE /* CellGuardSceneDelegate.swift */; };
+		CF5EA78B29892F420061E9F1 /* CGTabBarAppearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5EA78A29892F420061E9F1 /* CGTabBarAppearance.swift */; };
 		CF5EF9202977FACA00C4F50A /* Formatters.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5EF91F2977FACA00C4F50A /* Formatters.swift */; };
 		CF5EF9222977FCF800C4F50A /* CellTechnologyFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5EF9212977FCF800C4F50A /* CellTechnologyFormatter.swift */; };
 		CF5EF9242978538E00C4F50A /* ALSVerifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5EF9232978538E00C4F50A /* ALSVerifier.swift */; };
@@ -119,6 +120,7 @@
 		CF5AB2BF2975458D00896ADC /* CellStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellStatus.swift; sourceTree = "<group>"; };
 		CF5CBB8C29687CBB001CE9BE /* CCTParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CCTParserTests.swift; sourceTree = "<group>"; };
 		CF5CBB9429689FFE001CE9BE /* CellGuardSceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellGuardSceneDelegate.swift; sourceTree = "<group>"; };
+		CF5EA78A29892F420061E9F1 /* CGTabBarAppearance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CGTabBarAppearance.swift; sourceTree = "<group>"; };
 		CF5EF91F2977FACA00C4F50A /* Formatters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Formatters.swift; sourceTree = "<group>"; };
 		CF5EF9212977FCF800C4F50A /* CellTechnologyFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellTechnologyFormatter.swift; sourceTree = "<group>"; };
 		CF5EF9232978538E00C4F50A /* ALSVerifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ALSVerifier.swift; sourceTree = "<group>"; };
@@ -200,6 +202,7 @@
 				CF5EF91F2977FACA00C4F50A /* Formatters.swift */,
 				CF5EF9212977FCF800C4F50A /* CellTechnologyFormatter.swift */,
 				CF93B851297FFEF9003F9FFE /* URLIdentifiable.swift */,
+				CF5EA78A29892F420061E9F1 /* CGTabBarAppearance.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -559,6 +562,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CFDF5D73297EF0E4000708A8 /* CellAnnotationView.swift in Sources */,
+				CF5EA78B29892F420061E9F1 /* CGTabBarAppearance.swift in Sources */,
 				CFDF5D7B297EF71F000708A8 /* CellClusterAnnotation.swift in Sources */,
 				CF93B852297FFEF9003F9FFE /* URLIdentifiable.swift in Sources */,
 				CFD023402961A10D00AA5A1C /* Persistence.swift in Sources */,
