@@ -20,7 +20,7 @@ struct CellLocationDistance {
     }
     
     func largerThan(maximum: CLLocationDistance) -> Bool {
-        return distance + userAccuracy + alsAccuracy > maximum
+        return distance > maximum + userAccuracy + alsAccuracy
     }
     
     static func distance(userLocation: UserLocation, alsLocation: ALSLocation) -> CellLocationDistance {
