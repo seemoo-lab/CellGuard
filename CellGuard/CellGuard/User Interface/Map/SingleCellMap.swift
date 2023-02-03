@@ -25,17 +25,20 @@ struct SingleCellMap: UIViewRepresentable {
         mapView.isPitchEnabled = false
         mapView.isRotateEnabled = false
         
-        let region = MKCoordinateRegion(
-            center: middleLocation(),
-            span: MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02)
-        )
-        mapView.setRegion(region, animated: false)
+        mapView.setRegion(middleRegion(), animated: false)
         
         CommonCellMap.registerAnnotations(mapView)
         
         mapView.delegate = context.coordinator
         
         return mapView
+    }
+    
+    private func middleRegion() -> MKCoordinateRegion {
+        MKCoordinateRegion(
+            center: middleLocation(),
+            span: MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02)
+        )
     }
     
     private func middleLocation() -> CLLocationCoordinate2D {
@@ -56,13 +59,16 @@ struct SingleCellMap: UIViewRepresentable {
     }
     
     func updateUIView(_ uiView: MKMapView, context: Context) {
-        CommonCellMap.updateCellAnnotations(data: alsCells, uiView: uiView)
-        CommonCellMap.updateLocationAnnotations(data: tweakCells, uiView: uiView)
+        let (added, _) = CommonCellMap.updateCellAnnotations(data: alsCells, uiView: uiView)
+        _ = CommonCellMap.updateLocationAnnotations(data: tweakCells, uiView: uiView)
+        
+        // Update the shown map region if the cell annotation changes
+        if added > 0 {
+            uiView.setRegion(middleRegion(), animated: true)
+        }
         
         // TODO: Enable reach overlay if performance has been improved
-        // CommonCellMap.updateCellReachOverlay(data: alsCells, uiView: uiView)
-        
-        // TODO: Update map region if the ALS cell annotation has changed
+        // CommonCellMap.updateCellReachOverlay(data: alsCells, uiView: uiView)        
     }
     
     func makeCoordinator() -> CellMapDelegate {

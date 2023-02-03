@@ -49,7 +49,7 @@ struct MultiCellMap: UIViewRepresentable {
     }
     
     func updateUIView(_ uiView: MKMapView, context: Context) {
-        CommonCellMap.updateCellAnnotations(data: alsCells, uiView: uiView)
+        _ = CommonCellMap.updateCellAnnotations(data: alsCells, uiView: uiView)
     }
     
     func makeCoordinator() -> CellMapDelegate {

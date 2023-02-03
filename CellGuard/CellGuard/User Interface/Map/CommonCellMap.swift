@@ -31,7 +31,9 @@ struct CommonCellMap {
             forAnnotationViewWithReuseIdentifier: CellClusterAnnotationView.ReuseID)
     }
     
-    private static func updateAnnotations<D: NSManagedObject, A: DatabaseAnnotation>(data: any Sequence<D>, uiView: MKMapView, create: (D) -> A?) {
+    private static func updateAnnotations<D: NSManagedObject, A: DatabaseAnnotation>(
+        data: any Sequence<D>, uiView: MKMapView, create: (D) -> A?
+    ) -> (Int, Int) {
         // Pick all annotations of the given type
         let presentAnnotations = uiView.annotations
             .map { $0 as? A }
@@ -58,18 +60,21 @@ struct CommonCellMap {
             .map { create($0.value) }
             .compactMap { $0 }
         uiView.addAnnotations(addAnnotations)
+        
+        // Return the number of cell wihch are added and the number of the ones which are removed
+        return (addAnnotations.count, removeAnnotations.count)
     }
     
-    static func updateCellAnnotations(data: FetchedResults<ALSCell>, uiView: MKMapView) {
+    static func updateCellAnnotations(data: FetchedResults<ALSCell>, uiView: MKMapView) -> (Int, Int) {
         updateAnnotations(data: data, uiView: uiView) { cell in
             CellAnnotation(cell: cell)
         }
     }
     
-    static func updateLocationAnnotations(data: FetchedResults<TweakCell>, uiView: MKMapView) {
+    static func updateLocationAnnotations(data: FetchedResults<TweakCell>, uiView: MKMapView) -> (Int, Int) {
         let locations = Set(data.compactMap { $0.location })
         
-        updateAnnotations(data: locations, uiView: uiView) { location in
+        return updateAnnotations(data: locations, uiView: uiView) { location in
             LocationAnnotation(location: location)
         }
     }
