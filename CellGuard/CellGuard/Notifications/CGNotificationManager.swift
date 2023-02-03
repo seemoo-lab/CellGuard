@@ -23,18 +23,23 @@ enum CGNotificationLevel {
     }
     
     func body(cell: TweakCell) -> String {
-        let formatter = CellTechnologyFormatter.from(technology: cell.technology)
+        let techFormatter = CellTechnologyFormatter.from(technology: cell.technology)
         
-        let id = "\(formatter.country()): \(cell.country), " +
-        "\(formatter.network()): \(cell.network), " +
-        "\(formatter.area()): \(cell.area), " +
-        "\(formatter.cell()): \(cell.cell)"
+        let cellIdStr = "\(techFormatter.country()): \(cell.country), " +
+        "\(techFormatter.network()): \(cell.network), " +
+        "\(techFormatter.area()): \(cell.area), " +
+        "\(techFormatter.cell()): \(cell.cell)"
+                
+        var dateStr: String? = nil
+        if let collected = cell.collected {
+            dateStr = " seen at \(mediumDateTimeFormatter.string(from: collected))"
+        }
         
-        let cellStr = "\(cell.technology ?? "") cell (\(id))"
+        let cellStr = "\(cell.technology ?? "") cell (\(cellIdStr))\(dateStr ?? "")"
         
         switch (self) {
         case .verificationFailure:
-            return "The \(cellStr) could not be found in Apple's database. Thus, it could be rouge basestation."
+            return "The \(cellStr) could not be found in Apple's database. Therefore, it could be rouge base station."
         case let .locationWarning(distance):
             // Format the distance
             let distanceFormatter = MKDistanceFormatter()
@@ -46,8 +51,11 @@ enum CGNotificationLevel {
         }
     }
     
-    func sound() -> UNNotificationSound {
-        return .default
+    func sound() -> UNNotificationSound? {
+        switch (self) {
+        case .verificationFailure: return .default
+        case .locationWarning(_): return nil
+        }
     }
     
 }
