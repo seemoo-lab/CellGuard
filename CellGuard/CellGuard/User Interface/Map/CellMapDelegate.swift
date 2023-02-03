@@ -35,6 +35,7 @@ class CellMapDelegate: NSObject, MKMapViewDelegate {
         
         // TODO: Sometimes simple red pins are shown but when they're are tapped they show a callout and turn into correct annotations.
         // We don't know why
+        // See Dicussion: https://developer.apple.com/documentation/mapkit/mkmapviewdelegate/1452045-mapview
         return nil
     }
     

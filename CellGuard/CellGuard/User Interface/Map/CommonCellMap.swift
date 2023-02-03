@@ -17,6 +17,9 @@ struct CommonCellMap {
     }
     
     static func registerAnnotations(_ mapView: MKMapView) {
+        // Idea to fix the red pin problem: Put a prefix before each reuse identifier,
+        // but that doesn't seem to have an effect on the issue.
+        
         // Single point annotations
         mapView.register(
             CellAnnotationView.self,
