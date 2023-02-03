@@ -16,6 +16,7 @@ class CellAnnotationView: MKMarkerAnnotationView {
         super.init(annotation: annotation, reuseIdentifier: reuseIdentifier)
         clusteringIdentifier = "cell"
         
+        animatesWhenAdded = false
         canShowCallout = true
         if calloutAccessory {
             rightCalloutAccessoryView = UIButton(type: .detailDisclosure)

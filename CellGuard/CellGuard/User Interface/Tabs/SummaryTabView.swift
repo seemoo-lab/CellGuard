@@ -5,6 +5,7 @@
 //  Created by Lukas Arnold on 07.01.23.
 //
 
+import CoreData
 import SwiftUI
 
 struct SummaryTabView: View {
@@ -17,8 +18,7 @@ struct SummaryTabView: View {
     @EnvironmentObject var networkAuthorization: LocalNetworkAuthorization
     @EnvironmentObject var notificationManager: CGNotificationManager
     
-    @FetchRequest(sortDescriptors: [NSSortDescriptor(keyPath: \TweakCell.collected, ascending: false)])
-    private var tweakCells: FetchedResults<TweakCell>
+    @FetchRequest private var tweakCells: FetchedResults<TweakCell>
     @FetchRequest private var failedCells: FetchedResults<TweakCell>
     @FetchRequest private var unknownCells: FetchedResults<TweakCell>
     
@@ -27,13 +27,20 @@ struct SummaryTabView: View {
         self.showProgress = showProgress
         self.showListTab = showListTab
         
+        let latestTweakCellRequest = NSFetchRequest<TweakCell>()
+        latestTweakCellRequest.entity = TweakCell.entity()
+        latestTweakCellRequest.fetchLimit = 1
+        latestTweakCellRequest.sortDescriptors = [NSSortDescriptor(keyPath: \TweakCell.collected, ascending: false)]
+        
+        _tweakCells = FetchRequest(fetchRequest: latestTweakCellRequest)
+        
         let calendar = Calendar.current
         let ftDaysAgo = calendar.date(byAdding: .day, value: -14, to: calendar.startOfDay(for: Date()))!
         
         let ftPredicate = NSPredicate(format: "collected >= %@", ftDaysAgo as NSDate)
         let failedPredicate = NSPredicate(format: "status == %@", CellStatus.failed.rawValue)
         let unknownPredicate = NSPredicate(format: "status == %@", CellStatus.imported.rawValue)
-        
+                
         _failedCells = FetchRequest(
             sortDescriptors: [],
             predicate: NSCompoundPredicate(andPredicateWithSubpredicates: [ftPredicate, failedPredicate])

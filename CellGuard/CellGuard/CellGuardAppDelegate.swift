@@ -32,6 +32,7 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
     }
     
     func application(_ application: UIApplication, willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+        assignNotificationCenterDelegate()
         trackLocationIfBackground(launchOptions)
         registerSchedulers()
         
@@ -121,6 +122,23 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
                 Self.logger.warning("Failed to collect & store cells in scheduled timer: \(error)")
             }
         }
+    }
+    
+    private func assignNotificationCenterDelegate() {
+        UNUserNotificationCenter.current().delegate = self
+    }
+    
+}
+
+extension CellGuardAppDelegate: UNUserNotificationCenterDelegate {
+    
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        // Show the notifications even if the app is in foreground
+        // See: https://stackoverflow.com/a/37844312
+        
+        // We'll show the notifications as a banner and put them into the notification list for later review
+        // https://stackoverflow.com/a/65963174
+        completionHandler([.banner, .list])
     }
     
 }

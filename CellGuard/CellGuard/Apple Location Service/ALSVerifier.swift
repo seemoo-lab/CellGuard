@@ -91,23 +91,40 @@ struct ALSVerifier {
             
             // Check if the resuling ALS cell is valid
             if !(queryCells.first?.isValid() ?? false) {
-                
                 // If not, set the status of the origin cell to failed
-                // TODO: Send a notification
                 try? persistence.storeCellStatus(cellId: source, status: .failed)
+                
+                // Send a notification
+                CGNotificationManager.shared.notifyCell(level: .verificationFailure, source: source)
                 
                 return
             }
-            
-            // TODO: Check distance between user location (+ accuary) and cell location (+ reach)
-            // If this check fails, also send a notification and mark cell as failed
-            
+
             // If yes, import the cells
             do {
                 try persistence.importALSCells(from: queryCells, source: source)
             } catch {
                 Self.logger.warning("Can't import ALS cells \(queryCells): \(error)")
+                return
             }
+
+            // Calculate the distance between the location assigned to the tweak cells & the ALS cell used for its verification.
+            let distance = persistence.calculateDistance(tweakCell: source)
+            
+            // Maximum reach of GSM cell tower is about 70km
+            // See: https://en.wikipedia.org/wiki/Cell_site
+            let maxCellReach = 70_000.0
+            
+            if distance?.largerThan(maximum: maxCellReach) ?? true {
+                // If the distance is present and larger than the maximum, we'll send a notification
+                CGNotificationManager.shared.notifyCell(
+                    level: .locationWarning(distance: distance?.distance ?? 0),
+                    source: source
+                )
+            }
+            
+            // TODO: Use a higher limit to account for the periodic user location collections and if distance is greater mark the cell as failed
+            // If this check fails, also send a notification and mark cell as failed
         }
     }
         

@@ -241,6 +241,35 @@ class PersistenceController {
 
     }
     
+    /// Calcualtes the distance between the location for the tweak cell and its verified counter part from Apple's database.
+    /// If no verification or locations referrences cell exist, nil is returned.
+    func calculateDistance(tweakCell tweakCellID: NSManagedObjectID) -> CellLocationDistance? {
+        let taskContext = newTaskContext()
+        
+        var distance: CellLocationDistance? = nil
+        taskContext.performAndWait {
+            guard let tweakCell = taskContext.object(with: tweakCellID) as? TweakCell else {
+                return
+            }
+            
+            guard let alsCell = tweakCell.verification else {
+                return
+            }
+            
+            guard let userLocation = tweakCell.location else {
+                return
+            }
+            
+            guard let alsLocation = alsCell.location else {
+                return
+            }
+            
+            distance = CellLocationDistance.distance(userLocation: userLocation, alsLocation: alsLocation)
+        }
+        
+        return distance
+    }
+    
     /// Uses `NSBatchInsertRequest` (BIR) to import locations into the Core Data store on a private queue.
     func importUserLocations(from locations: [TrackedUserLocation]) throws {
         let taskContext = newTaskContext()
@@ -605,6 +634,7 @@ class PersistenceController {
         viewContext.perform {
             // Merge every transaction part of the history into the view context
             for transaction in history {
+                // self.logger.debug("Merging changes of transaction \(transaction)")
                 viewContext.mergeChanges(fromContextDidSave: transaction.objectIDNotification())
                 self.lastToken = transaction.token
             }
