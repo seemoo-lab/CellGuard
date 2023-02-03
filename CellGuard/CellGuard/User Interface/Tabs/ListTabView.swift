@@ -67,6 +67,27 @@ enum ListViewLevel {
     }
 }
 
+private struct GroupedTweakCell: Hashable {
+    
+    let value: Int64
+    let cells: [TweakCell]
+
+    let anyFailed: Bool
+    let lastCollected: TweakCell
+    
+    init(value: Int64, cells: [TweakCell]) {
+        self.value = value
+        self.cells = cells
+        self.anyFailed = cells.first { $0.status == CellStatus.failed.rawValue } != nil
+        // TODO: Ensure that cells contains at least one value
+        self.lastCollected = cells.max { $0.collected! < $1.collected! }!
+    }
+    
+    func hash(into hasher: inout Hasher) {
+        value.hash(into: &hasher)
+    }
+}
+
 struct ListTabView: View {
     
     var body: some View {
@@ -116,15 +137,10 @@ struct LevelListView: View {
     }
     
     var body: some View {
-        // Group cells by day.
-        // We're unable to compute this property in the database as the user can travel, therefore changing its timezone, and thus starting the day at a different time.
-        let itemsGroupedByDay = Dictionary(grouping: items.filter { $0.collected != nil }) { item in
-            Calendar.current.startOfDay(for: item.collected!)
-        }.sorted(by: {$0.key > $1.key})
+        // Group cells by day
+        let itemsGroupedByDay = groupDay()
         
-        // TODO: Ensure cells are only listed once per day
-        
-        // Embed in a VStack to make items collapsible:
+        // Embed in a VStack to make items collapsible
         VStack {
             if itemsGroupedByDay.isEmpty {
                 Text("Nothing collected so far")
@@ -132,8 +148,8 @@ struct LevelListView: View {
                 List {
                     ForEach(itemsGroupedByDay, id: \.key) { key, cells in
                         Section(header: Text(key, formatter: mediumDateFormatter)) {
-                            ForEach(removeDuplicates(cells: cells, key: { level.extractValue(cell: $0) }), id: \.self) { cell in
-                                ListBodyElement(level: level, selectors: selectors, cell: cell)
+                            ForEach(groupLevel(cells: cells), id: \.value) { groupedCells in
+                                ListBodyElement(level: level, selectors: selectors, groupedCells: groupedCells)
                             }
                         }
                     }
@@ -145,15 +161,19 @@ struct LevelListView: View {
         .navigationBarTitleDisplayMode(level == .country ? .automatic : .inline)
     }
     
-    private func removeDuplicates<T: Hashable>(cells: [TweakCell], key: (TweakCell) -> T) -> [TweakCell] {
-        var unique: [T : TweakCell] = [:]
-        for cell in cells {
-            if unique[key(cell)] == nil {
-                unique[key(cell)] = cell
-            }
-        }
-        
-        return unique.values.sorted(by: {$0.collected! > $1.collected!})
+    private func groupLevel(cells: [TweakCell]) -> [GroupedTweakCell] {
+        Dictionary(grouping: cells, by: { level.extractValue(cell: $0) })
+            .map { GroupedTweakCell(value: $0, cells: $1) }
+            // TODO: Should we sort by number of by last collected?
+            // Sort by value: .sorted { $0.value < $1.value }
+            .sorted { $0.lastCollected.collected! < $1.lastCollected.collected! }
+    }
+    
+    private func groupDay() -> [(key: Date, value: [TweakCell])] {
+        // We're unable to compute this property in the database as the user can travel, therefore changing its timezone, and thus starting the day at a different time.
+        return Dictionary(grouping: items.filter { $0.collected != nil }) { item in
+            Calendar.current.startOfDay(for: item.collected!)
+        }.sorted(by: {$0.key > $1.key})
     }
 }
 
@@ -161,14 +181,17 @@ private struct ListBodyElement: View {
     
     let level: ListViewLevel
     let selectors: [ListViewLevel : Int64]
-    let cell: TweakCell
+    let groupedCells: GroupedTweakCell
     
     var body: some View {
         var newSelectors = selectors
-        newSelectors[level] = level.extractValue(cell: cell)
+        newSelectors[level] = groupedCells.value
         
+        let cell = groupedCells.lastCollected
         let formatter = CellTechnologyFormatter.from(technology: cell.technology)
         let text = Text("\(level.extractValue(cell: cell) as NSNumber, formatter: plainNumberFormatter)")
+            // Color text red if the group contains a single failed cell
+            .foregroundColor(groupedCells.anyFailed ? .red : nil)
         
         return NavigationLink {
             if level == .cell {
