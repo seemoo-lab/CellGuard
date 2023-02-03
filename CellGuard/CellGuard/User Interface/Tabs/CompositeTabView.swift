@@ -87,6 +87,17 @@ struct CompositeTabView: View {
                 }
                 .tag(ShownTab.list)
         }
+        .onAppear {
+            // Only show the introduction if it never has been shown before
+            if !UserDefaults.standard.bool(forKey: UserDefaultsKeys.introductionShown.rawValue) {
+                showingSheet = .welcome
+            }
+            
+            // The tab bar on iOS 15 and above is by default translucent.
+            // However in the map tab, it doesn't switch from the transparent to its opaque mode.
+            // Therefore, we keep the tab for now always opaque.
+            CGTabBarAppearance.opaque()
+        }
         // Multiple .sheet() statements on a single view are not supported in iOS 14
         // See: https://stackoverflow.com/a/63181811
         .sheet(item: $showingSheet) { (sheet: ShownSheet) in
@@ -123,19 +134,18 @@ struct CompositeTabView: View {
                 .environment(\.managedObjectContext, managedContext)
             }
         }
-        .onAppear {
-            // Only show the introduction if it never has been shown before
-            if !UserDefaults.standard.bool(forKey: UserDefaultsKeys.introductionShown.rawValue) {
-                showingSheet = .welcome
-            }
-            
-            // The tab bar on iOS 15 and above is by default translucent.
-            // However in the map tab, it doesn't switch from the transparent to its opaque mode.
-            // Therefore, we keep the tab for now always opaque.
-            CGTabBarAppearance.opaque()
-        }
         .onOpenURL { url in
-            self.showingAlert = ShownAlert.importConfirm(url)
+            Self.logger.debug("Open URL: \(url)")
+            
+            // Switch to the summary tab and close the shown sheet (if there's any)
+            self.showingTab = .summary
+            self.showingSheet = nil
+            
+            // Wait a bit so the sheet can close and we can present the alert
+            // See: https://stackoverflow.com/a/71638878
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                self.showingAlert = ShownAlert.importConfirm(url)
+            }
         }
         .alert(item: $showingAlert) { alert in
             switch (alert) {
