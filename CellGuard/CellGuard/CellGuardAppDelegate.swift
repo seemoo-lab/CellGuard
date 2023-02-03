@@ -104,6 +104,12 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
         }
         // We allow only allow a lower tolerance for the check timer as it is executed in short intervals
         checkTimer.tolerance = 1
+        
+        // Clear the persistent history cache all five minutes
+        let clearHistoryTimer = Timer.scheduledTimer(withTimeInterval: 60 * 5, repeats: true) { timer in
+            PersistenceController.shared.cleanPersistentHistoryChanges()
+        }
+        clearHistoryTimer.tolerance = 30
 
         // TODO: Add task to reguarly delete old ALS cells (>= 90 days) to force a refresh
         // -> Then, also reset the status of the associated tweak cells
