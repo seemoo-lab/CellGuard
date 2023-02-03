@@ -1,114 +1,13 @@
 //
-//  Persistence.swift
+//  PersistenceQueries.swift
 //  CellGuard
 //
-//  Created by Lukas Arnold on 01.01.23.
+//  Created by Lukas Arnold on 03.02.23.
 //
 
 import CoreData
-import OSLog
 
-// TODO: Maybe use later
-protocol Persistable<T> {
-    associatedtype T
-    
-    func applyTo(_ object: T)
-}
-
-class PersistenceController {
-    
-    // Learn more about Core Data and our approach of synchronizing data across multiple queues:
-    // https://developer.apple.com/documentation/swiftui/loading_and_displaying_a_large_data_feed
-    // WWDC 2019: https://developer.apple.com/videos/play/wwdc2019/230/
-    // WWDC 2020: https://developer.apple.com/videos/play/wwdc2020/10017/
-    // WWDC 2021: https://developer.apple.com/videos/play/wwdc2021/10017/
-    
-    private let logger = Logger(
-        subsystem: Bundle.main.bundleIdentifier!,
-        category: String(describing: PersistenceController.self)
-    )
-    
-    /// A shared persistence provider to use within the main app bundle.
-    static let shared = PersistenceController()
-
-    /// A persistence provider to use with canvas previews.
-    static let preview = PersistencePreview.controller()
-
-    private let inMemory: Bool
-    private var notificationToken: NSObjectProtocol?
-    
-    /// A persistent container to set up the Core Data stack
-    let container: NSPersistentContainer
-
-    init(inMemory: Bool = false) {
-        self.inMemory = inMemory
-        
-        // It's better to directly initialize the container instead of using a lazy variable
-        // Create a persistent container responsible for storing the data on disk
-        container = NSPersistentContainer(name: "CellGuard")
-        
-        // Check if it has a store description
-        guard let description = container.persistentStoreDescriptions.first else {
-            fatalError("Failed to retrieve a persistent store description.")
-        }
-        
-        // If in memory is set, do not save the container on disk, just in memory
-        if inMemory {
-            description.url = URL(fileURLWithPath: "/dev/null")
-        }
-        
-        // Enable persistent store remote change notification for sending notification between queues
-        description.setOption(true as NSNumber, forKey: NSPersistentStoreRemoteChangeNotificationPostOptionKey)
-        // Enable persistent history tracking which keeps track of changes in the Core Data store
-        description.setOption(true as NSNumber, forKey: NSPersistentHistoryTrackingKey)
-        
-        // Load data from the stores into the container and abort on error
-        container.loadPersistentStores { storeDescription, error in
-            if let error = error as NSError? {
-                fatalError("Unresolved error \(error), \(error.userInfo)")
-            }
-        }
-        
-        // We refresh the UI by consuming store changes via persistent history tracking
-        container.viewContext.automaticallyMergesChangesFromParent = false
-        container.viewContext.name = "viewContext"
-        // If the data is already stored (identified by constraints), we only update the existing properties
-        container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
-        // We do not use the undo manager therefore we save resources and disable it
-        container.viewContext.undoManager = nil
-        container.viewContext.shouldDeleteInaccessibleFaults = true
-        
-        // We listen for remote store change notification which are sent from other queues.
-        notificationToken = NotificationCenter.default.addObserver(forName: .NSPersistentStoreRemoteChange, object: nil, queue: nil) { note in
-            self.logger.debug("Received a persistent store remote change notification.")
-            // Once we receive such notification we update our queue-local history
-            Task {
-                self.fetchPersistentHistory()
-            }
-        }
-    }
-    
-    deinit {
-        // If set, remove the observer for the remote store change notification
-        if let observer = notificationToken {
-            NotificationCenter.default.removeObserver(observer)
-        }
-    }
-    
-    /// A persistent history token used for fetching transactions from the store.
-    private var lastToken: NSPersistentHistoryToken?
-    
-    /// Creates and configures a private queue context.
-    func newTaskContext() -> NSManagedObjectContext {
-        // Create a preview queue context.
-        let taskContext = container.newBackgroundContext()
-        taskContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
-        // Set unused undoManager to nil for macOS (it is nil by default on iOS)
-        // to reduce resource requirements.
-        taskContext.undoManager = nil
-        return taskContext
-    }
-    
+extension PersistenceController {
     // TODO: Import data from Wikipedia
     // MCC -> Country Name
     // MCC, MNC -> Network Operator Name
@@ -580,64 +479,5 @@ class PersistenceController {
         }
         
         return successful
-    }
-    
-    /// Fetches persistent history into the view context.
-    func fetchPersistentHistory() {
-        do {
-            try fetchPersistentHistoryTransactionsAndChanges()
-        } catch {
-            logger.warning("Failed to fetch persistent history: \(error.localizedDescription)")
-        }
-    }
-    
-    /// Fetches persistent history transaction starting from the `lastToken` and merges it into the view context.
-    func fetchPersistentHistoryTransactionsAndChanges() throws {
-        let taskContext = newTaskContext()
-        taskContext.name = "persistentHistoryContext"
-        logger.debug("Start fetching persistent history changes from the store...")
-        
-        var taskError: Error? = nil
-        
-        taskContext.performAndWait {
-            do {
-                // Request transactions that happend since the lastToken
-                let changeRequest = NSPersistentHistoryChangeRequest.fetchHistory(after: self.lastToken)
-                let historyResult = try taskContext.execute(changeRequest) as? NSPersistentHistoryResult
-                if let history = historyResult?.result as? [NSPersistentHistoryTransaction],
-                    !history.isEmpty {
-                        // If successful, merge them into the view context
-                        self.mergePersistentHistoryChanges(from: history)
-                        return
-                }
-                
-                // This is normal at the first start of the app and doesn't require an exception
-                logger.debug("No persistent history transactions found.")
-                // throw PersistenceError.persistentHistoryChangeError
-                return
-            } catch {
-                taskError = error
-            }
-        }
-        
-        if let error = taskError {
-            throw error
-        }
-    }
-    
-    /// Merge transaction part of the`history`parameter into the view context.
-    func mergePersistentHistoryChanges(from history: [NSPersistentHistoryTransaction]) {
-        logger.debug("Received \(history.count) persistent history transactions.")
-        
-        // Update view context with objectIDs from history change request.
-        let viewContext = container.viewContext
-        viewContext.perform {
-            // Merge every transaction part of the history into the view context
-            for transaction in history {
-                // self.logger.debug("Merging changes of transaction \(transaction)")
-                viewContext.mergeChanges(fromContextDidSave: transaction.objectIDNotification())
-                self.lastToken = transaction.token
-            }
-        }
     }
 }
