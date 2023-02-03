@@ -20,6 +20,7 @@ class CellAnnotationView: MKMarkerAnnotationView {
         if calloutAccessory {
             rightCalloutAccessoryView = UIButton(type: .detailDisclosure)
         }
+        displayPriority = .required
     }
     
     required init?(coder aDecoder: NSCoder) {
