@@ -18,38 +18,44 @@ struct CCTCollector {
     
     private let parser: CCTParser = CCTParser()
     private let client: CCTClient
+    private let verifier: ALSVerifier = ALSVerifier()
+    
+    // TODO: Shared instance which exposes its last status
     
     init(client: CCTClient) {
         self.client = client
     }
     
-    func collectAndStore(completion: @escaping (Error?) -> ()) {
+    func collectAndStore(completion: @escaping (Result<Int,Error>) -> Void) {
         client.collectCells() { result in
             do {
-                store(samples: try result.get())
-                completion(nil)
+                let samples = try result.get()
+                let numberOfStoredCells = try store(samples: samples)
+                completion(.success(numberOfStoredCells))
             } catch {
                 Self.logger.warning("Can't request cells from tweak: \(error)")
-                completion(error)
+                completion(.failure(error))
             }
         }
     }
     
-    private func store(samples: [CellSample]) {
+    private func store(samples: [CellSample]) throws -> Int {
         do {
-            let importCells = try samples.map {sample -> CCTCellProperties? in
+            let importCells = try samples.compactMap {sample -> CCTCellProperties? in
                 do {
                     return try parser.parse(sample)
                 } catch let error as CCTParserError {
                     Self.logger.warning("Can't parse cell sample: \(error)\n\(sample)")
                     return nil
                 }
-            }.compactMap { $0 }
+            }
             
             try PersistenceController.shared.importCollectedCells(from: importCells)
+            
+            return importCells.count
         } catch {
             Self.logger.warning("Can't import cells: \(error)")
+            throw error
         }
     }
-    
 }

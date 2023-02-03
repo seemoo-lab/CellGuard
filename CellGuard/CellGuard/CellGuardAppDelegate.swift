@@ -48,7 +48,7 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
         if let launchOptions = launchOptions {
             // https://developer.apple.com/documentation/corelocation/cllocationmanager/1423531-startmonitoringsignificantlocati
             if launchOptions[.location] != nil {
-                // TODO: Is this even required?
+                // TODO: Is it even required to start a seperarte LocationDataManger()?
                 // -> I guess not
                 // _ = LocationDataManager()
             }
@@ -69,46 +69,58 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
             // TODO: Should we allow to cancel the task somehow?
             // task.expirationHandler
             
-            collector.collectAndStore { error in
-                task.setTaskCompleted(success: error == nil)
+            collector.collectAndStore { result in
+                let count = try? result.get()
+                task.setTaskCompleted(success: count != nil)
             }
         }
         
         BGTaskScheduler.shared.register(forTaskWithIdentifier: Self.verifyTaskIdentifier, using: nil) { task in
-            ALSVerifier().verify(n: 100)
+            // Simply start our collection & verification tasks
+            // TODO: This could be improved by directly resheduling a task when it has finished
+            self.startTasks()
         }
     }
     
     private func startTasks() {
-        let collector = CCTCollector(client: CCTClient(queue: .global(qos: .userInitiated)))
+        let collector = CCTCollector(client: CCTClient(queue: .global(qos: .default)))
+        let verifier = ALSVerifier()
         
-        // Schedule a timer to continously poll the latest cells while the app is active
+        // Schedule a timer to continously poll the latest cells while the app is active and instantly verify them
         let collectTimer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { timer in
-            collector.collectAndStore { error in
-                if let error = error {
-                    Self.logger.warning("Failed to collect & store cells in scheduled timer: \(error)")
-                }
-            }
+            self.collectAndVerifyTask(collector: collector, verifier: verifier)
         }
         // We allow the timer a high tolerance of 50% as our collector is not time critical
         collectTimer.tolerance = 30
-        // We also start a task to instantly fetch te latest cells
-        Task {
-            collector.collectAndStore { error in
-                if let error = error {
-                    Self.logger.warning("Failed to collect & store cells in initialization request: \(error)")
-                }
-            }
+        // We also start the function instantly to fetch the latest cells
+        DispatchQueue.global(qos: .default).async {
+            self.collectAndVerifyTask(collector: collector, verifier: verifier)
         }
-                
+            
+        // Slowly verify collected & imported cells in the background
         let checkTimer = Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { timer in
-            ALSVerifier().verify(n: 10)
+            verifier.verify(n: 10)
         }
-        // We allow only allow a lower tolerance for check timer as it is executed in short intervals
+        // We allow only allow a lower tolerance for the check timer as it is executed in short intervals
         checkTimer.tolerance = 1
 
         // TODO: Add task to reguarly delete old ALS cells (>= 90 days) to force a refresh
         // -> Then, also reset the status of the associated tweak cells
+    }
+    
+    private func collectAndVerifyTask(collector: CCTCollector, verifier: ALSVerifier) {
+        collector.collectAndStore { result in
+            do {
+                // Get the number of successfully collected & stored cells
+                let numberOfStoredCells = try result.get()
+                // Instant verify the number of collected & stored cells (up to a count of 10)
+                let verifyCells = numberOfStoredCells > 10 ? 10 : numberOfStoredCells
+                verifier.verify(n: verifyCells)
+            } catch {
+                // Print the error if the task execution was not successful
+                Self.logger.warning("Failed to collect & store cells in scheduled timer: \(error)")
+            }
+        }
     }
     
 }

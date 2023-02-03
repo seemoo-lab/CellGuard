@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CF0A5678298A7A910012B2A8 /* VerificationProgressSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0A5677298A7A910012B2A8 /* VerificationProgressSheet.swift */; };
 		CF0FDCB529698E1500A6FFE2 /* SummaryTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0FDCB429698E1500A6FFE2 /* SummaryTabView.swift */; };
 		CF0FDCB729699E5100A6FFE2 /* MapTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0FDCB629699E5100A6FFE2 /* MapTabView.swift */; };
 		CF0FDCBB29699E8A00A6FFE2 /* CompositeTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0FDCBA29699E8A00A6FFE2 /* CompositeTabView.swift */; };
@@ -95,6 +96,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		CF0A5677298A7A910012B2A8 /* VerificationProgressSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerificationProgressSheet.swift; sourceTree = "<group>"; };
 		CF0FDCB429698E1500A6FFE2 /* SummaryTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SummaryTabView.swift; sourceTree = "<group>"; };
 		CF0FDCB629699E5100A6FFE2 /* MapTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapTabView.swift; sourceTree = "<group>"; };
 		CF0FDCBA29699E8A00A6FFE2 /* CompositeTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompositeTabView.swift; sourceTree = "<group>"; };
@@ -218,9 +220,10 @@
 		CF2A1C1E2975CDBB00E8B61C /* Summary */ = {
 			isa = PBXGroup;
 			children = (
-				CF0FDCBC2969A21000A6FFE2 /* WelcomeSheet.swift */,
-				CF2A1C1F2975CDD200E8B61C /* RiskIndicatorCard.swift */,
 				CF2A1C212975DB8100E8B61C /* CellInformationCard.swift */,
+				CF2A1C1F2975CDD200E8B61C /* RiskIndicatorCard.swift */,
+				CF0A5677298A7A910012B2A8 /* VerificationProgressSheet.swift */,
+				CF0FDCBC2969A21000A6FFE2 /* WelcomeSheet.swift */,
 			);
 			path = Summary;
 			sourceTree = "<group>";
@@ -565,6 +568,7 @@
 				CF5EA78B29892F420061E9F1 /* CGTabBarAppearance.swift in Sources */,
 				CFDF5D7B297EF71F000708A8 /* CellClusterAnnotation.swift in Sources */,
 				CF93B852297FFEF9003F9FFE /* URLIdentifiable.swift in Sources */,
+				CF0A5678298A7A910012B2A8 /* VerificationProgressSheet.swift in Sources */,
 				CFD023402961A10D00AA5A1C /* Persistence.swift in Sources */,
 				CFCE7A8C29817E2500E28787 /* ALSTechnology.swift in Sources */,
 				CFDF5D85297F09D3000708A8 /* DatabaseAnnotation.swift in Sources */,
@@ -796,7 +800,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.1;
+				MARKETING_VERSION = 1.0.2;
 				PRODUCT_BUNDLE_IDENTIFIER = de.tudarmstadt.seemoo.CellGuard;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -832,7 +836,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.1;
+				MARKETING_VERSION = 1.0.2;
 				PRODUCT_BUNDLE_IDENTIFIER = de.tudarmstadt.seemoo.CellGuard;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;

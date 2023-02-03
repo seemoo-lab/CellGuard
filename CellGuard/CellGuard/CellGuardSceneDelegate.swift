@@ -51,7 +51,7 @@ class CellGuardSceneDelegate: NSObject, UIWindowSceneDelegate, ObservableObject 
         
         do {
             let verifyTask = BGProcessingTaskRequest(identifier: CellGuardAppDelegate.verifyTaskIdentifier)
-            verifyTask.earliestBeginDate = Date(timeIntervalSinceNow: 60 * 60 * 6)
+            verifyTask.earliestBeginDate = Date(timeIntervalSinceNow: 60 * 60 * 3)
             try BGTaskScheduler.shared.submit(verifyTask)
         } catch {
             Self.logger.warning("Could not schedule the app verify prcessing task: \(Self.toDescription(taskSchedulerError: error as? BGTaskScheduler.Error)) -> \(error)")
