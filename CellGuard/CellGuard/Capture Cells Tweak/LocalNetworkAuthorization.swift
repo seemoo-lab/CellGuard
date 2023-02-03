@@ -54,8 +54,10 @@ public class LocalNetworkAuthorization: NSObject, ObservableObject {
             case let .waiting(error):
                 Self.logger.info("Local network permission has been denied: \(error)")
                 self.reset()
-                self.lastResult = false
-                self.completion?(false)
+                DispatchQueue.main.async {
+                    self.lastResult = false
+                    self.completion?(false)
+                }
             default:
                 break
             }
@@ -81,7 +83,9 @@ extension LocalNetworkAuthorization : NetServiceDelegate {
     public func netServiceDidPublish(_ sender: NetService) {
         self.reset()
         Self.logger.info("Local network permission has been granted")
-        self.lastResult = true
-        completion?(true)
+        DispatchQueue.main.async {
+            self.lastResult = true
+            self.completion?(true)
+        }
     }
 }

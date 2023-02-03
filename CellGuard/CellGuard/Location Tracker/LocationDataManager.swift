@@ -46,9 +46,12 @@ class LocationDataManager : NSObject, CLLocationManagerDelegate, ObservableObjec
         // https://developer.apple.com/documentation/corelocation/handling_location_updates_in_the_background
         
         Self.logger.log("Authorization: \(self.describe(authorizationStatus: manager.authorizationStatus))")
-        authorizationStatus = manager.authorizationStatus
+
+        DispatchQueue.main.async {
+            self.authorizationStatus = manager.authorizationStatus
+        }
         
-        if authorizationStatus == .authorizedWhenInUse && authorizationCompletion != nil {
+        if manager.authorizationStatus == .authorizedWhenInUse && authorizationCompletion != nil {
             // The second part of the request the always authorization, see below in requestAuthorization()
             locationManager.requestAlwaysAuthorization()
             
@@ -67,8 +70,10 @@ class LocationDataManager : NSObject, CLLocationManagerDelegate, ObservableObjec
             return
         }
         
-        authorizationCompletion?(authorizationStatus == .authorizedAlways)
-        authorizationCompletion = nil
+        DispatchQueue.main.async {
+            self.authorizationCompletion?(manager.authorizationStatus == .authorizedAlways)
+            self.authorizationCompletion = nil
+        }
         
         // More information about the always status which is also temporarily granted if only requestAlwaysAuthorization is called:
         // https://developer.apple.com/forums/thread/117256?page=2
@@ -97,7 +102,9 @@ class LocationDataManager : NSObject, CLLocationManagerDelegate, ObservableObjec
         }
         
         if !locations.isEmpty {
-            self.lastLocation = locations.last
+            DispatchQueue.main.async {
+                self.lastLocation = locations.last
+            }
         }
     }
     
