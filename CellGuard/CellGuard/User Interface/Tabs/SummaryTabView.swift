@@ -10,6 +10,8 @@ import SwiftUI
 struct SummaryTabView: View {
     
     let showSettings: () -> Void
+    let showProgress: () -> Void
+    let showListTab: () -> Void
     
     @EnvironmentObject var locationManager: LocationDataManager
     @EnvironmentObject var networkAuthorization: LocalNetworkAuthorization
@@ -20,8 +22,10 @@ struct SummaryTabView: View {
     @FetchRequest private var failedCells: FetchedResults<TweakCell>
     @FetchRequest private var unknownCells: FetchedResults<TweakCell>
     
-    init(showSettings: @escaping () -> Void) {
+    init(showSettings: @escaping () -> Void, showProgress: @escaping () -> Void, showListTab: @escaping () -> Void) {
         self.showSettings = showSettings
+        self.showProgress = showProgress
+        self.showListTab = showListTab
         
         let calendar = Calendar.current
         let ftDaysAgo = calendar.date(byAdding: .day, value: -14, to: calendar.startOfDay(for: Date()))!
@@ -44,10 +48,19 @@ struct SummaryTabView: View {
         NavigationView {
             ScrollView {
                 RiskIndicatorCard(risk: determineRisk(), onTap: { risk in
-                    // TODO: .High -> Show list of bad cells
-                    // TODO: .Low -> Navigate to cell list
-                    if risk == .Medium(cause: .Permissions) {
-                        showSettings()
+                    switch (risk) {
+                    case .Low:
+                        showListTab()
+                    case let .Medium(cause):
+                        if cause == .Permissions {
+                            showSettings()
+                        } else if cause == .Tweak {
+                            // TODO: Show explain sheet
+                        }
+                    case .High(_):
+                        showListTab()
+                    case .Unknown:
+                        showProgress()
                     }
                 })
                 if !tweakCells.isEmpty {
@@ -91,6 +104,10 @@ struct SummaryTabView: View {
 struct SummaryView_Previews: PreviewProvider {
     static var previews: some View {
         SummaryTabView {
+            // doing nothing
+        } showProgress: {
+            // doing nothing
+        } showListTab: {
             // doing nothing
         }
         .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)

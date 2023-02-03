@@ -9,11 +9,27 @@ import Foundation
 import OSLog
 
 enum PersistenceImportError: Error {
+    case permissionDenied
     case readFailed(Error)
     case deserilizationFailed(Error)
     case invalidStructure
     case locationImportFailed(Error)
     case cellImportFailed(Error)
+}
+
+extension PersistenceImportError: LocalizedError {
+    
+    var errorDescription: String? {
+        switch (self) {
+        case .permissionDenied: return "Permission Denied"
+        case let .readFailed(error): return "Read Failed (\(error.localizedDescription))"
+        case let .deserilizationFailed(error): return "Derserilization Failed (\(error.localizedDescription))"
+        case .invalidStructure: return "Invalid JSON Structure"
+        case let .locationImportFailed(error): return "Location Import Failed (\(error.localizedDescription))"
+        case let .cellImportFailed(error): return "Cell Import Failed (\(error.localizedDescription))"
+        }
+    }
+    
 }
 
 // https://stackoverflow.com/a/49154838
@@ -29,7 +45,7 @@ struct PersistenceImporter {
         category: String(describing: PersistenceImporter.self)
     )
     
-    static func importInBackground(url: URL, completion: @escaping (Result<Int, Error>) -> Void) {
+    static func importInBackground(url: URL, completion: @escaping (Result<(Int, Int), Error>) -> Void) {
         DispatchQueue.global(qos: .userInitiated).async {
             let result = Result.init {
                 try PersistenceImporter().importData(from: url)
@@ -44,12 +60,17 @@ struct PersistenceImporter {
         
     }
     
-    private func importData(from url: URL) throws -> Int {
+    private func importData(from url: URL) throws -> (Int, Int) {
         let data = try read(url: url)
         return try store(json: data)
     }
     
     private func read(url: URL) throws -> [String: Any] {
+        // This function call is required on iOS 16 to read files to be imported
+        guard url.startAccessingSecurityScopedResource() else {
+            throw PersistenceImportError.permissionDenied
+        }
+        
         let data: Data
         do {
             data = try Data(contentsOf: url)
@@ -72,7 +93,7 @@ struct PersistenceImporter {
         return jsonDict
     }
     
-    private func store(json: [String : Any]) throws -> Int {
+    private func store(json: [String : Any]) throws -> (Int, Int) {
         let parser = CCTParser()
         
         let cellsJson: [Any] = (json[CellFileKeys.cells] as? [Any]) ?? []
@@ -98,7 +119,7 @@ struct PersistenceImporter {
         
         Self.logger.debug("Imported \(locations.count) locations and \(cells.count) cells")
         
-        return cells.count + locations.count
+        return (cells.count, locations.count)
     }
     
 }

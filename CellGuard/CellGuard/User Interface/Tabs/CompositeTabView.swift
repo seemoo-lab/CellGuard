@@ -5,30 +5,57 @@
 //  Created by Lukas Arnold on 07.01.23.
 //
 
+import CoreData
+import OSLog
 import SwiftUI
+
+private enum ShownTab: Identifiable {
+    case summary
+    case map
+    case list
+    
+    var id: Self {
+        return self
+    }
+}
 
 private enum ShownSheet: Identifiable {
     case welcome
     case settings
+    case progress
 
     var id: Self {
         return self
     }
 }
 
+private enum ShownAlert: Hashable, Identifiable {
+    case importConfirm(URL)
+    case importSuccess(Int, Int)
+    case importFailed(String)
+    
+    var id: Self {
+        return self
+    }
+    
+}
+
 struct CompositeTabView: View {
     
-    // Summary: shield.fill or exclamationmark.shield.fill
-    // Map: map.fill
-    // Details: magnifyingglass or chart.bar.fill or cellularbars
+    private static let logger = Logger(
+        subsystem: Bundle.main.bundleIdentifier!,
+        category: String(describing: CompositeTabView.self)
+    )
     
+    @Environment(\.managedObjectContext) var managedContext: NSManagedObjectContext
     @EnvironmentObject var locationManager: LocationDataManager
     @EnvironmentObject var networkAuthorization: LocalNetworkAuthorization
     @EnvironmentObject var notificationManager: CGNotificationManager
     
+    @State private var showingTab = ShownTab.summary
+    @State private var showingImport = false
     @State private var showingSheet: ShownSheet?
-    @State private var showingImport: Bool = false
-    @State private var importURL: URLIdentfiable? = nil
+    @State private var showingAlert: ShownAlert?
     
     var body: some View {
         if showingImport {
@@ -40,26 +67,25 @@ struct CompositeTabView: View {
         }
         
         // If the introduction already was shown, we check on every start if we still have accesss to the local network
-        let view = TabView {
-            SummaryTabView(showSettings: { showingSheet = .settings })
+        let view = TabView(selection: $showingTab) {
+            SummaryTabView(
+                showSettings: { showingSheet = .settings },
+                showProgress: { showingSheet = .progress },
+                showListTab: { showingTab = .list })
                 .tabItem {
                     Label("Summary", systemImage: "shield.fill")
                 }
+                .tag(ShownTab.summary)
             MapTabView()
                 .tabItem {
                     Label("Map", systemImage: "map.fill")
                 }
+                .tag(ShownTab.map)
             ListTabView()
                 .tabItem {
                     Label("List", systemImage: "list.bullet")
                 }
-        }
-        // The tab bar on iOS 15 and above is by default translucent.
-        // However in the map tab, it doesn't switch from the transparent to its opaque mode.
-        // Therefore, we keep the tab for now always opaque.
-        .onAppear {
-            // TOOD: Change based on tap
-            CGTabBarAppearance.opaque()
+                .tag(ShownTab.list)
         }
         // Multiple .sheet() statements on a single view are not supported in iOS 14
         // See: https://stackoverflow.com/a/63181811
@@ -90,6 +116,11 @@ struct CompositeTabView: View {
                 .environmentObject(self.locationManager)
                 .environmentObject(self.networkAuthorization)
                 .environmentObject(self.notificationManager)
+            case .progress:
+                VerificationProgressSheet {
+                    self.showingSheet = nil
+                }
+                .environment(\.managedObjectContext, managedContext)
             }
         }
         .onAppear {
@@ -97,31 +128,62 @@ struct CompositeTabView: View {
             if !UserDefaults.standard.bool(forKey: UserDefaultsKeys.introductionShown.rawValue) {
                 showingSheet = .welcome
             }
+            
+            // The tab bar on iOS 15 and above is by default translucent.
+            // However in the map tab, it doesn't switch from the transparent to its opaque mode.
+            // Therefore, we keep the tab for now always opaque.
+            CGTabBarAppearance.opaque()
         }
         .onOpenURL { url in
-            importURL = URLIdentfiable(url: url)
+            self.showingAlert = ShownAlert.importConfirm(url)
         }
-        .alert(item: $importURL) { url in
-            let url = url.url
-            return Alert(
-                title: Text("Import Database"),
-                message: Text(
-                    "Import the selected CellGuard database? " +
-                    "This can result in incorrect analysis. " +
-                    "It is advertised to export your local database before."
-                ),
-                primaryButton: .cancel() {
-                    importURL = nil
-                },
-                secondaryButton: .destructive(Text("Import")) {
-                    showingImport = true
-                    PersistenceImporter.importInBackground(url: url) { result in
-                        // TODO: Handle result
-                        showingImport = false
+        .alert(item: $showingAlert) { alert in
+            switch (alert) {
+            case let .importConfirm(url):
+                return Alert(
+                    title: Text("Import Database"),
+                    message: Text(
+                        "Import the selected CellGuard database? " +
+                        "This can result in incorrect analysis. " +
+                        "It is advertised to export your local database before."
+                    ),
+                    primaryButton: .cancel() {
+                        showingAlert = nil
+                    },
+                    secondaryButton: .destructive(Text("Import")) {
+                        showingImport = true
+                        Self.logger.info("Start import from \(url)")
+                        PersistenceImporter.importInBackground(url: url) { result in
+                            showingImport = false
+                            do {
+                                let (cells, locations) = try result.get()
+                                showingAlert = .importSuccess(cells, locations)
+                                Self.logger.info("Successfully imported \(cells) cells and \(locations) locations")
+                            } catch {
+                                showingAlert = .importFailed(error.localizedDescription)
+                                Self.logger.info("Import failed due to \(error)")
+                            }
+                        }
+                        showingAlert = nil
                     }
-                    importURL = nil
-                }
-            )
+                )
+            case let .importFailed(error):
+                return Alert(
+                    title: Text("Import Failed"),
+                    message: Text(error),
+                    dismissButton: .default(Text("OK")) {
+                        showingAlert = nil
+                    }
+                )
+            case let .importSuccess(cells, locations):
+                return Alert(
+                    title: Text("Import Complete"),
+                    message: Text("Successfully imported \(cells) cells and \(locations) locations."),
+                    dismissButton: .default(Text("OK")) {
+                        showingAlert = nil
+                    }
+                )
+            }
         }
         return AnyView(view)
     }
