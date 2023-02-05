@@ -43,19 +43,17 @@ struct CCTClient {
             if let error = error {
                 // We've got an error
                 completion(.failure(error))
-                completed = true
-                return
+                connection.cancel()
             } else if let content = content {
                 // We've got a full response with data
                 completion(.init() {
                     try self.convert(data: content)
                 })
-                completed = true
             } else if !completed {
                 // We've got an empty response
                 completion(.success([]))
-                completed = true
             }
+            completed = true
         }
         
         connection.start(queue: self.queue)
