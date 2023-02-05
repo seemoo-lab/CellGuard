@@ -388,7 +388,7 @@ extension PersistenceController {
             // Fetch locations in date range with a margin of one day
             let locationFetchRequest = NSFetchRequest<UserLocation>()
             locationFetchRequest.entity = UserLocation.entity()
-            locationFetchRequest.predicate = NSPredicate(format: "imported > %@ and imported < %@ and collected != nil", minDay as NSDate, maxDay as NSDate)
+            locationFetchRequest.predicate = NSPredicate(format: "collected > %@ and collected < %@ and collected != nil", minDay as NSDate, maxDay as NSDate)
             
             let locations: [UserLocation]
             do {
