@@ -115,10 +115,11 @@ class LocationDataManager : NSObject, CLLocationManagerDelegate, ObservableObjec
             Self.logger.warning("Can't save locations: \(error)\nLocations: \(locations)")
         }
         
-        if !locations.isEmpty {
+        if let localLastLocation = locations.max(by: { $0.timestamp < $1.timestamp }) {
             DispatchQueue.main.async {
-                self.lastLocation = locations.last
+                self.lastLocation = localLastLocation
             }
+            updateAccuracy(location: localLastLocation)
         }
     }
     
@@ -183,6 +184,10 @@ class LocationDataManager : NSObject, CLLocationManagerDelegate, ObservableObjec
     }
     
     private func updateAccuracy() {
+        updateAccuracy(location: self.lastLocation)
+    }
+    
+    private func updateAccuracy(location: CLLocation?) {
         // TODO: Remove later as it currently is only used for debbuging
         // It's our choice with the Always permission whether we display the indicator or not
         // See: https://developer.apple.com/documentation/corelocation/handling_location_updates_in_the_background
@@ -201,7 +206,7 @@ class LocationDataManager : NSObject, CLLocationManagerDelegate, ObservableObjec
 
         // https://stackoverflow.com/a/3460632
         // https://developer.apple.com/documentation/corelocation/cllocationmanager/1620553-pauseslocationupdatesautomatical
-        if (lastLocation?.speed ?? 0) > 15 {
+        if (location?.speed ?? 0) > 15 {
             Self.logger.debug("Accuracy -> NearestTenMeters")
             locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
         } else {
