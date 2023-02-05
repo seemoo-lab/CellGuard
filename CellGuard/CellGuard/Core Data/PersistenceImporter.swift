@@ -10,6 +10,7 @@ import OSLog
 
 enum PersistenceImportError: Error {
     case permissionDenied
+    case iCloudDownload
     case readFailed(Error)
     case deserilizationFailed(Error)
     case invalidStructure
@@ -22,6 +23,7 @@ extension PersistenceImportError: LocalizedError {
     var errorDescription: String? {
         switch (self) {
         case .permissionDenied: return "Permission Denied"
+        case .iCloudDownload: return "Download the file from iCloud using the Files app before opening it."
         case let .readFailed(error): return "Read Failed (\(error.localizedDescription))"
         case let .deserilizationFailed(error): return "Derserilization Failed (\(error.localizedDescription))"
         case .invalidStructure: return "Invalid JSON Structure"
@@ -75,6 +77,16 @@ struct PersistenceImporter {
         do {
             data = try Data(contentsOf: url)
         } catch {
+            // Due to the entry "Supports opening documents in place" in Info.plist,
+            // the Files app also directly opens non-downloaded files from iCloud.
+            // But they have to be downloaded first, before they can be used.
+            // TODO: Implement automatic download
+            // See: https://developer.apple.com/documentation/foundation/filemanager/1410377-startdownloadingubiquitousitem
+            // See: https://stackoverflow.com/a/63531485
+            if FileManager.default.isUbiquitousItem(at: url) {
+                throw PersistenceImportError.iCloudDownload
+            }
+            
             throw PersistenceImportError.readFailed(error)
         }
         
