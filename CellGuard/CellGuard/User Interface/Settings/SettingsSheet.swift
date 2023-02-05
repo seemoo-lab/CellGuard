@@ -84,12 +84,15 @@ struct SettingsSheet: View {
             // TODO: Download other databases databases
             List {
                 Section(header: Text("Permissions")) {
-                    // TODO: Open settings app on disable
                     Toggle("Local Network", isOn: isPermissionLocalNetwork)
                         // The permission can't be revoked once granted
                         .disabled(isPermissionLocalNetwork.wrappedValue)
                     Toggle("Location (Always)", isOn: isPermissionAlwaysLocation)
                     Toggle("Notifications", isOn: isPermissionNotifications)
+                }
+                
+                Section(header: Text("Location")) {
+                    Toggle("Precise Background Updates", isOn: $locationManager.preciseInBackground)
                 }
                 
                 Section(header: Text("Cell Databases")) {

@@ -16,6 +16,8 @@ private struct LocationDictKeys {
     static let altitude = "altitude"
     static let verticalAccuracy = "verticalAccuracy"
     static let collected = "collected"
+    static let background = "background"
+    static let preciseBackground = "preciseBackground"
     
 }
 
@@ -31,7 +33,10 @@ struct TrackedUserLocation {
     
     var timestamp: Date?
     
-    init(from location: CLLocation) {
+    var background: Bool
+    var preciseBackground: Bool
+    
+    init(from location: CLLocation, background: Bool, preciseBackground: Bool) {
         self.latitude = location.coordinate.latitude
         self.longitude = location.coordinate.longitude
         self.horizontalAccuracy = location.horizontalAccuracy
@@ -40,6 +45,9 @@ struct TrackedUserLocation {
         self.verticalAccuracy = location.verticalAccuracy
         
         self.timestamp = location.timestamp
+        
+        self.background = background
+        self.preciseBackground = preciseBackground
     }
     
     init(from location: UserLocation) {
@@ -51,6 +59,9 @@ struct TrackedUserLocation {
         self.verticalAccuracy = location.verticalAccuracy
         
         self.timestamp = location.collected
+        
+        self.background = location.background
+        self.preciseBackground = location.preciseBackground
     }
     
     init(from location: [String : Any]) {
@@ -66,6 +77,9 @@ struct TrackedUserLocation {
         } else {
             self.timestamp = nil
         }
+        
+        self.background = location[LocationDictKeys.background] as? Bool ?? true
+        self.preciseBackground = location[LocationDictKeys.preciseBackground] as? Bool ?? false
     }
     
     func applyTo(location: UserLocation) {
@@ -77,6 +91,9 @@ struct TrackedUserLocation {
         location.verticalAccuracy = self.verticalAccuracy ?? 0
         
         location.collected = self.timestamp
+        
+        location.background = background
+        location.preciseBackground = preciseBackground
     }
     
     func toDictionary() -> Dictionary<String, Any> {
@@ -87,6 +104,8 @@ struct TrackedUserLocation {
             LocationDictKeys.altitude: altitude ?? 0,
             LocationDictKeys.verticalAccuracy: verticalAccuracy ?? 0,
             LocationDictKeys.collected: (timestamp ?? Date.distantPast).timeIntervalSince1970,
+            LocationDictKeys.background: background,
+            LocationDictKeys.preciseBackground: preciseBackground
         ]
     }
     

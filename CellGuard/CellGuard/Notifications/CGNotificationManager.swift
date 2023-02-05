@@ -14,15 +14,20 @@ enum CGNotificationLevel {
     
     case verificationFailure
     case locationWarning(distance: CLLocationDistance)
+    case locationFailure(distance: CLLocationDistance)
     
     func title() -> String {
         switch (self) {
         case .verificationFailure: return "Cell Verification Failed"
         case .locationWarning: return "Cell Distance Unusually High"
+        case .locationFailure: return "Cell Distance Too High"
         }
     }
     
     func body(cell: TweakCell) -> String {
+        let distanceFormatter = MKDistanceFormatter()
+        distanceFormatter.unitStyle = .abbreviated
+        
         let techFormatter = CellTechnologyFormatter.from(technology: cell.technology)
         
         let cellIdStr = "\(techFormatter.country()): \(cell.country), " +
@@ -41,20 +46,19 @@ enum CGNotificationLevel {
         case .verificationFailure:
             return "The \(cellStr) could not be found in Apple's database. Therefore, it could be rouge base station."
         case let .locationWarning(distance):
-            // Format the distance
-            let distanceFormatter = MKDistanceFormatter()
-            distanceFormatter.unitStyle = .abbreviated
-            
             let distanceStr = distanceFormatter.string(fromDistance: distance)
-            
-            return "Your recorded location whilst connected to the \(cellStr) differs significantly (\(distanceStr)) from its location in Apple's database."
+            return "Your recorded location whilst connected to the \(cellStr) differs significantly (\(distanceStr)) from its location in Apple's database. This could be due to high speed travel."
+        case let .locationFailure(distance):
+            let distanceStr = distanceFormatter.string(fromDistance: distance)
+            return "Your recorded location whilst connected to the \(cellStr) is not pluasible with a distance of (\(distanceStr)) to its location in Apple's database. Therefore, the cell could be rouge base station."
         }
     }
     
     func sound() -> UNNotificationSound? {
         switch (self) {
         case .verificationFailure: return .default
-        case .locationWarning(_): return nil
+        case .locationWarning: return nil
+        case .locationFailure: return .default
         }
     }
     

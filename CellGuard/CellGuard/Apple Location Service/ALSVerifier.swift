@@ -50,6 +50,7 @@ struct ALSVerifier {
             // Try to find the coresponding ALS cell in our database
             if let existing = try? persistence.assignExistingALSIfPossible(to: objectID), existing {
                 Self.logger.info("Verified tweak cell using the local ALS database: \(queryCell)")
+                verifyDistance(source: objectID)
                 group.leave()
                 return
             }
@@ -107,24 +108,41 @@ struct ALSVerifier {
                 Self.logger.warning("Can't import ALS cells \(queryCells): \(error)")
                 return
             }
-
-            // Calculate the distance between the location assigned to the tweak cells & the ALS cell used for its verification.
-            let distance = persistence.calculateDistance(tweakCell: source)
             
-            // Maximum reach of GSM cell tower is about 70km
-            // See: https://en.wikipedia.org/wiki/Cell_site
-            let maxCellReach = 70_000.0
+            verifyDistance(source: source)
+        }
+    }
+    
+    private func verifyDistance(source: NSManagedObjectID) {
+        // Calculate the distance between the location assigned to the tweak cells & the ALS cell
+        guard let distance = persistence.calculateDistance(tweakCell: source) else {
+            Self.logger.warning("Can't verify distance for cell \(source)")
+            return
+        }
+        
+        switch (distance.verify()) {
+        case .ok:
+            // The cell is within an acceptable distance, so nothing to worry about
+            break
+        case .warning:
+            // If the distance is present and larger than the maximum, we send a notification
+            CGNotificationManager.shared.notifyCell(
+                level: .locationWarning(distance: distance.distance),
+                source: source
+            )
             
-            if distance?.largerThan(maximum: maxCellReach) ?? true {
-                // If the distance is present and larger than the maximum, we'll send a notification
-                CGNotificationManager.shared.notifyCell(
-                    level: .locationWarning(distance: distance?.distance ?? 0),
-                    source: source
-                )
-            }
+            Self.logger.debug("Distance warning for cell \(source): \(distance.distance)")
+        case .failure:
+            // If the distance is present and too large to be plausbile, we mark the cell as failed and
+            try? persistence.storeCellStatus(cellId: source, status: .failed)
             
-            // TODO: Use a higher limit to account for the periodic user location collections and if distance is greater mark the cell as failed
-            // If this check fails, also send a notification and mark cell as failed
+            // We send a notification
+            CGNotificationManager.shared.notifyCell(
+                level: .locationFailure(distance: distance.distance),
+                source: source
+            )
+            
+            Self.logger.debug("Revoked verification for cell \(source) because of its high distance: \(distance.distance)")
         }
     }
         

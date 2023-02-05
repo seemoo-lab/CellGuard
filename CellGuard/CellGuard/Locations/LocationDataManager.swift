@@ -5,7 +5,7 @@
 //  Created by Lukas Arnold on 02.01.23.
 //
 
-import Foundation
+import Combine
 import CoreLocation
 import OSLog
 
@@ -17,27 +17,41 @@ class LocationDataManager : NSObject, CLLocationManagerDelegate, ObservableObjec
     )
     
     public static var shared = LocationDataManager()
-    
+        
     private let locationManager = CLLocationManager()
     private var authorizationCompletion: ((Bool) -> Void)?
     private var background = true
+    private var preciseBackgroundSink: AnyCancellable?
     
     @Published var authorizationStatus: CLAuthorizationStatus? = nil
     @Published var lastLocation: CLLocation?
+    @Published var preciseInBackground: Bool = false
     
-    // TODO: Initialize in app
     private override init() {
         super.init()
         
         locationManager.delegate = self
         locationManager.allowsBackgroundLocationUpdates = true
-        locationManager.showsBackgroundLocationIndicator = false
+        
+        let preciseBackgroudUpdatesKey = "preciseBackgroundUpdates"
+        preciseInBackground = UserDefaults.standard.bool(forKey: preciseBackgroudUpdatesKey)
+        preciseBackgroundSink = $preciseInBackground.sink {
+            UserDefaults.standard.set($0, forKey: preciseBackgroudUpdatesKey)
+            self.updateAccuracy()
+        }
+        
+        updateAccuracy()
+        
         // Properties that could be interesting
         // https://developer.apple.com/documentation/corelocation/cllocationmanager/1620553-pauseslocationupdatesautomatical
         // https://developer.apple.com/documentation/corelocation/cllocationmanager/1620567-activitytype
         
         // Useful for later (UI)
         // https://developer.apple.com/documentation/corelocation/converting_between_coordinates_and_user-friendly_place_names
+     }
+    
+    deinit {
+        preciseBackgroundSink?.cancel()
     }
     
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
@@ -93,7 +107,7 @@ class LocationDataManager : NSObject, CLLocationManagerDelegate, ObservableObjec
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         Self.logger.log("New Locations: \(locations)")
         
-        let importLocations = locations.map { TrackedUserLocation(from: $0) }
+        let importLocations = locations.map { TrackedUserLocation(from: $0, background: background, preciseBackground: preciseInBackground) }
         
         do {
             try PersistenceController.shared.importUserLocations(from: importLocations)
@@ -110,6 +124,10 @@ class LocationDataManager : NSObject, CLLocationManagerDelegate, ObservableObjec
     
     func locationManager(_ manager: CLLocationManager, didVisit visit: CLVisit) {
         Self.logger.log("New Visit: \(visit)")
+        
+        // TODO: Also record visits as locations
+        // Question: Do we already get the same data from background location updates?
+        // See: https://www.kodeco.com/5247-core-location-tutorial-for-ios-tracking-visited-locations
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
@@ -117,7 +135,7 @@ class LocationDataManager : NSObject, CLLocationManagerDelegate, ObservableObjec
     }
     
     private func resumeLocationUpdates() {
-        if !background {
+        if !background || preciseInBackground {
             locationManager.startUpdatingLocation()
         }
         
@@ -139,16 +157,56 @@ class LocationDataManager : NSObject, CLLocationManagerDelegate, ObservableObjec
         }
     }
     
+    // TODO: Add new UserDefault which allows for more fine-grained tracking
+    // Forgeground -> Similar (kCLLocationAccuracyBest)
+    // Background (Slow moving) -> kCLLocationAccuracyKilometer
+    // Background (Fast moving) -> kCLLocationAccuracyBestForNavigation
+    // See: https://developer.apple.com/documentation/corelocation/cllocationmanager/1423836-desiredaccuracy
+    // See: https://developer.apple.com/forums/thread/69152?answerId=202430022#202430022
+    
     func enterForeground() {
         background = false
         if locationManager.authorizationStatus == .authorizedAlways ||
         locationManager.authorizationStatus == .authorizedWhenInUse {
             locationManager.startUpdatingLocation()
+            updateAccuracy()
         }
     }
     
     func enterBackgorund() {
         background = true
-        locationManager.stopUpdatingLocation()
+        if preciseInBackground {
+            updateAccuracy()
+        } else {
+            locationManager.stopUpdatingLocation()
+        }
+    }
+    
+    private func updateAccuracy() {
+        // TODO: Remove later as it currently is only used for debbuging
+        // It's our choice with the Always permission whether we display the indicator or not
+        // See: https://developer.apple.com/documentation/corelocation/handling_location_updates_in_the_background
+        locationManager.showsBackgroundLocationIndicator = preciseInBackground
+        
+        if !background {
+            Self.logger.debug("Accuracy -> Best")
+            locationManager.desiredAccuracy = kCLLocationAccuracyBest
+            return
+        }
+        
+        if !preciseInBackground {
+            Self.logger.debug("Accuracy -> Not precise in background")
+            return
+        }
+
+        // https://stackoverflow.com/a/3460632
+        // https://developer.apple.com/documentation/corelocation/cllocationmanager/1620553-pauseslocationupdatesautomatical
+        if (lastLocation?.speed ?? 0) > 15 {
+            Self.logger.debug("Accuracy -> NearestTenMeters")
+            locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
+        } else {
+            Self.logger.debug("Accuracy -> HundredMeters")
+            locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters
+        }
     }
 }
