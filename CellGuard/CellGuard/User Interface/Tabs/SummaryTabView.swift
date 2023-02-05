@@ -89,6 +89,11 @@ struct SummaryTabView: View {
     }
     
     func determineRisk() -> RiskLevel {
+        // We keep the unknown status until all cells are verified because we're sending notifications during verification
+        if unknownCells.count > 0 {
+            return .Unknown
+        }
+        
         if failedCells.count > 0 {
             return .High(count: failedCells.count)
         }
@@ -100,11 +105,7 @@ struct SummaryTabView: View {
             return .Medium(cause: .Permissions)
         }
         
-        if unknownCells.count > 0 {
-            return .Unknown
-        } else {
-            return .Low
-        }
+        return .Low
     }
 }
 
