@@ -44,9 +44,7 @@ struct CellLocationDistance {
         // Thus, we have to incooperate a large margin of error to decrase false positives.
         let inpreciseWarning = 150_000.0
         let inpreciseFailure = 200_000.0
-        
-        print("Distance is \(distance)")
-        
+
         if userLocationBackground && !preciseBackground {
             // Use higher margins for warning if the location has been recorded in background with a bad accuracy
             if largerThan(maximum: inpreciseFailure) {

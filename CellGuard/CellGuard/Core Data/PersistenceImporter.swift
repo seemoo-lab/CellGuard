@@ -47,7 +47,25 @@ struct PersistenceImporter {
         category: String(describing: PersistenceImporter.self)
     )
     
+    // Provide synchronized access to the import active variable
+    // See: https://stackoverflow.com/a/65849172
+    private static let importLock = NSLock()
+    private static var _importActive = false
+    static var importActive: Bool {
+        get {
+            importLock.lock()
+            defer { importLock.unlock() }
+            return _importActive
+        }
+        set {
+            importLock.lock()
+            defer { importLock.unlock() }
+            _importActive = newValue
+        }
+    }
+    
     static func importInBackground(url: URL, completion: @escaping (Result<(Int, Int), Error>) -> Void) {
+        importActive = true
         DispatchQueue.global(qos: .userInitiated).async {
             let result = Result.init {
                 try PersistenceImporter().importData(from: url)
@@ -55,6 +73,7 @@ struct PersistenceImporter {
             DispatchQueue.main.async {
                 completion(result)
             }
+            importActive = false
         }
     }
     
@@ -128,6 +147,7 @@ struct PersistenceImporter {
         
         try PersistenceController.shared.importUserLocations(from: locations)
         try PersistenceController.shared.importCollectedCells(from: cells)
+        try PersistenceController.shared.assignLocationsToTweakCells()
         
         Self.logger.debug("Imported \(locations.count) locations and \(cells.count) cells")
         

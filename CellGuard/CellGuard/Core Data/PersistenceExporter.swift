@@ -115,6 +115,8 @@ struct PersistenceExporter {
             // TODO: Print error for failures
             .compactMap { try? JSONSerialization.jsonObject(with: $0) }
         
+        // TODO: Also export ALS cells
+        
         dict[CellFileKeys.locations] = userLocations
             .map { TrackedUserLocation(from: $0) }
             .map { $0.toDictionary() }

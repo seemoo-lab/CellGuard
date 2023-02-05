@@ -100,6 +100,7 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
             
         // Slowly verify collected & imported cells in the background
         let checkTimer = Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { timer in
+            guard !PersistenceImporter.importActive else { return }
             verifier.verify(n: 10)
         }
         // We allow only allow a lower tolerance for the check timer as it is executed in short intervals
@@ -107,6 +108,7 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
         
         // Clear the persistent history cache all five minutes
         let clearHistoryTimer = Timer.scheduledTimer(withTimeInterval: 60 * 5, repeats: true) { timer in
+            guard !PersistenceImporter.importActive else { return }
             PersistenceController.shared.cleanPersistentHistoryChanges()
         }
         clearHistoryTimer.tolerance = 30
@@ -116,6 +118,9 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
     }
     
     private func collectAndVerifyTask(collector: CCTCollector, verifier: ALSVerifier) {
+        // Only run tasks when we currently don't manually import any new data
+        guard !PersistenceImporter.importActive else { return }
+        
         collector.collectAndStore { result in
             do {
                 // Get the number of successfully collected & stored cells

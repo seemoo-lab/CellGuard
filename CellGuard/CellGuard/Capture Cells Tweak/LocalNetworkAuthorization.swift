@@ -48,7 +48,7 @@ public class LocalNetworkAuthorization: NSObject, ObservableObject {
         browser.stateUpdateHandler = { newState in
             switch newState {
             case .failed(let error):
-                print(error.localizedDescription)
+                Self.logger.debug("Browser failed: \(error.localizedDescription)")
             case .ready, .cancelled:
                 break
             case let .waiting(error):
