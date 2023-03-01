@@ -50,7 +50,7 @@ enum CGNotificationLevel {
             return "Your recorded location whilst connected to the \(cellStr) differs significantly (\(distanceStr)) from its location in Apple's database. This could be due to high speed travel."
         case let .locationFailure(distance):
             let distanceStr = distanceFormatter.string(fromDistance: distance)
-            return "Your recorded location whilst connected to the \(cellStr) is not pluasible with a distance of (\(distanceStr)) to its location in Apple's database. Therefore, the cell could be rouge base station."
+            return "Your recorded location whilst connected to the \(cellStr) is not plausible with a distance of (\(distanceStr)) to its location in Apple's database. Therefore, the cell could be rouge base station."
         }
     }
     
