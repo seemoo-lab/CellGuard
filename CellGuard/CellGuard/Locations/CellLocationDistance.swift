@@ -31,13 +31,13 @@ struct CellLocationDistance {
         // - https://dgtlinfra.com/cell-tower-range-how-far-reach/
         // - https://en.wikipedia.org/wiki/Cell_site#Operation
         
-        // The absolute maximum reach of a cell tower is about 70km
-        let maxCellReach = 70_000.0
+        // The absolute maximum reach of a cell tower is about 75km
+        let maxCellReach = 75_000.0
         
         // TODO: Calculate maximum range based on the cellular technology & speed of assigned location
         
         // If we've got a continuous stream of locations, we can be much more fine-grained with distances.
-        let preciseWarning = 20_000.0
+        let preciseWarning = 55_000.0
         let preciseFailure = maxCellReach
         
         // If we're only getting occasional from the iPhone, users can travel a lot of kilometers until we get the next location.
