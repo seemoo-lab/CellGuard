@@ -103,7 +103,7 @@ struct TrackedUserLocation {
             LocationDictKeys.horizontalAccuracy: horizontalAccuracy ?? 0,
             LocationDictKeys.altitude: altitude ?? 0,
             LocationDictKeys.verticalAccuracy: verticalAccuracy ?? 0,
-            LocationDictKeys.collected: (timestamp ?? Date.distantPast).timeIntervalSince1970,
+            LocationDictKeys.collected: timestamp?.timeIntervalSince1970 ?? 0,
             LocationDictKeys.background: background,
             LocationDictKeys.preciseBackground: preciseBackground
         ]
