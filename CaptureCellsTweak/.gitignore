@@ -3,3 +3,5 @@
 packages/
 .DS_Store
 data
+
+frida-gum.d.ts
