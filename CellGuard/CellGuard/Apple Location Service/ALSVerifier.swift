@@ -55,6 +55,7 @@ struct ALSVerifier {
                 return
             }
             
+            // TODO: What happens if this is executed offline?
             // If we can't find the cell in our database, we'll query ALS
             Self.logger.info("Requesting tweak cell from the remote ALS database: \(queryCell)")
             client.requestCells(
