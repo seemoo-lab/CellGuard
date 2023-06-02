@@ -57,7 +57,7 @@ def create_ipa(archive_path: Path, ipa_path: Path):
         app_path = archive_path.joinpath('Products', 'Applications', 'CellGuard.app')
         with zipfile.ZipFile(ipa_path, 'w') as ipa_file:
             for file_path in app_path.rglob('*'):
-                file_zip_path = Path.joinpath(Path('Payload'), file_path.relative_to(app_path))
+                file_zip_path = Path.joinpath(Path('Payload'), file_path.relative_to(app_path.parent))
                 ipa_file.write(filename=file_path, arcname=file_zip_path)
 
         spinner.ok("🟢")
