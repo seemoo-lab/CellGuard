@@ -29,7 +29,12 @@ Copy the final .ipa file via iCloud to iPhone and install it using TrollStore.
 
 References:
 - [GeneXus](https://wiki.genexus.com/commwiki/servlet/wiki?34616,HowTo%3A+Create+an+.ipa+file+from+XCode): Requires paid Apple Developer Account 
-- https://stackoverflow.com/a/72724017: Doesn't requires an Apple Developer Account
+- https://stackoverflow.com/a/72724017: Doesn't require an Apple Developer Account
+
+The [`build-ipa.py`](./build-ipa.py) script automates all of these steps:
+```sh
+pipenv run python3 build-ipa.py
+```
 
 ### .deb
 
