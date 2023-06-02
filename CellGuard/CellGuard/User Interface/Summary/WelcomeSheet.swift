@@ -16,7 +16,7 @@ struct WelcomeSheet: View {
             ScrollView {
                 Spacer()
                 
-                Text("Welcome to\n Cell Guard")
+                Text("Welcome to\n CellGuard")
                     .font(.title)
                     .fontWeight(.bold)
                     .padding()
