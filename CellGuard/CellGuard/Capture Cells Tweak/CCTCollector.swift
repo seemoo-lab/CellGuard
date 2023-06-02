@@ -32,10 +32,13 @@ struct CCTCollector {
                 let samples = try result.get()
                 let numberOfStoredCells = try store(samples: samples)
                 completion(.success(numberOfStoredCells))
+                // TODO: Afterwards check the latest cell in the database. If it is older than 30 minutes output a warning notification
             } catch {
+                // TODO: Count failures and if they exceed a given threshold, output a warning notification
                 Self.logger.warning("Can't request cells from tweak: \(error)")
                 completion(.failure(error))
             }
+            // TODO: In both cases do not overwhelm the user with notifications & only do this check on jailbroken devices
         }
     }
     

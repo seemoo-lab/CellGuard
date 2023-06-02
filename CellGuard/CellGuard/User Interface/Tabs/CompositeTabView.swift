@@ -23,6 +23,7 @@ private enum ShownSheet: Identifiable {
     case welcome
     case settings
     case progress
+    case tweakInfo
 
     var id: Self {
         return self
@@ -71,7 +72,9 @@ struct CompositeTabView: View {
             SummaryTabView(
                 showSettings: { showingSheet = .settings },
                 showProgress: { showingSheet = .progress },
-                showListTab: { showingTab = .list })
+                showListTab: { showingTab = .list },
+                showTweakInfo: { showingSheet = .tweakInfo }
+            )
                 .tabItem {
                     Label("Summary", systemImage: "shield.fill")
                 }
@@ -132,6 +135,10 @@ struct CompositeTabView: View {
                     self.showingSheet = nil
                 }
                 .environment(\.managedObjectContext, managedContext)
+            case .tweakInfo:
+                TweakInfoSheet {
+                    self.showingSheet = nil
+                }
             }
         }
         .onOpenURL { url in

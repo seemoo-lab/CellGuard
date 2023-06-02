@@ -31,6 +31,7 @@
 		CF446754298D2A040083EE63 /* CellLocationDistance.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF446753298D2A040083EE63 /* CellLocationDistance.swift */; };
 		CF446756298D78F80083EE63 /* PersistenceQueries.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF446755298D78F80083EE63 /* PersistenceQueries.swift */; };
 		CF53DB42297473E8005DCD10 /* CoreLocationALS.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF53DB41297473E8005DCD10 /* CoreLocationALS.pb.swift */; };
+		CF5672962A29E59000B6EA7C /* TweakInfoSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5672952A29E59000B6EA7C /* TweakInfoSheet.swift */; };
 		CF5AB2C02975458D00896ADC /* CellStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5AB2BF2975458D00896ADC /* CellStatus.swift */; };
 		CF5CBB8D29687CBB001CE9BE /* CCTParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5CBB8C29687CBB001CE9BE /* CCTParserTests.swift */; };
 		CF5CBB9529689FFE001CE9BE /* CellGuardSceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5CBB9429689FFE001CE9BE /* CellGuardSceneDelegate.swift */; };
@@ -123,6 +124,7 @@
 		CF446753298D2A040083EE63 /* CellLocationDistance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellLocationDistance.swift; sourceTree = "<group>"; };
 		CF446755298D78F80083EE63 /* PersistenceQueries.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceQueries.swift; sourceTree = "<group>"; };
 		CF53DB41297473E8005DCD10 /* CoreLocationALS.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreLocationALS.pb.swift; sourceTree = "<group>"; };
+		CF5672952A29E59000B6EA7C /* TweakInfoSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TweakInfoSheet.swift; sourceTree = "<group>"; };
 		CF5AB2BF2975458D00896ADC /* CellStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellStatus.swift; sourceTree = "<group>"; };
 		CF5CBB8C29687CBB001CE9BE /* CCTParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CCTParserTests.swift; sourceTree = "<group>"; };
 		CF5CBB9429689FFE001CE9BE /* CellGuardSceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellGuardSceneDelegate.swift; sourceTree = "<group>"; };
@@ -228,6 +230,7 @@
 				CF2A1C1F2975CDD200E8B61C /* RiskIndicatorCard.swift */,
 				CF0A5677298A7A910012B2A8 /* VerificationProgressSheet.swift */,
 				CF0FDCBC2969A21000A6FFE2 /* WelcomeSheet.swift */,
+				CF5672952A29E59000B6EA7C /* TweakInfoSheet.swift */,
 			);
 			path = Summary;
 			sourceTree = "<group>";
@@ -594,6 +597,7 @@
 				CFDF5D75297EF127000708A8 /* CellClusterAnnotationView.swift in Sources */,
 				CFB51834297AEFA80006C690 /* CellStatusIcon.swift in Sources */,
 				CFB8B291296359CC00503189 /* CCTCollector.swift in Sources */,
+				CF5672962A29E59000B6EA7C /* TweakInfoSheet.swift in Sources */,
 				CF53DB42297473E8005DCD10 /* CoreLocationALS.pb.swift in Sources */,
 				CF5EF9242978538E00C4F50A /* ALSVerifier.swift in Sources */,
 				CFD023432961A10D00AA5A1C /* CellGuard.xcdatamodeld in Sources */,

@@ -10,7 +10,7 @@ import SwiftUI
 
 enum RiskMediumCause: String {
     case Permissions = "Ensure you've granted all required permissions"
-    case Tweak = "Ensure the tweak is running on your device"
+    case Tweak = "Ensure the tweak is active"
 }
 
 enum RiskLevel: Equatable {

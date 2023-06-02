@@ -13,6 +13,7 @@ struct SummaryTabView: View {
     let showSettings: () -> Void
     let showProgress: () -> Void
     let showListTab: () -> Void
+    let showTweakInfo: () -> Void
     
     @EnvironmentObject var locationManager: LocationDataManager
     @EnvironmentObject var networkAuthorization: LocalNetworkAuthorization
@@ -22,10 +23,11 @@ struct SummaryTabView: View {
     @FetchRequest private var failedCells: FetchedResults<TweakCell>
     @FetchRequest private var unknownCells: FetchedResults<TweakCell>
     
-    init(showSettings: @escaping () -> Void, showProgress: @escaping () -> Void, showListTab: @escaping () -> Void) {
+    init(showSettings: @escaping () -> Void, showProgress: @escaping () -> Void, showListTab: @escaping () -> Void, showTweakInfo: @escaping () -> Void) {
         self.showSettings = showSettings
         self.showProgress = showProgress
         self.showListTab = showListTab
+        self.showTweakInfo = showTweakInfo
         
         let latestTweakCellRequest = NSFetchRequest<TweakCell>()
         latestTweakCellRequest.entity = TweakCell.entity()
@@ -62,7 +64,7 @@ struct SummaryTabView: View {
                         if cause == .Permissions {
                             showSettings()
                         } else if cause == .Tweak {
-                            // TODO: Show explain sheet
+                            showTweakInfo()
                         }
                     case .High(_):
                         showListTab()
@@ -98,6 +100,12 @@ struct SummaryTabView: View {
             return .High(count: failedCells.count)
         }
         
+        // We've received no cells for 30 minutes from the tweak, so we warn the user
+        let ftMinutesAgo = Date() - 30 * 60
+        if tweakCells.isEmpty || tweakCells.first!.collected! < ftMinutesAgo {
+            return .Medium(cause: .Tweak)
+        }
+        
         // TODO: A condition is false at the start of the app, figure out which
         if (locationManager.authorizationStatus ?? .authorizedAlways) != .authorizedAlways ||
             !(networkAuthorization.lastResult ?? true) ||
@@ -116,6 +124,8 @@ struct SummaryView_Previews: PreviewProvider {
         } showProgress: {
             // doing nothing
         } showListTab: {
+            // doing nothing
+        } showTweakInfo: {
             // doing nothing
         }
         .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
