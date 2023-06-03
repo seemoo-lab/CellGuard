@@ -1,1 +1,7 @@
-{ Filter = { Bundles = ( "com.apple.CoreTelephony" ); }; }
+{
+	Filter = {
+		Bundles = (
+			"com.apple.CoreTelephony",
+		);
+	};
+}
