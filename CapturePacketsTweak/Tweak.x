@@ -34,6 +34,9 @@ the generation of a class list and an automatic constructor.
 */
 
 #import <Foundation/Foundation.h>
+#import "CPTManager.h"
+
+CPTManager* cptManager;
 
 // https://theos.dev/docs/logos-syntax#hookf
 
@@ -48,9 +51,8 @@ the generation of a class list and an automatic constructor.
 	// Copy the data buffer into a NSData object
 	// See: https://developer.apple.com/documentation/foundation/nsdata/1547231-datawithbytes?language=objc
 	NSData *objData = [NSData dataWithBytes:data length:length];
-
-	// TODO: Store data + timestamp
-	NSLog(@"Hey, we're hooking QMI read stuff %@", objData);
+	// NSLog(@"Hey, we're hooking QMI read stuff %@", objData);
+	[cptManager addData:objData :@"QMI" :@"IN"];
 
 	// Call the original implementation of this function
 	return %orig;
@@ -64,9 +66,8 @@ the generation of a class list and an automatic constructor.
 	// Copy the data buffer into a NSData object
 	// See: https://developer.apple.com/documentation/foundation/nsdata/1547231-datawithbytes?language=objc
 	NSData *objData = [NSData dataWithBytes:data length:length];
-
-	// TODO: Store data + timestamp
-	NSLog(@"Hey, we're hooking QMI send stuff %@", objData);
+	// NSLog(@"Hey, we're hooking QMI send stuff %@", objData);
+	[cptManager addData:objData :@"QMI" :@"OUT"];
 
 	// Call the original implementation of this function
 	return %orig;
@@ -85,9 +86,8 @@ the generation of a class list and an automatic constructor.
 	// Copy the data buffer into a NSData object
 	// See: https://developer.apple.com/documentation/foundation/nsdata/1547231-datawithbytes?language=objc
 	NSData *objData = [NSData dataWithBytes:data length:length];
-
-	// TODO: Store data + timestamp
-	NSLog(@"Hey, we're hooking ARI read stuff %@", objData);
+	// NSLog(@"Hey, we're hooking ARI read stuff %@", objData);
+	[cptManager addData:objData :@"ARI" :@"IN"];
 
 	// Call the original implementation of this function
 	return %orig;
@@ -100,9 +100,8 @@ the generation of a class list and an automatic constructor.
 	// Copy the data buffer into a NSData object
 	// See: https://developer.apple.com/documentation/foundation/nsdata/1547231-datawithbytes?language=objc
 	NSData *objData = [NSData dataWithBytes:data length:length];
-
-	// TODO: Store data + timestamp
-	NSLog(@"Hey, we're hooking ARI send stuff %@", objData);
+	// NSLog(@"Hey, we're hooking ARI send stuff %@", objData);
+	[cptManager addData:objData :@"ARI" :@"OUT"];
 
 	// Call the original implementation of this function
 	return %orig;
@@ -114,7 +113,8 @@ the generation of a class list and an automatic constructor.
 	NSString* programName = [NSString stringWithUTF8String: argv[0]];
 	if ([programName isEqualToString:@"/System/Library/Frameworks/CoreTelephony.framework/Support/CommCenter"]) {
 		// Only enable the tweak for the process CommCenter
-		NSLog(@"Happy hooking from the capture QMI & ARI tweak in %@", programName);
+		NSLog(@"Happy hooking from the CapturePackets tweak in %@", programName);
+		cptManager = [[CPTManager alloc] init];
 
 		// Collect the references to the two libraries to increase the speed of function finding
 		// See: https://github.com/theos/logos/issues/67#issuecomment-682242010
@@ -131,14 +131,22 @@ the generation of a class list and an automatic constructor.
 				HandleReadData = MSFindSymbol(libATCommandStudioDynamicImage, "__ZN4QMux5State14handleReadDataEPKhj"),
 				WriteAsync = MSFindSymbol(libPCITransportImage, "__ZN3pci9transport2th10writeAsyncEPKhjPFvPvE")
 			);
-			NSLog(@"We're hooking QMI packets");
+			NSLog(@"Our CapturePackets tweak hooks QMI packets");
 		} else {
 			// The iPhone contains a baseband from formely Intel
 			%init(ARI, 
 				InboundMsgCB = MSFindSymbol(libARIServerImage, "__ZN9AriHostRt12InboundMsgCBEPhm"),
 				SendRawInternal = MSFindSymbol(libARIServerImage, "__ZN9AriHostRt18sendRawInternal_nlEPhj")
 			);
-			NSLog(@"We're hooking ARI packets");
+			NSLog(@"Our CapturePackets tweak hooks QMI packets");
 		}
+
+		[cptManager listen:33067];
+	}
+}
+
+%dtor {
+	if (cptManager != NULL) {
+		[cptManager close];
 	}
 }

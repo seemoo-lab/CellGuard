@@ -6,7 +6,7 @@ include $(THEOS)/makefiles/common.mk
 
 TWEAK_NAME = CapturePackets
 
-CapturePackets_FILES = Tweak.x
+CapturePackets_FILES = Tweak.x CPTManager.m
 CapturePackets_CFLAGS = -fobjc-arc
 # The dynamic_lookup flag is very important, otherwise the tweak won't compile
 # $ man ld
