@@ -1,0 +1,9 @@
+Package: de.tudarmstadt.seemoo.capturepackets
+Name: CapturePackets
+Version: 0.0.1
+Architecture: iphoneos-arm
+Description: Captures the binary packets iOS and the iPhone's baseband exchange and provides a TCP interface to query them
+Maintainer: Lukas Arnold
+Author: Lukas Arnold
+Section: Tweaks
+Depends: mobilesubstrate (>= 0.9.5000)
