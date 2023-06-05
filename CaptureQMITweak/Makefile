@@ -15,6 +15,6 @@ CaptureQMI_CFLAGS = -fobjc-arc
 #             error, warning, suppress, or dynamic_lookup.  The default is
 #             error. Note: dynamic_lookup that depends on lazy binding will not
 #             work with chained fixups.
-CaptureQMI_LDFLAGS = -undefined dynamic_lookup
+# CaptureQMI_LDFLAGS = -undefined dynamic_lookup
 
 include $(THEOS_MAKE_PATH)/tweak.mk
