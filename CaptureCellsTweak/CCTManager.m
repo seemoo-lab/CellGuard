@@ -95,16 +95,23 @@
     // Read the full content of the file into memory to lock the file as short as possible
     NSError *fileError;
     NSData *data = [NSData dataWithContentsOfURL:cacheFile options:0 error:&fileError];
-    if (data == nil) {
+    if (fileError) {
         NSLog(@"CCTManager: Can't read the file %@ into memory: %@", cacheFile.path, fileError);
         [self closeConnection];
         return;
     }
 
     // Convert the data read from NSData into dispatch_data_t
-    Byte bytes[data.length];
+    // It's important to use malloc and not to store this amount of data on the stack
+    // See: https://stackoverflow.com/a/4116966
+    char* bytes = malloc(data.length);
+    if (bytes == NULL) {
+        NSLog(@"CCTManager: Can't malloc %lu bytes for sending the file", data.length);
+    }
     [data getBytes:bytes length:data.length];
-    dispatch_data_t sendData = dispatch_data_create(bytes, data.length, NULL, DISPATCH_DATA_DESTRUCTOR_DEFAULT);
+    // Free the bytes array when the dispatch_data_t object is destroyed
+    // See: https://developer.apple.com/documentation/dispatch/dispatch_data_destructor_free
+    dispatch_data_t sendData = dispatch_data_create(bytes, data.length, NULL, DISPATCH_DATA_DESTRUCTOR_FREE);
 
     // Send the data over the wire
     nw_connection_send(self.nw_inbound_connection, sendData, NW_CONNECTION_DEFAULT_MESSAGE_CONTEXT, true,
