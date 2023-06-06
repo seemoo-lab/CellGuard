@@ -239,12 +239,11 @@
         return;
     }
 
-    // If the file is larger than 512 MB, we'll truncate it to half of its size
-    if (endOffset > 1024 * 1024 * 512) {
+    // If the file is larger than 128 MB, we'll truncate it to half of its size
+    if (endOffset > 1024 * 1024 * 128) {
         NSLog(@"CPTManager: File end offset (before write) is %lld, truncating file to half of this size", endOffset);
 
         // Move the file pointer to the middle of the file
-        // TODO: Check that we do not split lines in half
         if (![fileHandle seekToOffset:endOffset / 2 error:&error]) {
             NSLog(@"CPTManager: Can't move the file pointer to %lld: %@", endOffset / 2, error);
             return;
@@ -255,6 +254,19 @@
         if (secondFileHalf == nil) {
             NSLog(@"CPTManager: Can't read the data of the file until end: %@", error);
             return;
+        }
+
+        // TODO: Test
+        // Search for the position of the first newline in the new data character
+        NSData *newLine = [@"\n" dataUsingEncoding:NSUTF8StringEncoding];
+        NSRange searchRange = NSMakeRange(0, [secondFileHalf length]);
+        NSRange foundRange = [secondFileHalf rangeOfData:newLine options:0 range:searchRange];
+
+        // Cut the incomplete line from the beginning of the string
+        if (foundRange.length > 0) {
+            NSUInteger newLineOffset = foundRange.location + foundRange.length;
+            NSRange fullLineRange = NSMakeRange(newLineOffset, [secondFileHalf length] - newLineOffset);
+            secondFileHalf = [secondFileHalf subdataWithRange:fullLineRange];
         }
 
         // Remove all the file blocks on disk
