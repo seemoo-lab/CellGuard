@@ -48,6 +48,7 @@
 		CF5EF92829793F7500C4F50A /* TestDetection.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5EF92729793F7500C4F50A /* TestDetection.swift */; };
 		CF5EF92A2979B8D800C4F50A /* LocationSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5EF9292979B8D800C4F50A /* LocationSource.swift */; };
 		CF90EF1B2A30BDD200E7FDB0 /* QMIParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF90EF1A2A30BDD200E7FDB0 /* QMIParserTests.swift */; };
+		CF90EF1D2A30E7FD00E7FDB0 /* ARIParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF90EF1C2A30E7FD00E7FDB0 /* ARIParserTests.swift */; };
 		CF93B84E297FF5C3003F9FFE /* CellFileTypeIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = CF93B84D297FF5C3003F9FFE /* CellFileTypeIcon.png */; };
 		CF93B852297FFEF9003F9FFE /* URLIdentifiable.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF93B851297FFEF9003F9FFE /* URLIdentifiable.swift */; };
 		CF93B85429800278003F9FFE /* PersistenceImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF93B85329800278003F9FFE /* PersistenceImporter.swift */; };
@@ -146,6 +147,7 @@
 		CF5EF92729793F7500C4F50A /* TestDetection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestDetection.swift; sourceTree = "<group>"; };
 		CF5EF9292979B8D800C4F50A /* LocationSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationSource.swift; sourceTree = "<group>"; };
 		CF90EF1A2A30BDD200E7FDB0 /* QMIParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QMIParserTests.swift; sourceTree = "<group>"; };
+		CF90EF1C2A30E7FD00E7FDB0 /* ARIParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARIParserTests.swift; sourceTree = "<group>"; };
 		CF93B84D297FF5C3003F9FFE /* CellFileTypeIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = CellFileTypeIcon.png; path = ../../../Icon/Apple/CellFileTypeIcon.png; sourceTree = "<group>"; };
 		CF93B851297FFEF9003F9FFE /* URLIdentifiable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLIdentifiable.swift; sourceTree = "<group>"; };
 		CF93B85329800278003F9FFE /* PersistenceImporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceImporter.swift; sourceTree = "<group>"; };
@@ -342,6 +344,7 @@
 			isa = PBXGroup;
 			children = (
 				CF90EF1A2A30BDD200E7FDB0 /* QMIParserTests.swift */,
+				CF90EF1C2A30E7FD00E7FDB0 /* ARIParserTests.swift */,
 			);
 			path = "Capture Packets";
 			sourceTree = "<group>";
@@ -701,6 +704,7 @@
 				CF5CBB8D29687CBB001CE9BE /* CCTParserTests.swift in Sources */,
 				CFD023742961DF7400AA5A1C /* ALSClientTests.swift in Sources */,
 				CF320F5729621C42009BAD18 /* CCTClientTests.swift in Sources */,
+				CF90EF1D2A30E7FD00E7FDB0 /* ARIParserTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
