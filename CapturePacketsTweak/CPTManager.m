@@ -17,10 +17,21 @@
 
 - (void)writeData:(NSString *)data;
 
+@property (retain) dispatch_queue_t writeQueue;
+
 @end
 
 @implementation CPTManager {
 
+}
+
++ (instancetype)managerWithQueue {
+    CPTManager *manager = [[CPTManager alloc] init];
+    manager.writeQueue = dispatch_queue_create_with_target(
+            "de.tudarmstadt.seemoo.cpt.writeQueue", DISPATCH_QUEUE_SERIAL, 
+            dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0)
+    );
+    return manager;
 }
 
 - (void)listen:(int)port {
@@ -44,7 +55,7 @@
         return;
     }
 
-    // If callback functions are called using the specified the queue
+    // If callback functions are called using the specified the writeQueue
     nw_listener_set_queue(self.nw_listener, dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0));
     // Function to handle state changes
     nw_listener_set_state_changed_handler(self.nw_listener, ^(nw_listener_state_t state, nw_error_t error) {
@@ -71,7 +82,7 @@
         return;
     }
 
-    // Store the connection and assign it a queue
+    // Store the connection and assign it a writeQueue
     self.nw_inbound_connection = connection;
     nw_connection_set_queue(self.nw_inbound_connection, dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0));
     nw_connection_set_state_changed_handler(self.nw_inbound_connection, ^(nw_connection_state_t state, nw_error_t error) {
@@ -181,9 +192,9 @@
     // https://developer.apple.com/documentation/dispatch?language=objc
     // https://developer.apple.com/documentation/dispatch/1452927-dispatch_get_global_queue
     // https://developer.apple.com/documentation/dispatch/1453057-dispatch_async
-    dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0), ^(void) {
+    dispatch_async(self.writeQueue, ^(void) {
         // Print the captured data to the syslog
-        NSLog(@"CPTManager: queue = %@", entry);
+        NSLog(@"CPTManager: writeQueue = %@", entry);
         [self writeData:entry];
     });
 }
@@ -266,6 +277,7 @@
         if (foundRange.length > 0) {
             NSUInteger newLineOffset = foundRange.location + foundRange.length;
             NSRange fullLineRange = NSMakeRange(newLineOffset, [secondFileHalf length] - newLineOffset);
+            NSLog(@"CPTManager: Remaining file bytes after truncation: %@", NSStringFromRange(fullLineRange));
             secondFileHalf = [secondFileHalf subdataWithRange:fullLineRange];
         }
 

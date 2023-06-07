@@ -11,6 +11,8 @@
 @property nw_listener_t nw_listener;
 @property nw_connection_t nw_inbound_connection;
 
++ (instancetype)managerWithQueue;
+
 - (void)listen:(int)port;
 
 - (void)close;

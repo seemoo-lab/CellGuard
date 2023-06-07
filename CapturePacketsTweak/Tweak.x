@@ -114,7 +114,7 @@ CPTManager* cptManager;
 	if ([programName isEqualToString:@"/System/Library/Frameworks/CoreTelephony.framework/Support/CommCenter"]) {
 		// Only enable the tweak for the process CommCenter
 		NSLog(@"Happy hooking from the CapturePackets tweak in %@", programName);
-		cptManager = [[CPTManager alloc] init];
+		cptManager = [CPTManager managerWithQueue];
 
 		// Collect the references to the two libraries to increase the speed of function finding
 		// See: https://github.com/theos/logos/issues/67#issuecomment-682242010
