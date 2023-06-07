@@ -4,19 +4,12 @@
 
 #import <Foundation/Foundation.h>
 #import <Network/Network.h>
+#import "BaseTweakManager.h"
 
 
-@interface CCTManager : NSObject
+@interface CCTManager : BaseTweakManager
 
-@property nw_listener_t nw_listener;
-@property nw_connection_t nw_inbound_connection;
-
-@property NSTimeInterval cellLastTimestamp;
-@property NSArray *cellLastData;
-
-- (void)listen:(int)port;
-
-- (void)close;
++ (instancetype)manager;
 
 - (void)addData:(NSArray *)data;
 

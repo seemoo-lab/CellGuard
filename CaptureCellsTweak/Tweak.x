@@ -67,7 +67,7 @@ CCTManager* cctManager;
 	NSString* programName = [NSString stringWithUTF8String: argv[0]];
 	if ([programName isEqualToString:@"/System/Library/Frameworks/CoreTelephony.framework/Support/CommCenter"]) {
 		NSLog(@"Hello from the CaptureCells tweak %@", programName);
-		cctManager = [[CCTManager alloc] init];
+		cctManager = [CCTManager manager];
 		// Only enable the tweak for the process CommCenter
 		%init(CommCenter)
 		[cctManager listen:33066];

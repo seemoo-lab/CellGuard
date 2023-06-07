@@ -6,7 +6,7 @@ include $(THEOS)/makefiles/common.mk
 
 TWEAK_NAME = CaptureCells
 
-CaptureCells_FILES = Tweak.x CCTManager.m
+CaptureCells_FILES = Tweak.x CCTManager.m BaseTweakManager.m
 CaptureCells_CFLAGS = -fobjc-arc
 
 include $(THEOS_MAKE_PATH)/tweak.mk

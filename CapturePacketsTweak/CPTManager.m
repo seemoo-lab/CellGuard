@@ -15,7 +15,8 @@
 
 + (instancetype)manager {
     // https://stackoverflow.com/a/18622702
-    return [[CPTManager alloc] initWithQueue:@"de.tudarmstadt.seemoo.cpt.writeQueue" :@"CPTManager"];
+    return [[CPTManager alloc] initWithQueue:@"de.tudarmstadt.seemoo.cpt.writeQueue"
+            :@"CPTManager" :@"CapturePacketsTweak" :@"packets-cache.json"];
 }
 
 - (void)addData:(NSData *)packetData :(NSString *)proto :(NSString *)direction; {
