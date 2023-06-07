@@ -2,20 +2,12 @@
 // Created by Lukas Arnold on 05.06.23.
 //
 
-#import <Foundation/Foundation.h>
-#import <Network/Network.h>
+#import "BaseTweakManager.h"
 
 
-@interface CPTManager : NSObject
+@interface CPTManager : BaseTweakManager
 
-@property nw_listener_t nw_listener;
-@property nw_connection_t nw_inbound_connection;
-
-+ (instancetype)managerWithQueue;
-
-- (void)listen:(int)port;
-
-- (void)close;
++ (instancetype)manager;
 
 - (void)addData:(NSData *)packetData :(NSString *)proto :(NSString *)direction;
 
