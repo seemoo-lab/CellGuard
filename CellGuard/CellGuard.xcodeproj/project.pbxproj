@@ -19,6 +19,11 @@
 		CF0FDCCB296B466100A6FFE2 /* PersistenceError.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0FDCCA296B466100A6FFE2 /* PersistenceError.swift */; };
 		CF0FDCCD296B480B00A6FFE2 /* TrackedUserLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0FDCCC296B480B00A6FFE2 /* TrackedUserLocation.swift */; };
 		CF1FAFB32986B11200106930 /* CellReachOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1FAFB22986B11200106930 /* CellReachOverlay.swift */; };
+		CF2002E82A2F2BE2000922E6 /* QMIParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2002E72A2F2BE2000922E6 /* QMIParser.swift */; };
+		CF2002EA2A2F2BEA000922E6 /* ARIParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2002E92A2F2BEA000922E6 /* ARIParser.swift */; };
+		CF2002ED2A2F3244000922E6 /* BinarySwift in Frameworks */ = {isa = PBXBuildFile; productRef = CF2002EC2A2F3244000922E6 /* BinarySwift */; };
+		CF2002F02A2F996A000922E6 /* TweakClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2002EF2A2F996A000922E6 /* TweakClient.swift */; };
+		CF2002F22A2F9FB5000922E6 /* CPTClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2002F12A2F9FB5000922E6 /* CPTClient.swift */; };
 		CF2A1C1529754AA400E8B61C /* LocalNetworkAuthorization.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2A1C1429754AA400E8B61C /* LocalNetworkAuthorization.swift */; };
 		CF2A1C182975562800E8B61C /* UserDefaultsKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2A1C172975562800E8B61C /* UserDefaultsKeys.swift */; };
 		CF2A1C1B2975670000E8B61C /* CGNotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2A1C1A2975670000E8B61C /* CGNotificationManager.swift */; };
@@ -42,6 +47,7 @@
 		CF5EF9262978689B00C4F50A /* ALSVerifierTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5EF9252978689B00C4F50A /* ALSVerifierTests.swift */; };
 		CF5EF92829793F7500C4F50A /* TestDetection.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5EF92729793F7500C4F50A /* TestDetection.swift */; };
 		CF5EF92A2979B8D800C4F50A /* LocationSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5EF9292979B8D800C4F50A /* LocationSource.swift */; };
+		CF90EF1B2A30BDD200E7FDB0 /* QMIParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF90EF1A2A30BDD200E7FDB0 /* QMIParserTests.swift */; };
 		CF93B84E297FF5C3003F9FFE /* CellFileTypeIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = CF93B84D297FF5C3003F9FFE /* CellFileTypeIcon.png */; };
 		CF93B852297FFEF9003F9FFE /* URLIdentifiable.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF93B851297FFEF9003F9FFE /* URLIdentifiable.swift */; };
 		CF93B85429800278003F9FFE /* PersistenceImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF93B85329800278003F9FFE /* PersistenceImporter.swift */; };
@@ -111,6 +117,10 @@
 		CF0FDCCA296B466100A6FFE2 /* PersistenceError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceError.swift; sourceTree = "<group>"; };
 		CF0FDCCC296B480B00A6FFE2 /* TrackedUserLocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackedUserLocation.swift; sourceTree = "<group>"; };
 		CF1FAFB22986B11200106930 /* CellReachOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellReachOverlay.swift; sourceTree = "<group>"; };
+		CF2002E72A2F2BE2000922E6 /* QMIParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QMIParser.swift; sourceTree = "<group>"; };
+		CF2002E92A2F2BEA000922E6 /* ARIParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARIParser.swift; sourceTree = "<group>"; };
+		CF2002EF2A2F996A000922E6 /* TweakClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TweakClient.swift; sourceTree = "<group>"; };
+		CF2002F12A2F9FB5000922E6 /* CPTClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTClient.swift; sourceTree = "<group>"; };
 		CF2A1C1429754AA400E8B61C /* LocalNetworkAuthorization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalNetworkAuthorization.swift; sourceTree = "<group>"; };
 		CF2A1C172975562800E8B61C /* UserDefaultsKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsKeys.swift; sourceTree = "<group>"; };
 		CF2A1C1A2975670000E8B61C /* CGNotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CGNotificationManager.swift; sourceTree = "<group>"; };
@@ -135,6 +145,7 @@
 		CF5EF9252978689B00C4F50A /* ALSVerifierTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ALSVerifierTests.swift; sourceTree = "<group>"; };
 		CF5EF92729793F7500C4F50A /* TestDetection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestDetection.swift; sourceTree = "<group>"; };
 		CF5EF9292979B8D800C4F50A /* LocationSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationSource.swift; sourceTree = "<group>"; };
+		CF90EF1A2A30BDD200E7FDB0 /* QMIParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QMIParserTests.swift; sourceTree = "<group>"; };
 		CF93B84D297FF5C3003F9FFE /* CellFileTypeIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = CellFileTypeIcon.png; path = ../../../Icon/Apple/CellFileTypeIcon.png; sourceTree = "<group>"; };
 		CF93B851297FFEF9003F9FFE /* URLIdentifiable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLIdentifiable.swift; sourceTree = "<group>"; };
 		CF93B85329800278003F9FFE /* PersistenceImporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceImporter.swift; sourceTree = "<group>"; };
@@ -182,6 +193,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CFD0236D2961AD1500AA5A1C /* SwiftProtobuf in Frameworks */,
+				CF2002ED2A2F3244000922E6 /* BinarySwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -213,6 +225,26 @@
 				CF5EA78A29892F420061E9F1 /* CGTabBarAppearance.swift */,
 			);
 			path = Helpers;
+			sourceTree = "<group>";
+		};
+		CF2002E62A2F2BB0000922E6 /* Capture Packets */ = {
+			isa = PBXGroup;
+			children = (
+				CF2002E72A2F2BE2000922E6 /* QMIParser.swift */,
+				CF2002E92A2F2BEA000922E6 /* ARIParser.swift */,
+				CF2002F12A2F9FB5000922E6 /* CPTClient.swift */,
+			);
+			path = "Capture Packets";
+			sourceTree = "<group>";
+		};
+		CF2002EE2A2F9957000922E6 /* Tweaks */ = {
+			isa = PBXGroup;
+			children = (
+				CFD023662961AB7E00AA5A1C /* Capture Cells */,
+				CF2002E62A2F2BB0000922E6 /* Capture Packets */,
+				CF2002EF2A2F996A000922E6 /* TweakClient.swift */,
+			);
+			path = Tweaks;
 			sourceTree = "<group>";
 		};
 		CF2A1C19297566CE00E8B61C /* Notifications */ = {
@@ -265,14 +297,14 @@
 			path = Cells;
 			sourceTree = "<group>";
 		};
-		CF5CBB8A29687BD8001CE9BE /* Capture Cells Tweak */ = {
+		CF5CBB8A29687BD8001CE9BE /* Capture Cells */ = {
 			isa = PBXGroup;
 			children = (
 				CF320F582962208B009BAD18 /* CCTResponse.txt */,
 				CF320F5629621C42009BAD18 /* CCTClientTests.swift */,
 				CF5CBB8C29687CBB001CE9BE /* CCTParserTests.swift */,
 			);
-			path = "Capture Cells Tweak";
+			path = "Capture Cells";
 			sourceTree = "<group>";
 		};
 		CF5CBB8B29687BF1001CE9BE /* Apple Location Service */ = {
@@ -295,6 +327,23 @@
 				CF4EE5DE296C512D0069BA5A /* Tabs */,
 			);
 			path = "User Interface";
+			sourceTree = "<group>";
+		};
+		CF90EF182A30BD3000E7FDB0 /* Tweaks */ = {
+			isa = PBXGroup;
+			children = (
+				CF5CBB8A29687BD8001CE9BE /* Capture Cells */,
+				CF90EF192A30BD4700E7FDB0 /* Capture Packets */,
+			);
+			path = Tweaks;
+			sourceTree = "<group>";
+		};
+		CF90EF192A30BD4700E7FDB0 /* Capture Packets */ = {
+			isa = PBXGroup;
+			children = (
+				CF90EF1A2A30BDD200E7FDB0 /* QMIParserTests.swift */,
+			);
+			path = "Capture Packets";
 			sourceTree = "<group>";
 		};
 		CFB8B28B2963560100503189 /* Core Data */ = {
@@ -339,7 +388,7 @@
 			isa = PBXGroup;
 			children = (
 				CFD023652961AB6E00AA5A1C /* Apple Location Service */,
-				CFD023662961AB7E00AA5A1C /* Capture Cells Tweak */,
+				CF2002EE2A2F9957000922E6 /* Tweaks */,
 				CFB8B28B2963560100503189 /* Core Data */,
 				CFD023702961AF1700AA5A1C /* Locations */,
 				CF2A1C19297566CE00E8B61C /* Notifications */,
@@ -368,7 +417,7 @@
 			isa = PBXGroup;
 			children = (
 				CF5CBB8B29687BF1001CE9BE /* Apple Location Service */,
-				CF5CBB8A29687BD8001CE9BE /* Capture Cells Tweak */,
+				CF90EF182A30BD3000E7FDB0 /* Tweaks */,
 				CFD0234C2961A10E00AA5A1C /* CellGuardTests.swift */,
 			);
 			path = CellGuardTests;
@@ -394,7 +443,7 @@
 			path = "Apple Location Service";
 			sourceTree = "<group>";
 		};
-		CFD023662961AB7E00AA5A1C /* Capture Cells Tweak */ = {
+		CFD023662961AB7E00AA5A1C /* Capture Cells */ = {
 			isa = PBXGroup;
 			children = (
 				CFD023672961AB9900AA5A1C /* CCTClient.swift */,
@@ -402,7 +451,7 @@
 				CFB8B290296359CC00503189 /* CCTCollector.swift */,
 				CF2A1C1429754AA400E8B61C /* LocalNetworkAuthorization.swift */,
 			);
-			path = "Capture Cells Tweak";
+			path = "Capture Cells";
 			sourceTree = "<group>";
 		};
 		CFD023702961AF1700AA5A1C /* Locations */ = {
@@ -453,6 +502,7 @@
 			name = CellGuard;
 			packageProductDependencies = (
 				CFD0236C2961AD1500AA5A1C /* SwiftProtobuf */,
+				CF2002EC2A2F3244000922E6 /* BinarySwift */,
 			);
 			productName = CellGuard;
 			productReference = CFD023332961A10D00AA5A1C /* CellGuard.app */;
@@ -528,6 +578,7 @@
 			mainGroup = CFD0232A2961A10D00AA5A1C;
 			packageReferences = (
 				CFD0236B2961AD1500AA5A1C /* XCRemoteSwiftPackageReference "swift-protobuf" */,
+				CF2002EB2A2F3244000922E6 /* XCRemoteSwiftPackageReference "BinarySwift" */,
 			);
 			productRefGroup = CFD023342961A10D00AA5A1C /* Products */;
 			projectDirPath = "";
@@ -593,6 +644,7 @@
 				CFB51832297AD3C80006C690 /* CellJSONDataView.swift in Sources */,
 				CFDF5D79297EF1EF000708A8 /* LocationAnnotationView.swift in Sources */,
 				CF320F5529620B16009BAD18 /* CCTParser.swift in Sources */,
+				CF2002F02A2F996A000922E6 /* TweakClient.swift in Sources */,
 				CFDF5D83297F0736000708A8 /* CommonCellMap.swift in Sources */,
 				CFDF5D75297EF127000708A8 /* CellClusterAnnotationView.swift in Sources */,
 				CFB51834297AEFA80006C690 /* CellStatusIcon.swift in Sources */,
@@ -618,7 +670,9 @@
 				CF93B85429800278003F9FFE /* PersistenceImporter.swift in Sources */,
 				CFDF5D71297EF0C6000708A8 /* CellAnnotation.swift in Sources */,
 				CF2A1C202975CDD200E8B61C /* RiskIndicatorCard.swift in Sources */,
+				CF2002EA2A2F2BEA000922E6 /* ARIParser.swift in Sources */,
 				CF5EF9202977FACA00C4F50A /* Formatters.swift in Sources */,
+				CF2002F22A2F9FB5000922E6 /* CPTClient.swift in Sources */,
 				CFDF5D81297F05F1000708A8 /* CellMapDelegate.swift in Sources */,
 				CFE4462B29705F0C006F2CF4 /* ListTabView.swift in Sources */,
 				CF0FDCC9296B310400A6FFE2 /* PersistencePreview.swift in Sources */,
@@ -631,6 +685,7 @@
 				CFD023372961A10D00AA5A1C /* CellGuardApp.swift in Sources */,
 				CF0FDCBD2969A21000A6FFE2 /* WelcomeSheet.swift in Sources */,
 				CF0FDCBB29699E8A00A6FFE2 /* CompositeTabView.swift in Sources */,
+				CF2002E82A2F2BE2000922E6 /* QMIParser.swift in Sources */,
 				CF5EF9222977FCF800C4F50A /* CellTechnologyFormatter.swift in Sources */,
 				CF93B85629800451003F9FFE /* CellFileKeys.swift in Sources */,
 			);
@@ -640,6 +695,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF90EF1B2A30BDD200E7FDB0 /* QMIParserTests.swift in Sources */,
 				CF5EF9262978689B00C4F50A /* ALSVerifierTests.swift in Sources */,
 				CFD0234D2961A10E00AA5A1C /* CellGuardTests.swift in Sources */,
 				CF5CBB8D29687CBB001CE9BE /* CCTParserTests.swift in Sources */,
@@ -975,6 +1031,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		CF2002EB2A2F3244000922E6 /* XCRemoteSwiftPackageReference "BinarySwift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Szaq/BinarySwift";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 		CFD0236B2961AD1500AA5A1C /* XCRemoteSwiftPackageReference "swift-protobuf" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/apple/swift-protobuf.git";
@@ -986,6 +1050,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		CF2002EC2A2F3244000922E6 /* BinarySwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CF2002EB2A2F3244000922E6 /* XCRemoteSwiftPackageReference "BinarySwift" */;
+			productName = BinarySwift;
+		};
 		CFD0236C2961AD1500AA5A1C /* SwiftProtobuf */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = CFD0236B2961AD1500AA5A1C /* XCRemoteSwiftPackageReference "swift-protobuf" */;

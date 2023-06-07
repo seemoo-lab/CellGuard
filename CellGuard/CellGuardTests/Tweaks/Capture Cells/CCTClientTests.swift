@@ -63,7 +63,7 @@ final class CCTClientTests: XCTestCase {
         
         do {
             let cells = try await withCheckedThrowingContinuation { continuation in
-                client.collectCells() { result in
+                client.queryCells() { result in
                     continuation.resume(with: result)
                 }
             }

@@ -27,7 +27,7 @@ struct CCTCollector {
     }
     
     func collectAndStore(completion: @escaping (Result<Int,Error>) -> Void) {
-        client.collectCells() { result in
+        client.queryCells { result in
             do {
                 let samples = try result.get()
                 let numberOfStoredCells = try store(samples: samples)

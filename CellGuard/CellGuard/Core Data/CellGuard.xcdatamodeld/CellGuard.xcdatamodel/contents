@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21513" systemVersion="21G419" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21754" systemVersion="22F66" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="ALSCell" representedClassName="ALSCell" parentEntity="Cell" syncable="YES" codeGenerationType="class">
         <relationship name="location" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ALSLocation" inverseName="cells" inverseEntity="ALSLocation"/>
         <relationship name="verified" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="TweakCell" inverseName="verification" inverseEntity="TweakCell"/>
@@ -8,6 +8,10 @@
         <attribute name="reach" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="score" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <relationship name="cells" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ALSCell" inverseName="location" inverseEntity="ALSCell"/>
+    </entity>
+    <entity name="ARIPacket" representedClassName="ARIPacket" parentEntity="Packet" syncable="YES" codeGenerationType="class">
+        <attribute name="group" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="type" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
     </entity>
     <entity name="Cell" representedClassName="Cell" isAbstract="YES" syncable="YES" codeGenerationType="class">
         <attribute name="area" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
@@ -23,6 +27,18 @@
         <attribute name="imported" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="latitude" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="longitude" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+    </entity>
+    <entity name="Packet" representedClassName="Packet" isAbstract="YES" syncable="YES" codeGenerationType="class">
+        <attribute name="collected" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="data" optional="YES" attributeType="Binary"/>
+        <attribute name="direction" optional="YES" attributeType="String"/>
+        <attribute name="imported" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="proto" optional="YES" attributeType="String"/>
+    </entity>
+    <entity name="QMIPacket" representedClassName="QMIPacket" parentEntity="Packet" syncable="YES" codeGenerationType="class">
+        <attribute name="message" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="service" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="type" optional="YES" attributeType="String"/>
     </entity>
     <entity name="TweakCell" representedClassName="TweakCell" parentEntity="Cell" syncable="YES" codeGenerationType="class">
         <attribute name="collected" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
