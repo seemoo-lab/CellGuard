@@ -34,19 +34,26 @@ class ARIAppDefinitions:
         key: Number = group_field.key
         value: Table = group_field.value
 
+        # Get the group id from the key
         group_id = key.n
+
         group_name: Optional[str] = None
         types: list[dict] = []
 
+        # Iterate through the key-value pairs in the table
         for type_field in value.fields:
             if isinstance(type_field.key, String) and isinstance(type_field.value, String) \
                     and type_field.key.s == 'name':
+                # We've found the name entry
                 group_name = type_field.value.s
             elif isinstance(type_field.key, Number) and isinstance(type_field.value, Table):
+                # We've found the type entry (which is yet another table)
                 type_id = type_field.key.n
+                # We get its first entry to access the type's name
                 name_field = type_field.value.fields[0]
                 if isinstance(name_field.key, Name) and isinstance(name_field.value, String) \
                         and name_field.key.id == 'name':
+                    # We append both the type's identifier and name to our list
                     type_name = name_field.value.s
                     types.append({
                         'identifier': type_id,
@@ -61,6 +68,7 @@ class ARIAppDefinitions:
             print(f'Couldn\'t extract name for group {group_id}')
             return None
 
+        # We combine all collected data for the group and return it
         return {
             'identifier': group_id,
             'name': group_name,
@@ -69,27 +77,34 @@ class ARIAppDefinitions:
 
     def generate(self) -> bool:
         """ Generate a JSON definition file based on the class properties and return its location. """
+        # Parse the libari_dylib.lua file, this may take some time
         with yaspin(text=f"Reading {self.data_file_path.name}..."):
             with open(self.data_file_path, "r") as data_file:
                 tree = ast.parse(data_file.read())
 
+        # Check that it has only a return statement
         first_statement: Statement = tree.body.body[0]
         if not isinstance(first_statement, Return):
             print('The first statement of the lua file is not a return statement.')
             return False
 
+        # Get the handle of the root table in the file
         return_statement: Return = first_statement
         group_table: Table = return_statement.values[0]
         json_group_list: list[dict] = []
 
+        # Collect all group and type data
         for group_field in group_table.fields:
             group_data = self.process_group(group_field)
             if group_data:
                 json_group_list.append(group_data)
 
+        # Create the directory if not does not yet exist
         if not self.build_file_path.parent.exists():
+            print('Remember to include the created in the XCode project')
             self.build_file_path.parent.mkdir()
 
+        # Write the data
         with open(self.build_file_path, "w") as output_file:
             json.dump(json_group_list, output_file)
 
@@ -101,10 +116,13 @@ class ARIAppDefinitions:
 def main():
     """ The main function composing all the work. """
     if len(sys.argv) != 2:
+        sys.stderr.write("Please clone the aristoteles repository from "
+                         "https://github.com/seemoo-lab/aristoteles/tree/master and run this script again.")
         sys.stderr.write("Usage: generate_ari_json.py <path/libari_dylib.lua>\n")
         sys.exit(1)
 
     data_file = Path(sys.argv[1])
+    # Directly update the file present in the XCode project
     build_file = Path("CellGuard", "Tweaks", "Capture Packets", "ari-definitions.json")
 
     if not data_file.is_file() or data_file.name != 'libari_dylib.lua':
