@@ -14,7 +14,7 @@ final class ARIParserTests: XCTestCase {
     // Packets extracted from https://github.com/seemoo-lab/aristoteles/blob/master/examples/captures/cellinfo_nosim.pcapng
     
     func testFirstPacket() throws {
-        // 1
+        // 1st packet from the trace
         let data = Data(base64Encoded: "3sB+q3igoABCwAAAAiAQAAAAAAAGIBAA8BMAAAggEAAAAAAACiCwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADCAQAAAAAAA=")!
         let packet = try ParsedARIPacket(data: data)
         
@@ -54,7 +54,7 @@ final class ARIParserTests: XCTestCase {
     }
     
     func testSecondPacket() throws {
-        // 19
+        // 19th packet from the trace
         let data = Data(base64Encoded: "3sB+qxjENAHCwgAAAiAQAAAAAAAEIAQA8QYgBAAyCCAQABQAAAAKIFAAAAAAAAAAAAAAAAAAAAAAADIAAAAMIJAB8TIAAAAAAAAAAAAAAAAAAAAAMgAAAAMAAAA34gAA0cIAAETB8////5j///8AAAAAAAAAAAAAAAAAAAAAAAAAAAYAAAAAAAAAWOQbhRiAHIUQOvCEAAAAAABgsFEAAAAAkXDfhQ==")!
         let packet = try ParsedARIPacket(data: data)
         
@@ -95,7 +95,7 @@ final class ARIParserTests: XCTestCase {
         XCTAssertEqual(packet.tlvs[5].type, 6)
         XCTAssertEqual(packet.tlvs[5].version, 1)
         XCTAssertEqual(packet.tlvs[5].length, 100)
-        // We've ommited its data check
+        // We've omitted its data check
     }
     
     func testInvalidPacket() throws {

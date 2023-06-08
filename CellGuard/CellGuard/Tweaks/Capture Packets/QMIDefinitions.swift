@@ -39,6 +39,7 @@ struct QMIDefinitions {
     let services: [UInt8: QMIDefintionService]
     
     private init(serviceList: [QMIDefintionService]) {
+        // We map the list of services to a dictionary to allow for simple retrieval of service details
         self.services = Dictionary(uniqueKeysWithValues: serviceList.map { ($0.identifier, $0) })
     }
     
@@ -67,6 +68,7 @@ struct QMIDefintionService: Decodable {
         self.shortName = try container.decode(String.self, forKey: .shortName)
         self.longName = try container.decode(String.self, forKey: .longName)
         
+        // We map the list to a dictionary to allow for simple retrieval of message and indications by their id
         self.messages = CommonDefinitionElement.dictionary(try container.decode([CommonDefinitionElement].self, forKey: .messages))
         self.indications = CommonDefinitionElement.dictionary(try container.decode([CommonDefinitionElement].self, forKey: .indications))
     }

@@ -12,7 +12,7 @@ import XCTest
 final class QMIParserTests: XCTestCase {
     
     func testCTLPacket() throws {
-        // 269
+        // 269th packet from a private trace
         let data = Data(base64Encoded: "ARcAgAAAASIiAAwAAgQAAAAAAAECADAM")!
         let packet = try ParsedQMIPacket(nsData: data)
         
@@ -41,7 +41,7 @@ final class QMIParserTests: XCTestCase {
     }
     
     func testNASPacket() throws {
-        // 1702
+        // 1702th packet from a private trace
         let data = Data(base64Encoded: "AbYAgAMBBBYATgCqABACAAAAEQIAAAASAwAAAAATAwAAAAAUAwACAgAZHQABAwEDAQABAAD//wEDF+8AAAAAATI2MjAy/wF0tR4CAP//IQEAAScBAAAoBAABAAAAKgEAASsEAAEAAAAwBAAAAAAAMgQAAAAAADUCAP//OQQAAQAAADoEAAEAAAA/BAAAAAAARQQAAwAAAEcEAAQAAABMAwAAAABQAQABUQEAAFcBAAFdBAAAAAAA")!
         let packet = try ParsedQMIPacket(nsData: data)
         

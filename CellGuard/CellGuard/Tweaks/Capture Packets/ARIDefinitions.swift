@@ -39,6 +39,7 @@ struct ARIDefinitions {
     let groups: [UInt8: ARIDefinitionGroup]
     
     private init(groupList: [ARIDefinitionGroup]) {
+        // We map the list of groups to a dictionary to allow for simple retrieval of service details
         self.groups = Dictionary(uniqueKeysWithValues: groupList.map { ($0.identifier, $0) })
     }
     
@@ -62,6 +63,7 @@ struct ARIDefinitionGroup: Decodable {
         self.identifier = try container.decode(UInt8.self, forKey: .identifier)
         self.name = try container.decode(String.self, forKey: .name)
         
+        // We map the list to a dictionary to allow for simple retrieval of types by their id
         self.types = CommonDefinitionElement.dictionary(try container.decode([CommonDefinitionElement].self, forKey: .types))
     }
     

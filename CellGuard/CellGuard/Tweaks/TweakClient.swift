@@ -29,13 +29,16 @@ struct TweakClient {
     
     /// Connects to the tweak, fetches all cells, and converts them into a dictionary structure.
     func query(completion: @escaping (Result<Data, Error>) -> ()) {
+        // Create a connection to localhost on the given port
         let nwPort = NWEndpoint.Port(integerLiteral: UInt16(port))
         let connection = NWConnection(host: "127.0.0.1", port: nwPort, using: NWParameters.tcp)
         
+        // Print the connection state
         connection.stateUpdateHandler = { state in
             Self.logger.trace("Connection State (\(self.port)) : \(String(describing: state))")
         }
         
+        // Create a handler for the received message
         var completed = false
         
         connection.receiveMessage { content, context, complete, error in
@@ -53,7 +56,8 @@ struct TweakClient {
             }
             completed = true
         }
-        
+
+        // Open the connection
         connection.start(queue: self.queue)
     }
 

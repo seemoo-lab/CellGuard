@@ -51,28 +51,35 @@ struct CPTClient {
         
         var packets: [CPTPacket] = []
         
+        // Each line received by our tweak represents on QMI or ARI packet
         let lines = string.split(whereSeparator: \.isNewline)
         for line in lines {
+            // Each packet has some additional information.
+            // Our tweak separates the four fields in each line using commas.
             let lineComponents = line.split(separator: ",")
             if lineComponents.count != 4 {
                 Self.logger.warning("Invalid CPTPacket '\(line)': Has not exactly four components")
                 continue
             }
             
+            // The protocol of the recorded packet, either QMI or ARI
             let proto = lineComponents[0]
             if proto != "QMI" && proto != "ARI" {
                 Self.logger.warning("Invalid CPTPacket '\(line)': Unknown protocol")
                 continue
             }
+            // The direction the from which packet was intercepted, either IN (Baseband -> iOS) or OUT (iOS -> Baseband)
             let direction = lineComponents[1]
             if direction != "IN" && direction != "OUT" {
                 Self.logger.warning("Invalid CPTPacket '\(line)': Unknown direction")
                 continue
             }
+            // The actual packet data encoded with base64
             guard let data = Data(base64Encoded: String(lineComponents[2]), options: .ignoreUnknownCharacters) else {
                 Self.logger.warning("Invalid CPTPacket '\(line)': Can't read base64 data from the third component")
                 continue
             }
+            // The timestamp when the packet was recorded
             guard let unixTimestamp = Double(String(lineComponents[3])) else {
                 Self.logger.warning("Invalid CPTPacket '\(line)': Can't convert fourth component to Double")
                 continue
