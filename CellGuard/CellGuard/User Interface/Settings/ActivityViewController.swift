@@ -8,7 +8,7 @@
 import UIKit
 import SwiftUI
 
-// SwiftUI on iOS 14 doesn't allow to show the share, thus we have to resort back to UIKit.
+// SwiftUI on iOS 14 doesn't allow to show the share window, and thus we have to resort back to UIKit.
 // Author: samwize (https://stackoverflow.com/a/60137973)
 
 struct ActivityViewController: UIViewControllerRepresentable {

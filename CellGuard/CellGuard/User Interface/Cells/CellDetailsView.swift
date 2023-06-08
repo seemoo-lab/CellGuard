@@ -162,9 +162,11 @@ struct CellDetailsView_Previews: PreviewProvider {
         
         PersistenceController.preview.fetchPersistentHistory()
         
-        return CellDetailsView(
-            cell: PersistencePreview.alsCell(context: viewContext)
-        )
+        return NavigationView {
+            CellDetailsView(
+                cell: PersistencePreview.alsCell(context: viewContext)
+            )
+        }
         .environment(\.managedObjectContext, viewContext)
     }
 }

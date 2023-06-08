@@ -76,12 +76,9 @@ struct SettingsSheet: View {
     )}
     
     @State private var showAlert: AlertIdentifiable? = nil
-    @State private var shareURL: URLIdentfiable? = nil
-    @State private var isExportInProgress = false
     
     var body: some View {
         NavigationView {
-            // TODO: Download other databases databases
             List {
                 Section(header: Text("Permissions")) {
                     Toggle("Local Network", isOn: isPermissionLocalNetwork)
@@ -97,42 +94,9 @@ struct SettingsSheet: View {
                 
                 Section(header: Text("Cell Databases")) {
                     Text("Apple Location Service")
-                    /* Button {
-                        self.showAlertNotImplemented()
-                    } label: {
-                        Text("OpenCellid Database")
-                    }
-                    
-                    Button {
-                        self.showAlertNotImplemented()
-                    } label: {
-                        Text("Mozilla Location Service")
-                    } */
                 }
                 
                 Section(header: Text("Collected Data")) {
-                    HStack {
-                        Button {
-                            isExportInProgress = true
-                            PersistenceExporter.exportInBackground { result in
-                                isExportInProgress = false
-                                do {
-                                    self.shareURL = URLIdentfiable(url: try result.get())
-                                } catch {
-                                    // TODO: Show error
-                                }
-                            }
-                        } label: {
-                            Text("Export Data")
-                        }
-                        .disabled(isExportInProgress)
-                        
-                        if (isExportInProgress) {
-                            Spacer()
-                            ProgressView()
-                        }
-                    }
-                    
                     Button {
                         self.showAlert = AlertIdentifiable(id: "confirm-delete", alert: Alert(
                             title: Text("Delete Database"),
@@ -163,9 +127,6 @@ struct SettingsSheet: View {
                             .bold()
                     }
                 }
-            }
-            .sheet(item: $shareURL) { url in
-                ActivityViewController(activityItems: [url.url])
             }
             .alert(item: $showAlert) { $0.alert }
         }

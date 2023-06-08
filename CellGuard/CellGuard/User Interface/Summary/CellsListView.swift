@@ -88,12 +88,10 @@ private struct GroupedTweakCell: Hashable {
     }
 }
 
-struct ListTabView: View {
+struct CellsListView: View {
     
     var body: some View {
-        NavigationView {
-            LevelListView()
-        }
+        LevelListView()
     }
     
 }
@@ -137,6 +135,8 @@ struct LevelListView: View {
     }
     
     var body: some View {
+        // TODO: Replace with cell timeline
+        
         // Group cells by day
         let itemsGroupedByDay = groupDay()
         
@@ -157,7 +157,7 @@ struct LevelListView: View {
                 .listStyle(.insetGrouped)
             }
         }
-        .navigationTitle(level == .country ? "List" : level.name)
+        .navigationTitle(level == .country ? "Connected Cells" : level.name)
         .navigationBarTitleDisplayMode(level == .country ? .automatic : .inline)
     }
     
@@ -222,7 +222,9 @@ private struct ListBodyElement: View {
 
 struct ListView_Previews: PreviewProvider {
     static var previews: some View {
-        ListTabView()
-            .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+        NavigationView {
+            CellsListView()
+                .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+        }
     }
 }

@@ -12,7 +12,7 @@ import SwiftUI
 private enum ShownTab: Identifiable {
     case summary
     case map
-    case list
+    case packets
     
     var id: Self {
         return self
@@ -24,6 +24,7 @@ private enum ShownSheet: Identifiable {
     case settings
     case progress
     case tweakInfo
+    case export
 
     var id: Self {
         return self
@@ -67,12 +68,12 @@ struct CompositeTabView: View {
             })
         }
         
-        // If the introduction already was shown, we check on every start if we still have accesss to the local network
+        // If the introduction already was shown, we check on every start if we still have access to the local network
         let view = TabView(selection: $showingTab) {
             SummaryTabView(
                 showSettings: { showingSheet = .settings },
+                showExport: { showingSheet = .export },
                 showProgress: { showingSheet = .progress },
-                showListTab: { showingTab = .list },
                 showTweakInfo: { showingSheet = .tweakInfo }
             )
                 .tabItem {
@@ -84,11 +85,11 @@ struct CompositeTabView: View {
                     Label("Map", systemImage: "map.fill")
                 }
                 .tag(ShownTab.map)
-            ListTabView()
+            PacketTabView()
                 .tabItem {
-                    Label("List", systemImage: "list.bullet")
+                    Label("Packets", systemImage: "shippingbox")
                 }
-                .tag(ShownTab.list)
+                .tag(ShownTab.packets)
         }
         .onAppear {
             // Only show the introduction if it never has been shown before
@@ -137,6 +138,10 @@ struct CompositeTabView: View {
                 .environment(\.managedObjectContext, managedContext)
             case .tweakInfo:
                 TweakInfoSheet {
+                    self.showingSheet = nil
+                }
+            case .export:
+                ExportSheet {
                     self.showingSheet = nil
                 }
             }

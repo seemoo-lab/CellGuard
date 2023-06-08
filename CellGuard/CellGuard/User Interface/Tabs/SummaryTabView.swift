@@ -11,9 +11,11 @@ import SwiftUI
 struct SummaryTabView: View {
     
     let showSettings: () -> Void
+    let showExport: () -> Void
     let showProgress: () -> Void
-    let showListTab: () -> Void
     let showTweakInfo: () -> Void
+    
+    @State var isShowingConnectedCells = false
     
     @EnvironmentObject var locationManager: LocationDataManager
     @EnvironmentObject var networkAuthorization: LocalNetworkAuthorization
@@ -23,10 +25,10 @@ struct SummaryTabView: View {
     @FetchRequest private var failedCells: FetchedResults<TweakCell>
     @FetchRequest private var unknownCells: FetchedResults<TweakCell>
     
-    init(showSettings: @escaping () -> Void, showProgress: @escaping () -> Void, showListTab: @escaping () -> Void, showTweakInfo: @escaping () -> Void) {
+    init(showSettings: @escaping () -> Void, showExport: @escaping () -> Void, showProgress: @escaping () -> Void, showTweakInfo: @escaping () -> Void) {
         self.showSettings = showSettings
+        self.showExport = showExport
         self.showProgress = showProgress
-        self.showListTab = showListTab
         self.showTweakInfo = showTweakInfo
         
         let latestTweakCellRequest = NSFetchRequest<TweakCell>()
@@ -55,34 +57,49 @@ struct SummaryTabView: View {
     
     var body: some View {
         NavigationView {
-            ScrollView {
-                RiskIndicatorCard(risk: determineRisk(), onTap: { risk in
-                    switch (risk) {
-                    case .Low:
-                        showListTab()
-                    case let .Medium(cause):
-                        if cause == .Permissions {
-                            showSettings()
-                        } else if cause == .Tweak {
-                            showTweakInfo()
+            VStack {
+                // A hack for programmatic navigation
+                // https://www.hackingwithswift.com/quick-start/swiftui/how-to-use-programmatic-navigation-in-swiftui
+                NavigationLink(destination: CellsListView(), isActive: $isShowingConnectedCells) { EmptyView() }
+                
+                // The actual primary view
+                ScrollView {
+                    RiskIndicatorCard(risk: determineRisk(), onTap: { risk in
+                        switch (risk) {
+                        case .Low:
+                            showConnectedCells()
+                        case let .Medium(cause):
+                            if cause == .Permissions {
+                                showSettings()
+                            } else if cause == .Tweak {
+                                showTweakInfo()
+                            }
+                        case .High(_):
+                            showConnectedCells()
+                        case .Unknown:
+                            showProgress()
                         }
-                    case .High(_):
-                        showListTab()
-                    case .Unknown:
-                        showProgress()
+                    })
+                    if !tweakCells.isEmpty {
+                        CellInformationCard(cell: tweakCells[0])
                     }
-                })
-                if !tweakCells.isEmpty {
-                    CellInformationCard(cell: tweakCells[0])
                 }
-            }
-            .navigationTitle("Summary")
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button {
-                        self.showSettings()
-                    } label: {
-                        Label("Settings", systemImage: "ellipsis.circle")
+                .navigationTitle("Summary")
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Menu {
+                            Button(action: self.showConnectedCells) {
+                                Label("Connected Cells", systemImage: "list.bullet")
+                            }
+                            Button(action: self.showExport) {
+                                Label("Export Data", systemImage: "square.and.arrow.up")
+                            }
+                            Button(action: self.showSettings) {
+                                Label("Settings", systemImage: "gear")
+                            }
+                        } label: {
+                            Label("Settings", systemImage: "ellipsis.circle")
+                        }
                     }
                 }
             }
@@ -115,15 +132,19 @@ struct SummaryTabView: View {
         
         return .Low
     }
+    
+    func showConnectedCells() {
+        isShowingConnectedCells = true
+    }
 }
 
 struct SummaryView_Previews: PreviewProvider {
     static var previews: some View {
         SummaryTabView {
             // doing nothing
-        } showProgress: {
+        } showExport: {
             // doing nothing
-        } showListTab: {
+        } showProgress: {
             // doing nothing
         } showTweakInfo: {
             // doing nothing
