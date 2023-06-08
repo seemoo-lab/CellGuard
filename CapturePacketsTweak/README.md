@@ -1,10 +1,9 @@
-# CaptureCells
+# CapturePackets
 
-An iOS tweak which captures the cellular base stations you've connected to and provides a TCP interface on port 33066 to query them.
+An iOS tweak which captures the packets iOS and your iPhone's baseband exchange and provides a TCP interface on port 33067 to query them.
+It supports iPhones with Qualcomm (QMI) and Intel (ARI) modems.
 
 iOS Versions: 14.0 - 16.4
-
-TCP Port: 33066
 
 ## Building
 
