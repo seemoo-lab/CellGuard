@@ -31,9 +31,9 @@ References:
 - [GeneXus](https://wiki.genexus.com/commwiki/servlet/wiki?34616,HowTo%3A+Create+an+.ipa+file+from+XCode): Requires paid Apple Developer Account 
 - https://stackoverflow.com/a/72724017: Doesn't require an Apple Developer Account
 
-The [`build-ipa.py`](./build-ipa.py) script automates all of these steps:
+The [`build-ipa.py`](./build_ipa.py) script automates all of these steps:
 ```sh
-pipenv run python3 build-ipa.py
+pipenv run python3 build_ipa.py
 ```
 
 ### .deb

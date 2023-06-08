@@ -35,6 +35,13 @@
 		CF320F59296225F9009BAD18 /* CCTResponse.txt in Resources */ = {isa = PBXBuildFile; fileRef = CF320F582962208B009BAD18 /* CCTResponse.txt */; };
 		CF446754298D2A040083EE63 /* CellLocationDistance.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF446753298D2A040083EE63 /* CellLocationDistance.swift */; };
 		CF446756298D78F80083EE63 /* PersistenceQueries.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF446755298D78F80083EE63 /* PersistenceQueries.swift */; };
+		CF4E53932A31CE2500AE2059 /* ari-definitions.json in Resources */ = {isa = PBXBuildFile; fileRef = CF4E53912A31CE2500AE2059 /* ari-definitions.json */; };
+		CF4E53942A31CE2500AE2059 /* qmi-definitions.json in Resources */ = {isa = PBXBuildFile; fileRef = CF4E53922A31CE2500AE2059 /* qmi-definitions.json */; };
+		CF4E53962A31CE3F00AE2059 /* QMIDefinitions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF4E53952A31CE3F00AE2059 /* QMIDefinitions.swift */; };
+		CF4E53982A31CE4600AE2059 /* ARIDefinitions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF4E53972A31CE4600AE2059 /* ARIDefinitions.swift */; };
+		CF4E539A2A31DAAA00AE2059 /* QMIDefinitionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF4E53992A31DAAA00AE2059 /* QMIDefinitionsTests.swift */; };
+		CF4E539C2A31E73F00AE2059 /* CommonDefinitions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF4E539B2A31E73F00AE2059 /* CommonDefinitions.swift */; };
+		CF4E539E2A31E7E100AE2059 /* ARIDefinitionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF4E539D2A31E7E100AE2059 /* ARIDefinitionTests.swift */; };
 		CF53DB42297473E8005DCD10 /* CoreLocationALS.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF53DB41297473E8005DCD10 /* CoreLocationALS.pb.swift */; };
 		CF5672962A29E59000B6EA7C /* TweakInfoSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5672952A29E59000B6EA7C /* TweakInfoSheet.swift */; };
 		CF5AB2C02975458D00896ADC /* CellStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5AB2BF2975458D00896ADC /* CellStatus.swift */; };
@@ -134,6 +141,13 @@
 		CF320F5A29622B6D009BAD18 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		CF446753298D2A040083EE63 /* CellLocationDistance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellLocationDistance.swift; sourceTree = "<group>"; };
 		CF446755298D78F80083EE63 /* PersistenceQueries.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceQueries.swift; sourceTree = "<group>"; };
+		CF4E53912A31CE2500AE2059 /* ari-definitions.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "ari-definitions.json"; sourceTree = "<group>"; };
+		CF4E53922A31CE2500AE2059 /* qmi-definitions.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "qmi-definitions.json"; sourceTree = "<group>"; };
+		CF4E53952A31CE3F00AE2059 /* QMIDefinitions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QMIDefinitions.swift; sourceTree = "<group>"; };
+		CF4E53972A31CE4600AE2059 /* ARIDefinitions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARIDefinitions.swift; sourceTree = "<group>"; };
+		CF4E53992A31DAAA00AE2059 /* QMIDefinitionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QMIDefinitionsTests.swift; sourceTree = "<group>"; };
+		CF4E539B2A31E73F00AE2059 /* CommonDefinitions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonDefinitions.swift; sourceTree = "<group>"; };
+		CF4E539D2A31E7E100AE2059 /* ARIDefinitionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARIDefinitionTests.swift; sourceTree = "<group>"; };
 		CF53DB41297473E8005DCD10 /* CoreLocationALS.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreLocationALS.pb.swift; sourceTree = "<group>"; };
 		CF5672952A29E59000B6EA7C /* TweakInfoSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TweakInfoSheet.swift; sourceTree = "<group>"; };
 		CF5AB2BF2975458D00896ADC /* CellStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellStatus.swift; sourceTree = "<group>"; };
@@ -232,9 +246,14 @@
 		CF2002E62A2F2BB0000922E6 /* Capture Packets */ = {
 			isa = PBXGroup;
 			children = (
-				CF2002E72A2F2BE2000922E6 /* QMIParser.swift */,
+				CF4E53912A31CE2500AE2059 /* ari-definitions.json */,
+				CF4E53922A31CE2500AE2059 /* qmi-definitions.json */,
 				CF2002E92A2F2BEA000922E6 /* ARIParser.swift */,
+				CF4E53972A31CE4600AE2059 /* ARIDefinitions.swift */,
+				CF2002E72A2F2BE2000922E6 /* QMIParser.swift */,
+				CF4E53952A31CE3F00AE2059 /* QMIDefinitions.swift */,
 				CF2002F12A2F9FB5000922E6 /* CPTClient.swift */,
+				CF4E539B2A31E73F00AE2059 /* CommonDefinitions.swift */,
 			);
 			path = "Capture Packets";
 			sourceTree = "<group>";
@@ -343,8 +362,10 @@
 		CF90EF192A30BD4700E7FDB0 /* Capture Packets */ = {
 			isa = PBXGroup;
 			children = (
-				CF90EF1A2A30BDD200E7FDB0 /* QMIParserTests.swift */,
 				CF90EF1C2A30E7FD00E7FDB0 /* ARIParserTests.swift */,
+				CF90EF1A2A30BDD200E7FDB0 /* QMIParserTests.swift */,
+				CF4E539D2A31E7E100AE2059 /* ARIDefinitionTests.swift */,
+				CF4E53992A31DAAA00AE2059 /* QMIDefinitionsTests.swift */,
 			);
 			path = "Capture Packets";
 			sourceTree = "<group>";
@@ -599,7 +620,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF4E53942A31CE2500AE2059 /* qmi-definitions.json in Resources */,
 				CFD0233E2961A10D00AA5A1C /* Preview Assets.xcassets in Resources */,
+				CF4E53932A31CE2500AE2059 /* ari-definitions.json in Resources */,
 				CF93B84E297FF5C3003F9FFE /* CellFileTypeIcon.png in Resources */,
 				CFD0233B2961A10D00AA5A1C /* Assets.xcassets in Resources */,
 			);
@@ -642,6 +665,7 @@
 				CF2A1C222975DB8100E8B61C /* CellInformationCard.swift in Sources */,
 				CF0FDCC72969F8D300A6FFE2 /* CellDetailsView.swift in Sources */,
 				CFDF5D6F297EF05D000708A8 /* MultiCellMap.swift in Sources */,
+				CF4E53962A31CE3F00AE2059 /* QMIDefinitions.swift in Sources */,
 				CF5EF92829793F7500C4F50A /* TestDetection.swift in Sources */,
 				CF446756298D78F80083EE63 /* PersistenceQueries.swift in Sources */,
 				CFB51832297AD3C80006C690 /* CellJSONDataView.swift in Sources */,
@@ -669,6 +693,7 @@
 				CF0FDCB729699E5100A6FFE2 /* MapTabView.swift in Sources */,
 				CF0FDCC02969A3E500A6FFE2 /* LargeButton.swift in Sources */,
 				CFDF5D7D297EF76C000708A8 /* LocationClusterAnnotation.swift in Sources */,
+				CF4E539C2A31E73F00AE2059 /* CommonDefinitions.swift in Sources */,
 				CFDF5D89297F340E000708A8 /* ActivityViewController.swift in Sources */,
 				CF93B85429800278003F9FFE /* PersistenceImporter.swift in Sources */,
 				CFDF5D71297EF0C6000708A8 /* CellAnnotation.swift in Sources */,
@@ -681,6 +706,7 @@
 				CF0FDCC9296B310400A6FFE2 /* PersistencePreview.swift in Sources */,
 				CFD0236A2961ABA100AA5A1C /* ALSClient.swift in Sources */,
 				CF0FDCCB296B466100A6FFE2 /* PersistenceError.swift in Sources */,
+				CF4E53982A31CE4600AE2059 /* ARIDefinitions.swift in Sources */,
 				CF5AB2C02975458D00896ADC /* CellStatus.swift in Sources */,
 				CF0FDCCD296B480B00A6FFE2 /* TrackedUserLocation.swift in Sources */,
 				CFB8B2882963417B00503189 /* LocationDataManager.swift in Sources */,
@@ -699,7 +725,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				CF90EF1B2A30BDD200E7FDB0 /* QMIParserTests.swift in Sources */,
+				CF4E539E2A31E7E100AE2059 /* ARIDefinitionTests.swift in Sources */,
 				CF5EF9262978689B00C4F50A /* ALSVerifierTests.swift in Sources */,
+				CF4E539A2A31DAAA00AE2059 /* QMIDefinitionsTests.swift in Sources */,
 				CFD0234D2961A10E00AA5A1C /* CellGuardTests.swift in Sources */,
 				CF5CBB8D29687CBB001CE9BE /* CCTParserTests.swift in Sources */,
 				CFD023742961DF7400AA5A1C /* ALSClientTests.swift in Sources */,

@@ -5,6 +5,7 @@ name = "pypi"
 
 [packages]
 yaspin = "*"
+luaparser = "*"
 
 [dev-packages]
 
