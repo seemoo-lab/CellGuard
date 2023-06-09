@@ -68,6 +68,51 @@ struct PersistencePreview {
         return cell
     }
     
+    static func packet(proto: CPTProtocol, direction: CPTDirection, data: String, major: UInt8, minor: UInt16, indication: Bool, collected: Date, context: NSManagedObjectContext) -> Packet {
+        let packet: Packet
+        
+        switch (proto) {
+        case .qmi:
+            let qmiPacket = QMIPacket(context: context)
+            qmiPacket.service = Int16(major)
+            qmiPacket.message = Int32(minor)
+            qmiPacket.indication = indication
+            packet = qmiPacket
+        case .ari:
+            let ariPacket = ARIPacket(context: context)
+            ariPacket.group = Int16(major)
+            ariPacket.type = Int32(minor)
+            packet = ariPacket
+        }
+        
+        packet.collected = collected
+        packet.proto = proto.rawValue
+        packet.direction = direction.rawValue
+        packet.data = Data(base64Encoded: data)
+        packet.imported = Date()
+        
+        return packet
+    }
+    
+    static func packets(context: NSManagedObjectContext) -> [Packet] {
+        var packets: [Packet] = []
+        
+        // 4th packt from the test trace
+        packets.append(packet(proto: .qmi, direction: .outgoing, data: "ARcAACIBAE8FUQALAAEBAAAQBAAHAAAA", major: 0x22, minor: 0x0051, indication: false, collected: Date().addingTimeInterval(-60*2), context: context))
+        // 269th packet from the test trace
+        packets.append(packet(proto: .qmi, direction: .ingoing, data: "ARcAgAAAASIiAAwAAgQAAAAAAAECADAM", major: 0x00, minor: 0x0022, indication: false, collected: Date().addingTimeInterval(-60*4), context: context))
+        // 1702th packet from the test trace
+       packets.append(packet(proto: .qmi, direction: .ingoing, data: "AbYAgAMBBBYATgCqABACAAAAEQIAAAASAwAAAAATAwAAAAAUAwACAgAZHQABAwEDAQABAAD//wEDF+8AAAAAATI2MjAy/wF0tR4CAP//IQEAAScBAAAoBAABAAAAKgEAASsEAAEAAAAwBAAAAAAAMgQAAAAAADUCAP//OQQAAQAAADoEAAEAAAA/BAAAAAAARQQAAwAAAEcEAAQAAABMAwAAAABQAQABUQEAAFcBAAFdBAAAAAAA", major: 0x03, minor: 0x004E, indication: true, collected: Date().addingTimeInterval(-60*60*24*2), context: context))
+        
+        // 1st packet from the test trace
+        packets.append(packet(proto: .ari, direction: .ingoing, data: "3sB+q3igoABCwAAAAiAQAAAAAAAGIBAA8BMAAAggEAAAAAAACiCwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADCAQAAAAAAA=", major: 15, minor: 0x301, indication: false, collected: Date().addingTimeInterval(-60*3), context: context))
+        // 19th packet from the test trace
+        // We don't know if the packet was in- or outgoing but for our UI testing, we categorize it to outgoing
+        packets.append(packet(proto: .ari, direction: .outgoing, data: "3sB+qxjENAHCwgAAAiAQAAAAAAAEIAQA8QYgBAAyCCAQABQAAAAKIFAAAAAAAAAAAAAAAAAAAAAAADIAAAAMIJAB8TIAAAAAAAAAAAAAAAAAAAAAMgAAAAMAAAA34gAA0cIAAETB8////5j///8AAAAAAAAAAAAAAAAAAAAAAAAAAAYAAAAAAAAAWOQbhRiAHIUQOvCEAAAAAABgsFEAAAAAkXDfhQ==", major: 3, minor: 0x030B, indication: false, collected: Date().addingTimeInterval(-60*60*24*1), context: context))
+
+        return packets
+    }
+    
     static func controller() -> PersistenceController {
         let result = PersistenceController(inMemory: true)
         let viewContext = result.container.viewContext
@@ -79,6 +124,9 @@ struct PersistencePreview {
             _ = tweakCell(context: viewContext, imported: importedDate)
             _ = alsCell(context: viewContext)
         }
+        
+        _ = packets(context: viewContext)
+        
         do {
             try viewContext.save()
         } catch {

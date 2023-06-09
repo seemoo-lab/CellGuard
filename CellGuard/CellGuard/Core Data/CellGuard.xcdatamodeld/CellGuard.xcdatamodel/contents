@@ -28,7 +28,7 @@
         <attribute name="latitude" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="longitude" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
     </entity>
-    <entity name="Packet" representedClassName="Packet" isAbstract="YES" syncable="YES" codeGenerationType="class">
+    <entity name="Packet" representedClassName="Packet" syncable="YES" codeGenerationType="class">
         <attribute name="collected" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="data" optional="YES" attributeType="Binary"/>
         <attribute name="direction" optional="YES" attributeType="String"/>

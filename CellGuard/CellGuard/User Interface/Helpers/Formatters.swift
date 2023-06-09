@@ -26,3 +26,10 @@ let mediumDateTimeFormatter: DateFormatter = {
     formatter.timeStyle = .short
     return formatter
 }()
+
+let fullMediumDateTimeFormatter: DateFormatter = {
+    let formatter = DateFormatter()
+    formatter.dateStyle = .medium
+    formatter.timeStyle = .medium
+    return formatter
+}()
