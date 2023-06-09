@@ -20,7 +20,7 @@ enum QMIParseError: Error {
 // - https://dev.seemoo.tu-darmstadt.de/apple/iphone-qmi-wireshark/-/blob/main/dissector/qmi_dissector_template.lua
 // - https://nextcloud.seemoo.tu-darmstadt.de/s/pqsrRgggBPt3psZ
 
-struct ParsedQMIPacket {
+struct ParsedQMIPacket: ParsedPacket {
     let qmuxHeader: QMIQMuxHeader
     let transactionHeader: QMITransactionHeader
     let messageHeader: QMIMessageHeader

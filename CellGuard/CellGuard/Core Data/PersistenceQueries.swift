@@ -42,8 +42,8 @@ extension PersistenceController {
             })
             
             if let fetchResult = try? taskContext.execute(batchInsertRequest),
-               let batchInsertResuklt = fetchResult as? NSBatchInsertResult {
-                success = batchInsertResuklt.result as? Bool ?? false
+               let batchInsertResult = fetchResult as? NSBatchInsertResult {
+                success = batchInsertResult.result as? Bool ?? false
             }
         }
         
@@ -140,8 +140,8 @@ extension PersistenceController {
 
     }
     
-    /// Calcualtes the distance between the location for the tweak cell and its verified counter part from Apple's database.
-    /// If no verification or locations referrences cell exist, nil is returned.
+    /// Calculates the distance between the location for the tweak cell and its verified counter part from Apple's database.
+    /// If no verification or locations references cell exist, nil is returned.
     func calculateDistance(tweakCell tweakCellID: NSManagedObjectID) -> CellLocationDistance? {
         let taskContext = newTaskContext()
         
@@ -209,6 +209,105 @@ extension PersistenceController {
         }
         
         logger.debug("Successfully inserted \(locations.count) locations.")
+    }
+    
+    /// Uses `NSBatchInsertRequest` (BIR) to import QMI packets into the Core Data store on a private queue.
+    func importQMIPackets(from packets: [(CPTPacket, ParsedQMIPacket)]) throws {
+        let taskContext = newTaskContext()
+        
+        taskContext.name = "importContext"
+        taskContext.transactionAuthor = "importQMIPackets"
+        
+        var success = false
+        
+        taskContext.performAndWait {
+            var index = 0
+            let total = packets.count
+            
+            let importedDate = Date()
+            
+            let batchInsertRequest = NSBatchInsertRequest(entity: QMIPacket.entity(), managedObjectHandler: { dbPacket in
+                guard index < total else { return true }
+                
+                if let dbPacket = dbPacket as? QMIPacket {
+                    let (tweakPacket, parsedPacket) = packets[index]
+                    dbPacket.data = tweakPacket.data
+                    dbPacket.collected = tweakPacket.timestamp
+                    dbPacket.direction = tweakPacket.direction.rawValue
+                    dbPacket.proto = tweakPacket.proto.rawValue
+                    
+                    dbPacket.service = Int16(parsedPacket.qmuxHeader.serviceId)
+                    dbPacket.message = Int32(parsedPacket.messageHeader.messageId)
+                    dbPacket.indication = parsedPacket.transactionHeader.indication
+                    
+                    dbPacket.imported = importedDate
+                }
+                    
+                index += 1
+                return false
+            })
+            
+            if let fetchResult = try? taskContext.execute(batchInsertRequest),
+               let batchInsertResult = fetchResult as? NSBatchInsertResult {
+                success = batchInsertResult.result as? Bool ?? false
+            }
+        }
+        
+        if !success {
+            logger.debug("Failed to execute batch import request for QMI packets.")
+            throw PersistenceError.batchInsertError
+        }
+        
+        logger.debug("Successfully inserted \(packets.count) tweak QMI packets.")
+    }
+    
+    /// Uses `NSBatchInsertRequest` (BIR) to import ARI packets into the Core Data store on a private queue.
+    func importARIPackets(from packets: [(CPTPacket, ParsedARIPacket)]) throws {
+        let taskContext = newTaskContext()
+        
+        taskContext.name = "importContext"
+        taskContext.transactionAuthor = "importARIPackets"
+        
+        var success = false
+        
+        taskContext.performAndWait {
+            var index = 0
+            let total = packets.count
+            
+            let importedDate = Date()
+            
+            let batchInsertRequest = NSBatchInsertRequest(entity: ARIPacket.entity(), managedObjectHandler: { dbPacket in
+                guard index < total else { return true }
+                
+                if let dbPacket = dbPacket as? ARIPacket {
+                    let (tweakPacket, parsedPacket) = packets[index]
+                    dbPacket.data = tweakPacket.data
+                    dbPacket.collected = tweakPacket.timestamp
+                    dbPacket.direction = tweakPacket.direction.rawValue
+                    dbPacket.proto = tweakPacket.proto.rawValue
+                    
+                    dbPacket.group = Int16(parsedPacket.header.group)
+                    dbPacket.type = Int32(parsedPacket.header.type)
+                    
+                    dbPacket.imported = importedDate
+                }
+                    
+                index += 1
+                return false
+            })
+            
+            if let fetchResult = try? taskContext.execute(batchInsertRequest),
+               let batchInsertResult = fetchResult as? NSBatchInsertResult {
+                success = batchInsertResult.result as? Bool ?? false
+            }
+        }
+        
+        if !success {
+            logger.debug("Failed to execute batch import request for ARI packets.")
+            throw PersistenceError.batchInsertError
+        }
+        
+        logger.debug("Successfully inserted \(packets.count) tweak ARI packets.")
     }
     
     func fetchLatestUnverfiedTweakCells(count: Int) throws -> [NSManagedObjectID : ALSQueryCell]  {

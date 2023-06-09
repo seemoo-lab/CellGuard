@@ -84,24 +84,38 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
     }
     
     private func startTasks() {
-        let collector = CCTCollector(client: CCTClient(queue: .global(qos: .default)))
-        let verifier = ALSVerifier()
+        let cellCollector = CCTCollector(client: CCTClient(queue: .global(qos: .default)))
+        let cellVerifier = ALSVerifier()
         
-        // Schedule a timer to continously poll the latest cells while the app is active and instantly verify them
-        let collectTimer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { timer in
-            self.collectAndVerifyTask(collector: collector, verifier: verifier)
+        // Schedule a timer to continuously poll the latest cells while the app is active and instantly verify them
+        let cellCollectTimer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { timer in
+            self.collectAndVerifyCellsTask(collector: cellCollector, verifier: cellVerifier)
         }
         // We allow the timer a high tolerance of 50% as our collector is not time critical
-        collectTimer.tolerance = 30
+        cellCollectTimer.tolerance = 30
         // We also start the function instantly to fetch the latest cells
         DispatchQueue.global(qos: .default).async {
-            self.collectAndVerifyTask(collector: collector, verifier: verifier)
+            self.collectAndVerifyCellsTask(collector: cellCollector, verifier: cellVerifier)
+        }
+        
+        let packetCollector = CPTCollector(client: CPTClient(queue: .global(qos: .default)))
+        
+        // TODO: Variable timeout based on whether a the packet is open or not
+        // Schedule a timer to continuously poll the latest packets while the app is active
+        let packetCollectTimer = Timer.scheduledTimer(withTimeInterval: 10, repeats: true) { timer in
+            self.collectPacketsTask(collector: packetCollector)
+        }
+        // We allow the timer a tolerance of 50% as our collector is not time critical
+        packetCollectTimer.tolerance = 5
+        // We also start the function instantly to fetch the latest cells
+        DispatchQueue.global(qos: .default).async {
+            self.collectPacketsTask(collector: packetCollector)
         }
             
         // Slowly verify collected & imported cells in the background
         let checkTimer = Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { timer in
             guard !PersistenceImporter.importActive else { return }
-            verifier.verify(n: 10)
+            cellVerifier.verify(n: 10)
         }
         // We allow only allow a lower tolerance for the check timer as it is executed in short intervals
         checkTimer.tolerance = 1
@@ -113,11 +127,11 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
         }
         clearHistoryTimer.tolerance = 30
 
-        // TODO: Add task to reguarly delete old ALS cells (>= 90 days) to force a refresh
+        // TODO: Add task to regularly delete old ALS cells (>= 90 days) to force a refresh
         // -> Then, also reset the status of the associated tweak cells
     }
     
-    private func collectAndVerifyTask(collector: CCTCollector, verifier: ALSVerifier) {
+    private func collectAndVerifyCellsTask(collector: CCTCollector, verifier: ALSVerifier) {
         // Only run tasks when we currently don't manually import any new data
         guard !PersistenceImporter.importActive else { return }
         
@@ -131,6 +145,20 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
             } catch {
                 // Print the error if the task execution was not successful
                 Self.logger.warning("Failed to collect & store cells in scheduled timer: \(error)")
+            }
+        }
+    }
+    
+    private func collectPacketsTask(collector: CPTCollector) {
+        // Only run tasks when we currently don't manually import any new data
+        guard !PersistenceImporter.importActive else { return }
+        
+        collector.collectAndStore { result in
+            do {
+                _ = try result.get()
+            } catch {
+                // Print the error if the task execution was not successful
+                Self.logger.warning("Failed to collect & store packets in scheduled timer: \(error)")
             }
         }
     }

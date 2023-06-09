@@ -45,6 +45,8 @@
 		CF4E53A22A321B3000AE2059 /* PacketTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF4E53A12A321B3000AE2059 /* PacketTabView.swift */; };
 		CF4E53A62A32225300AE2059 /* ExportSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF4E53A52A32225300AE2059 /* ExportSheet.swift */; };
 		CF53DB42297473E8005DCD10 /* CoreLocationALS.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF53DB41297473E8005DCD10 /* CoreLocationALS.pb.swift */; };
+		CF54CCBC2A33093800961E4D /* CPTCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF54CCBB2A33093800961E4D /* CPTCollector.swift */; };
+		CF54CCBE2A330E6D00961E4D /* CommonParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF54CCBD2A330E6D00961E4D /* CommonParser.swift */; };
 		CF5672962A29E59000B6EA7C /* TweakInfoSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5672952A29E59000B6EA7C /* TweakInfoSheet.swift */; };
 		CF5AB2C02975458D00896ADC /* CellStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5AB2BF2975458D00896ADC /* CellStatus.swift */; };
 		CF5CBB8D29687CBB001CE9BE /* CCTParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5CBB8C29687CBB001CE9BE /* CCTParserTests.swift */; };
@@ -153,6 +155,8 @@
 		CF4E53A12A321B3000AE2059 /* PacketTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacketTabView.swift; sourceTree = "<group>"; };
 		CF4E53A52A32225300AE2059 /* ExportSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportSheet.swift; sourceTree = "<group>"; };
 		CF53DB41297473E8005DCD10 /* CoreLocationALS.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreLocationALS.pb.swift; sourceTree = "<group>"; };
+		CF54CCBB2A33093800961E4D /* CPTCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTCollector.swift; sourceTree = "<group>"; };
+		CF54CCBD2A330E6D00961E4D /* CommonParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonParser.swift; sourceTree = "<group>"; };
 		CF5672952A29E59000B6EA7C /* TweakInfoSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TweakInfoSheet.swift; sourceTree = "<group>"; };
 		CF5AB2BF2975458D00896ADC /* CellStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellStatus.swift; sourceTree = "<group>"; };
 		CF5CBB8C29687CBB001CE9BE /* CCTParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CCTParserTests.swift; sourceTree = "<group>"; };
@@ -252,12 +256,14 @@
 			children = (
 				CF4E53912A31CE2500AE2059 /* ari-definitions.json */,
 				CF4E53922A31CE2500AE2059 /* qmi-definitions.json */,
-				CF2002E92A2F2BEA000922E6 /* ARIParser.swift */,
-				CF4E53972A31CE4600AE2059 /* ARIDefinitions.swift */,
-				CF2002E72A2F2BE2000922E6 /* QMIParser.swift */,
-				CF4E53952A31CE3F00AE2059 /* QMIDefinitions.swift */,
-				CF2002F12A2F9FB5000922E6 /* CPTClient.swift */,
 				CF4E539B2A31E73F00AE2059 /* CommonDefinitions.swift */,
+				CF4E53972A31CE4600AE2059 /* ARIDefinitions.swift */,
+				CF4E53952A31CE3F00AE2059 /* QMIDefinitions.swift */,
+				CF54CCBD2A330E6D00961E4D /* CommonParser.swift */,
+				CF2002E92A2F2BEA000922E6 /* ARIParser.swift */,
+				CF2002E72A2F2BE2000922E6 /* QMIParser.swift */,
+				CF2002F12A2F9FB5000922E6 /* CPTClient.swift */,
+				CF54CCBB2A33093800961E4D /* CPTCollector.swift */,
 			);
 			path = "Capture Packets";
 			sourceTree = "<group>";
@@ -708,6 +714,7 @@
 				CF2A1C202975CDD200E8B61C /* RiskIndicatorCard.swift in Sources */,
 				CF2002EA2A2F2BEA000922E6 /* ARIParser.swift in Sources */,
 				CF5EF9202977FACA00C4F50A /* Formatters.swift in Sources */,
+				CF54CCBE2A330E6D00961E4D /* CommonParser.swift in Sources */,
 				CF2002F22A2F9FB5000922E6 /* CPTClient.swift in Sources */,
 				CFDF5D81297F05F1000708A8 /* CellMapDelegate.swift in Sources */,
 				CFE4462B29705F0C006F2CF4 /* CellsListView.swift in Sources */,
@@ -715,6 +722,7 @@
 				CFD0236A2961ABA100AA5A1C /* ALSClient.swift in Sources */,
 				CF0FDCCB296B466100A6FFE2 /* PersistenceError.swift in Sources */,
 				CF4E53982A31CE4600AE2059 /* ARIDefinitions.swift in Sources */,
+				CF54CCBC2A33093800961E4D /* CPTCollector.swift in Sources */,
 				CF5AB2C02975458D00896ADC /* CellStatus.swift in Sources */,
 				CF0FDCCD296B480B00A6FFE2 /* TrackedUserLocation.swift in Sources */,
 				CFB8B2882963417B00503189 /* LocationDataManager.swift in Sources */,

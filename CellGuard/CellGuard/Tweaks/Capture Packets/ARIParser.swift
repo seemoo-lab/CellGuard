@@ -18,7 +18,7 @@ enum ARIParseError: Error {
     case InvalidPacketLength(UInt16, UInt16)
 }
 
-struct ParsedARIPacket {
+struct ParsedARIPacket: ParsedPacket {
     
     let header: ARIHeader
     let tlvs: [ARITLV]
