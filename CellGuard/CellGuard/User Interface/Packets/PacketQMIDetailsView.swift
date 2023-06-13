@@ -12,20 +12,20 @@ struct PacketQMIDetailsView: View {
     
     var body: some View {
         guard let data = packet.data else {
-            return AnyView(List {
-                Text("Failed to get the packet's binary data.")
-            }
-                .navigationTitle("QMI Packet"))
+            return AnyView(List { Text("Failed to get the packet's binary data.") }
+                .navigationTitle("QMI Packet")
+                .listStyle(.insetGrouped)
+            )
         }
         
         let parsed: ParsedQMIPacket
         do {
             parsed = try ParsedQMIPacket(nsData: data)
         } catch {
-            return AnyView(List {
-                Text("Failed to parse the packet's binary data: \(error.localizedDescription)")
-            }
-                .navigationTitle("QMI Packet"))
+            return AnyView(List { Text("Failed to parse the packet's binary data: \(error.localizedDescription)") }
+                .navigationTitle("QMI Packet")
+                .listStyle(.insetGrouped)
+            )
         }
         
         return AnyView(PacketQMIDetailsList(packet: packet, data: data, parsed: parsed))
@@ -91,6 +91,7 @@ private struct PacketQMIDetailsList: View {
             }
         }
         .navigationTitle("QMI Packet")
+        .listStyle(.insetGrouped)
     }
     
 }

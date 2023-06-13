@@ -12,19 +12,18 @@ struct PacketARIDetailsView: View {
     
     var body: some View {
         guard let data = packet.data else {
-            return AnyView(List {
-                Text("Failed to get the packet's binary data.")
-            }
-                .navigationTitle("ARI Packet"))
+            return AnyView(List { Text("Failed to get the packet's binary data.") }
+                .listStyle(.insetGrouped)
+                .navigationTitle("ARI Packet")
+            )
         }
         
         let parsed: ParsedARIPacket
         do {
             parsed = try ParsedARIPacket(data: data)
         } catch {
-            return AnyView(List {
-                Text("Failed to parse the packet's binary data: \(error.localizedDescription)")
-            }
+            return AnyView(List { Text("Failed to parse the packet's binary data: \(error.localizedDescription)") }
+                .listStyle(.insetGrouped)
                 .navigationTitle("ARI Packet"))
         }
         
@@ -79,6 +78,7 @@ private struct PacketARIDetailsList: View {
             }
         }
         .navigationTitle("ARI Packet")
+        .listStyle(.insetGrouped)
     }
     
 }
