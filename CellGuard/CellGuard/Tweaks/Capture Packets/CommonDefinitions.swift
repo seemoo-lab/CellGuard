@@ -21,3 +21,9 @@ struct CommonDefinitionElement: Decodable {
     }
     
 }
+
+protocol UpperDefinitionGroup: Identifiable {
+    
+    var name: String { get }
+    
+}

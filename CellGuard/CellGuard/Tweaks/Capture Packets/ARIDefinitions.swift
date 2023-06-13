@@ -45,7 +45,7 @@ struct ARIDefinitions {
     
 }
 
-struct ARIDefinitionGroup: Decodable {
+struct ARIDefinitionGroup: Decodable, UpperDefinitionGroup {
     
     let identifier: UInt8
     let name: String
@@ -61,10 +61,13 @@ struct ARIDefinitionGroup: Decodable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
         self.identifier = try container.decode(UInt8.self, forKey: .identifier)
-        self.name = try container.decode(String.self, forKey: .name)
+        // We cut this prefix appended to all group names for clarity
+        self.name = try container.decode(String.self, forKey: .name).replacingOccurrences(of: "_ARIMSGDEF_GROUP", with: "")
         
         // We map the list to a dictionary to allow for simple retrieval of types by their id
         self.types = CommonDefinitionElement.dictionary(try container.decode([CommonDefinitionElement].self, forKey: .types))
     }
+    
+    var id: UInt8 { self.identifier }
     
 }
