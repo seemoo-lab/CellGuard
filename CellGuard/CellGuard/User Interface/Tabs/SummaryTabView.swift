@@ -16,6 +16,8 @@ import SwiftUI
 // - https://www.hackingwithswift.com/forums/swiftui/navigationbar-toolbar-button-not-working-properly/3376
 // - https://stackoverflow.com/questions/63540602/navigationbar-toolbar-button-not-working-reliable-when-state-variable-refres
 // - https://stackoverflow.com/questions/65095562/observableobject-is-updating-all-views-and-causing-menus-to-close-in-swiftui
+//
+// We've got a workaround for a related problem with NavigationLinks in ToolbarItems in PacketTabView.swift.
 
 
 struct SummaryTabView: View {
@@ -65,9 +67,8 @@ private struct CombinedRiskCellView: View {
     }
     
     var body: some View {
-        let risk = determineRisk()
         ScrollView {
-            RiskIndicatorCard(risk: risk)
+            RiskIndicatorCard(risk: riskLevel)
             
             if !tweakCells.isEmpty {
                 CellInformationCard(cell: tweakCells[0])
@@ -96,7 +97,7 @@ private struct CombinedRiskCellView: View {
         }
     }
     
-    func determineRisk() -> RiskLevel {
+    var riskLevel: RiskLevel {
         // We keep the unknown status until all cells are verified because we're sending notifications during verification
         if unknownCells.count > 0 {
             return .Unknown

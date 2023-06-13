@@ -11,53 +11,83 @@ import CoreData
 struct PacketTabView: View {
     
     // TODO: Add divider for days (bold) & hours
-    // TODO: Add calendar to quickly up to certain dates (& hours)
-    // TODO: Add filter to search for specific properties
-    // TODO: Use new list style
     
-    // We have to use separate fetch request as the preview crashes a unified request
+    @State private var filter: PacketFilterSettings = PacketFilterSettings()
+    @State private var isShowingFilterView = false
+    
+    var body: some View {
+        NavigationView {
+            VStack {
+                // A workaround for the problem that the view repeatedly opens on iOS 14.
+                // Using this workaround we can effectively treat the view as a sheet which stores its open state using a @State variable.
+                // See: https://www.hackingwithswift.com/quick-start/swiftui/how-to-use-programmatic-navigation-in-swiftui
+                // See:
+                NavigationLink(isActive: $isShowingFilterView) {
+                    PacketFilterView(settings: filter) { settings in
+                        self.filter = settings
+                    }
+                } label: {
+                    EmptyView()
+                }
+                FilteredPacketView(filter: filter)
+            }
+            .navigationTitle("Packets")
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button {
+                        isShowingFilterView = true
+                    } label: {
+                        // Starting with iOS 15: line.3.horizontal.decrease.circle
+                        Image(systemName: "line.horizontal.3.decrease.circle")
+                    }
+                }
+            }
+        }
+    }
+}
+
+private struct FilteredPacketView: View {
+    
+    // We have to use separate fetch request as the preview crashes for a unified request
     @FetchRequest
     private var qmiPackets: FetchedResults<QMIPacket>
     
     @FetchRequest
     private var ariPackets: FetchedResults<ARIPacket>
-
-    // TODO: Fetch packets in batches
     
-    init() {
+    private let filter: PacketFilterSettings
+        
+    init(filter: PacketFilterSettings) {
+        self.filter = filter
+        
         // https://www.hackingwithswift.com/quick-start/swiftui/how-to-limit-the-number-of-items-in-a-fetch-request
         let qmiRequest: NSFetchRequest<QMIPacket> = QMIPacket.fetchRequest()
-        qmiRequest.fetchLimit = 200
         qmiRequest.fetchBatchSize = 25
         qmiRequest.sortDescriptors = [NSSortDescriptor(keyPath: \QMIPacket.collected, ascending: false)]
+        filter.applyTo(qmi: qmiRequest)
         
         let ariRequest: NSFetchRequest<ARIPacket> = ARIPacket.fetchRequest()
-        ariRequest.fetchLimit = 200
         ariRequest.fetchBatchSize = 25
         ariRequest.sortDescriptors = [NSSortDescriptor(keyPath: \ARIPacket.collected, ascending: false)]
+        filter.applyTo(ari: ariRequest)
         
         self._qmiPackets = FetchRequest(fetchRequest: qmiRequest, animation: .easeOut)
         self._ariPackets = FetchRequest(fetchRequest: ariRequest, animation: .easeOut)
     }
     
     var body: some View {
-        NavigationView {
-            VStack {
-                if (qmiPackets.isEmpty && ariPackets.isEmpty) {
-                    Text("No packets collected so far. Is the tweak installed?")
-                        .multilineTextAlignment(.center)
-                        .padding()
-                } else if (!qmiPackets.isEmpty) {
-                    QMIPacketList(qmiPackets: qmiPackets)
-                } else if (!ariPackets.isEmpty) {
-                    ARIPacketList(ariPackets: ariPackets)
-                } else {
-                    // TODO: CHANGE!!!
-                    Text("Warning: Only showing QMI packets for now")
-                    QMIPacketList(qmiPackets: qmiPackets)
-                }
+        if filter.proto == .qmi {
+            if qmiPackets.isEmpty {
+                Text("No packets match your search criteria.")
+            } else {
+                QMIPacketList(qmiPackets: qmiPackets)
             }
-            .navigationTitle("Packets")
+        } else {
+            if ariPackets.isEmpty {
+                Text("No packets match your search criteria.")
+            } else {
+                ARIPacketList(ariPackets: ariPackets)
+            }
         }
     }
 }
@@ -66,18 +96,12 @@ private struct QMIPacketList: View {
     let qmiPackets: FetchedResults<QMIPacket>
     
     var body: some View {
-        // TODO: Improve performance (-> Decrease query speed)
-        
         List(qmiPackets) { packet in
             NavigationLink {
                 PacketQMIDetailsView(packet: packet)
             } label: {
                 PacketCell(packet: packet)
             }
-            
-            /* if let thisDate = packet.collected, let lastDate = packet.las {
-                let thisDate = Calendar.current.dateComponents([.day, .month, .year], from: packet.collected)
-            } */
         }
         .listStyle(.insetGrouped)
     }
@@ -97,29 +121,6 @@ private struct ARIPacketList: View {
         .listStyle(.insetGrouped)
     }
 }
-
-/* private struct MergedPacketList: View {
-    private let packets: [Packet]
-    
-    init(qmiPackets: FetchedResults<QMIPacket>, ariPackets: FetchedResults<ARIPacket>) {
-        self.packets = [qmiPackets.arr, List(ariPackets)].lazy.joined()
-    }
-    
-    var body: some View {
-        List(packets) { packet in
-            NavigationLink {
-                if let qmiPacket = packet as? QMIPacket {
-                    PacketQMIDetailsView(packet: qmiPacket)
-                } else if let ariPacket = packet as? ARIPacket {
-                    PacketARIDetailsView(packet: ariPacket)
-                }
-                PacketARIDetailsView(packet: packet)
-            } label: {
-                PacketCell(packet: packet)
-            }
-        }
-    }
-} */
 
 struct PacketTabView_Previews: PreviewProvider {
     static var previews: some View {

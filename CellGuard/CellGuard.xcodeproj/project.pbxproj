@@ -24,6 +24,7 @@
 		CF2002ED2A2F3244000922E6 /* BinarySwift in Frameworks */ = {isa = PBXBuildFile; productRef = CF2002EC2A2F3244000922E6 /* BinarySwift */; };
 		CF2002F02A2F996A000922E6 /* TweakClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2002EF2A2F996A000922E6 /* TweakClient.swift */; };
 		CF2002F22A2F9FB5000922E6 /* CPTClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2002F12A2F9FB5000922E6 /* CPTClient.swift */; };
+		CF208D9F2A387261003A73A7 /* PacketFilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF208D9E2A387261003A73A7 /* PacketFilterView.swift */; };
 		CF2A1C1529754AA400E8B61C /* LocalNetworkAuthorization.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2A1C1429754AA400E8B61C /* LocalNetworkAuthorization.swift */; };
 		CF2A1C182975562800E8B61C /* UserDefaultsKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2A1C172975562800E8B61C /* UserDefaultsKeys.swift */; };
 		CF2A1C1B2975670000E8B61C /* CGNotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2A1C1A2975670000E8B61C /* CGNotificationManager.swift */; };
@@ -137,6 +138,7 @@
 		CF2002E92A2F2BEA000922E6 /* ARIParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARIParser.swift; sourceTree = "<group>"; };
 		CF2002EF2A2F996A000922E6 /* TweakClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TweakClient.swift; sourceTree = "<group>"; };
 		CF2002F12A2F9FB5000922E6 /* CPTClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTClient.swift; sourceTree = "<group>"; };
+		CF208D9E2A387261003A73A7 /* PacketFilterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacketFilterView.swift; sourceTree = "<group>"; };
 		CF2A1C1429754AA400E8B61C /* LocalNetworkAuthorization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalNetworkAuthorization.swift; sourceTree = "<group>"; };
 		CF2A1C172975562800E8B61C /* UserDefaultsKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsKeys.swift; sourceTree = "<group>"; };
 		CF2A1C1A2975670000E8B61C /* CGNotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CGNotificationManager.swift; sourceTree = "<group>"; };
@@ -344,6 +346,7 @@
 				CF54CCC42A33680200961E4D /* PacketCommonDetails.swift */,
 				CF54CCC62A33699A00961E4D /* PacketARIDetailsView.swift */,
 				CF54CCC02A331E7100961E4D /* PacketQMIDetailsView.swift */,
+				CF208D9E2A387261003A73A7 /* PacketFilterView.swift */,
 				CF54CCC22A331ED300961E4D /* PacketCell.swift */,
 			);
 			path = Packets;
@@ -735,6 +738,7 @@
 				CFDF5D89297F340E000708A8 /* ActivityViewController.swift in Sources */,
 				CF93B85429800278003F9FFE /* PersistenceImporter.swift in Sources */,
 				CFDF5D71297EF0C6000708A8 /* CellAnnotation.swift in Sources */,
+				CF208D9F2A387261003A73A7 /* PacketFilterView.swift in Sources */,
 				CF2A1C202975CDD200E8B61C /* RiskIndicatorCard.swift in Sources */,
 				CF2002EA2A2F2BEA000922E6 /* ARIParser.swift in Sources */,
 				CF5EF9202977FACA00C4F50A /* Formatters.swift in Sources */,
