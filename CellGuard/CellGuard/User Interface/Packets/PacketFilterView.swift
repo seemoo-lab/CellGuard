@@ -145,7 +145,6 @@ struct PacketFilterView: View {
                     Picker("Type", selection: $settings.qmiType) {
                         ForEach(PacketFilterQMIType.allCases) { Text($0.rawValue.capitalized) }
                     }
-                    // // QMIDefinitions.shared.services.values.sorted(by: { $0.identifier < $1.identifier })
                     NavigationLink {
                         PacketFilterQMIServicesView(
                             all: QMIDefinitions.shared.services.values.sorted(by: {$0.id < $1.id}),
