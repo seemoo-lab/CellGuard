@@ -11,24 +11,20 @@ struct PacketQMIDetailsView: View {
     let packet: QMIPacket
     
     var body: some View {
-        guard let data = packet.data else {
-            return AnyView(List { Text("Failed to get the packet's binary data.") }
-                .navigationTitle("QMI Packet")
-                .listStyle(.insetGrouped)
-            )
+        List {
+            if let data = packet.data {
+                if let parsed = try? ParsedQMIPacket(nsData: data) {
+                    PacketQMIDetailsList(packet: packet, data: data, parsed: parsed)
+                } else {
+                    Text("Failed to parse the packet's binary data:")
+                }
+            } else {
+                Text("Failed to get the packet's binary data.")
+            }
         }
-        
-        let parsed: ParsedQMIPacket
-        do {
-            parsed = try ParsedQMIPacket(nsData: data)
-        } catch {
-            return AnyView(List { Text("Failed to parse the packet's binary data: \(error.localizedDescription)") }
-                .navigationTitle("QMI Packet")
-                .listStyle(.insetGrouped)
-            )
-        }
-        
-        return AnyView(PacketQMIDetailsList(packet: packet, data: data, parsed: parsed))
+        .navigationTitle("QMI Packet")
+        .navigationBarTitleDisplayMode(.inline)
+        .listStyle(.insetGrouped)
     }
 }
 
@@ -37,24 +33,16 @@ private struct PacketQMIDetailsList: View {
     let packet: QMIPacket
     let data: Data
     let parsed: ParsedQMIPacket
-    let serviceDef: QMIDefintionService?
-    let messageDef: CommonDefinitionElement?
-    
-    init(packet: QMIPacket, data: Data, parsed: ParsedQMIPacket) {
-        self.packet = packet
-        self.data = data
-        self.parsed = parsed
-        
-        let serviceId = parsed.qmuxHeader.serviceId
-        let messageId = parsed.messageHeader.messageId
-        
-        let definitions = QMIDefinitions.shared
-        serviceDef = definitions.services[serviceId]
-        messageDef = parsed.transactionHeader.indication ? serviceDef?.indications[messageId] : serviceDef?.messages[messageId]
-    }
     
     var body: some View {
-        List {
+        let serviceId = parsed.qmuxHeader.serviceId
+        let messageId = parsed.messageHeader.messageId
+
+        let definitions = QMIDefinitions.shared
+        let serviceDef = definitions.services[serviceId]
+        let messageDef = parsed.transactionHeader.indication ? serviceDef?.indications[messageId] : serviceDef?.messages[messageId]
+        
+        Group {
             Section(header: Text("Packet")) {
                 PacketDetailsRow("Protocol", packet.proto ?? "???")
                 PacketDetailsRow("Direction", packet.direction ?? "???")
@@ -84,14 +72,12 @@ private struct PacketQMIDetailsList: View {
             
             ForEach(parsed.tlvs, id: \.type) { tlv in
                 Section(header: Text("TLV")) {
-                    PacketDetailsRow("Type ID", hex: tlv.type)
+                    PacketDetailsRow("TLV ID", hex: tlv.type)
                     PacketDetailsRow("Length", bytes: Int(tlv.length))
                     PacketDetailsDataRow("Data", data: tlv.data)
                 }
             }
         }
-        .navigationTitle("QMI Packet")
-        .listStyle(.insetGrouped)
     }
     
 }

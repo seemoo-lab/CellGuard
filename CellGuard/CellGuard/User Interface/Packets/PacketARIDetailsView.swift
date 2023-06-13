@@ -11,23 +11,21 @@ struct PacketARIDetailsView: View {
     let packet: ARIPacket
     
     var body: some View {
-        guard let data = packet.data else {
-            return AnyView(List { Text("Failed to get the packet's binary data.") }
-                .listStyle(.insetGrouped)
-                .navigationTitle("ARI Packet")
-            )
+        List {
+            if let data = packet.data {
+                if let parsed = try? ParsedARIPacket(data: data) {
+                    PacketARIDetailsList(packet: packet, data: data, parsed: parsed)
+                } else {
+                    Text("Failed to parse the packet's binary data")
+                }
+            } else {
+                Text("Failed to get the packet's binary data.")
+            }
+            
         }
-        
-        let parsed: ParsedARIPacket
-        do {
-            parsed = try ParsedARIPacket(data: data)
-        } catch {
-            return AnyView(List { Text("Failed to parse the packet's binary data: \(error.localizedDescription)") }
-                .listStyle(.insetGrouped)
-                .navigationTitle("ARI Packet"))
-        }
-        
-        return AnyView(PacketARIDetailsList(packet: packet, data: data, parsed: parsed))
+        .listStyle(.insetGrouped)
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationTitle("ARI Packet")
     }
 }
 
@@ -36,21 +34,13 @@ private struct PacketARIDetailsList: View {
     let packet: ARIPacket
     let data: Data
     let parsed: ParsedARIPacket
-    let groupDef: ARIDefinitionGroup?
-    let typeDef: CommonDefinitionElement?
-    
-    init(packet: ARIPacket, data: Data, parsed: ParsedARIPacket) {
-        self.packet = packet
-        self.data = data
-        self.parsed = parsed
-        
-        let definitions = ARIDefinitions.shared
-        groupDef = definitions.groups[parsed.header.group]
-        typeDef = groupDef?.types[parsed.header.type]
-    }
     
     var body: some View {
-        List {
+        let definitions = ARIDefinitions.shared
+        let groupDef = definitions.groups[parsed.header.group]
+        let typeDef = groupDef?.types[parsed.header.type]
+        
+        return Group {
             Section(header: Text("Packet")) {
                 PacketDetailsRow("Protocol", packet.proto ?? "???")
                 PacketDetailsRow("Direction", packet.direction ?? "???")
@@ -70,15 +60,13 @@ private struct PacketARIDetailsList: View {
             }
             ForEach(parsed.tlvs, id: \.type) { tlv in
                 Section(header: Text("TLV")) {
-                    PacketDetailsRow("Type ID", hex: tlv.type)
+                    PacketDetailsRow("TLV ID", hex: tlv.type)
                     PacketDetailsRow("Version", hex: tlv.version)
                     PacketDetailsRow("Length", bytes: Int(tlv.length))
                     PacketDetailsDataRow("Data", data: tlv.data)
                 }
             }
         }
-        .navigationTitle("ARI Packet")
-        .listStyle(.insetGrouped)
     }
     
 }
