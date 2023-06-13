@@ -127,7 +127,9 @@ struct PersistenceImporter {
     private func store(json: [String : Any]) throws -> (Int, Int) {
         let parser = CCTParser()
         
-        let cellsJson: [Any] = (json[CellFileKeys.cells] as? [Any]) ?? []
+        // TODO: Import ALS Cache & Packets
+        
+        let cellsJson: [Any] = (json[CellFileKeys.connectedCells] as? [Any]) ?? []
         let locationsJson: [Any] = (json[CellFileKeys.locations] as? [Any]) ?? []
         
         let cells = cellsJson

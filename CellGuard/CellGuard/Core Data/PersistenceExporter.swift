@@ -12,7 +12,14 @@ import UIKit
 
 enum PersistenceExportError: Error {
     case noResultSet
-    case fetchOrSerilizationFailed(Error)
+    case fetchOrSerializationFailed(Error)
+}
+
+enum PersistenceExporterCategory {
+    case connectedCells
+    case alsCells
+    case locations
+    case packets
 }
 
 struct PersistenceExporter {
@@ -22,12 +29,12 @@ struct PersistenceExporter {
         category: String(describing: PersistenceExporter.self)
     )
     
-    static func exportInBackground(completion: @escaping (Result<URL, Error>) -> Void) {
+    static func exportInBackground(categories: [PersistenceExporterCategory], completion: @escaping (Result<URL, Error>) -> Void) {
         // See: https://www.hackingwithswift.com/read/9/4/back-to-the-main-thread-dispatchqueuemain
         
         // Run the export in the background
         DispatchQueue.global(qos: .userInitiated).async {
-            let exporter = PersistenceExporter()
+            let exporter = PersistenceExporter(categories: categories)
             
             exporter.export { result in
                 // Call the callback on the main queue
@@ -38,8 +45,10 @@ struct PersistenceExporter {
         }
     }
     
-    private init() {
-        
+    let categories: [PersistenceExporterCategory]
+    
+    private init(categories: [PersistenceExporterCategory]) {
+        self.categories = categories
     }
     
     private func export(completion: @escaping (Result<URL, Error>) -> Void) {
@@ -63,7 +72,7 @@ struct PersistenceExporter {
         }
         
         Self.logger.debug("Exported data to file \(url)")
-
+        
         return completion(.success(url))
     }
     
@@ -74,20 +83,47 @@ struct PersistenceExporter {
         var processingError: Error? = nil
         
         context.performAndWait {
-            let fetchCells = NSFetchRequest<TweakCell>()
-            fetchCells.entity = TweakCell.entity()
-            
-            let fetchLocations = NSFetchRequest<UserLocation>()
-            fetchLocations.entity = UserLocation.entity()
-            
             do {
-                let cells = try fetchCells.execute()
-                let locations = try fetchLocations.execute()
+                var connectedCells: [TweakCell] = []
+                var alsCells: [ALSCell] = []
+                var locations: [UserLocation] = []
+                var packets: [Packet] = []
                 
-                Self.logger.debug("Exporting \(cells.count) cells and \(locations.count) locations")
+                if (categories.contains(.connectedCells)) {
+                    let fetchConnectedCells = NSFetchRequest<TweakCell>()
+                    fetchConnectedCells.entity = TweakCell.entity()
+                    
+                    connectedCells.append(contentsOf: try fetchConnectedCells.execute())
+                    Self.logger.debug("Exporting \(connectedCells.count) cells the iPhone connected to")
+                }
+                if (categories.contains(.alsCells)) {
+                    let fetchALSCells = NSFetchRequest<ALSCell>()
+                    fetchALSCells.entity = ALSCell.entity()
+                    fetchALSCells.relationshipKeyPathsForPrefetching = ["location"]
+                    
+                    alsCells.append(contentsOf: try fetchALSCells.execute())
+                    Self.logger.debug("Exporting \(alsCells.count) ALS cells")
+                }
+                if (categories.contains(.locations)) {
+                    let fetchLocations = NSFetchRequest<UserLocation>()
+                    fetchLocations.entity = UserLocation.entity()
+                    
+                    locations.append(contentsOf: try fetchLocations.execute())
+                    Self.logger.debug("Exporting \(locations.count) user locations")
+                }
+                if (categories.contains(.packets)) {
+                    let fetchQMIPackets = NSFetchRequest<QMIPacket>()
+                    fetchQMIPackets.entity = QMIPacket.entity()
+                    let fetchARIPackets = NSFetchRequest<ARIPacket>()
+                    fetchARIPackets.entity = ARIPacket.entity()
+                    
+                    packets.append(contentsOf: try fetchQMIPackets.execute())
+                    packets.append(contentsOf: try fetchARIPackets.execute())
+                    Self.logger.debug("Exporting \(packets.count) packets")
+                }
                 
-                // TODO: Why does the app crash and just doesn't report the error?
-                result = try toJSON(tweakCells: cells, userLocations: locations)
+                // Sometimes the app just crashes here
+                result = try toJSON(connectedCells: connectedCells, alsCells: alsCells, userLocations: locations, packets: packets)
             } catch {
                 Self.logger.warning("Can't fetch data or serialize it: \(error)")
                 processingError = error
@@ -96,7 +132,7 @@ struct PersistenceExporter {
         }
         
         if let error = processingError {
-            throw PersistenceExportError.fetchOrSerilizationFailed(error)
+            throw PersistenceExportError.fetchOrSerializationFailed(error)
         }
         
         guard let result = result else {
@@ -106,20 +142,32 @@ struct PersistenceExporter {
         return result
     }
     
-    private func toJSON(tweakCells: [TweakCell], userLocations: [UserLocation]) throws -> Data {
+    private func toJSON(connectedCells: [TweakCell], alsCells: [ALSCell], userLocations: [UserLocation], packets: [Packet]) throws -> Data {
         var dict: [String: Any] = [:]
         
-        // TODO: Think about cells without JSON data
-        dict[CellFileKeys.cells] = tweakCells
-            .compactMap { $0.json?.data(using: .utf8) }
+        if categories.contains(.connectedCells) {
+            // TODO: Think about cells without JSON data
             // TODO: Print error for failures
-            .compactMap { try? JSONSerialization.jsonObject(with: $0) }
+            dict[CellFileKeys.connectedCells] = connectedCells
+                .compactMap { $0.json?.data(using: .utf8) }
+                .compactMap { try? JSONSerialization.jsonObject(with: $0) }
+        }
         
-        // TODO: Also export ALS cells
+        if categories.contains(.alsCells) {
+            dict[CellFileKeys.alsCells] = alsCells
+                .map { exportALSCell(alsCell: $0) }
+        }
         
-        dict[CellFileKeys.locations] = userLocations
-            .map { TrackedUserLocation(from: $0) }
-            .map { $0.toDictionary() }
+        if categories.contains(.locations) {
+            dict[CellFileKeys.locations] = userLocations
+                .map { TrackedUserLocation(from: $0) }
+                .map { $0.toDictionary() }
+        }
+        
+        if categories.contains(.packets) {
+            dict[CellFileKeys.packets] = packets
+                .map { exportPacket(packet: $0) }
+        }
         
         // https://developer.apple.com/documentation/uikit/uidevice?language=objc
         let device = UIDevice.current
@@ -129,18 +177,50 @@ struct PersistenceExporter {
             "systemVersion": device.systemVersion,
             "model": device.model,
             "localizedModel": device.localizedModel,
-            "userInterfaceIdiom": device.userInterfaceIdiom.rawValue,
+            "userInterfaceIdiom": String(device.userInterfaceIdiom.rawValue),
             "identifierForVendor": device.identifierForVendor?.uuidString ?? "nil"
-        ]
+        ] as [String : String]
         
         dict[CellFileKeys.date] = Date().timeIntervalSince1970
         
         return try JSONSerialization.data(withJSONObject: dict)
     }
     
+    private func exportALSCell(alsCell cell: ALSCell) -> [String: Any] {
+        var cellDict: [String: Any] = [
+            ALSCellDictKeys.technology: cell.technology ?? "",
+            ALSCellDictKeys.country: cell.country,
+            ALSCellDictKeys.network: cell.network ,
+            ALSCellDictKeys.cell: cell.cell,
+            ALSCellDictKeys.frequency: cell.frequency,
+            ALSCellDictKeys.imported: cell.imported?.timeIntervalSince1970 ?? 0,
+        ]
+        
+        if let location = cell.location {
+            cellDict[ALSCellDictKeys.location] = [
+                ALSLocationDictKeys.horizontalAccuracy: location.horizontalAccuracy,
+                ALSLocationDictKeys.latitude: location.latitude,
+                ALSLocationDictKeys.longitude: location.longitude,
+                ALSLocationDictKeys.imported: location.imported?.timeIntervalSince1970 ?? 0,
+                ALSLocationDictKeys.reach: location.reach,
+                ALSLocationDictKeys.score: location.score,
+            ] as [String : Any]
+        }
+        
+        return cellDict
+    }
+    
+    private func exportPacket(packet: Packet) -> [String: Any] {
+        return [
+            PacketDictKeys.direction: packet.direction ?? "",
+            PacketDictKeys.proto: packet.proto ?? "",
+            PacketDictKeys.collected: packet.collected?.timeIntervalSince1970 ?? 0,
+            PacketDictKeys.data: packet.data?.base64EncodedString() ?? ""
+        ]
+    }
+    
     private func exportURL() -> URL {
         // https://www.hackingwithswift.com/books/ios-swiftui/writing-data-to-the-documents-directory
-        
         let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
         let documents = paths[0]
         
