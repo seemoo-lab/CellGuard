@@ -1,3 +1,4 @@
+import argparse
 import re
 import subprocess
 import zipfile
@@ -65,9 +66,20 @@ def create_ipa(archive_path: Path, ipa_path: Path):
 
 
 def main():
+    arg_parser = argparse.ArgumentParser(
+        prog='build_ipa',
+        description='Automatically build a IPA file for CellGuard using XCode command-line tools.'
+    )
+    arg_parser.add_argument(
+        '-tipa', action='store_true',
+        help='Build a .tipa file which can be AirDropped to an iPhone with TrollStore.'
+    )
+    args = arg_parser.parse_args()
+
     version, build = get_build_settings()
     archive_path = build_archive()
-    create_ipa(archive_path, Path('build', f'CellGuard-{version}-{build}.ipa'))
+    ipa_extension = '.tipa' if args.tipa else '.ipa'
+    create_ipa(archive_path, Path('build', f'CellGuard-{version}-{build}{ipa_extension}'))
 
 
 if __name__ == '__main__':
