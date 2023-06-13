@@ -299,6 +299,7 @@
 		CF2A1C1E2975CDBB00E8B61C /* Summary */ = {
 			isa = PBXGroup;
 			children = (
+				CF0FDCB429698E1500A6FFE2 /* SummaryTabView.swift */,
 				CF0FDCBC2969A21000A6FFE2 /* WelcomeSheet.swift */,
 				CF2A1C1F2975CDD200E8B61C /* RiskIndicatorCard.swift */,
 				CF2A1C212975DB8100E8B61C /* CellInformationCard.swift */,
@@ -306,17 +307,6 @@
 				CF5672952A29E59000B6EA7C /* TweakInfoView.swift */,
 			);
 			path = Summary;
-			sourceTree = "<group>";
-		};
-		CF4EE5DE296C512D0069BA5A /* Tabs */ = {
-			isa = PBXGroup;
-			children = (
-				CF0FDCBA29699E8A00A6FFE2 /* CompositeTabView.swift */,
-				CF0FDCB429698E1500A6FFE2 /* SummaryTabView.swift */,
-				CF0FDCB629699E5100A6FFE2 /* MapTabView.swift */,
-				CF4E53A12A321B3000AE2059 /* PacketTabView.swift */,
-			);
-			path = Tabs;
 			sourceTree = "<group>";
 		};
 		CF4EE5DF296C51A20069BA5A /* Settings */ = {
@@ -343,6 +333,7 @@
 		CF54CCBF2A331E5400961E4D /* Packets */ = {
 			isa = PBXGroup;
 			children = (
+				CF4E53A12A321B3000AE2059 /* PacketTabView.swift */,
 				CF54CCC42A33680200961E4D /* PacketCommonDetails.swift */,
 				CF54CCC62A33699A00961E4D /* PacketARIDetailsView.swift */,
 				CF54CCC02A331E7100961E4D /* PacketQMIDetailsView.swift */,
@@ -380,7 +371,7 @@
 				CFDF5D6D297EEED4000708A8 /* Map */,
 				CF4EE5DF296C51A20069BA5A /* Settings */,
 				CF2A1C1E2975CDBB00E8B61C /* Summary */,
-				CF4EE5DE296C512D0069BA5A /* Tabs */,
+				CF0FDCBA29699E8A00A6FFE2 /* CompositeTabView.swift */,
 			);
 			path = "User Interface";
 			sourceTree = "<group>";
@@ -526,6 +517,7 @@
 		CFDF5D6D297EEED4000708A8 /* Map */ = {
 			isa = PBXGroup;
 			children = (
+				CF0FDCB629699E5100A6FFE2 /* MapTabView.swift */,
 				CFDF5D82297F0736000708A8 /* CommonCellMap.swift */,
 				CFDF5D80297F05F1000708A8 /* CellMapDelegate.swift */,
 				CFDF5D7E297F05A0000708A8 /* SingleCellMap.swift */,
