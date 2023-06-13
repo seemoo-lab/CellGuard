@@ -102,11 +102,11 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
         
         // TODO: Variable timeout based on whether a the packet is open or not
         // Schedule a timer to continuously poll the latest packets while the app is active
-        let packetCollectTimer = Timer.scheduledTimer(withTimeInterval: 10, repeats: true) { timer in
+        let packetCollectTimer = Timer.scheduledTimer(withTimeInterval: 30, repeats: true) { timer in
             self.collectPacketsTask(collector: packetCollector)
         }
         // We allow the timer a tolerance of 50% as our collector is not time critical
-        packetCollectTimer.tolerance = 5
+        packetCollectTimer.tolerance = 15
         // We also start the function instantly to fetch the latest cells
         DispatchQueue.global(qos: .default).async {
             self.collectPacketsTask(collector: packetCollector)
