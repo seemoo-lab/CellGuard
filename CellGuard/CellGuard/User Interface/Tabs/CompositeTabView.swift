@@ -21,10 +21,6 @@ private enum ShownTab: Identifiable {
 
 private enum ShownSheet: Identifiable {
     case welcome
-    case settings
-    case progress
-    case tweakInfo
-    case export
 
     var id: Self {
         return self
@@ -70,12 +66,7 @@ struct CompositeTabView: View {
         
         // If the introduction already was shown, we check on every start if we still have access to the local network
         let view = TabView(selection: $showingTab) {
-            SummaryTabView(
-                showSettings: { showingSheet = .settings },
-                showExport: { showingSheet = .export },
-                showProgress: { showingSheet = .progress },
-                showTweakInfo: { showingSheet = .tweakInfo }
-            )
+            SummaryTabView()
                 .tabItem {
                     Label("Summary", systemImage: "shield.fill")
                 }
@@ -119,30 +110,6 @@ struct CompositeTabView: View {
                             notificationManager.requestAuthorization { _ in }
                         }
                     }
-                }
-            case .settings:
-                SettingsSheet { reason in
-                    if reason == .delete {
-                        self.showingSheet = .welcome
-                    } else {
-                        self.showingSheet = nil
-                    }
-                }
-                .environmentObject(self.locationManager)
-                .environmentObject(self.networkAuthorization)
-                .environmentObject(self.notificationManager)
-            case .progress:
-                VerificationProgressSheet {
-                    self.showingSheet = nil
-                }
-                .environment(\.managedObjectContext, managedContext)
-            case .tweakInfo:
-                TweakInfoSheet {
-                    self.showingSheet = nil
-                }
-            case .export:
-                ExportSheet {
-                    self.showingSheet = nil
                 }
             }
         }

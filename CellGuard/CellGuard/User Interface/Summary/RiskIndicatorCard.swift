@@ -56,55 +56,79 @@ enum RiskLevel: Equatable {
 struct RiskIndicatorCard: View {
     
     let risk: RiskLevel
-    let onTap: (RiskLevel) -> Void
     
     @Environment(\.colorScheme) private var colorScheme
     
     var body: some View {
-        VStack {
-            HStack() {
-                Text("\(risk.header()) Risk")
-                    .font(.title2)
-                    .bold()
-                Spacer()
-                if risk == .Unknown {
-                    ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle(tint: .white))
-                } else {
-                    Image(systemName: "chevron.right.circle.fill")
-                        .imageScale(.large)
+        NavigationLink {
+            RiskIndicatorLink(risk: risk)
+        } label: {
+            VStack {
+                HStack() {
+                    Text("\(risk.header()) Risk")
+                        .font(.title2)
+                        .bold()
+                    Spacer()
+                    if risk == .Unknown {
+                        ProgressView()
+                            .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                    } else {
+                        Image(systemName: "chevron.right.circle.fill")
+                            .imageScale(.large)
+                    }
+                }
+                HStack {
+                    Text(risk.description())
+                        .padding()
+                    Spacer()
                 }
             }
-            HStack {
-                Text(risk.description())
-                    .padding()
-                Spacer()
-            }
-        }
-        .frame(maxWidth: .infinity)
-        .padding()
-        .background(
-            RoundedRectangle(cornerSize: CGSize(width: 10, height: 10))
-                .foregroundColor(risk.color(dark: colorScheme == .dark))
-                .shadow(color: .black.opacity(0.2), radius: 8)
-        )
-        .foregroundColor(.white)
-        .padding()
-        .onTapGesture {
-            onTap(risk)
+            .frame(maxWidth: .infinity)
+            .padding()
+            .background(
+                RoundedRectangle(cornerSize: CGSize(width: 10, height: 10))
+                    .foregroundColor(risk.color(dark: colorScheme == .dark))
+                    .shadow(color: .black.opacity(0.2), radius: 8)
+            )
+            .foregroundColor(.white)
+            .padding()
         }
     }
 }
 
+private struct RiskIndicatorLink: View {
+    
+    let risk: RiskLevel
+    
+    var body: some View {
+        switch (risk) {
+        case .Low:
+            return AnyView(CellsListView())
+        case let .Medium(cause):
+            if cause == .Permissions {
+                return AnyView(SettingsView())
+            } else if cause == .Tweak {
+                return AnyView(TweakInfoView())
+            }
+        case .High(_):
+            return AnyView(CellsListView())
+        case .Unknown:
+            return AnyView(VerificationProgressSheet())
+        }
+        return AnyView(Text("Unknown Risk Level"))
+    }
+    
+}
+
 struct RiskIndicator_Previews: PreviewProvider {
     static var previews: some View {
-        RiskIndicatorCard(risk: .Unknown, onTap: { _ in })
+        RiskIndicatorCard(risk: .Unknown)
             .previewDisplayName("Unknown")
-        RiskIndicatorCard(risk: .Low, onTap: { _ in })
+        RiskIndicatorCard(risk: .Low)
             .previewDisplayName("Low")
-        RiskIndicatorCard(risk: .Medium(cause: .Permissions), onTap: { _ in })
+        RiskIndicatorCard(risk: .Medium(cause: .Permissions))
             .previewDisplayName("Medium")
-        RiskIndicatorCard(risk: .High(count: 3), onTap: { _ in })
+        RiskIndicatorCard(risk: .High(count: 3))
             .previewDisplayName("High")
     }
 }

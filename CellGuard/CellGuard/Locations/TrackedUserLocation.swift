@@ -96,7 +96,7 @@ struct TrackedUserLocation {
         location.preciseBackground = preciseBackground
     }
     
-    func toDictionary() -> Dictionary<String, Any> {
+    func toDictionary() -> [String: Any] {
         return [
             LocationDictKeys.latitude: latitude ?? 0,
             LocationDictKeys.longitude: longitude ?? 0,

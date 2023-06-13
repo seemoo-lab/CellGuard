@@ -158,7 +158,7 @@ struct LevelListView: View {
             }
         }
         .navigationTitle(level == .country ? "Connected Cells" : level.name)
-        .navigationBarTitleDisplayMode(level == .country ? .automatic : .inline)
+        .navigationBarTitleDisplayMode(.inline)
     }
     
     private func groupLevel(cells: [TweakCell]) -> [GroupedTweakCell] {

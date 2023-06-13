@@ -7,13 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		CF0A5678298A7A910012B2A8 /* VerificationProgressSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0A5677298A7A910012B2A8 /* VerificationProgressSheet.swift */; };
+		CF0A5678298A7A910012B2A8 /* VerificationProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0A5677298A7A910012B2A8 /* VerificationProgressView.swift */; };
 		CF0FDCB529698E1500A6FFE2 /* SummaryTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0FDCB429698E1500A6FFE2 /* SummaryTabView.swift */; };
 		CF0FDCB729699E5100A6FFE2 /* MapTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0FDCB629699E5100A6FFE2 /* MapTabView.swift */; };
 		CF0FDCBB29699E8A00A6FFE2 /* CompositeTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0FDCBA29699E8A00A6FFE2 /* CompositeTabView.swift */; };
 		CF0FDCBD2969A21000A6FFE2 /* WelcomeSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0FDCBC2969A21000A6FFE2 /* WelcomeSheet.swift */; };
 		CF0FDCC02969A3E500A6FFE2 /* LargeButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0FDCBF2969A3E500A6FFE2 /* LargeButton.swift */; };
-		CF0FDCC22969AC1100A6FFE2 /* SettingsSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0FDCC12969AC1100A6FFE2 /* SettingsSheet.swift */; };
+		CF0FDCC22969AC1100A6FFE2 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0FDCC12969AC1100A6FFE2 /* SettingsView.swift */; };
 		CF0FDCC72969F8D300A6FFE2 /* CellDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0FDCC62969F8D300A6FFE2 /* CellDetailsView.swift */; };
 		CF0FDCC9296B310400A6FFE2 /* PersistencePreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0FDCC8296B310400A6FFE2 /* PersistencePreview.swift */; };
 		CF0FDCCB296B466100A6FFE2 /* PersistenceError.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0FDCCA296B466100A6FFE2 /* PersistenceError.swift */; };
@@ -43,7 +43,7 @@
 		CF4E539C2A31E73F00AE2059 /* CommonDefinitions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF4E539B2A31E73F00AE2059 /* CommonDefinitions.swift */; };
 		CF4E539E2A31E7E100AE2059 /* ARIDefinitionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF4E539D2A31E7E100AE2059 /* ARIDefinitionTests.swift */; };
 		CF4E53A22A321B3000AE2059 /* PacketTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF4E53A12A321B3000AE2059 /* PacketTabView.swift */; };
-		CF4E53A62A32225300AE2059 /* ExportSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF4E53A52A32225300AE2059 /* ExportSheet.swift */; };
+		CF4E53A62A32225300AE2059 /* ExportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF4E53A52A32225300AE2059 /* ExportView.swift */; };
 		CF53DB42297473E8005DCD10 /* CoreLocationALS.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF53DB41297473E8005DCD10 /* CoreLocationALS.pb.swift */; };
 		CF54CCBC2A33093800961E4D /* CPTCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF54CCBB2A33093800961E4D /* CPTCollector.swift */; };
 		CF54CCBE2A330E6D00961E4D /* CommonParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF54CCBD2A330E6D00961E4D /* CommonParser.swift */; };
@@ -51,7 +51,7 @@
 		CF54CCC32A331ED300961E4D /* PacketCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF54CCC22A331ED300961E4D /* PacketCell.swift */; };
 		CF54CCC52A33680200961E4D /* PacketCommonDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF54CCC42A33680200961E4D /* PacketCommonDetails.swift */; };
 		CF54CCC72A33699A00961E4D /* PacketARIDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF54CCC62A33699A00961E4D /* PacketARIDetailsView.swift */; };
-		CF5672962A29E59000B6EA7C /* TweakInfoSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5672952A29E59000B6EA7C /* TweakInfoSheet.swift */; };
+		CF5672962A29E59000B6EA7C /* TweakInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5672952A29E59000B6EA7C /* TweakInfoView.swift */; };
 		CF5AB2C02975458D00896ADC /* CellStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5AB2BF2975458D00896ADC /* CellStatus.swift */; };
 		CF5CBB8D29687CBB001CE9BE /* CCTParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5CBB8C29687CBB001CE9BE /* CCTParserTests.swift */; };
 		CF5CBB9529689FFE001CE9BE /* CellGuardSceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5CBB9429689FFE001CE9BE /* CellGuardSceneDelegate.swift */; };
@@ -121,13 +121,13 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		CF0A5677298A7A910012B2A8 /* VerificationProgressSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerificationProgressSheet.swift; sourceTree = "<group>"; };
+		CF0A5677298A7A910012B2A8 /* VerificationProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerificationProgressView.swift; sourceTree = "<group>"; };
 		CF0FDCB429698E1500A6FFE2 /* SummaryTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SummaryTabView.swift; sourceTree = "<group>"; };
 		CF0FDCB629699E5100A6FFE2 /* MapTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapTabView.swift; sourceTree = "<group>"; };
 		CF0FDCBA29699E8A00A6FFE2 /* CompositeTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompositeTabView.swift; sourceTree = "<group>"; };
 		CF0FDCBC2969A21000A6FFE2 /* WelcomeSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeSheet.swift; sourceTree = "<group>"; };
 		CF0FDCBF2969A3E500A6FFE2 /* LargeButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LargeButton.swift; sourceTree = "<group>"; };
-		CF0FDCC12969AC1100A6FFE2 /* SettingsSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsSheet.swift; sourceTree = "<group>"; };
+		CF0FDCC12969AC1100A6FFE2 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		CF0FDCC62969F8D300A6FFE2 /* CellDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellDetailsView.swift; sourceTree = "<group>"; };
 		CF0FDCC8296B310400A6FFE2 /* PersistencePreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistencePreview.swift; sourceTree = "<group>"; };
 		CF0FDCCA296B466100A6FFE2 /* PersistenceError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceError.swift; sourceTree = "<group>"; };
@@ -157,7 +157,7 @@
 		CF4E539B2A31E73F00AE2059 /* CommonDefinitions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonDefinitions.swift; sourceTree = "<group>"; };
 		CF4E539D2A31E7E100AE2059 /* ARIDefinitionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARIDefinitionTests.swift; sourceTree = "<group>"; };
 		CF4E53A12A321B3000AE2059 /* PacketTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacketTabView.swift; sourceTree = "<group>"; };
-		CF4E53A52A32225300AE2059 /* ExportSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportSheet.swift; sourceTree = "<group>"; };
+		CF4E53A52A32225300AE2059 /* ExportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportView.swift; sourceTree = "<group>"; };
 		CF53DB41297473E8005DCD10 /* CoreLocationALS.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreLocationALS.pb.swift; sourceTree = "<group>"; };
 		CF54CCBB2A33093800961E4D /* CPTCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTCollector.swift; sourceTree = "<group>"; };
 		CF54CCBD2A330E6D00961E4D /* CommonParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonParser.swift; sourceTree = "<group>"; };
@@ -165,7 +165,7 @@
 		CF54CCC22A331ED300961E4D /* PacketCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacketCell.swift; sourceTree = "<group>"; };
 		CF54CCC42A33680200961E4D /* PacketCommonDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacketCommonDetails.swift; sourceTree = "<group>"; };
 		CF54CCC62A33699A00961E4D /* PacketARIDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacketARIDetailsView.swift; sourceTree = "<group>"; };
-		CF5672952A29E59000B6EA7C /* TweakInfoSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TweakInfoSheet.swift; sourceTree = "<group>"; };
+		CF5672952A29E59000B6EA7C /* TweakInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TweakInfoView.swift; sourceTree = "<group>"; };
 		CF5AB2BF2975458D00896ADC /* CellStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellStatus.swift; sourceTree = "<group>"; };
 		CF5CBB8C29687CBB001CE9BE /* CCTParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CCTParserTests.swift; sourceTree = "<group>"; };
 		CF5CBB9429689FFE001CE9BE /* CellGuardSceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellGuardSceneDelegate.swift; sourceTree = "<group>"; };
@@ -297,12 +297,11 @@
 		CF2A1C1E2975CDBB00E8B61C /* Summary */ = {
 			isa = PBXGroup;
 			children = (
-				CF2A1C212975DB8100E8B61C /* CellInformationCard.swift */,
-				CF2A1C1F2975CDD200E8B61C /* RiskIndicatorCard.swift */,
-				CF0A5677298A7A910012B2A8 /* VerificationProgressSheet.swift */,
 				CF0FDCBC2969A21000A6FFE2 /* WelcomeSheet.swift */,
-				CF5672952A29E59000B6EA7C /* TweakInfoSheet.swift */,
-				CF4E53A52A32225300AE2059 /* ExportSheet.swift */,
+				CF2A1C1F2975CDD200E8B61C /* RiskIndicatorCard.swift */,
+				CF2A1C212975DB8100E8B61C /* CellInformationCard.swift */,
+				CF0A5677298A7A910012B2A8 /* VerificationProgressView.swift */,
+				CF5672952A29E59000B6EA7C /* TweakInfoView.swift */,
 			);
 			path = Summary;
 			sourceTree = "<group>";
@@ -321,7 +320,8 @@
 		CF4EE5DF296C51A20069BA5A /* Settings */ = {
 			isa = PBXGroup;
 			children = (
-				CF0FDCC12969AC1100A6FFE2 /* SettingsSheet.swift */,
+				CF4E53A52A32225300AE2059 /* ExportView.swift */,
+				CF0FDCC12969AC1100A6FFE2 /* SettingsView.swift */,
 				CFDF5D88297F340E000708A8 /* ActivityViewController.swift */,
 			);
 			path = Settings;
@@ -686,7 +686,7 @@
 				CF5EA78B29892F420061E9F1 /* CGTabBarAppearance.swift in Sources */,
 				CFDF5D7B297EF71F000708A8 /* CellClusterAnnotation.swift in Sources */,
 				CF93B852297FFEF9003F9FFE /* URLIdentifiable.swift in Sources */,
-				CF0A5678298A7A910012B2A8 /* VerificationProgressSheet.swift in Sources */,
+				CF0A5678298A7A910012B2A8 /* VerificationProgressView.swift in Sources */,
 				CF446754298D2A040083EE63 /* CellLocationDistance.swift in Sources */,
 				CFD023402961A10D00AA5A1C /* PersistenceController.swift in Sources */,
 				CFCE7A8C29817E2500E28787 /* ALSTechnology.swift in Sources */,
@@ -711,7 +711,7 @@
 				CFB51834297AEFA80006C690 /* CellStatusIcon.swift in Sources */,
 				CFB8B291296359CC00503189 /* CCTCollector.swift in Sources */,
 				CF54CCC32A331ED300961E4D /* PacketCell.swift in Sources */,
-				CF5672962A29E59000B6EA7C /* TweakInfoSheet.swift in Sources */,
+				CF5672962A29E59000B6EA7C /* TweakInfoView.swift in Sources */,
 				CF54CCC12A331E7100961E4D /* PacketQMIDetailsView.swift in Sources */,
 				CF53DB42297473E8005DCD10 /* CoreLocationALS.pb.swift in Sources */,
 				CF5EF9242978538E00C4F50A /* ALSVerifier.swift in Sources */,
@@ -720,11 +720,11 @@
 				CF5EF92A2979B8D800C4F50A /* LocationSource.swift in Sources */,
 				CF4E53A22A321B3000AE2059 /* PacketTabView.swift in Sources */,
 				CF2A1C1B2975670000E8B61C /* CGNotificationManager.swift in Sources */,
-				CF4E53A62A32225300AE2059 /* ExportSheet.swift in Sources */,
+				CF4E53A62A32225300AE2059 /* ExportView.swift in Sources */,
 				CFDF5D87297F190A000708A8 /* PersistenceExporter.swift in Sources */,
 				CF0FDCB529698E1500A6FFE2 /* SummaryTabView.swift in Sources */,
 				CF2A1C1D2975C71000E8B61C /* BackgroundState.swift in Sources */,
-				CF0FDCC22969AC1100A6FFE2 /* SettingsSheet.swift in Sources */,
+				CF0FDCC22969AC1100A6FFE2 /* SettingsView.swift in Sources */,
 				CFD023682961AB9900AA5A1C /* CCTClient.swift in Sources */,
 				CF1FAFB32986B11200106930 /* CellReachOverlay.swift in Sources */,
 				CFB8B28A2963498200503189 /* CellGuardAppDelegate.swift in Sources */,
@@ -919,7 +919,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_ASSET_PATHS = "\"CellGuard/Preview Content\"";
 				DEVELOPMENT_TEAM = RJXNW62ZYN;
 				ENABLE_PREVIEWS = YES;
@@ -955,7 +955,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_ASSET_PATHS = "\"CellGuard/Preview Content\"";
 				DEVELOPMENT_TEAM = RJXNW62ZYN;
 				ENABLE_PREVIEWS = YES;

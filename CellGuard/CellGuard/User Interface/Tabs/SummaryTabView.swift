@@ -8,14 +8,28 @@
 import CoreData
 import SwiftUI
 
+// Do not attempt to use a SwiftUI Menu within a NavigationView ToolbarItem!
+// This is utterly broken in SwiftUI on iOS 14 as the menu always closes if a view gets any kind of update.
+// See:
+// - https://developer.apple.com/forums/thread/664906
+// - https://stackoverflow.com/questions/68373893/toolbar-menu-is-closed-when-updates-are-made-to-ui-in-swiftui
+// - https://www.hackingwithswift.com/forums/swiftui/navigationbar-toolbar-button-not-working-properly/3376
+// - https://stackoverflow.com/questions/63540602/navigationbar-toolbar-button-not-working-reliable-when-state-variable-refres
+// - https://stackoverflow.com/questions/65095562/observableobject-is-updating-all-views-and-causing-menus-to-close-in-swiftui
+
+
 struct SummaryTabView: View {
     
-    let showSettings: () -> Void
-    let showExport: () -> Void
-    let showProgress: () -> Void
-    let showTweakInfo: () -> Void
-    
-    @State var isShowingConnectedCells = false
+    var body: some View {
+        NavigationView {
+            CombinedRiskCellView()
+            .navigationTitle("Summary")
+        }
+        .background(Color.gray)
+    }
+}
+
+private struct CombinedRiskCellView: View {
     
     @EnvironmentObject var locationManager: LocationDataManager
     @EnvironmentObject var networkAuthorization: LocalNetworkAuthorization
@@ -25,12 +39,7 @@ struct SummaryTabView: View {
     @FetchRequest private var failedCells: FetchedResults<TweakCell>
     @FetchRequest private var unknownCells: FetchedResults<TweakCell>
     
-    init(showSettings: @escaping () -> Void, showExport: @escaping () -> Void, showProgress: @escaping () -> Void, showTweakInfo: @escaping () -> Void) {
-        self.showSettings = showSettings
-        self.showExport = showExport
-        self.showProgress = showProgress
-        self.showTweakInfo = showTweakInfo
-        
+    init() {
         let latestTweakCellRequest = NSFetchRequest<TweakCell>()
         latestTweakCellRequest.entity = TweakCell.entity()
         latestTweakCellRequest.fetchLimit = 1
@@ -44,7 +53,7 @@ struct SummaryTabView: View {
         let ftPredicate = NSPredicate(format: "collected >= %@", ftDaysAgo as NSDate)
         let failedPredicate = NSPredicate(format: "status == %@", CellStatus.failed.rawValue)
         let unknownPredicate = NSPredicate(format: "status == %@", CellStatus.imported.rawValue)
-                
+        
         _failedCells = FetchRequest(
             sortDescriptors: [],
             predicate: NSCompoundPredicate(andPredicateWithSubpredicates: [ftPredicate, failedPredicate])
@@ -56,55 +65,35 @@ struct SummaryTabView: View {
     }
     
     var body: some View {
-        NavigationView {
-            VStack {
-                // A hack for programmatic navigation
-                // https://www.hackingwithswift.com/quick-start/swiftui/how-to-use-programmatic-navigation-in-swiftui
-                NavigationLink(destination: CellsListView(), isActive: $isShowingConnectedCells) { EmptyView() }
-                
-                // The actual primary view
-                ScrollView {
-                    RiskIndicatorCard(risk: determineRisk(), onTap: { risk in
-                        switch (risk) {
-                        case .Low:
-                            showConnectedCells()
-                        case let .Medium(cause):
-                            if cause == .Permissions {
-                                showSettings()
-                            } else if cause == .Tweak {
-                                showTweakInfo()
-                            }
-                        case .High(_):
-                            showConnectedCells()
-                        case .Unknown:
-                            showProgress()
-                        }
-                    })
-                    if !tweakCells.isEmpty {
-                        CellInformationCard(cell: tweakCells[0])
-                    }
-                }
-                .navigationTitle("Summary")
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        Menu {
-                            Button(action: self.showConnectedCells) {
-                                Label("Connected Cells", systemImage: "list.bullet")
-                            }
-                            Button(action: self.showExport) {
-                                Label("Export Data", systemImage: "square.and.arrow.up")
-                            }
-                            Button(action: self.showSettings) {
-                                Label("Settings", systemImage: "gear")
-                            }
-                        } label: {
-                            Label("Settings", systemImage: "ellipsis.circle")
-                        }
-                    }
-                }
+        let risk = determineRisk()
+        ScrollView {
+            RiskIndicatorCard(risk: risk)
+            
+            if !tweakCells.isEmpty {
+                CellInformationCard(cell: tweakCells[0])
             }
+            
+            NavigationLink {
+                CellsListView()
+            } label: {
+                Label("View all cells", systemImage: "list.bullet")
+            }
+            .padding(EdgeInsets(top: 10, leading: 0, bottom: 7, trailing: 0))
+            
+            NavigationLink {
+                Text("TODO")
+            } label: {
+                Label("Learn more", systemImage: "questionmark.circle")
+            }
+            .padding(EdgeInsets(top: 7, leading: 0, bottom: 7, trailing: 0))
+            
+            NavigationLink {
+                SettingsView()
+            } label: {
+                Label("Settings", systemImage: "gear")
+            }
+            .padding(EdgeInsets(top: 7, leading: 0, bottom: 7, trailing: 0))
         }
-        .background(Color.gray)
     }
     
     func determineRisk() -> RiskLevel {
@@ -123,7 +112,7 @@ struct SummaryTabView: View {
             return .Medium(cause: .Tweak)
         }
         
-        // TODO: A condition is false at the start of the app, figure out which
+        // TODO: A condition is false at the first start of the app, figure out which
         if (locationManager.authorizationStatus ?? .authorizedAlways) != .authorizedAlways ||
             !(networkAuthorization.lastResult ?? true) ||
             (notificationManager.authorizationStatus ?? .authorized) != .authorized {
@@ -133,22 +122,11 @@ struct SummaryTabView: View {
         return .Low
     }
     
-    func showConnectedCells() {
-        isShowingConnectedCells = true
-    }
 }
 
 struct SummaryView_Previews: PreviewProvider {
     static var previews: some View {
-        SummaryTabView {
-            // doing nothing
-        } showExport: {
-            // doing nothing
-        } showProgress: {
-            // doing nothing
-        } showTweakInfo: {
-            // doing nothing
-        }
+        SummaryTabView()
         .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
         .environmentObject(LocationDataManager.shared)
         .environmentObject(LocalNetworkAuthorization(checkNow: true))
