@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import CoreData
 
 struct PacketTabView: View {
     
@@ -15,13 +16,29 @@ struct PacketTabView: View {
     // TODO: Use new list style
     
     // We have to use separate fetch request as the preview crashes a unified request
-    @FetchRequest(sortDescriptors: [NSSortDescriptor(keyPath: \QMIPacket.collected, ascending: false)])
+    @FetchRequest
     private var qmiPackets: FetchedResults<QMIPacket>
     
-    @FetchRequest(sortDescriptors: [NSSortDescriptor(keyPath: \ARIPacket.collected, ascending: false)])
+    @FetchRequest
     private var ariPackets: FetchedResults<ARIPacket>
 
     // TODO: Fetch packets in batches
+    
+    init() {
+        // https://www.hackingwithswift.com/quick-start/swiftui/how-to-limit-the-number-of-items-in-a-fetch-request
+        let qmiRequest: NSFetchRequest<QMIPacket> = QMIPacket.fetchRequest()
+        qmiRequest.fetchLimit = 200
+        qmiRequest.fetchBatchSize = 25
+        qmiRequest.sortDescriptors = [NSSortDescriptor(keyPath: \QMIPacket.collected, ascending: false)]
+        
+        let ariRequest: NSFetchRequest<ARIPacket> = ARIPacket.fetchRequest()
+        ariRequest.fetchLimit = 200
+        ariRequest.fetchBatchSize = 25
+        ariRequest.sortDescriptors = [NSSortDescriptor(keyPath: \ARIPacket.collected, ascending: false)]
+        
+        self._qmiPackets = FetchRequest(fetchRequest: qmiRequest, animation: .easeOut)
+        self._ariPackets = FetchRequest(fetchRequest: ariRequest, animation: .easeOut)
+    }
     
     var body: some View {
         NavigationView {
@@ -62,6 +79,7 @@ private struct QMIPacketList: View {
                 let thisDate = Calendar.current.dateComponents([.day, .month, .year], from: packet.collected)
             } */
         }
+        .listStyle(.insetGrouped)
     }
 }
 
@@ -76,6 +94,7 @@ private struct ARIPacketList: View {
                 PacketCell(packet: packet)
             }
         }
+        .listStyle(.insetGrouped)
     }
 }
 
