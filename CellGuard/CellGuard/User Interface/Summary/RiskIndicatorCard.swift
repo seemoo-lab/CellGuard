@@ -113,7 +113,7 @@ private struct RiskIndicatorLink: View {
         case .High(_):
             return AnyView(CellsListView())
         case .Unknown:
-            return AnyView(VerificationProgressSheet())
+            return AnyView(VerificationProgressView())
         }
         return AnyView(Text("Unknown Risk Level"))
     }
