@@ -27,7 +27,7 @@ struct QMIDefinitions {
             // https://www.avanderlee.com/swift/json-parsing-decoding/
             let decoder = JSONDecoder()
             decoder.keyDecodingStrategy = .convertFromSnakeCase
-            let services = try decoder.decode([QMIDefintionService].self, from: try Data(contentsOf: url))
+            let services = try decoder.decode([QMIDefinitionService].self, from: try Data(contentsOf: url))
             
             return QMIDefinitions(serviceList: services)
         } catch {
@@ -36,16 +36,16 @@ struct QMIDefinitions {
         }
     }()
     
-    let services: [UInt8: QMIDefintionService]
+    let services: [UInt8: QMIDefinitionService]
     
-    private init(serviceList: [QMIDefintionService]) {
+    private init(serviceList: [QMIDefinitionService]) {
         // We map the list of services to a dictionary to allow for simple retrieval of service details
         self.services = Dictionary(uniqueKeysWithValues: serviceList.map { ($0.identifier, $0) })
     }
     
 }
 
-struct QMIDefintionService: Decodable {
+struct QMIDefinitionService: Decodable, UpperDefinitionGroup {
     
     let identifier: UInt8
     let shortName: String
@@ -72,5 +72,9 @@ struct QMIDefintionService: Decodable {
         self.messages = CommonDefinitionElement.dictionary(try container.decode([CommonDefinitionElement].self, forKey: .messages))
         self.indications = CommonDefinitionElement.dictionary(try container.decode([CommonDefinitionElement].self, forKey: .indications))
     }
+    
+    var id: UInt8 { self.identifier }
+    
+    var name: String { self.longName }
     
 }
