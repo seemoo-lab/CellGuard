@@ -133,6 +133,7 @@ struct PacketFilterView: View {
     let apply: (PacketFilterSettings) -> Void
     
     var body: some View {
+        // TODO: Pickers close upon refresh on iOS 15
         List {
             Section(header: Text("Packets")) {
                 Picker("Protocol", selection: $settings.proto) {
