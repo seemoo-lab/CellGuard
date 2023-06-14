@@ -12,11 +12,11 @@ struct TweakInfoView: View {
         ScrollView {
             // TODO: Improve text + Add icons
             Text("""
-The CellGuard iOS app itself does not collect cell identification data. This is the task of a external component, a so-called tweak. It modifies the default behavior of iOS, but for that it requires a jailbroken iPhone.
+The CellGuard iOS app itself does not collect cell identification data. This is the task of an external component, a so-called tweak. It modifies the default behavior of iOS, but for that it requires a jailbroken iPhone.
 
-CellGuard continously queries this component for new data and processes it. That's why the tweak must be active alongside the app.
+CellGuard continuously queries this component for new data and processes it. That's why the tweak must be active alongside the app.
 
-In the last thirty minutes the tweak was either not reachable or did not provide any new data which is unusal. Please check if it is running correctly.
+In the last thirty minutes the tweak was either not reachable or did not provide any new data which is unusual. Please check if it is running correctly.
 
 For troubleshooting you can manually delete the file /var/wireless/Documents/CaptureCellsTweak/cells-cache.json and restart the CommCenter process.
 """)
