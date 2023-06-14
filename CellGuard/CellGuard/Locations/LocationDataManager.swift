@@ -33,7 +33,7 @@ class LocationDataManager : NSObject, CLLocationManagerDelegate, ObservableObjec
         locationManager.delegate = self
         locationManager.allowsBackgroundLocationUpdates = true
         
-        let preciseBackgroudUpdatesKey = "preciseBackgroundUpdates"
+        let preciseBackgroudUpdatesKey = UserDefaultsKeys.preciseBackgroudUpdates.rawValue
         preciseInBackground = UserDefaults.standard.bool(forKey: preciseBackgroudUpdatesKey)
         preciseBackgroundSink = $preciseInBackground.sink {
             UserDefaults.standard.set($0, forKey: preciseBackgroudUpdatesKey)

@@ -549,34 +549,89 @@ extension PersistenceController {
         self.logger.debug("Successfully assigned user locations to \(successful) tweak cells of out \(count) cells.")
     }
     
-    /// Synchronously deletes all records in the Core Data store.
-    func deleteAllData() -> Bool {
+    func deletePacketsOlderThan(days: Int) {
         let viewContext = container.viewContext
-        logger.debug("Start deleting all data from the store...")
+        logger.debug("Start deleting packets older than \(days) day(s) from the store...")
         
-        // TODO: Test
-        
-        var successful = false
         viewContext.performAndWait {
-            let fetchCells = NSFetchRequest<NSFetchRequestResult>()
-            fetchCells.entity = Cell.entity()
-            let deleteCells = NSBatchDeleteRequest(fetchRequest: fetchCells)
-            
-            let fetchLocations = NSFetchRequest<NSFetchRequestResult>()
-            fetchLocations.entity = Location.entity()
-            let deleteLocations = NSBatchDeleteRequest(fetchRequest: fetchLocations)
-            
             do {
-                try viewContext.persistentStoreCoordinator?.execute(deleteCells, with: viewContext)
-                try viewContext.persistentStoreCoordinator?.execute(deleteLocations, with: viewContext)
+                let startOfDay = Calendar.current.startOfDay(for: Date())
+                guard let daysAgo = Calendar.current.date(byAdding: .day, value: -days, to: startOfDay) else {
+                    logger.debug("Can't calculate the date for packet deletion")
+                    return
+                }
+                logger.debug("Deleting packets older than \(startOfDay)")
+                let predicate = NSPredicate(format: "collected < %@", daysAgo as NSDate)
+                
+                try deleteData(entity: QMIPacket.entity(), predicate: predicate, context: viewContext)
+                try deleteData(entity: ARIPacket.entity(), predicate: predicate, context: viewContext)
+                logger.debug("Successfully deleted old packets")
             } catch {
-                self.logger.warning("Failed to delete all data: \(error)")
+                self.logger.warning("Failed to delete old packets: \(error)")
+            }
+        }
+
+    }
+    
+    func deleteDataInBackground(categories: [PersistenceCategory], completion: @escaping (Result<Void, Error>) -> Void) {
+        DispatchQueue.global(qos: .userInitiated).async {
+            // Perform the deletion
+            let result = Result { try self.deleteData(categories: categories) }
+            
+            // Call the callback on the main queue
+            DispatchQueue.main.async {
+                completion(result)
+            }
+        }
+    }
+    
+    /// Synchronously deletes all records in the Core Data store.
+    private func deleteData(categories: [PersistenceCategory]) throws {
+        let viewContext = container.viewContext
+        logger.debug("Start deleting data of \(categories) from the store...")
+        
+        // If the ALS cell cache or older locations are deleted but no connected cells, we do not reset their verification status to trigger a re-verification.
+        let categoryEntityMapping: [PersistenceCategory: [NSEntityDescription]] = [
+            .connectedCells: [TweakCell.entity()],
+            .alsCells: [ALSCell.entity(), ALSLocation.entity()],
+            .locations: [UserLocation.entity()],
+            .packets: [ARIPacket.entity(), QMIPacket.entity()]
+        ]
+        
+        var deleteError: Error? = nil
+        viewContext.performAndWait {
+            do {
+                try categoryEntityMapping
+                    .filter { categories.contains($0.key) }
+                    .flatMap { $0.value }
+                    .forEach { entity in
+                        try deleteData(entity: entity, predicate: nil, context: viewContext)
+                    }
+            } catch {
+                self.logger.warning("Failed to delete data: \(error)")
+                deleteError = error
             }
             
-            successful = true
-            logger.debug("Successfully deleted all data.")
+            logger.debug("Successfully deleted data of \(categories).")
         }
         
-        return successful
+        if let deleteError = deleteError {
+            throw deleteError
+        }
+        
+        cleanPersistentHistoryChanges()
     }
+    
+    /// Deletes all records belonging to a given entity
+    private func deleteData(entity: NSEntityDescription, predicate: NSPredicate?, context: NSManagedObjectContext) throws {
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>()
+        fetchRequest.entity = entity
+        if let predicate = predicate {
+            fetchRequest.predicate = predicate
+        }
+        
+        let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+        try context.persistentStoreCoordinator?.execute(deleteRequest, with: context)
+    }
+
 }

@@ -126,6 +126,13 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
             PersistenceController.shared.cleanPersistentHistoryChanges()
         }
         clearHistoryTimer.tolerance = 30
+        
+        let clearPacketTimer = Timer.scheduledTimer(withTimeInterval: 60 * 2, repeats: true) { timer in
+            guard !PersistenceImporter.importActive else { return }
+            let days = UserDefaults.standard.object(forKey: UserDefaultsKeys.packetRetention.rawValue) as? Double ?? 15.0
+            PersistenceController.shared.deletePacketsOlderThan(days: Int(days))
+        }
+        clearPacketTimer.tolerance = 30
 
         // TODO: Add task to regularly delete old ALS cells (>= 90 days) to force a refresh
         // -> Then, also reset the status of the associated tweak cells

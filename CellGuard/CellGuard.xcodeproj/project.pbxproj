@@ -102,6 +102,8 @@
 		CFDF5D87297F190A000708A8 /* PersistenceExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFDF5D86297F190A000708A8 /* PersistenceExporter.swift */; };
 		CFDF5D89297F340E000708A8 /* ActivityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFDF5D88297F340E000708A8 /* ActivityViewController.swift */; };
 		CFE4462B29705F0C006F2CF4 /* CellsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFE4462A29705F0C006F2CF4 /* CellsListView.swift */; };
+		CFF05F6D2A39AA3900DE6FB2 /* DeleteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFF05F6C2A39AA3900DE6FB2 /* DeleteView.swift */; };
+		CFF05F6F2A39ABF500DE6FB2 /* PersistenceCategories.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFF05F6E2A39ABF500DE6FB2 /* PersistenceCategories.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -219,6 +221,8 @@
 		CFDF5D86297F190A000708A8 /* PersistenceExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceExporter.swift; sourceTree = "<group>"; };
 		CFDF5D88297F340E000708A8 /* ActivityViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityViewController.swift; sourceTree = "<group>"; };
 		CFE4462A29705F0C006F2CF4 /* CellsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellsListView.swift; sourceTree = "<group>"; };
+		CFF05F6C2A39AA3900DE6FB2 /* DeleteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteView.swift; sourceTree = "<group>"; };
+		CFF05F6E2A39ABF500DE6FB2 /* PersistenceCategories.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceCategories.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -312,8 +316,9 @@
 		CF4EE5DF296C51A20069BA5A /* Settings */ = {
 			isa = PBXGroup;
 			children = (
-				CF4E53A52A32225300AE2059 /* ExportView.swift */,
 				CF0FDCC12969AC1100A6FFE2 /* SettingsView.swift */,
+				CF4E53A52A32225300AE2059 /* ExportView.swift */,
+				CFF05F6C2A39AA3900DE6FB2 /* DeleteView.swift */,
 				CFDF5D88297F340E000708A8 /* ActivityViewController.swift */,
 			);
 			path = Settings;
@@ -410,6 +415,7 @@
 				CFDF5D86297F190A000708A8 /* PersistenceExporter.swift */,
 				CF93B85329800278003F9FFE /* PersistenceImporter.swift */,
 				CF0FDCC8296B310400A6FFE2 /* PersistencePreview.swift */,
+				CFF05F6E2A39ABF500DE6FB2 /* PersistenceCategories.swift */,
 			);
 			path = "Core Data";
 			sourceTree = "<group>";
@@ -738,8 +744,10 @@
 				CF2002F22A2F9FB5000922E6 /* CPTClient.swift in Sources */,
 				CFDF5D81297F05F1000708A8 /* CellMapDelegate.swift in Sources */,
 				CFE4462B29705F0C006F2CF4 /* CellsListView.swift in Sources */,
+				CFF05F6F2A39ABF500DE6FB2 /* PersistenceCategories.swift in Sources */,
 				CF0FDCC9296B310400A6FFE2 /* PersistencePreview.swift in Sources */,
 				CFD0236A2961ABA100AA5A1C /* ALSClient.swift in Sources */,
+				CFF05F6D2A39AA3900DE6FB2 /* DeleteView.swift in Sources */,
 				CF0FDCCB296B466100A6FFE2 /* PersistenceError.swift in Sources */,
 				CF4E53982A31CE4600AE2059 /* ARIDefinitions.swift in Sources */,
 				CF54CCBC2A33093800961E4D /* CPTCollector.swift in Sources */,

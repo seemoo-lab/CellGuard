@@ -68,10 +68,10 @@ struct ExportView: View {
         isExportInProgress = true
         
         let exportCategories = [
-            PersistenceExporterCategory.connectedCells: doExportCells,
-            PersistenceExporterCategory.alsCells: doExportALSCache,
-            PersistenceExporterCategory.locations: doExportLocations,
-            PersistenceExporterCategory.packets: doExportPackets,
+            PersistenceCategory.connectedCells: doExportCells,
+            PersistenceCategory.alsCells: doExportALSCache,
+            PersistenceCategory.locations: doExportLocations,
+            PersistenceCategory.packets: doExportPackets,
         ].filter { $0.value }.map { $0.key }
         
         PersistenceExporter.exportInBackground(categories: exportCategories) { result in
@@ -86,7 +86,7 @@ struct ExportView: View {
     }
 }
 
-struct ExportSheet_Previews: PreviewProvider {
+struct ExportView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
             ExportView()

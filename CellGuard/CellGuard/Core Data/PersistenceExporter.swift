@@ -15,13 +15,6 @@ enum PersistenceExportError: Error {
     case fetchOrSerializationFailed(Error)
 }
 
-enum PersistenceExporterCategory {
-    case connectedCells
-    case alsCells
-    case locations
-    case packets
-}
-
 struct PersistenceExporter {
     
     private static let logger = Logger(
@@ -29,7 +22,7 @@ struct PersistenceExporter {
         category: String(describing: PersistenceExporter.self)
     )
     
-    static func exportInBackground(categories: [PersistenceExporterCategory], completion: @escaping (Result<URL, Error>) -> Void) {
+    static func exportInBackground(categories: [PersistenceCategory], completion: @escaping (Result<URL, Error>) -> Void) {
         // See: https://www.hackingwithswift.com/read/9/4/back-to-the-main-thread-dispatchqueuemain
         
         // Run the export in the background
@@ -45,9 +38,9 @@ struct PersistenceExporter {
         }
     }
     
-    let categories: [PersistenceExporterCategory]
+    let categories: [PersistenceCategory]
     
-    private init(categories: [PersistenceExporterCategory]) {
+    private init(categories: [PersistenceCategory]) {
         self.categories = categories
     }
     

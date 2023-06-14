@@ -227,6 +227,36 @@ class PersistenceController {
             logger.debug("Deleting persistent history before the token \(token)")
             _ = try? taskContext.execute(deleteHistoryRequest)
         }
+    }
+    
+    /// Returns the size in bytes of CellGuard's data store
+    func size() -> UInt64 {
+        if self.inMemory {
+            return 0
+        }
         
+        return container.persistentStoreCoordinator.persistentStores.flatMap { store in
+            guard let url = store.url else {
+                return [] as [String]
+            }
+            
+            // We only check URLs referencing files on disk, not those in-memory
+            if url.scheme != "file" {
+                return [] as [String]
+            }
+            
+            let path = url.path
+            // Include the size of SQLite database and its journal files
+            // See: https://stackoverflow.com/a/24373470
+            return [path, "\(path)-wal", "\(path)-shm"]
+        }.map { path in
+            do {
+                let attributes = try FileManager.default.attributesOfItem(atPath: path)
+                return attributes[.size] as? UInt64 ?? UInt64(0)
+            } catch {
+                logger.debug("Can't get attributes for path \(path): \(error)")
+            }
+            return UInt64(0)
+        }.reduce(0, { $0 + $1 })
     }
 }

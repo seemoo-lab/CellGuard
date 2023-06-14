@@ -68,9 +68,7 @@ struct SettingsView: View {
             }
         }
     )}
-    
-    @State private var showAlert: AlertIdentifiable? = nil
-    
+
     var body: some View {
         List {
             Section(header: Text("Permissions")) {
@@ -91,28 +89,16 @@ struct SettingsView: View {
                 } label: {
                     Text("Export Data")
                 }
-                Button {
-                    // TODO: Add a delete view where users can select similar categories
-                    self.showAlert = AlertIdentifiable(id: "confirm-delete", alert: Alert(
-                        title: Text("Delete Database"),
-                        message: Text("Delete all the app's data?"),
-                        primaryButton: .cancel(),
-                        secondaryButton: .destructive(Text("Delete")) {
-                            // TODO: Handle error
-                            _ = PersistenceController.shared.deleteAllData()
-                            UserDefaults.standard.setValue(false, forKey: UserDefaultsKeys.introductionShown.rawValue)
-                        }
-                    ))
+                NavigationLink {
+                    DeleteView()
                 } label: {
                     Text("Delete Data")
-                        .foregroundColor(.red)
                 }
             }
         }
         .listStyle(.insetGrouped)
         .navigationTitle(Text("Settings"))
         .navigationBarTitleDisplayMode(.inline)
-        .alert(item: $showAlert) { $0.alert }
     }
     
     private func openAppSettings() {
