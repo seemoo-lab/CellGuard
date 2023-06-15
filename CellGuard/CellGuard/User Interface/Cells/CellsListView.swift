@@ -65,6 +65,23 @@ enum ListViewLevel {
             return cell.cell
         }
     }
+    
+    func text(cell: Cell) -> Text {
+        let valueText = Text("\(extractValue(cell: cell) as NSNumber, formatter: plainNumberFormatter)")
+        
+        if self == .country {
+            if let countryName = OperatorDefinitions.shared.translate(country: cell.country) {
+                return Text("\(countryName) (") + valueText + Text(")")
+            }
+        } else if self == .network {
+            let (_, networkName) = OperatorDefinitions.shared.translate(country: cell.country, network: cell.network)
+            if let networkName = networkName {
+                return Text("\(networkName) (") + valueText + Text(")")
+            }
+        }
+        
+        return valueText
+    }
 }
 
 private struct GroupedTweakCell: Hashable {
@@ -189,10 +206,11 @@ private struct ListBodyElement: View {
         
         let cell = groupedCells.lastCollected
         let formatter = CellTechnologyFormatter.from(technology: cell.technology)
-        let text = Text("\(level.extractValue(cell: cell) as NSNumber, formatter: plainNumberFormatter)")
-            // Color text red if the group contains a single failed cell
+        // // Color the text red if the group contains a single failed cell
+        let text = level.text(cell: cell)
             .foregroundColor(groupedCells.anyFailed ? .red : nil)
-        
+
+                
         return NavigationLink {
             if level == .cell {
                 CellDetailsView(cell: cell)

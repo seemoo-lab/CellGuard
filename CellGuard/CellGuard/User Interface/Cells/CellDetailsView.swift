@@ -33,6 +33,8 @@ struct CellDetailsView: View {
     }
     
     var body: some View {
+        let (countryName, networkName) = OperatorDefinitions.shared.translate(country: cell.country, network: cell.network)
+        
         List {
             if SingleCellMap.hasAnyLocation(alsCells, tweakCells) {
                 SingleCellMap(alsCells: alsCells, tweakCells: tweakCells)
@@ -41,7 +43,7 @@ struct CellDetailsView: View {
             }
             
             Section(header: Text("Cellular Technology")) {
-                CellDetailsRows("Technology", cell.technology ?? "Unknwon")
+                CellDetailsRows("Technology", cell.technology ?? "Unknown")
                 CellDetailsRows(techFormatter.frequency(), cell.frequency)
                 if let tweakCell = cell as? TweakCell {
                     NavigationLink {
@@ -53,7 +55,9 @@ struct CellDetailsView: View {
             }
             
             Section(header: Text("Cell Identification")) {
+                CellDetailsRows("Country", countryName ?? "???")
                 CellDetailsRows(techFormatter.country(), cell.country)
+                CellDetailsRows("Network", networkName ?? "???")
                 CellDetailsRows(techFormatter.network(), cell.network)
                 CellDetailsRows(techFormatter.area(), cell.area)
                 CellDetailsRows(techFormatter.cell(), cell.cell)

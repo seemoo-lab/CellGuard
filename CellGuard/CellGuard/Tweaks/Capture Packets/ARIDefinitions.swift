@@ -31,7 +31,7 @@ struct ARIDefinitions {
             
             return ARIDefinitions(groupList: services)
         } catch {
-            logger.warning("Failed to decode the JSON file qmi-definitions.json: \(error)")
+            logger.warning("Failed to decode the JSON file ari-definitions.json: \(error)")
             return ARIDefinitions(groupList: [])
         }
     }()

@@ -6,6 +6,8 @@ name = "pypi"
 [packages]
 yaspin = "*"
 luaparser = "*"
+beautifulsoup4 = "*"
+requests = "*"
 
 [dev-packages]
 

@@ -42,7 +42,7 @@ class CellClusterAnnotationView: MKAnnotationView {
         // Offset to position everything in the center of the drawing area
         let offset = (drawSize - circleSize) / 2.0
         
-        // Decrase the text size if the number gets larger
+        // Decrease the text size if the number gets larger
         let textSize: CGFloat
         if count < 1_000_000 {
             textSize = 14
