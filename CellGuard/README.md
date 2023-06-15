@@ -45,10 +45,10 @@ Then you can run of one of the following commands:
 
 ```bash
 # Only build the Debian package (.deb) containing the app
-gmake package
+THEOS_PACKAGE_SCHEME=rootless FINALPACKAGE=1 gmake package
 
 # Build the .deb and install it on your local device
-gmake do
+THEOS_PACKAGE_SCHEME=rootless gmake do
 ```
 
 To read more on how to build jailbroken apps, see
