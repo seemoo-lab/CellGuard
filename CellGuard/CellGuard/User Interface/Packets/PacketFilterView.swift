@@ -125,16 +125,48 @@ enum PacketFilterTimeFrame: String, CaseIterable, Identifiable {
 
 struct PacketFilterView: View {
     
-    // An environment variable used to close the current NavigationLink
-    // See: https://stackoverflow.com/a/58657990
-    @Environment(\.presentationMode) var presentation
+    let close: () -> Void
     
-    @State var settings: PacketFilterSettings
-    let apply: (PacketFilterSettings) -> Void
+    @Binding var settingsBound: PacketFilterSettings
+    @State var settings: PacketFilterSettings = PacketFilterSettings()
+    
+    init(settingsBound: Binding<PacketFilterSettings>, close: @escaping () -> Void) {
+        self.close = close
+        self._settingsBound = settingsBound
+        self._settings = State(wrappedValue: self._settingsBound.wrappedValue)
+    }
     
     var body: some View {
-        // TODO: Pickers close upon refresh on iOS 15
-        List {
+        PacketFilterListView(settings: $settings)
+        .navigationTitle("Filter")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .confirmationAction) {
+                Button {
+                    self.settingsBound = settings
+                    self.close()
+                } label: {
+                    Text("Apply")
+                }
+            }
+        }
+        .listStyle(.insetGrouped)
+        // There's an evil bug in iOS 15.2, where onAppear is called multiple times
+        // See: https://developer.apple.com/forums/thread/666345
+        // Therefore we rely on the constructor and hope that is called every time
+        /*.onAppear() {
+            print("On Appear (changed)")
+            self.settings = settingsBound
+        } */
+    }
+}
+
+private struct PacketFilterListView: View {
+    
+    @Binding var settings: PacketFilterSettings
+    
+    var body: some View {
+        return Form {
             Section(header: Text("Packets")) {
                 Picker("Protocol", selection: $settings.proto) {
                     ForEach(PacketFilterProtocol.allCases) { Text($0.rawValue.uppercased()) }
@@ -184,21 +216,8 @@ struct PacketFilterView: View {
                 }
             }
         }
-        .navigationTitle("Filter")
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .confirmationAction) {
-                Button {
-                    apply(settings)
-                    // TODO: Add a short delay
-                    self.presentation.wrappedValue.dismiss()
-                } label: {
-                    Text("Apply")
-                }
-            }
-        }
-        .listStyle(.insetGrouped)
-        // The Picker Style menu is broken on iOS 14, therefore we use the default fallback to the navigation picker even if it looks not so nice
+        // The Picker Style menu is broken on iOS 14 & 15 if Pickers are in Sections.
+        // Therefore we use the default fallback to the navigation picker even if it looks not so nice and comes with its own set of bugs ):
     }
 }
 
@@ -289,8 +308,8 @@ struct PacketFilterView_Previews: PreviewProvider {
         @State var settings = PacketFilterSettings()
         
         NavigationView {
-            PacketFilterView(settings: settings) { settings in
-                // We ignore the update
+            PacketFilterView(settingsBound: $settings) {
+                // Doing nothing
             }
         }
     }

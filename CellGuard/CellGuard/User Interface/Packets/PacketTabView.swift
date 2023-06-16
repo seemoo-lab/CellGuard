@@ -18,13 +18,11 @@ struct PacketTabView: View {
     var body: some View {
         NavigationView {
             VStack {
-                // A workaround for the problem that the view repeatedly opens on iOS 14.
-                // Using this workaround we can effectively treat the view as a sheet which stores its open state using a @State variable.
+                // A workaround for that the NavigationLink on iOS does not respect the isShowingFilterView variable if it's embedded into a ToolbarItem.
                 // See: https://www.hackingwithswift.com/quick-start/swiftui/how-to-use-programmatic-navigation-in-swiftui
-                // See:
                 NavigationLink(isActive: $isShowingFilterView) {
-                    PacketFilterView(settings: filter) { settings in
-                        self.filter = settings
+                    PacketFilterView(settingsBound: $filter) {
+                        isShowingFilterView = false
                     }
                 } label: {
                     EmptyView()
@@ -43,6 +41,9 @@ struct PacketTabView: View {
                 }
             }
         }
+        // Magic that prevents Pickers from closing
+        // See: https://stackoverflow.com/a/70307271
+        .navigationViewStyle(.stack)
     }
 }
 
