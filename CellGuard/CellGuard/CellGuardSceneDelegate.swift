@@ -32,7 +32,7 @@ class CellGuardSceneDelegate: NSObject, UIWindowSceneDelegate, ObservableObject 
         scheduleAppRefresh()
         
         // Disable exact location measurement when the app moves in the background
-        LocationDataManager.shared.enterBackgorund()
+        LocationDataManager.shared.enterBackground()
     }
     
     private func scheduleAppRefresh() {
@@ -62,7 +62,7 @@ class CellGuardSceneDelegate: NSObject, UIWindowSceneDelegate, ObservableObject 
             verifyTask.earliestBeginDate = Date(timeIntervalSinceNow: 60 * 60 * 3)
             try BGTaskScheduler.shared.submit(verifyTask)
         } catch {
-            Self.logger.warning("Could not schedule the app verify prcessing task: \(Self.toDescription(taskSchedulerError: error as? BGTaskScheduler.Error)) -> \(error)")
+            Self.logger.warning("Could not schedule the app verify processing task: \(Self.toDescription(taskSchedulerError: error as? BGTaskScheduler.Error)) -> \(error)")
         }
     }
 

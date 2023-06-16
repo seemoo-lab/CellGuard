@@ -33,10 +33,10 @@ class LocationDataManager : NSObject, CLLocationManagerDelegate, ObservableObjec
         locationManager.delegate = self
         locationManager.allowsBackgroundLocationUpdates = true
         
-        let preciseBackgroudUpdatesKey = UserDefaultsKeys.preciseBackgroudUpdates.rawValue
-        preciseInBackground = UserDefaults.standard.bool(forKey: preciseBackgroudUpdatesKey)
+        let preciseBackgroundUpdatesKey = UserDefaultsKeys.preciseBackgroundUpdates.rawValue
+        preciseInBackground = UserDefaults.standard.bool(forKey: preciseBackgroundUpdatesKey)
         preciseBackgroundSink = $preciseInBackground.sink {
-            UserDefaults.standard.set($0, forKey: preciseBackgroudUpdatesKey)
+            UserDefaults.standard.set($0, forKey: preciseBackgroundUpdatesKey)
             self.updateAccuracy()
         }
         
@@ -71,7 +71,7 @@ class LocationDataManager : NSObject, CLLocationManagerDelegate, ObservableObjec
             
             // Solution for missing callback copied from AirGuard:
             
-            // If the user prevously selected "Allow once" for location, no dialogue will appear when requesting always usage.
+            // If the user previously selected "Allow once" for location, no dialogue will appear when requesting always usage.
             // We detect if a dialogue is shown using the background property.
             // If the dialogue is show, the app is in background.
             // If not, we open the app settings.
@@ -159,7 +159,7 @@ class LocationDataManager : NSObject, CLLocationManagerDelegate, ObservableObjec
     }
     
     // TODO: Add new UserDefault which allows for more fine-grained tracking
-    // Forgeground -> Similar (kCLLocationAccuracyBest)
+    // Foreground -> Similar (kCLLocationAccuracyBest)
     // Background (Slow moving) -> kCLLocationAccuracyKilometer
     // Background (Fast moving) -> kCLLocationAccuracyBestForNavigation
     // See: https://developer.apple.com/documentation/corelocation/cllocationmanager/1423836-desiredaccuracy
@@ -174,7 +174,7 @@ class LocationDataManager : NSObject, CLLocationManagerDelegate, ObservableObjec
         }
     }
     
-    func enterBackgorund() {
+    func enterBackground() {
         background = true
         if preciseInBackground {
             updateAccuracy()
@@ -188,7 +188,7 @@ class LocationDataManager : NSObject, CLLocationManagerDelegate, ObservableObjec
     }
     
     private func updateAccuracy(location: CLLocation?) {
-        // TODO: Remove later as it currently is only used for debbuging
+        // TODO: Remove later as it currently is only used for debuginng
         // It's our choice with the Always permission whether we display the indicator or not
         // See: https://developer.apple.com/documentation/corelocation/handling_location_updates_in_the_background
         locationManager.showsBackgroundLocationIndicator = preciseInBackground
