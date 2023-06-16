@@ -6,6 +6,7 @@
 	<true/>
 	<key>BGTaskSchedulerPermittedIdentifiers</key>
 	<array>
+		<string>de.tudarmstadt.seemoo.CellGuard.refresh.packets</string>
 		<string>de.tudarmstadt.seemoo.CellGuard.refresh.cells</string>
 		<string>de.tudarmstadt.seemoo.CellGuard.processing.verify</string>
 	</array>

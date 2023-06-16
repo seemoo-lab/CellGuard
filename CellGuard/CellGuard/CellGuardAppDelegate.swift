@@ -17,6 +17,7 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
     // https://holyswift.app/new-backgroundtask-in-swiftui-and-how-to-test-it/
     
     static let cellRefreshTaskIdentifier = "de.tudarmstadt.seemoo.CellGuard.refresh.cells"
+    static let packetRefreshTaskIdentifier = "de.tudarmstadt.seemoo.CellGuard.refresh.packets"
     static let verifyTaskIdentifier = "de.tudarmstadt.seemoo.CellGuard.processing.verify"
     
     private static let logger = Logger(
@@ -70,6 +71,20 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
             // TODO: Should we allow to cancel the task somehow?
             // task.expirationHandler
             
+            collector.collectAndStore { result in
+                let count = try? result.get()
+                task.setTaskCompleted(success: count != nil)
+            }
+        }
+        
+        BGTaskScheduler.shared.register(forTaskWithIdentifier: Self.packetRefreshTaskIdentifier, using: nil) { task in
+            let collector = CPTCollector(client: CPTClient(queue: DispatchQueue.global()))
+            
+            collector.collectAndStore { result in
+                let count = try? result.get()
+                task.setTaskCompleted(success: count != nil)
+            }
+                        
             collector.collectAndStore { result in
                 let count = try? result.get()
                 task.setTaskCompleted(success: count != nil)

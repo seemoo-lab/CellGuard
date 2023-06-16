@@ -36,7 +36,7 @@ class CellGuardSceneDelegate: NSObject, UIWindowSceneDelegate, ObservableObject 
     }
     
     private func scheduleAppRefresh() {
-        // Scheudle the background refresh task once the app goes into the background.
+        // Schedule the background refresh task once the app goes into the background.
         // The task will be executed no earlier than 1 hour from now.
         // This methods is also called once the task was executed in the background and thus, schedules another execution.
         // (Or at least I hope that)
@@ -47,6 +47,14 @@ class CellGuardSceneDelegate: NSObject, UIWindowSceneDelegate, ObservableObject 
             try BGTaskScheduler.shared.submit(refreshTask)
         } catch {
             Self.logger.warning("Could not schedule the app cell refresh task: \(Self.toDescription(taskSchedulerError: error as? BGTaskScheduler.Error)) -> \(error)")
+        }
+        
+        do {
+            let refreshTask = BGAppRefreshTaskRequest(identifier: CellGuardAppDelegate.packetRefreshTaskIdentifier)
+            refreshTask.earliestBeginDate = Date(timeIntervalSinceNow: 60 * 60)
+            try BGTaskScheduler.shared.submit(refreshTask)
+        } catch {
+            Self.logger.warning("Could not schedule the app packet refresh task: \(Self.toDescription(taskSchedulerError: error as? BGTaskScheduler.Error)) -> \(error)")
         }
         
         do {
