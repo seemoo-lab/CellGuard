@@ -18,14 +18,63 @@ import SwiftUI
 // - https://stackoverflow.com/questions/65095562/observableobject-is-updating-all-views-and-causing-menus-to-close-in-swiftui
 //
 // We've got a workaround for a related problem with NavigationLinks in ToolbarItems in PacketTabView.swift.
+//
+// And we've fixed the primary issue with 'Self._printChanges()' (Only works on iOS 15 and above)
+// See: WelcomeSheet.swift
+// See: https://www.hackingwithswift.com/quick-start/swiftui/how-to-find-which-data-change-is-causing-a-swiftui-view-to-update
 
 
 struct SummaryTabView: View {
     
+    @State private var showingCellList = false
+    @State private var showingHelp = false
+    @State private var showingSettings = false
+    
     var body: some View {
         NavigationView {
-            CombinedRiskCellView()
+            VStack {
+                NavigationLink(isActive: $showingCellList) {
+                    CellsListView()
+                } label: {
+                    EmptyView()
+                }
+                NavigationLink(isActive: $showingHelp) {
+                    Text("TODO")
+                } label: {
+                    EmptyView()
+                }
+                NavigationLink(isActive: $showingSettings) {
+                    SettingsView()
+                } label: {
+                    EmptyView()
+                }
+                CombinedRiskCellView()
+            }
             .navigationTitle("Summary")
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Menu {
+                        Button {
+                            showingCellList = true
+                        } label: {
+                            Label("View all Cells", systemImage: "list.bullet")
+                        }
+                        Button {
+                            showingHelp = true
+                        } label: {
+                            Label("Learn more", systemImage: "questionmark.circle")
+                        }
+                        Button {
+                            showingSettings = true
+                        } label: {
+                            Label("Settings", systemImage: "gear")
+                        }
+                    } label: {
+                        Image(systemName: "ellipsis.circle")
+                            .imageScale(.large)
+                    }
+                }
+            }
         }
         .background(Color.gray)
     }
@@ -73,27 +122,6 @@ private struct CombinedRiskCellView: View {
             if !tweakCells.isEmpty {
                 CellInformationCard(cell: tweakCells[0])
             }
-            
-            NavigationLink {
-                CellsListView()
-            } label: {
-                Label("View all cells", systemImage: "list.bullet")
-            }
-            .padding(EdgeInsets(top: 10, leading: 0, bottom: 7, trailing: 0))
-            
-            NavigationLink {
-                Text("TODO")
-            } label: {
-                Label("Learn more", systemImage: "questionmark.circle")
-            }
-            .padding(EdgeInsets(top: 7, leading: 0, bottom: 7, trailing: 0))
-            
-            NavigationLink {
-                SettingsView()
-            } label: {
-                Label("Settings", systemImage: "gear")
-            }
-            .padding(EdgeInsets(top: 7, leading: 0, bottom: 7, trailing: 0))
         }
     }
     
