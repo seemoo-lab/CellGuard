@@ -9,7 +9,7 @@ import SwiftUI
 
 struct WelcomeSheet: View {
     
-    let pressContinue: () -> ()
+    let close: () -> Void
     
     var body: some View {
         VStack {
@@ -42,9 +42,23 @@ struct WelcomeSheet: View {
                 
             }
             
-            // TODO: The button must get a bit bigger
+            // The button could get a bit bigger
             LargeButton(title: "Continue", backgroundColor: .blue) {
-                self.pressContinue()
+                // Only show the introduction sheet once
+                UserDefaults.standard.set(true, forKey: UserDefaultsKeys.introductionShown.rawValue)
+                
+                self.close()
+                
+                // Request permissions after the introduction sheet has been closed.
+                // It's crucial that we do NOT use those manager objects as environment objects in the CompositeTabView class,
+                // otherwise there are a lot of updates and shit (including toolbar stuff) breaks, e.g. NavigationView close prematurely.
+                CGNotificationManager.shared.requestAuthorization { _ in
+                    LocationDataManager.shared.requestAuthorization { _ in
+                        CGNotificationManager.shared.requestAuthorization { _ in
+                            
+                        }
+                    }
+                }
             }
             
             Spacer()

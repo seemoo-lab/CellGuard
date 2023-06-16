@@ -45,11 +45,6 @@ struct CompositeTabView: View {
         category: String(describing: CompositeTabView.self)
     )
     
-    @Environment(\.managedObjectContext) var managedContext: NSManagedObjectContext
-    @EnvironmentObject var locationManager: LocationDataManager
-    @EnvironmentObject var networkAuthorization: LocalNetworkAuthorization
-    @EnvironmentObject var notificationManager: CGNotificationManager
-    
     @State private var showingTab = ShownTab.summary
     @State private var showingImport = false
     @State private var showingSheet: ShownSheet?
@@ -100,16 +95,6 @@ struct CompositeTabView: View {
             case .welcome:
                 WelcomeSheet {
                     self.showingSheet = nil
-                    
-                    // Only show the introduction sheet once
-                    UserDefaults.standard.set(true, forKey: UserDefaultsKeys.introductionShown.rawValue)
-                    
-                    // Request permissions after the introduction sheet has been closed
-                    networkAuthorization.requestAuthorization { _ in
-                        locationManager.requestAuthorization { _ in
-                            notificationManager.requestAuthorization { _ in }
-                        }
-                    }
                 }
             }
         }

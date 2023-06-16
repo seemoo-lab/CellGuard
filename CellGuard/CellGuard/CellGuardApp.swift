@@ -21,7 +21,6 @@ struct CellGuardApp: App {
     let backgroundState = BackgroundState.shared
 
     var body: some Scene {
-        // TODO: App hangs a bit started for the first time -> Maybe add a launch screen?
         WindowGroup {
             CompositeTabView()
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
