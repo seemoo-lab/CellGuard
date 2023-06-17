@@ -13,7 +13,6 @@ enum QMIParseError: Error {
     case InvalidQMuxFlag(UInt8)
     case InvalidPacketLength(UInt16, UInt16)
     case InvalidContentLength(UInt16, UInt16)
-    case EmptyTLV
 }
 
 // Sources:
@@ -174,10 +173,5 @@ struct QMITLV {
         length = try data.get(1)
         // The actual content of the TLV
         self.data = nsData.subdata(in: 3..<1+2+Int(length))
-        
-        // No TLV has a length of zero, so we throw an error to prevent an infinite parsing loop.
-        if length == 0 {
-            throw QMIParseError.EmptyTLV
-        }
     }
 }

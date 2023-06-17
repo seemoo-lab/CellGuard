@@ -18,7 +18,7 @@ final class ARIDefinitionsTests: XCTestCase {
         XCTAssertNotNil(group)
         
         XCTAssertEqual(group?.identifier, 0x01)
-        XCTAssertEqual(group?.name, "_ARIMSGDEF_GROUP01_bsp")
+        XCTAssertEqual(group?.name, "01_bsp")
         XCTAssertEqual(group?.types.count, 52)
     }
     
