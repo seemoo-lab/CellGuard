@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct URLIdentfiable: Identifiable {
+struct URLIdentifiable: Identifiable {
     let id: String
     let url: URL
     

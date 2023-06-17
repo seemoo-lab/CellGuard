@@ -16,7 +16,7 @@ struct ExportView: View {
     @State private var doCompressFile = true
     
     @State private var isExportInProgress = false
-    @State private var shareURL: URLIdentfiable? = nil
+    @State private var shareURL: URLIdentifiable? = nil
     @State private var showFailAlert: Bool = false
     @State private var failReason: String? = nil
     
@@ -82,7 +82,7 @@ struct ExportView: View {
         PersistenceExporter.exportInBackground(categories: exportCategories, compress: doCompressFile) { result in
             isExportInProgress = false
             do {
-                self.shareURL = URLIdentfiable(url: try result.get())
+                self.shareURL = URLIdentifiable(url: try result.get())
             } catch {
                 failReason = error.localizedDescription
                 showFailAlert = true
