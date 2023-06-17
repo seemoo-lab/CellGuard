@@ -82,13 +82,7 @@ struct SummaryTabView: View {
 
 private struct CombinedRiskCellView: View {
     
-    @EnvironmentObject var locationManager: LocationDataManager
-    @EnvironmentObject var networkAuthorization: LocalNetworkAuthorization
-    @EnvironmentObject var notificationManager: CGNotificationManager
-    
     @FetchRequest private var tweakCells: FetchedResults<TweakCell>
-    @FetchRequest private var failedCells: FetchedResults<TweakCell>
-    @FetchRequest private var unknownCells: FetchedResults<TweakCell>
     
     init() {
         let latestTweakCellRequest = NSFetchRequest<TweakCell>()
@@ -97,27 +91,11 @@ private struct CombinedRiskCellView: View {
         latestTweakCellRequest.sortDescriptors = [NSSortDescriptor(keyPath: \TweakCell.collected, ascending: false)]
         
         _tweakCells = FetchRequest(fetchRequest: latestTweakCellRequest)
-        
-        let calendar = Calendar.current
-        let ftDaysAgo = calendar.date(byAdding: .day, value: -14, to: calendar.startOfDay(for: Date()))!
-        
-        let ftPredicate = NSPredicate(format: "collected >= %@", ftDaysAgo as NSDate)
-        let failedPredicate = NSPredicate(format: "status == %@", CellStatus.failed.rawValue)
-        let unknownPredicate = NSPredicate(format: "status == %@", CellStatus.imported.rawValue)
-        
-        _failedCells = FetchRequest(
-            sortDescriptors: [],
-            predicate: NSCompoundPredicate(andPredicateWithSubpredicates: [ftPredicate, failedPredicate])
-        )
-        _unknownCells = FetchRequest(
-            sortDescriptors: [],
-            predicate: NSCompoundPredicate(andPredicateWithSubpredicates: [ftPredicate, unknownPredicate])
-        )
     }
     
     var body: some View {
         ScrollView {
-            RiskIndicatorCard(risk: riskLevel)
+            CalculatedRiskView(latestTweakCell: tweakCells.first)
             
             if !tweakCells.isEmpty {
                 CellInformationCard(cell: tweakCells[0])
@@ -125,30 +103,71 @@ private struct CombinedRiskCellView: View {
         }
     }
     
-    var riskLevel: RiskLevel {
+}
+
+private struct CalculatedRiskView: View {
+    
+    @EnvironmentObject var locationManager: LocationDataManager
+    @EnvironmentObject var networkAuthorization: LocalNetworkAuthorization
+    @EnvironmentObject var notificationManager: CGNotificationManager
+    
+    @FetchRequest(
+        sortDescriptors: [NSSortDescriptor(keyPath: \TweakCell.collected, ascending: false)],
+        predicate: Self.ftDaysPredicate(status: .failed)
+    )
+    private var failedCells: FetchedResults<TweakCell>
+    
+    @FetchRequest(
+        sortDescriptors: [NSSortDescriptor(keyPath: \TweakCell.collected, ascending: false)],
+        predicate: Self.ftDaysPredicate(status: .imported)
+    )
+    private var unknownCells: FetchedResults<TweakCell>
+    
+    let latestTweakCell: TweakCell?
+    
+    init(latestTweakCell: TweakCell?) {
+        self.latestTweakCell = latestTweakCell
+    }
+    
+    var body: some View {
         // We keep the unknown status until all cells are verified because we're sending notifications during verification
         if unknownCells.count > 0 {
-            return .Unknown
+            print("Unknown \(unknownCells)")
+            return RiskIndicatorCard(risk: .Unknown)
         }
         
         if failedCells.count > 0 {
-            return .High(count: failedCells.count)
+            return RiskIndicatorCard(risk: .High(count: failedCells.count))
         }
         
         // We've received no cells for 30 minutes from the tweak, so we warn the user
         let ftMinutesAgo = Date() - 30 * 60
-        if tweakCells.isEmpty || tweakCells.first!.collected! < ftMinutesAgo {
-            return .Medium(cause: .Tweak)
+        guard let latestTweakCell = latestTweakCell else {
+            return RiskIndicatorCard(risk: .Medium(cause: .Tweak))
+        }
+        
+        if latestTweakCell.collected ?? Date() < ftMinutesAgo {
+            return RiskIndicatorCard(risk: .Medium(cause: .Tweak))
         }
         
         // TODO: A condition is false at the first start of the app, figure out which
         if (locationManager.authorizationStatus ?? .authorizedAlways) != .authorizedAlways ||
             !(networkAuthorization.lastResult ?? true) ||
             (notificationManager.authorizationStatus ?? .authorized) != .authorized {
-            return .Medium(cause: .Permissions)
+            return RiskIndicatorCard(risk: .Medium(cause: .Permissions))
         }
         
-        return .Low
+        return RiskIndicatorCard(risk: .Low)
+    }
+    
+    private static func ftDaysPredicate(status: CellStatus) -> NSPredicate {
+        let calendar = Calendar.current
+        let ftDaysAgo = calendar.date(byAdding: .day, value: -14, to: calendar.startOfDay(for: Date()))!
+        
+        return NSCompoundPredicate(andPredicateWithSubpredicates: [
+            NSPredicate(format: "collected >= %@", ftDaysAgo as NSDate),
+            NSPredicate(format: "status == %@", status.rawValue)
+        ])
     }
     
 }
