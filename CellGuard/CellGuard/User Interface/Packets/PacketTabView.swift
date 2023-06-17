@@ -32,6 +32,9 @@ struct PacketTabView: View {
             .navigationTitle("Packets")
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
+                    PauseContinueButton(filter: $filter)
+                }
+                ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
                         isShowingFilterView = true
                     } label: {
@@ -47,6 +50,34 @@ struct PacketTabView: View {
     }
 }
 
+private struct PauseContinueButton: View {
+    
+    @Binding var filter: PacketFilterSettings
+    
+    var body: some View {
+        Button {
+            if filter.timeFrame == .live {
+                if filter.pauseDate == nil {
+                    filter.pauseDate = Date()
+                } else {
+                    filter.pauseDate = nil
+                }
+            } else {
+                filter.timeFrame = .live
+            }
+        } label: {
+            if filter.timeFrame == .live && filter.pauseDate == nil {
+                Image(systemName: "pause")
+            } else {
+                Image(systemName: "play")
+            }
+        }
+        // For now we disable the continue button for past traces as it lags when pressed
+        .disabled(filter.timeFrame != .live)
+    }
+    
+}
+
 private struct FilteredPacketView: View {
     
     // We have to use separate fetch request as the preview crashes for a unified request
@@ -57,7 +88,7 @@ private struct FilteredPacketView: View {
     private var ariPackets: FetchedResults<ARIPacket>
     
     private let filter: PacketFilterSettings
-        
+    
     init(filter: PacketFilterSettings) {
         self.filter = filter
         

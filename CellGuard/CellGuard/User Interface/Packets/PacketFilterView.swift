@@ -19,8 +19,10 @@ struct PacketFilterSettings {
     
     var timeFrame: PacketFilterTimeFrame = .live
     var livePacketCount: Double = 200
-    var startDate = Date().addingTimeInterval(-60*60*24)
+    var startDate = Date().addingTimeInterval(-60*30)
     var endDate = Date()
+    
+    var pauseDate: Date? = nil
     
     func applyTo(qmi request: NSFetchRequest<QMIPacket>) {
         if proto != .qmi {
@@ -46,6 +48,9 @@ struct PacketFilterSettings {
         
         if timeFrame == .live {
             request.fetchLimit = Int(livePacketCount)
+            if let pauseDate = pauseDate {
+                predicateList.append(NSPredicate(format: "imported <= %@", pauseDate as NSDate))
+            }
         } else {
             predicateList.append(NSPredicate(format: "collected >= %@", startDate as NSDate))
             predicateList.append(NSPredicate(format: "collected <= %@", endDate as NSDate))
@@ -73,6 +78,9 @@ struct PacketFilterSettings {
         
         if timeFrame == .live {
             request.fetchLimit = Int(livePacketCount)
+            if let pauseDate = pauseDate {
+                predicateList.append(NSPredicate(format: "imported <= %@", pauseDate as NSDate))
+            }
         } else {
             predicateList.append(NSPredicate(format: "collected >= %@", startDate as NSDate))
             predicateList.append(NSPredicate(format: "collected <= %@", endDate as NSDate))
@@ -203,6 +211,15 @@ private struct PacketFilterListView: View {
                     Text("Recorded").tag(PacketFilterTimeFrame.past)
                 }
                 if settings.timeFrame == .live {
+                    Toggle("Paused", isOn: Binding(get: {
+                        settings.pauseDate != nil
+                    }, set: { doPause in
+                        if doPause {
+                            settings.pauseDate = Date()
+                        } else {
+                            settings.pauseDate = nil
+                        }
+                    }))
                     HStack {
                         Image(systemName: "tray")
                             .foregroundColor(.gray)
