@@ -9,6 +9,7 @@ import CoreData
 import Foundation
 import OSLog
 import UIKit
+import Gzip
 
 enum PersistenceExportError: Error {
     case noResultSet
@@ -22,12 +23,12 @@ struct PersistenceExporter {
         category: String(describing: PersistenceExporter.self)
     )
     
-    static func exportInBackground(categories: [PersistenceCategory], completion: @escaping (Result<URL, Error>) -> Void) {
+    static func exportInBackground(categories: [PersistenceCategory], compress: Bool, completion: @escaping (Result<URL, Error>) -> Void) {
         // See: https://www.hackingwithswift.com/read/9/4/back-to-the-main-thread-dispatchqueuemain
         
         // Run the export in the background
         DispatchQueue.global(qos: .userInitiated).async {
-            let exporter = PersistenceExporter(categories: categories)
+            let exporter = PersistenceExporter(categories: categories, compress: compress)
             
             exporter.export { result in
                 // Call the callback on the main queue
@@ -39,9 +40,11 @@ struct PersistenceExporter {
     }
     
     let categories: [PersistenceCategory]
+    let compress: Bool
     
-    private init(categories: [PersistenceCategory]) {
+    private init(categories: [PersistenceCategory], compress: Bool) {
         self.categories = categories
+        self.compress = compress
     }
     
     private func export(completion: @escaping (Result<URL, Error>) -> Void) {
@@ -115,8 +118,14 @@ struct PersistenceExporter {
                     Self.logger.debug("Exporting \(packets.count) packets")
                 }
                 
-                // Sometimes the app just crashes here
+                // Sometimes the app just crashes here ):
                 result = try toJSON(connectedCells: connectedCells, alsCells: alsCells, userLocations: locations, packets: packets)
+                
+                // Compress the data using zlib if enabled
+                // See: https://github.com/1024jp/GzipSwift
+                if compress {
+                    result = try result?.gzipped()
+                }
             } catch {
                 Self.logger.warning("Can't fetch data or serialize it: \(error)")
                 processingError = error
@@ -222,7 +231,9 @@ struct PersistenceExporter {
         dateFormatter.dateFormat = "yyyy-MM-dd_HH-mm-ss"
         let dateString = dateFormatter.string(for: Date())!
         
-        return documents.appendingPathComponent("export-\(dateString).cells")
+        let compressionSuffix = self.compress ? ".gz" : ""
+        
+        return documents.appendingPathComponent("export-\(dateString).cells\(compressionSuffix)")
     }
     
 }

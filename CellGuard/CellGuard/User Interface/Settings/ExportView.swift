@@ -13,6 +13,8 @@ struct ExportView: View {
     @State private var doExportLocations = true
     @State private var doExportPackets = true
     
+    @State private var doCompressFile = true
+    
     @State private var isExportInProgress = false
     @State private var shareURL: URLIdentfiable? = nil
     @State private var showFailAlert: Bool = false
@@ -26,8 +28,11 @@ struct ExportView: View {
                 Toggle("Locations", isOn: $doExportLocations)
                 Toggle("Packets", isOn: $doExportPackets)
             }
-            .disabled(isExportInProgress)
+            Section(header: Text("File"), footer: Text("Enable compression to decrease the file's size.")) {
+                Toggle("Compression", isOn: $doCompressFile)
+            }
         }
+        .disabled(isExportInProgress)
         .listStyle(.insetGrouped)
         .navigationTitle(Text("Data"))
         .navigationBarTitleDisplayMode(.inline)
@@ -74,7 +79,7 @@ struct ExportView: View {
             PersistenceCategory.packets: doExportPackets,
         ].filter { $0.value }.map { $0.key }
         
-        PersistenceExporter.exportInBackground(categories: exportCategories) { result in
+        PersistenceExporter.exportInBackground(categories: exportCategories, compress: doCompressFile) { result in
             isExportInProgress = false
             do {
                 self.shareURL = URLIdentfiable(url: try result.get())
