@@ -51,13 +51,7 @@ struct PacketDetailsRow: View {
     }
     
     var body: some View {
-        HStack {
-            Text(description)
-            Spacer()
-            Text(value)
-                .foregroundColor(.gray)
-        }
-        .multilineTextAlignment(.trailing)
+        KeyValueListRow(key: description, value: value)
     }
 }
 

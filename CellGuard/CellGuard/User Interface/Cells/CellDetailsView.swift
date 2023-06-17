@@ -138,12 +138,7 @@ private struct CellDetailsRows: View {
     }
     
     var body: some View {
-        HStack {
-            Text(description)
-            Spacer()
-            Text(value)
-                .foregroundColor(.gray)
-        }
+        KeyValueListRow(key: description, value: value)
     }
     
 }

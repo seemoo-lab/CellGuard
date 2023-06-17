@@ -103,10 +103,28 @@ struct SettingsView: View {
                     Text("Delete Data")
                 }
             }
+            
+            Section(header: Text("About CellGuard")) {
+                KeyValueListRow(key: "Version", value: versionBuild)
+                // TODO: Open mail with the correct address on click
+                KeyValueListRow(key: "Developer", value: "Lukas Arnold")
+                KeyValueListRow(key: "Supervisor", value: "Jiska Classen")
+                Link(destination: URL(string: "https://www.seemoo.tu-darmstadt.de")!) {
+                    KeyValueListRow(key: "Institution", value: "SEEMOO @ TU Darmstadt")
+                }
+            }
         }
         .listStyle(.insetGrouped)
         .navigationTitle(Text("Settings"))
         .navigationBarTitleDisplayMode(.inline)
+    }
+    
+    var versionBuild: String {
+        // https://stackoverflow.com/a/28153897
+        let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "???"
+        let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String  ?? "???"
+        
+        return "\(version) (\(build))"
     }
     
     private func openAppSettings() {
