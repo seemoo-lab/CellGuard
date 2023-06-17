@@ -19,6 +19,8 @@ enum SettingsCloseReason {
 
 struct SettingsView: View {
     
+    @AppStorage(UserDefaultsKeys.showTrackingMarker.rawValue) var showTrackingMarker: Bool = false
+    
     @EnvironmentObject var locationManager: LocationDataManager
     @EnvironmentObject var networkAuthorization: LocalNetworkAuthorization
     @EnvironmentObject var notificationManager: CGNotificationManager
@@ -79,8 +81,14 @@ struct SettingsView: View {
                 Toggle("Notifications", isOn: isPermissionNotifications)
             }
             
-            Section(header: Text("Location")) {
-                Toggle("Precise Background Updates", isOn: $locationManager.preciseInBackground)
+            Section(header: Text("Cell Verification")) {
+                Picker("Approach", selection: $locationManager.proximityDetection) {
+                    Text("Database Validation").tag(false)
+                    Text("Proximity Detection").tag(true)
+                }
+                if locationManager.proximityDetection {
+                    Toggle("Show Tracking Indicator", isOn: $showTrackingMarker)
+                }
             }
             
             Section(header: Text("Local Database")) {

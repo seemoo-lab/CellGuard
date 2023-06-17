@@ -21,11 +21,11 @@ class LocationDataManager : NSObject, CLLocationManagerDelegate, ObservableObjec
     private let locationManager = CLLocationManager()
     private var authorizationCompletion: ((Bool) -> Void)?
     private var background = true
-    private var preciseBackgroundSink: AnyCancellable?
+    private var verificationApproachSink: AnyCancellable?
     
     @Published var authorizationStatus: CLAuthorizationStatus? = nil
     @Published var lastLocation: CLLocation?
-    @Published var preciseInBackground: Bool = false
+    @Published var proximityDetection: Bool = false
     
     private override init() {
         super.init()
@@ -33,10 +33,10 @@ class LocationDataManager : NSObject, CLLocationManagerDelegate, ObservableObjec
         locationManager.delegate = self
         locationManager.allowsBackgroundLocationUpdates = true
         
-        let preciseBackgroundUpdatesKey = UserDefaultsKeys.preciseBackgroundUpdates.rawValue
-        preciseInBackground = UserDefaults.standard.bool(forKey: preciseBackgroundUpdatesKey)
-        preciseBackgroundSink = $preciseInBackground.sink {
-            UserDefaults.standard.set($0, forKey: preciseBackgroundUpdatesKey)
+        let verificationApproachKey = UserDefaultsKeys.verificationApproach.rawValue
+        proximityDetection = UserDefaults.standard.bool(forKey: verificationApproachKey)
+        verificationApproachSink = $proximityDetection.sink {
+            UserDefaults.standard.set($0, forKey: verificationApproachKey)
             self.updateAccuracy()
         }
         
@@ -51,7 +51,7 @@ class LocationDataManager : NSObject, CLLocationManagerDelegate, ObservableObjec
      }
     
     deinit {
-        preciseBackgroundSink?.cancel()
+        verificationApproachSink?.cancel()
     }
     
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
@@ -107,7 +107,7 @@ class LocationDataManager : NSObject, CLLocationManagerDelegate, ObservableObjec
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         Self.logger.log("New Locations: \(locations)")
         
-        let importLocations = locations.map { TrackedUserLocation(from: $0, background: background, preciseBackground: preciseInBackground) }
+        let importLocations = locations.map { TrackedUserLocation(from: $0, background: background, preciseBackground: proximityDetection) }
         
         do {
             try PersistenceController.shared.importUserLocations(from: importLocations)
@@ -136,7 +136,7 @@ class LocationDataManager : NSObject, CLLocationManagerDelegate, ObservableObjec
     }
     
     private func resumeLocationUpdates() {
-        if !background || preciseInBackground {
+        if !background || proximityDetection {
             locationManager.startUpdatingLocation()
         }
         
@@ -154,7 +154,7 @@ class LocationDataManager : NSObject, CLLocationManagerDelegate, ObservableObjec
         case .authorizedWhenInUse: return "authorizedWhenInUse"
         
         default:
-            return "unknwon (\(authorizationStatus.rawValue)"
+            return "unknown (\(authorizationStatus.rawValue)"
         }
     }
     
@@ -176,7 +176,7 @@ class LocationDataManager : NSObject, CLLocationManagerDelegate, ObservableObjec
     
     func enterBackground() {
         background = true
-        if preciseInBackground {
+        if proximityDetection {
             updateAccuracy()
         } else {
             locationManager.stopUpdatingLocation()
@@ -188,10 +188,10 @@ class LocationDataManager : NSObject, CLLocationManagerDelegate, ObservableObjec
     }
     
     private func updateAccuracy(location: CLLocation?) {
-        // TODO: Remove later as it currently is only used for debuginng
         // It's our choice with the Always permission whether we display the indicator or not
         // See: https://developer.apple.com/documentation/corelocation/handling_location_updates_in_the_background
-        locationManager.showsBackgroundLocationIndicator = preciseInBackground
+        // We allow the user to chose whether the indicator is shown or not, by default it's hidden.
+        locationManager.showsBackgroundLocationIndicator = proximityDetection && UserDefaults.standard.bool(forKey: UserDefaultsKeys.showTrackingMarker.rawValue)
         
         if !background {
             Self.logger.debug("Accuracy -> Best")
@@ -199,7 +199,7 @@ class LocationDataManager : NSObject, CLLocationManagerDelegate, ObservableObjec
             return
         }
         
-        if !preciseInBackground {
+        if !proximityDetection {
             Self.logger.debug("Accuracy -> Not precise in background")
             return
         }

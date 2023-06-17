@@ -10,5 +10,6 @@ import Foundation
 enum UserDefaultsKeys: String {
     case introductionShown
     case packetRetention
-    case preciseBackgroundUpdates
+    case verificationApproach
+    case showTrackingMarker
 }
