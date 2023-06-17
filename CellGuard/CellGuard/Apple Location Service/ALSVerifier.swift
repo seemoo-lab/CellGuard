@@ -28,12 +28,12 @@ struct ALSVerifier {
     }
     
     func verify(n: Int, completion: (Error?) -> Void) {
-        Self.logger.debug("Verifing at max \(n) tweak cell(s)...")
+        Self.logger.debug("Verifying at max \(n) tweak cell(s)...")
         
         // Fetch n of the latest unverified cells
         let queryCells: [NSManagedObjectID : ALSQueryCell]
         do {
-            queryCells = try persistence.fetchLatestUnverfiedTweakCells(count: n)
+            queryCells = try persistence.fetchLatestUnverifiedTweakCells(count: n)
         } catch {
             completion(error)
             return
@@ -44,10 +44,10 @@ struct ALSVerifier {
         // We're using a dispatch group to provide a callback when all operations are finished
         let group = DispatchGroup()
         queryCells.forEach { objectID, queryCell in
-            // Signal the wait group to incrase its size by one
+            // Signal the wait group to increase its size by one
             group.enter()
             
-            // Try to find the coresponding ALS cell in our database
+            // Try to find the corresponding ALS cell in our database
             if let existing = try? persistence.assignExistingALSIfPossible(to: objectID), existing {
                 Self.logger.info("Verified tweak cell using the local ALS database: \(queryCell)")
                 verifyDistance(source: objectID)
@@ -134,7 +134,7 @@ struct ALSVerifier {
             
             Self.logger.debug("Distance warning for cell \(source): \(distance.distance)")
         case .failure:
-            // If the distance is present and too large to be plausbile, we mark the cell as failed and
+            // If the distance is present and too large to be plausible, we mark the cell as failed and
             try? persistence.storeCellStatus(cellId: source, status: .failed)
             
             // We send a notification

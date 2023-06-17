@@ -31,6 +31,7 @@ struct MultiCellMap: UIViewRepresentable {
         mapView.showsUserLocation = true
         mapView.showsCompass = true
         
+        // TODO: Extract lastLocation into sub struct of the LocationDataManger
         let location = locationManager.lastLocation ?? CLLocation(latitude: 49.8726737, longitude: 8.6516291)
         let region = MKCoordinateRegion(
             center: location.coordinate,

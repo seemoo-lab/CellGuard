@@ -12,11 +12,11 @@ struct VerificationProgressView: View {
         sortDescriptors: [NSSortDescriptor(keyPath: \TweakCell.collected, ascending: false)],
         predicate: NSPredicate(format: "status == %@", CellStatus.imported.rawValue)
     )
-    private var unverifedCells: FetchedResults<TweakCell>
+    private var unverifiedCells: FetchedResults<TweakCell>
     
     var body: some View {
         ProgressView {
-            Text("Verifing \(unverifedCells.count) \(unverifedCells.count == 1 ? "cell" : "cells")")
+            Text("Verifying \(unverifiedCells.count) \(unverifiedCells.count == 1 ? "cell" : "cells")")
         }
     }
 }

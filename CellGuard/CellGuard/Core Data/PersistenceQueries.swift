@@ -310,7 +310,7 @@ extension PersistenceController {
         logger.debug("Successfully inserted \(packets.count) tweak ARI packets.")
     }
     
-    func fetchLatestUnverfiedTweakCells(count: Int) throws -> [NSManagedObjectID : ALSQueryCell]  {
+    func fetchLatestUnverifiedTweakCells(count: Int) throws -> [NSManagedObjectID : ALSQueryCell]  {
         var queryCells: [NSManagedObjectID : ALSQueryCell] = [:]
         var fetchError: Error? = nil
         newTaskContext().performAndWait {
