@@ -132,7 +132,6 @@ private struct CalculatedRiskView: View {
     var body: some View {
         // We keep the unknown status until all cells are verified because we're sending notifications during verification
         if unknownCells.count > 0 {
-            print("Unknown \(unknownCells)")
             return RiskIndicatorCard(risk: .Unknown)
         }
         
