@@ -31,6 +31,11 @@ struct CPTPacket: CustomStringConvertible {
     func parse() throws -> ParsedPacket {
         switch (proto) {
         case .qmi:
+            // Apparently ARI packets use the same interfaces as QMI
+            if data.count >= 1 && data.subdata(in: 0..<4) == Data([0xDE, 0xC0, 0x7E, 0xAB]) {
+                return try ParsedARIPacket(data: data)
+            }
+                    
             return try ParsedQMIPacket(nsData: data)
         case .ari:
             return try ParsedARIPacket(data: data)
