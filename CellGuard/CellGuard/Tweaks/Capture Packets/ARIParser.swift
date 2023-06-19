@@ -73,11 +73,11 @@ struct ARIHeader {
         // Our comments before each field show the relevant bytes (starting from zero) and the bitmask applied to them
         
         // (5) 00000001 (4) 11111000
-        self.group = ((data[5] & 0b00000001) << 5) | ((data[4] & 0b11111000) >> 3)
+        self.group = (UInt8(data[5] & 0b00000001) << 5) | (UInt8(data[4] & 0b11111000) >> 3)
         // (8) 00000111 (7) 00000000 (6) 00000001 (5) 11111110
         self.sequenceNumber = (UInt16(data[8] & 0b00000111) << 8) | (UInt16(data[6] & 0b00000001) << 7) | (UInt16(data[5] & 0b11111110) >> 1)
         // (7) 11111111 (6) 11111110
-        self.length = UInt16(data[7] << 7) | (UInt16(data[6] & 0b11111110) >> 1)
+        self.length = (UInt16(data[7]) << 7) | (UInt16(data[6] & 0b11111110) >> 1)
         // (9) 11111111 (8) 11000000
         self.type = (UInt16(data[9]) << 2) | (UInt16(data[8] & 0b11000000) >> 6)
         // (11) 11111111 (10) 11111110
