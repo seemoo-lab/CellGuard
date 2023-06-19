@@ -50,7 +50,7 @@ private struct PacketCellQMIBody: View {
                 Spacer()
             }
             HStack {
-                Text(message?.name ?? "???")
+                Text(message?.name ?? hexString(packet.message))
                 Spacer()
             }
         }
@@ -83,10 +83,7 @@ private struct PacketCellARIBody: View {
                 Spacer()
             }
             HStack {
-                // Image(systemName: "book")
-                Text(type?.name ?? "???")
-                // + Text(" ")
-                // + GrayText(hex: packet.type)
+                Text(type?.name ?? hexString(packet.type))
                 Spacer()
             }
         }
@@ -109,7 +106,7 @@ private struct PacketCellFooter: View {
 }
 
 private func hexString(_ hex: any BinaryInteger) -> String {
-    return String(hex, radix: 16, uppercase: true)
+    return "0x\(String(hex, radix: 16, uppercase: true))"
 }
 
 private func GrayText(_ text: String) -> Text {
@@ -125,7 +122,7 @@ private func GrayText(bytes: Int) -> Text {
 }
 
 private func GrayText(hex: any BinaryInteger) -> Text {
-    return GrayText("0x\(hexString(hex))")
+    return GrayText(hexString(hex))
 }
 
 struct PacketCell_Previews: PreviewProvider {
