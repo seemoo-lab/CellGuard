@@ -19,7 +19,7 @@
             :@"CPTManager" :@"CapturePacketsTweak" :@"packets-cache.json"];
 }
 
-- (void)addData:(NSData *)packetData :(NSString *)proto :(NSString *)direction; {
+- (void)addData:(NSData *)packetData :(NSString *)direction; {
     // If the packet data is null, we'll just ignore it
     if (packetData == NULL) {
         return;
@@ -28,9 +28,7 @@
     // If the new array is different or at least a second has passed, we'll save the array
     NSTimeInterval now = [[NSDate date] timeIntervalSince1970];
 
-    NSMutableString *entry = [NSMutableString stringWithString:proto];
-    [entry appendString:@","];
-    [entry appendString:direction];
+    NSMutableString *entry = [NSMutableString stringWithString:direction];
     [entry appendString:@","];
     [entry appendString:[packetData base64EncodedStringWithOptions:NSDataBase64EncodingEndLineWithLineFeed]];
     [entry appendString:@","];
