@@ -40,12 +40,32 @@ CPTManager* cptManager;
 
 // https://theos.dev/docs/logos-syntax#hookf
 
-%group Packets
+%group TX
+
+// libPCITransport.dylib
+// pci::transport::th::writeAsync(unsigned char const*, unsigned int, void (*)(void*))
+// Handles all outgoing ARI & QMI packets
 // Source: https://dev.seemoo.tu-darmstadt.de/apple/iphone-qmi-wireshark/-/tree/main/agent
+
+%hookf(int, WriteAsync, void *instance, unsigned char *data, unsigned int length, void *callback) {
+	// Copy the data buffer into a NSData object
+	// See: https://developer.apple.com/documentation/foundation/nsdata/1547231-datawithbytes?language=objc
+	NSData *objData = [NSData dataWithBytes:data length:length];
+	// NSLog(@"Hey, we're hooking ARI & QMI send stuff %@", objData);
+	[cptManager addData:objData :@"OUT"];
+
+	// Call the original implementation of this function
+	return %orig;
+}
+
+%end
+
+%group QMI
 
 // libATCommandStudioDynamic.dylib
 // QMux::State::handleReadData(unsigned char const*, unsigned int)
-// Handles all incoming ARI & QMI packets
+// Handles all incoming QMI packets
+// Source: https://dev.seemoo.tu-darmstadt.de/apple/iphone-qmi-wireshark/-/tree/main/agent
 
 %hookf(int, HandleReadData, void *instance, unsigned char *data, unsigned int length) {
 	// Copy the data buffer into a NSData object
@@ -58,16 +78,21 @@ CPTManager* cptManager;
 	return %orig;
 }
 
-// libPCITransport.dylib
-// pci::transport::th::writeAsync(unsigned char const*, unsigned int, void (*)(void*))
-// Handles all outgoing ARI & QMI packets
+%end
 
-%hookf(int, WriteAsync, void *instance, unsigned char *data, unsigned int length, void *callback) {
+%group ARI
+
+// libARIServer.dylib
+// AriHostRt::InboundMsgCB(unsigned char*, unsigned long)
+// Handles all incoming ARI packets
+// Source: https://github.com/seemoo-lab/aristoteles/blob/master/tools/frida_ari_functions.js
+
+%hookf(int, InboundMsgCB, unsigned char *data, unsigned int length) {
 	// Copy the data buffer into a NSData object
 	// See: https://developer.apple.com/documentation/foundation/nsdata/1547231-datawithbytes?language=objc
 	NSData *objData = [NSData dataWithBytes:data length:length];
-	// NSLog(@"Hey, we're hooking ARI & QMI send stuff %@", objData);
-	[cptManager addData:objData :@"OUT"];
+	// NSLog(@"Hey, we're hooking ARI read stuff %@", objData);
+	[cptManager addData:objData :@"IN"];
 
 	// Call the original implementation of this function
 	return %orig;
@@ -90,11 +115,24 @@ CPTManager* cptManager;
 
 		// The two underscores in front of the function names are important for MSFindSymbol to work
 		// See: http://www.cydiasubstrate.com/api/c/MSFindSymbol/
-		%init(Packets, 
-			HandleReadData = MSFindSymbol(libATCommandStudioDynamicImage, "__ZN4QMux5State14handleReadDataEPKhj"),
-			WriteAsync = MSFindSymbol(libPCITransportImage, "__ZN3pci9transport2th10writeAsyncEPKhjPFvPvE")
-		);
-		NSLog(@"Our CapturePackets tweak hooks QMI & ARI packets");
+		%init(TX, WriteAsync = MSFindSymbol(libPCITransportImage, "__ZN3pci9transport2th10writeAsyncEPKhjPFvPvE"));
+		// We can always hook this function and on ARI iPhone it is never called.
+		%init(QMI, HandleReadData = MSFindSymbol(libATCommandStudioDynamicImage, "__ZN4QMux5State14handleReadDataEPKhj"));
+		NSLog(@"Our CapturePackets tweak hooks QMI packets");
+
+		// libARIServer is not directly loaded into the CommCenter process.
+		// We have to wait a bit for it to be available.
+		// The library is only loaded on ARI iPhones.
+		// 1s = 10^9s
+		dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+			MSImageRef libARIServer = MSGetImageByName("/usr/lib/libARIServer.dylib");
+			// Only initialize the hook for incoming ARI messages as the library is only loaded on ARI iPhones.
+			if (libARIServer != NULL) {
+				%init(ARI, InboundMsgCB = MSFindSymbol(libARIServer, "__ZN9AriHostRt12InboundMsgCBEPhm"));
+				// NSLog(@"libARIServer: %p - InboundMsg: %p", libARIServer, MSFindSymbol(libARIServer, "__ZN9AriHostRt12InboundMsgCBEPhm"));
+				NSLog(@"Our CapturePackets tweak also hooks ARI packets");
+			}
+		});
 
 
 		[cptManager listen:33067];
