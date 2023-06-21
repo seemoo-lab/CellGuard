@@ -610,7 +610,7 @@ extension PersistenceController {
     
     /// Synchronously deletes all records in the Core Data store.
     private func deleteData(categories: [PersistenceCategory]) throws {
-        let viewContext = container.viewContext
+        let taskContext = newTaskContext()
         logger.debug("Start deleting data of \(categories) from the store...")
         
         // If the ALS cell cache or older locations are deleted but no connected cells, we do not reset their verification status to trigger a re-verification.
@@ -622,13 +622,13 @@ extension PersistenceController {
         ]
         
         var deleteError: Error? = nil
-        viewContext.performAndWait {
+        taskContext.performAndWait {
             do {
                 try categoryEntityMapping
                     .filter { categories.contains($0.key) }
                     .flatMap { $0.value }
                     .forEach { entity in
-                        try deleteData(entity: entity, predicate: nil, context: viewContext)
+                        try deleteData(entity: entity, predicate: nil, context: taskContext)
                     }
             } catch {
                 self.logger.warning("Failed to delete data: \(error)")
