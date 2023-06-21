@@ -5,17 +5,24 @@
 //  Created by Lukas Arnold on 08.06.23.
 //
 
-import SwiftUI
 import CoreData
+import SwiftUI
+import OSLog
 
 struct PacketTabView: View {
     
     // TODO: Add divider for days (bold) & hours
     
+    private static let logger = Logger(
+        subsystem: Bundle.main.bundleIdentifier!,
+        category: String(describing: PacketTabView.self)
+    )
+    
     @State private var filter: PacketFilterSettings = PacketFilterSettings()
     @State private var isShowingFilterView = false
     
     var body: some View {
+        // TODO: Store filter settings across different app executions?
         NavigationView {
             VStack {
                 // A workaround for that the NavigationLink on iOS does not respect the isShowingFilterView variable if it's embedded into a ToolbarItem.
@@ -40,6 +47,29 @@ struct PacketTabView: View {
                     } label: {
                         // Starting with iOS 15: line.3.horizontal.decrease.circle
                         Image(systemName: "line.horizontal.3.decrease.circle")
+                    }
+                }
+            }
+        }.onAppear {
+            // Check for one time if the iPhone received ARI packets and if yes, automatically switch the filter to it
+            if !filter.protoAutoSet {
+                PersistenceController.shared.countPacketsByType { result in
+                    do {
+                        let (qmiPackets, ariPackets) = try result.get()
+                        if qmiPackets == 0 && ariPackets == 0 {
+                            Self.logger.debug("No packets recorded so far, deciding what to show at a later point")
+                            return
+                        }
+                        if ariPackets > qmiPackets {
+                            Self.logger.debug("Switch to ARI packets")
+                            self.filter.proto = .ari
+                        } else {
+                            Self.logger.debug("Switch to QMI packets")
+                            self.filter.proto = .qmi
+                        }
+                        self.filter.protoAutoSet = true
+                    } catch {
+                        Self.logger.warning("Couldn't count QMI & ARI packets: \(error)")
                     }
                 }
             }

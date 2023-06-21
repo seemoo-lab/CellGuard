@@ -549,6 +549,29 @@ extension PersistenceController {
         self.logger.debug("Successfully assigned user locations to \(successful) tweak cells of out \(count) cells.")
     }
     
+    func countPacketsByType(completion: @escaping (Result<(Int, Int), Error>) -> Void) {
+        let backgroundContext = newTaskContext()
+        backgroundContext.perform {
+            let qmiRequest = NSFetchRequest<QMIPacket>()
+            qmiRequest.entity = QMIPacket.entity()
+            
+            let ariRequest = NSFetchRequest<ARIPacket>()
+            ariRequest.entity = ARIPacket.entity()
+            
+            let result = Result {
+                let qmiCount = try backgroundContext.count(for: qmiRequest)
+                let ariCount = try backgroundContext.count(for: ariRequest)
+                
+                return (qmiCount, ariCount)
+            }
+            
+            // Call the callback on the main queue
+            DispatchQueue.main.async {
+                completion(result)
+            }
+        }
+    }
+    
     func deletePacketsOlderThan(days: Int) {
         let viewContext = container.viewContext
         logger.debug("Start deleting packets older than \(days) day(s) from the store...")

@@ -10,6 +10,7 @@ import SwiftUI
 
 struct PacketFilterSettings {
     var proto: PacketFilterProtocol = .qmi
+    var protoAutoSet: Bool = false
     var direction: PacketFilterDirection = .all
     
     var qmiType: PacketFilterQMIType = .all
