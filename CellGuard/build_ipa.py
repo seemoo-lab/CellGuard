@@ -2,6 +2,7 @@ import argparse
 import re
 import subprocess
 import zipfile
+from distutils import spawn
 from pathlib import Path
 
 from yaspin import yaspin
@@ -65,6 +66,16 @@ def create_ipa(archive_path: Path, ipa_path: Path):
         print(f'Successfully created {ipa_path}')
 
 
+def airdrop(ipa_path: Path):
+    # https://github.com/vldmrkl/airdrop-cli
+    if spawn.find_executable("airdrop") is None:
+        print("Please install 'airdrop' from https://github.com/vldmrkl/airdrop-cli")
+        return
+
+    with yaspin(text='Opening AirDrop UI...'):
+        subprocess.run(["airdrop", ipa_path.absolute().__str__()])
+
+
 def main():
     arg_parser = argparse.ArgumentParser(
         prog='build_ipa',
@@ -74,12 +85,23 @@ def main():
         '-tipa', action='store_true',
         help='Build a .tipa file which can be AirDropped to an iPhone with TrollStore.'
     )
+    arg_parser.add_argument(
+        '-airdrop', action='store_true',
+        help='Open the AirDrop UI to send the final .tipa file to your phone.'
+    )
     args = arg_parser.parse_args()
 
     version, build = get_build_settings()
     archive_path = build_archive()
     ipa_extension = '.tipa' if args.tipa else '.ipa'
-    create_ipa(archive_path, Path('build', f'CellGuard-{version}-{build}{ipa_extension}'))
+    ipa_path = Path('build', f'CellGuard-{version}-{build}{ipa_extension}')
+    create_ipa(archive_path, ipa_path)
+
+    if args.airdrop:
+        if args.tipa:
+            airdrop(ipa_path)
+        else:
+            print("You can't AirDrop a .ipa file to TrollStore, please append the '-tipa' argument")
 
 
 if __name__ == '__main__':
