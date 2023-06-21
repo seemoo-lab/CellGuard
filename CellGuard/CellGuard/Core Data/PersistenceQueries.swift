@@ -573,10 +573,10 @@ extension PersistenceController {
     }
     
     func deletePacketsOlderThan(days: Int) {
-        let viewContext = container.viewContext
+        let taskContext = newTaskContext()
         logger.debug("Start deleting packets older than \(days) day(s) from the store...")
         
-        viewContext.performAndWait {
+        taskContext.performAndWait {
             do {
                 let startOfDay = Calendar.current.startOfDay(for: Date())
                 guard let daysAgo = Calendar.current.date(byAdding: .day, value: -days, to: startOfDay) else {
@@ -586,8 +586,8 @@ extension PersistenceController {
                 logger.debug("Deleting packets older than \(startOfDay)")
                 let predicate = NSPredicate(format: "collected < %@", daysAgo as NSDate)
                 
-                try deleteData(entity: QMIPacket.entity(), predicate: predicate, context: viewContext)
-                try deleteData(entity: ARIPacket.entity(), predicate: predicate, context: viewContext)
+                try deleteData(entity: QMIPacket.entity(), predicate: predicate, context: taskContext)
+                try deleteData(entity: ARIPacket.entity(), predicate: predicate, context: taskContext)
                 logger.debug("Successfully deleted old packets")
             } catch {
                 self.logger.warning("Failed to delete old packets: \(error)")
