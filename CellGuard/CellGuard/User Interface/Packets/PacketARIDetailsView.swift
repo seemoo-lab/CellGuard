@@ -50,22 +50,46 @@ private struct PacketARIDetailsList: View {
             }
             Section(header: Text("ARI Header")) {
                 PacketDetailsRow("Group ID", hex: parsed.header.group)
-                PacketDetailsRow("Group Name", groupDef?.name ?? "???")
+                if let groupDef = groupDef {
+                    PacketDetailsRow("Group Name", groupDef.name)
+                }
                 PacketDetailsRow("Sequence Number", hex: parsed.header.sequenceNumber)
                 PacketDetailsRow("Length", hex: parsed.header.length)
                 PacketDetailsRow("Type ID", hex: parsed.header.type)
-                PacketDetailsRow("Type Name", typeDef?.name ?? "???")
+                if let typeDef = typeDef {
+                    PacketDetailsRow("Type Name", typeDef.name)
+                }
                 PacketDetailsRow("Transaction", hex: parsed.header.transaction)
                 PacketDetailsRow("Acknowledgement", bool: parsed.header.acknowledgement)
             }
             ForEach(parsed.tlvs, id: \.type) { tlv in
-                Section(header: Text("TLV")) {
-                    PacketDetailsRow("TLV ID", hex: tlv.type)
-                    PacketDetailsRow("Version", hex: tlv.version)
-                    PacketDetailsRow("Length", bytes: Int(tlv.length))
-                    PacketDetailsDataRow("Data", data: tlv.data)
-                }
+                PacketARIDetailsTLVSection(tlv: tlv, typeDef: typeDef)
             }
+        }
+    }
+    
+}
+
+private struct PacketARIDetailsTLVSection: View {
+    
+    let tlv: ARITLV
+    let tlvDef: ARIDefinitionTLV?
+    
+    init(tlv: ARITLV, typeDef: ARIDefinitionType?) {
+        self.tlv = tlv
+        self.tlvDef = typeDef?.tlvs[tlv.type]
+    }
+    
+    var body: some View {
+        Section(header: Text("TLV")) {
+            PacketDetailsRow("ID", hex: tlv.type)
+            PacketDetailsRow("Version", hex: tlv.version)
+            if let tlvDef = tlvDef {
+                PacketDetailsRow("Name", tlvDef.name)
+                PacketDetailsRow("Codec", tlvDef.codecName)
+            }
+            PacketDetailsRow("Length", bytes: Int(tlv.length))
+            PacketDetailsDataRow("Data", data: tlv.data)
         }
     }
     

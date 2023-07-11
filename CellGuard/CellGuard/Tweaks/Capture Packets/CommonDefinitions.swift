@@ -7,23 +7,20 @@
 
 import Foundation
 
-struct CommonDefinitionElement: Decodable {
+protocol CommonDefinitionElement: Decodable {
     
-    let identifier: UInt16
-    let name: String
+    var identifier: UInt16 { get }
     
-    static func dictionary(_ elements: [CommonDefinitionElement]) -> [UInt16: CommonDefinitionElement] {
-        var dict: [UInt16: CommonDefinitionElement] = [:]
+}
+
+extension CommonDefinitionElement {
+    
+    static func dictionary(_ elements: [Self]) -> [UInt16: Self]  {
+        var dict: [UInt16: Self] = [:]
         for element in elements {
             dict[element.identifier] = element
         }
         return dict
     }
-    
-}
-
-protocol UpperDefinitionGroup: Identifiable {
-    
-    var name: String { get }
     
 }

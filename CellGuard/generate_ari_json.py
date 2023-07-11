@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Optional
 
 from luaparser import ast
-from luaparser.astnodes import Return, Statement, Table, Number, String, Field, Name
+from luaparser.astnodes import Return, Statement, Table, Number, String, Field, Name, Expression
 from yaspin import yaspin
 
 
@@ -24,6 +24,58 @@ class ARIAppDefinitions:
     def __init__(self, data_file: Path, build_file: Path) -> None:
         self.data_file_path = data_file
         self.build_file_path = build_file
+
+    @staticmethod
+    def map_lua_table(table_field: Table) -> dict[int | str, Expression]:
+        d: dict[int | str, Expression] = {}
+
+        for field in table_field.fields:
+            if isinstance(field.key, Name):
+                d[field.key.id] = field.value
+            elif isinstance(field.key, String):
+                d[field.key.s] = field.value
+            elif isinstance(field.key, Number):
+                d[field.key.n] = field.value
+
+        return d
+
+    @staticmethod
+    def process_type(type_field: Field, group_id: int) -> Optional[dict]:
+        if not isinstance(type_field.key, Number) or not isinstance(type_field.value, Table):
+            print(f'Skipping type {type_field.key} of group {group_id} because its malformed')
+            return None
+
+        # Get the id from the
+        type_id = type_field.key.n
+
+        # Create a Python dictionary of the upper type table
+        type_map = ARIAppDefinitions.map_lua_table(type_field.value)
+
+        # Check if the type name is present there, if not abort
+        if 'name' not in type_map:
+            print(f'Skipping type {type_id} of group {group_id} because we couldn\'t extract the type\'s name')
+            return None
+        type_name = type_map['name'].s
+
+        # Compile a list of TLV dictionary for the JSON output
+        tlvs_field: Table = type_map['tlvs']
+        tlvs: list[dict] = []
+
+        for tlv_id, tlv_data_table in ARIAppDefinitions.map_lua_table(tlvs_field).items():
+            tlv_data = ARIAppDefinitions.map_lua_table(tlv_data_table)
+            tlv_codec = ARIAppDefinitions.map_lua_table(tlv_data['codec'])
+            tlvs.append({
+                'identifier': tlv_id,
+                'name': tlv_data['type_desc'].s,
+                'codecLength': tlv_codec['length'].n,
+                'codecName': tlv_codec['name'].s
+            })
+
+        return {
+            'identifier': type_id,
+            'name': type_name,
+            'tlvs': tlvs
+        }
 
     @staticmethod
     def process_group(group_field: Field) -> Optional[dict]:
@@ -47,20 +99,10 @@ class ARIAppDefinitions:
                 # We've found the name entry
                 group_name = type_field.value.s
             elif isinstance(type_field.key, Number) and isinstance(type_field.value, Table):
-                # We've found the type entry (which is yet another table)
-                type_id = type_field.key.n
-                # We get its first entry to access the type's name
-                name_field = type_field.value.fields[0]
-                if isinstance(name_field.key, Name) and isinstance(name_field.value, String) \
-                        and name_field.key.id == 'name':
-                    # We append both the type's identifier and name to our list
-                    type_name = name_field.value.s
-                    types.append({
-                        'identifier': type_id,
-                        'name': type_name
-                    })
-                else:
-                    print(f'Skipping type {type_id} of group {group_id} because we couldn\'t extract the type\'s name')
+                # Try to extract the type information
+                type_dict = ARIAppDefinitions.process_type(type_field, group_id)
+                if type_dict:
+                    types.append(type_dict)
             else:
                 print(f'Skipping type field {type_field} of group {group_id} because its malformed')
 

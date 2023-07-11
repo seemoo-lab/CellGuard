@@ -45,13 +45,13 @@ struct QMIDefinitions {
     
 }
 
-struct QMIDefinitionService: Decodable, UpperDefinitionGroup {
+struct QMIDefinitionService: Decodable, Identifiable {
     
     let identifier: UInt8
     let shortName: String
     let longName: String
-    let messages: [UInt16: CommonDefinitionElement]
-    let indications: [UInt16: CommonDefinitionElement]
+    let messages: [UInt16: QMIDefinitionElement]
+    let indications: [UInt16: QMIDefinitionElement]
     
     enum CodingKeys: CodingKey {
         case identifier
@@ -69,12 +69,19 @@ struct QMIDefinitionService: Decodable, UpperDefinitionGroup {
         self.longName = try container.decode(String.self, forKey: .longName)
         
         // We map the list to a dictionary to allow for simple retrieval of message and indications by their id
-        self.messages = CommonDefinitionElement.dictionary(try container.decode([CommonDefinitionElement].self, forKey: .messages))
-        self.indications = CommonDefinitionElement.dictionary(try container.decode([CommonDefinitionElement].self, forKey: .indications))
+        self.messages = QMIDefinitionElement.dictionary(try container.decode([QMIDefinitionElement].self, forKey: .messages))
+        self.indications = QMIDefinitionElement.dictionary(try container.decode([QMIDefinitionElement].self, forKey: .indications))
     }
     
     var id: UInt8 { self.identifier }
     
     var name: String { self.longName }
+    
+}
+
+struct QMIDefinitionElement: CommonDefinitionElement {
+    
+    let identifier: UInt16
+    let name: String
     
 }

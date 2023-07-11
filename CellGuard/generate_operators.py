@@ -18,6 +18,7 @@ class Operator:
     network_name: str
 
 
+# We could also scrape operators from iOS' carrier bundles part of its firmware
 def request_html() -> str:
     print('Fetching operators from mcc-mnc.com...')
     r = requests.get('https://mcc-mnc.com')

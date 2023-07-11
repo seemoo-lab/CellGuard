@@ -45,13 +45,14 @@ struct ARIDefinitions {
     
 }
 
-struct ARIDefinitionGroup: Decodable, UpperDefinitionGroup {
+struct ARIDefinitionGroup: Decodable, Identifiable {
     
     let identifier: UInt8
     let name: String
-    let types: [UInt16: CommonDefinitionElement]
+    // TOOD: Include Name, Type
+    let types: [UInt16: ARIDefinitionType]
     
-    enum CodingKeys: CodingKey {
+    private enum CodingKeys: CodingKey {
         case identifier
         case name
         case types
@@ -65,9 +66,42 @@ struct ARIDefinitionGroup: Decodable, UpperDefinitionGroup {
         self.name = try container.decode(String.self, forKey: .name).replacingOccurrences(of: "_ARIMSGDEF_GROUP", with: "")
         
         // We map the list to a dictionary to allow for simple retrieval of types by their id
-        self.types = CommonDefinitionElement.dictionary(try container.decode([CommonDefinitionElement].self, forKey: .types))
+        self.types = ARIDefinitionType.dictionary(try container.decode([ARIDefinitionType].self, forKey: .types))
     }
     
     var id: UInt8 { self.identifier }
+    
+}
+
+struct ARIDefinitionType: CommonDefinitionElement {
+    
+    let identifier: UInt16
+    let name: String
+    let tlvs: [UInt16: ARIDefinitionTLV]
+    
+    private enum CodingKeys: CodingKey {
+        case identifier
+        case name
+        case tlvs
+    }
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        self.identifier = try container.decode(UInt16.self, forKey: .identifier)
+        self.name = try container.decode(String.self, forKey: .name)
+        
+        // We map the TLV list to a dictionary to allow for simple retrieval of TLVs by their id
+        self.tlvs = ARIDefinitionTLV.dictionary(try container.decode([ARIDefinitionTLV].self, forKey: .tlvs))
+    }
+    
+}
+
+struct ARIDefinitionTLV: CommonDefinitionElement {
+    
+    let identifier: UInt16
+    let name: String
+    let codecLength: UInt16
+    let codecName: String
     
 }

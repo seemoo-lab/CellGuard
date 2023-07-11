@@ -54,8 +54,10 @@ private struct PacketQMIDetailsList: View {
                 PacketDetailsRow("Packet Length", bytes: Int(parsed.qmuxHeader.length))
                 PacketDetailsRow("Flag", hex: parsed.qmuxHeader.flag)
                 PacketDetailsRow("Service ID", hex: parsed.qmuxHeader.serviceId)
-                PacketDetailsRow("Service Short Name", serviceDef?.shortName ?? "???")
-                PacketDetailsRow("Service Name", serviceDef?.longName ?? "???")
+                if let serviceDef = serviceDef {
+                    PacketDetailsRow("Service Short Name", serviceDef.shortName)
+                    PacketDetailsRow("Service Name", serviceDef.longName)
+                }
                 PacketDetailsRow("Client ID", hex: parsed.qmuxHeader.clientId)
             }
             Section(header: Text("Transaction Header")) {
@@ -66,13 +68,15 @@ private struct PacketQMIDetailsList: View {
             }
             Section(header: Text("Message Header")) {
                 PacketDetailsRow("Message ID", hex: parsed.messageHeader.messageId)
-                PacketDetailsRow("Message Name", messageDef?.name ?? "???")
+                if let messageDef = messageDef {
+                    PacketDetailsRow("Message Name", messageDef.name)
+                }
                 PacketDetailsRow("Message Length", bytes: Int(parsed.messageHeader.messageLength))
             }
             
             ForEach(parsed.tlvs, id: \.type) { tlv in
                 Section(header: Text("TLV")) {
-                    PacketDetailsRow("TLV ID", hex: tlv.type)
+                    PacketDetailsRow("ID", hex: tlv.type)
                     PacketDetailsRow("Length", bytes: Int(tlv.length))
                     PacketDetailsDataRow("Data", data: tlv.data)
                 }
