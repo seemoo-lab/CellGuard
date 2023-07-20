@@ -81,14 +81,8 @@ struct SettingsView: View {
                 Toggle("Notifications", isOn: isPermissionNotifications)
             }
             
-            Section(header: Text("Cell Verification")) {
-                Picker("Approach", selection: $locationManager.proximityDetection) {
-                    Text("Database Validation").tag(false)
-                    Text("Proximity Detection").tag(true)
-                }
-                if locationManager.proximityDetection {
-                    Toggle("Show Tracking Indicator", isOn: $showTrackingMarker)
-                }
+            Section(header: Text("Location")) {
+                Toggle("Show Tracking Indicator", isOn: $showTrackingMarker)
             }
             
             Section(header: Text("Local Database")) {

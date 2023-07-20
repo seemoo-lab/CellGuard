@@ -128,7 +128,6 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
         
         // Verify collected cells in the background, we start a new detached task for that
         // See: https://docs.swift.org/swift-book/documentation/the-swift-programming-language/concurrency/#Unstructured-Concurrency
-        // TODO: Change UI (i.e. green spinner after the first two phases, remove setting for method selection, risk indicator (use score), cell status (show score))
         Task.detached {
             // When does the loop finishes? The neat thing is, it doesn't :)
             await CellVerifier.verificationLoop()
