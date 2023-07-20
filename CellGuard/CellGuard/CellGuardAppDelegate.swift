@@ -45,12 +45,12 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
     }
     
     private func trackLocationIfBackground(_ launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) {
-        // Only initialize the location manager if the app was excliptly launched in the background to track locations.
+        // Only initialize the location manager if the app was explicitly launched in the background to track locations.
         // Otherwise it was initialized in CellGuardApp as environment variable
         if let launchOptions = launchOptions {
             // https://developer.apple.com/documentation/corelocation/cllocationmanager/1423531-startmonitoringsignificantlocati
             if launchOptions[.location] != nil {
-                // TODO: Is it even required to start a seperarte LocationDataManger()?
+                // TODO: Is it even required to start a separate LocationDataManger()?
                 // -> I guess not
                 // _ = LocationDataManager()
             }
@@ -84,7 +84,7 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
                 let count = try? result.get()
                 task.setTaskCompleted(success: count != nil)
             }
-                        
+            
             collector.collectAndStore { result in
                 let count = try? result.get()
                 task.setTaskCompleted(success: count != nil)
@@ -93,31 +93,30 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
         
         BGTaskScheduler.shared.register(forTaskWithIdentifier: Self.verifyTaskIdentifier, using: nil) { task in
             // Simply start our collection & verification tasks
-            // TODO: This could be improved by directly resheduling a task when it has finished
+            // TODO: This could be improved by directly rescheduling a task when it has finished
             self.startTasks()
         }
     }
     
     private func startTasks() {
         let cellCollector = CCTCollector(client: CCTClient(queue: .global(qos: .default)))
-        let cellVerifier = ALSVerifier()
         
         // Schedule a timer to continuously poll the latest cells while the app is active and instantly verify them
-        let cellCollectTimer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { timer in
-            self.collectAndVerifyCellsTask(collector: cellCollector, verifier: cellVerifier)
+        let cellCollectTimer = Timer.scheduledTimer(withTimeInterval: 30, repeats: true) { timer in
+            self.collectCellsTask(collector: cellCollector)
         }
         // We allow the timer a high tolerance of 50% as our collector is not time critical
         cellCollectTimer.tolerance = 30
         // We also start the function instantly to fetch the latest cells
         DispatchQueue.global(qos: .default).async {
-            self.collectAndVerifyCellsTask(collector: cellCollector, verifier: cellVerifier)
+            self.collectCellsTask(collector: cellCollector)
         }
         
         let packetCollector = CPTCollector(client: CPTClient(queue: .global(qos: .default)))
         
-        // TODO: Variable timeout based on whether a the packet is open or not
+        // TODO: Variable timeout based on whether a the app is open or not
         // Schedule a timer to continuously poll the latest packets while the app is active
-        let packetCollectTimer = Timer.scheduledTimer(withTimeInterval: 30, repeats: true) { timer in
+        let packetCollectTimer = Timer.scheduledTimer(withTimeInterval: 15, repeats: true) { timer in
             self.collectPacketsTask(collector: packetCollector)
         }
         // We allow the timer a tolerance of 50% as our collector is not time critical
@@ -126,14 +125,19 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
         DispatchQueue.global(qos: .default).async {
             self.collectPacketsTask(collector: packetCollector)
         }
-            
-        // Slowly verify collected & imported cells in the background
-        let checkTimer = Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { timer in
-            guard !PersistenceImporter.importActive else { return }
-            cellVerifier.verify(n: 10)
+        
+        // Verify collected cells in the background, we start a new detached task for that
+        // See: https://docs.swift.org/swift-book/documentation/the-swift-programming-language/concurrency/#Unstructured-Concurrency
+        // TODO: Change UI (i.e. green spinner after the first two phases, remove setting for method selection, risk indicator (use score), cell status (show score))
+        Task.detached {
+            // When does the loop finishes? The neat thing is, it doesn't :)
+            await CellVerifier.verificationLoop()
         }
-        // We allow only allow a lower tolerance for the check timer as it is executed in short intervals
-        checkTimer.tolerance = 1
+        
+        // TODO: Add notification task which summarizes the untrusted / suspicious cells all five minutes
+        // Start it also instantly when running the app
+        // Add a new boolean CoreData model field to TweakCell: notified
+        // DB Query: notified = false and status == verified and score < ...
         
         // Clear the persistent history cache all five minutes
         let clearHistoryTimer = Timer.scheduledTimer(withTimeInterval: 60 * 5, repeats: true) { timer in
@@ -148,22 +152,19 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
             PersistenceController.shared.deletePacketsOlderThan(days: Int(days))
         }
         clearPacketTimer.tolerance = 30
-
+        
         // TODO: Add task to regularly delete old ALS cells (>= 90 days) to force a refresh
         // -> Then, also reset the status of the associated tweak cells
     }
     
-    private func collectAndVerifyCellsTask(collector: CCTCollector, verifier: ALSVerifier) {
+    private func collectCellsTask(collector: CCTCollector) {
         // Only run tasks when we currently don't manually import any new data
         guard !PersistenceImporter.importActive else { return }
         
         collector.collectAndStore { result in
             do {
                 // Get the number of successfully collected & stored cells
-                let numberOfStoredCells = try result.get()
-                // Instant verify the number of collected & stored cells (up to a count of 10)
-                let verifyCells = numberOfStoredCells > 10 ? 10 : numberOfStoredCells
-                verifier.verify(n: verifyCells)
+                _ = try result.get()
             } catch {
                 // Print the error if the task execution was not successful
                 Self.logger.warning("Failed to collect & store cells in scheduled timer: \(error)")

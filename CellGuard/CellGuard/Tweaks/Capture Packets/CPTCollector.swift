@@ -15,6 +15,8 @@ struct CPTCollector {
         category: String(describing: CPTCollector.self)
     )
     
+    static var mostRecentPacket: Date = Date(timeIntervalSince1970: 0)
+    
     private let client: CPTClient
     
     init(client: CPTClient) {
@@ -53,6 +55,9 @@ struct CPTCollector {
                 } catch {
                     print(packet.description)
                     Self.logger.warning("Can't parse packet: \(error)\n\(packet)")
+                }
+                if CPTCollector.mostRecentPacket < packet.timestamp {
+                    CPTCollector.mostRecentPacket = packet.timestamp
                 }
             }
             

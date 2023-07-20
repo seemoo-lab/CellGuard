@@ -26,11 +26,7 @@ final class ALSClientTests: XCTestCase {
         // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
         
         let client = ALSClient()
-        let cells = try await withCheckedThrowingContinuation { continuation in
-            client.requestCells(origin: ALSQueryCell(technology: .LTE, country: 262, network: 2, area: 46452, cell: 15669002)) { result in
-                continuation.resume(with: result)
-            }
-        }
+        let cells = try await client.requestCells(origin: ALSQueryCell(technology: .LTE, country: 262, network: 2, area: 46452, cell: 15669002))
         print("Got \(cells.count) cells")
         print("First cell: \(cells[0])")
         XCTAssertGreaterThan(cells.count, 0)
@@ -45,11 +41,7 @@ final class ALSClientTests: XCTestCase {
         // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
         
         let client = ALSClient()
-        let cells = try await withCheckedThrowingContinuation { continuation in
-            client.requestCells(origin: ALSQueryCell(technology: .GSM, country: 262, network: 2, area: 566, cell: 4461)) { result in
-                continuation.resume(with: result)
-            }
-        }
+        let cells = try await client.requestCells(origin: ALSQueryCell(technology: .GSM, country: 262, network: 2, area: 566, cell: 4461))
         print("Got \(cells.count) cells")
         print("First cell: \(cells[0])")
         XCTAssertGreaterThan(cells.count, 0)

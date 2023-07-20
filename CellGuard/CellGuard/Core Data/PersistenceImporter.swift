@@ -149,7 +149,6 @@ struct PersistenceImporter {
         
         try PersistenceController.shared.importUserLocations(from: locations)
         try PersistenceController.shared.importCollectedCells(from: cells)
-        try PersistenceController.shared.assignLocationsToTweakCells()
         
         Self.logger.debug("Imported \(locations.count) locations and \(cells.count) cells")
         

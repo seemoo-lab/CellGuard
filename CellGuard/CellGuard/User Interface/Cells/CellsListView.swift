@@ -89,13 +89,15 @@ private struct GroupedTweakCell: Hashable {
     let value: Int64
     let cells: [TweakCell]
 
+    let anySuspicious: Bool
     let anyFailed: Bool
     let lastCollected: TweakCell
     
     init(value: Int64, cells: [TweakCell]) {
         self.value = value
         self.cells = cells
-        self.anyFailed = cells.first { $0.status == CellStatus.failed.rawValue } != nil
+        self.anySuspicious = cells.first { $0.status == CellStatus.verified.rawValue && $0.score < 100 } != nil
+        self.anyFailed = cells.first { $0.status == CellStatus.verified.rawValue && $0.score < 50 } != nil
         // TODO: Ensure that cells contains at least one value
         self.lastCollected = cells.max { $0.collected! < $1.collected! }!
     }
@@ -208,7 +210,7 @@ private struct ListBodyElement: View {
         let formatter = CellTechnologyFormatter.from(technology: cell.technology)
         // // Color the text red if the group contains a single failed cell
         let text = level.text(cell: cell)
-            .foregroundColor(groupedCells.anyFailed ? .red : nil)
+            .foregroundColor(groupedCells.anyFailed ? .red : groupedCells.anySuspicious ? .yellow : nil)
 
                 
         return NavigationLink {

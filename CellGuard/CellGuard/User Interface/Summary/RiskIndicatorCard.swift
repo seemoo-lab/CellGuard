@@ -8,22 +8,36 @@
 import UIKit
 import SwiftUI
 
-enum RiskMediumCause: String {
-    case Permissions = "Ensure you've granted all required permissions"
-    case Tweak = "Ensure the tweak is active"
+enum RiskMediumCause: Equatable {
+    case Permissions
+    case Tweak
+    case Cells(cellCount: Int)
+    
+    func text() -> String {
+        switch (self) {
+        case .Permissions:
+            return "Ensure you've granted all required permissions"
+        case .Tweak:
+            return "Ensure the tweak is active"
+        case let .Cells(cellCount):
+            return "Detected \(cellCount) suspicious \(cellCount == 1 ? "cell measurement" : "cell measurements") in the last 14 days"
+        }
+    }
 }
 
 enum RiskLevel: Equatable {
-    // TODO: Show number of cells to be verified
+    // TODO: Show the real number of cells to be verified
     case Unknown
     case Low
+    case LowMonitor
     case Medium(cause: RiskMediumCause)
-    case High(count: Int)
+    case High(cellCount: Int)
     
     func header() -> String {
         switch (self) {
         case .Unknown: return "Unkown"
         case .Low: return "Low"
+        case .LowMonitor: return "Low"
         case .Medium: return "Medium"
         case .High: return "High"
         }
@@ -35,10 +49,12 @@ enum RiskLevel: Equatable {
             return "Collecting and processing data"
         case .Low:
             return "Verified all cells of the last 14 days"
+        case .LowMonitor:
+            return "Monitoring the connected cell and verified the remaining cells"
         case let .Medium(cause):
-            return cause.rawValue
-        case let .High(count):
-            return "Detected \(count) potential malicious \(count == 1 ? "cell" : "cells") in the last 14 days"
+            return cause.text()
+        case let .High(cellCount):
+            return "Detected \(cellCount) potential malicious \(cellCount == 1 ? "cell measurement" : "cell measurements") in the last 14 days"
         }
     }
     
@@ -47,6 +63,7 @@ enum RiskLevel: Equatable {
         switch (self) {
         case .Unknown: return dark ? Color(UIColor.systemGray6) : .gray
         case .Low: return .green
+        case .LowMonitor: return .green
         case .Medium: return .orange
         case .High: return .red
         }
@@ -79,6 +96,7 @@ struct RiskIndicatorCard: View {
                 }
                 HStack {
                     Text(risk.description())
+                        .multilineTextAlignment(.leading)
                         .padding()
                     Spacer()
                 }
@@ -104,18 +122,21 @@ private struct RiskIndicatorLink: View {
         switch (risk) {
         case .Low:
             return AnyView(CellsListView())
+        case .LowMonitor:
+            return AnyView(CellsListView())
         case let .Medium(cause):
             if cause == .Permissions {
                 return AnyView(SettingsView())
             } else if cause == .Tweak {
                 return AnyView(TweakInfoView())
+            } else {
+                return AnyView(CellsListView())
             }
         case .High(_):
             return AnyView(CellsListView())
         case .Unknown:
             return AnyView(VerificationProgressView())
         }
-        return AnyView(Text("Unknown Risk Level"))
     }
     
 }
@@ -126,9 +147,13 @@ struct RiskIndicator_Previews: PreviewProvider {
             .previewDisplayName("Unknown")
         RiskIndicatorCard(risk: .Low)
             .previewDisplayName("Low")
+        RiskIndicatorCard(risk: .LowMonitor)
+            .previewDisplayName("Low (Monitor)")
         RiskIndicatorCard(risk: .Medium(cause: .Permissions))
-            .previewDisplayName("Medium")
-        RiskIndicatorCard(risk: .High(count: 3))
+            .previewDisplayName("Medium (Permissions)")
+        RiskIndicatorCard(risk: .Medium(cause: .Cells(cellCount: 3)))
+            .previewDisplayName("Medium (Cells)")
+        RiskIndicatorCard(risk: .High(cellCount: 3))
             .previewDisplayName("High")
     }
 }

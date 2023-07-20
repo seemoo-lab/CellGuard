@@ -113,13 +113,30 @@ private struct CalculatedRiskView: View {
     
     @FetchRequest(
         sortDescriptors: [NSSortDescriptor(keyPath: \TweakCell.collected, ascending: false)],
-        predicate: Self.ftDaysPredicate(status: .failed)
+        predicate: NSCompoundPredicate(andPredicateWithSubpredicates: [
+            Self.ftDaysPredicate(),
+            NSPredicate(format: "status == %@", CellStatus.verified.rawValue),
+            NSPredicate(format: "score < %@", CellVerifier.pointsUntrustedThreshold as NSNumber)
+        ])
     )
     private var failedCells: FetchedResults<TweakCell>
     
     @FetchRequest(
         sortDescriptors: [NSSortDescriptor(keyPath: \TweakCell.collected, ascending: false)],
-        predicate: Self.ftDaysPredicate(status: .imported)
+        predicate: NSCompoundPredicate(andPredicateWithSubpredicates: [
+            Self.ftDaysPredicate(),
+            NSPredicate(format: "status == %@", CellStatus.verified.rawValue),
+            NSPredicate(format: "score < %@", CellVerifier.pointsSuspiciousThreshold as NSNumber)
+        ])
+    )
+    private var suspiciousCells: FetchedResults<TweakCell>
+    
+    @FetchRequest(
+        sortDescriptors: [NSSortDescriptor(keyPath: \TweakCell.collected, ascending: false)],
+        predicate: NSCompoundPredicate(andPredicateWithSubpredicates: [
+            Self.ftDaysPredicate(),
+            NSPredicate(format: "status != %@", CellStatus.verified.rawValue),
+        ])
     )
     private var unknownCells: FetchedResults<TweakCell>
     
@@ -130,13 +147,20 @@ private struct CalculatedRiskView: View {
     }
     
     var body: some View {
-        // We keep the unknown status until all cells are verified because we're sending notifications during verification
-        if unknownCells.count > 0 {
-            return RiskIndicatorCard(risk: .Unknown)
+        if failedCells.count > 0 {
+            // TODO: Use a real cell count instead of measurements
+            return RiskIndicatorCard(risk: .High(cellCount: failedCells.count))
         }
         
-        if failedCells.count > 0 {
-            return RiskIndicatorCard(risk: .High(count: failedCells.count))
+        if suspiciousCells.count > 0 {
+            return RiskIndicatorCard(risk: .Medium(cause: .Cells(cellCount: suspiciousCells.count)))
+        }
+        
+        // We keep the unknown status until all cells are verified (except the current cell which we are monitoring)
+        if let unknownCell = unknownCells.first, unknownCell.status == CellStatus.processedLocation.rawValue {
+            return RiskIndicatorCard(risk: .LowMonitor)
+        } else if unknownCells.count > 0 {
+            return RiskIndicatorCard(risk: .Unknown)
         }
         
         // We've received no cells for 30 minutes from the tweak, so we warn the user
@@ -159,14 +183,10 @@ private struct CalculatedRiskView: View {
         return RiskIndicatorCard(risk: .Low)
     }
     
-    private static func ftDaysPredicate(status: CellStatus) -> NSPredicate {
+    private static func ftDaysPredicate() -> NSPredicate {
         let calendar = Calendar.current
         let ftDaysAgo = calendar.date(byAdding: .day, value: -14, to: calendar.startOfDay(for: Date()))!
-        
-        return NSCompoundPredicate(andPredicateWithSubpredicates: [
-            NSPredicate(format: "collected >= %@", ftDaysAgo as NSDate),
-            NSPredicate(format: "status == %@", status.rawValue)
-        ])
+        return NSPredicate(format: "collected >= %@", ftDaysAgo as NSDate)
     }
     
 }
@@ -174,9 +194,9 @@ private struct CalculatedRiskView: View {
 struct SummaryView_Previews: PreviewProvider {
     static var previews: some View {
         SummaryTabView()
-        .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
-        .environmentObject(LocationDataManager.shared)
-        .environmentObject(LocalNetworkAuthorization(checkNow: true))
-        .environmentObject(CGNotificationManager.shared)
+            .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+            .environmentObject(LocationDataManager.shared)
+            .environmentObject(LocalNetworkAuthorization(checkNow: true))
+            .environmentObject(CGNotificationManager.shared)
     }
 }

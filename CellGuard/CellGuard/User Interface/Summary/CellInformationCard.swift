@@ -45,7 +45,7 @@ struct CellInformationCard: View {
                     .font(.title2)
                     .bold()
                 Spacer()
-                CellStatusIcon(text: cell.status)
+                CellStatusIcon(status: cell.status, score: cell.score)
             }
             .padding(EdgeInsets(top: 20, leading: 20, bottom: 10, trailing: 20))
             

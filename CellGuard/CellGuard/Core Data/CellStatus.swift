@@ -9,14 +9,18 @@ import Foundation
 
 enum CellStatus: String {
     case imported
+    case processedCell
+    case processedLocation
+    // case processedPacket
     case verified
-    case failed
     
     func humanDescription() -> String {
         switch (self) {
-        case .imported: return "Pending"
-        case .verified: return "Verified"
-        case .failed: return "Failed"
+        case .imported: return "Pending Verification"
+        case .processedCell: return "Verified Cell"
+        case .processedLocation: return "Verified Location"
+        // case .processedPacket: return "Verified Packet"
+        case .verified: return "Verification Complete"
         }
     }
 }

@@ -18,7 +18,6 @@ struct CCTCollector {
     
     private let parser: CCTParser = CCTParser()
     private let client: CCTClient
-    private let verifier: ALSVerifier = ALSVerifier()
     
     // TODO: Shared instance which exposes its last status
     

@@ -32,6 +32,8 @@ struct CellDetailsView: View {
         )
     }
     
+    // TODO: Improve this view
+    
     var body: some View {
         let (countryName, networkName) = OperatorDefinitions.shared.translate(country: cell.country, network: cell.network)
         
@@ -65,14 +67,17 @@ struct CellDetailsView: View {
             
             Section(header: Text("Verification")) {
                 CellDetailsRows("Status", cellStatusDescription())
+                if let tweakCell = cell as? TweakCell {
+                    CellDetailsRows("Score", "\(tweakCell.score)")
+                }
                 if let alsImported = alsCells.first?.imported {
                     CellDetailsRows("Fetched", mediumDateTimeFormatter.string(from: alsImported))
                 }
                 if let reach = alsCells.first?.location?.reach {
-                    CellDetailsRows("Reach", "\(reach)m")
+                    CellDetailsRows("ALS Reach", "\(reach)m")
                 }
                 if let score = alsCells.first?.location?.score {
-                    CellDetailsRows("Score", "\(score)")
+                    CellDetailsRows("ALS Score", "\(score)")
                 }
             }
             
@@ -98,6 +103,7 @@ struct CellDetailsView: View {
     }
     
     private func cellStatusDescription() -> String {
+        // TODO: Change this
         if cell is ALSCell {
             return "Verified"
         } else if let tweakCell = cell as? TweakCell {
@@ -148,7 +154,7 @@ struct CellDetailsView_Previews: PreviewProvider {
         let viewContext = PersistenceController.preview.container.viewContext
         let cell = PersistencePreview.alsCell(context: viewContext)
 
-        _ = PersistencePreview.tweakCell(context: viewContext, from: cell)
+        let tweakCell = PersistencePreview.tweakCell(context: viewContext, from: cell)
         _ = PersistencePreview.tweakCell(context: viewContext, from: cell)
         _ = PersistencePreview.tweakCell(context: viewContext, from: cell)
         _ = PersistencePreview.tweakCell(context: viewContext, from: cell)
@@ -163,7 +169,7 @@ struct CellDetailsView_Previews: PreviewProvider {
         
         return NavigationView {
             CellDetailsView(
-                cell: PersistencePreview.alsCell(context: viewContext)
+                cell: tweakCell //PersistencePreview.alsCell(context: viewContext)
             )
         }
         .environment(\.managedObjectContext, viewContext)

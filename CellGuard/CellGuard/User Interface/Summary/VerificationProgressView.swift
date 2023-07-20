@@ -10,7 +10,7 @@ import SwiftUI
 struct VerificationProgressView: View {
     @FetchRequest(
         sortDescriptors: [NSSortDescriptor(keyPath: \TweakCell.collected, ascending: false)],
-        predicate: NSPredicate(format: "status == %@", CellStatus.imported.rawValue)
+        predicate: NSPredicate(format: "status != %@", CellStatus.verified.rawValue)
     )
     private var unverifiedCells: FetchedResults<TweakCell>
     

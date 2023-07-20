@@ -10,46 +10,54 @@ import SwiftUI
 struct CellStatusIcon: View {
     
     let status: CellStatus?
+    let score: Int16
     
-    init(text: String?) {
-        self.init(status: CellStatus(rawValue: text ?? ""))
-    }
-    
-    init(status: CellStatus?) {
-        self.status = status
+    init(status: String?, score: Int16) {
+        self.status = CellStatus(rawValue: status ?? "")
+        self.score = score
     }
     
     var body: some View {
         if status == .verified {
+            if score < 100 {
+                Image(systemName: "exclamationmark.shield")
+                    .font(.title2)
+                    .foregroundColor(score >= CellVerifier.pointsUntrustedThreshold ? .yellow : .red)
+            } else {
+                Image(systemName: "lock.shield")
+                    .font(.title2)
+                    .foregroundColor(.green)
+            }
+        } else if status == .processedLocation && score == 60 {
+            // We still monitoring the cell, but so far everything looks okay
             Image(systemName: "lock.shield")
                 .font(.title2)
                 .foregroundColor(.green)
-        } else if status == .failed {
-            Image(systemName: "exclamationmark.shield")
-                .font(.title2)
-                .foregroundColor(.red)
-        } else if status == .imported {
-            ProgressView()
-        } else {
+        } else if status == nil {
             Image(systemName: "questionmark.circle")
                 .font(.title2)
                 .foregroundColor(.gray)
+        } else {
+            ProgressView()
         }
     }
 }
 
 struct CellStatusIcon_Previews: PreviewProvider {
     static var previews: some View {
-        CellStatusIcon(status: CellStatus.verified)
+        CellStatusIcon(status: CellStatus.verified.rawValue, score: Int16(CellVerifier.pointsSuspiciousThreshold))
             .previewDisplayName("Verified")
         
-        CellStatusIcon(status: CellStatus.failed)
+        CellStatusIcon(status: CellStatus.verified.rawValue, score: Int16(CellVerifier.pointsUntrustedThreshold))
+            .previewDisplayName("Suspicious")
+        
+        CellStatusIcon(status: CellStatus.verified.rawValue, score: 0)
             .previewDisplayName("Failed")
         
-        CellStatusIcon(status: CellStatus.imported)
+        CellStatusIcon(status: CellStatus.imported.rawValue, score: 0)
             .previewDisplayName("Imported")
         
-        CellStatusIcon(status: nil)
+        CellStatusIcon(status: nil, score: 0)
             .previewDisplayName("Nil")
     }
 }

@@ -178,7 +178,7 @@ struct ALSQueryCell: CustomStringConvertible {
     }
     
     var description: String {
-        "ALSQueryCell(technology=\(self.technology), country=\(self.country), network=\(self.network)," +
+        "ALSQueryCell(technology=\(self.technology), country=\(self.country), network=\(self.network), " +
         "area=\(self.area), cell=\(self.cell), " +
         "location=\(String(describing: self.location)), frequency=\(String(describing: self.frequency)))"
     }
@@ -204,11 +204,11 @@ struct ALSClient {
     private let iOSVersion = "14.2.1.18B121"
     private let locale = "en_US"
     
-    /// Request nearby celluluar cells from Apple's Location Service
+    /// Request nearby cellular cells from Apple's Location Service
     /// - Parameters:
     ///   - origin: the cell used as origin for the request, it doesn't require a location
     ///   - completion: called upon success with a list of nearby cells
-    func requestCells(origin: ALSQueryCell, completion: @escaping (Result<[ALSQueryCell], Error>)->()) {
+    func requestCells(origin: ALSQueryCell) async throws -> [ALSQueryCell] {
         let protoRequest = AlsProto_ALSLocationRequest.with {
             switch (origin.technology) {
             case .GSM:
@@ -232,38 +232,35 @@ struct ALSClient {
             data = try protoRequest.serializedData()
         } catch {
             Self.logger.warning("Can't encode proto request: \(error)")
-            completion(.failure(error))
-            return
+            throw error
         }
         
-        sendHttpRequest(protoData: data) { result in
-            do {
-                let protoResponse = try AlsProto_ALSLocationResponse(serializedData: try result.get())
-                var cells: [ALSQueryCell] = []
-                cells.append(contentsOf: protoResponse.gsmCells.map {ALSQueryCell(fromGsmProto: $0)})
-                cells.append(contentsOf: protoResponse.scdmaCells.map {ALSQueryCell(fromScdmaProto: $0)})
-                cells.append(contentsOf: protoResponse.lteCells.map {ALSQueryCell(fromLteProto: $0)})
-                cells.append(contentsOf: protoResponse.nr5Gcells.map {ALSQueryCell(fromNRProto: $0)})
-                cells.append(contentsOf: protoResponse.cdmaCells.map {ALSQueryCell(fromCdmaProto: $0)})
-                if !cells.isEmpty {
-                    completion(.success(cells))
-                } else {
-                    completion(.failure(ALSClientError.noCells(try result.get())))
-                }
-            } catch {
-                Self.logger.warning("Can't decode proto response: \(error)")
-                completion(.failure(error))
-                return
+        do {
+            let httpData = try await sendHttpRequest(protoData: data)
+            let protoResponse = try AlsProto_ALSLocationResponse(serializedData: httpData)
+            var cells: [ALSQueryCell] = []
+            cells.append(contentsOf: protoResponse.gsmCells.map {ALSQueryCell(fromGsmProto: $0)})
+            cells.append(contentsOf: protoResponse.scdmaCells.map {ALSQueryCell(fromScdmaProto: $0)})
+            cells.append(contentsOf: protoResponse.lteCells.map {ALSQueryCell(fromLteProto: $0)})
+            cells.append(contentsOf: protoResponse.nr5Gcells.map {ALSQueryCell(fromNRProto: $0)})
+            cells.append(contentsOf: protoResponse.cdmaCells.map {ALSQueryCell(fromCdmaProto: $0)})
+            if !cells.isEmpty {
+                return cells
+            } else {
+                throw ALSClientError.noCells(httpData)
             }
+        } catch {
+            Self.logger.warning("Can't decode proto response: \(error)")
+            throw error
         }
     }
     
     /// Send an HTTP request to Apple's Location Service.
     /// - Parameters:
-    ///   - protoData: the encoded data of the protobuf request
-    ///   - completion: called upon success with the binary protobuf data of the response
-    private func sendHttpRequest(protoData: Data, completion: @escaping (Result<Data, Error>)->()) {
-        // Why we esacpe the parameter complection? https://www.donnywals.com/what-is-escaping-in-swift/
+    ///   - protoData: the encoded data of the Protocol Buffer request
+    ///   - completion: called upon success with the binary Protocol Buffer data of the response
+    private func sendHttpRequest(protoData: Data) async throws -> Data {
+        // Why we escape the parameter completion? https://www.donnywals.com/what-is-escaping-in-swift/
         
         // First build a binary request header and then append the length and the binary of the protobuf request
         let body = self.buildRequestHeader() + self.packLength(protoData.count) + protoData
@@ -275,33 +272,35 @@ struct ALSClient {
         request.allHTTPHeaderFields = self.headers
         
         // Execute the HTTP request using GCD (https://developer.apple.com/documentation/foundation/url_loading_system/fetching_website_data_into_memory?language=objc)
-        let task = URLSession.shared.dataTask(with: request) { data, response, error in
-            // Check if error is set and if yes execute block (https://stackoverflow.com/a/25193174)
-            if let error = error {
-                Self.logger.warning("Client error: \(error)")
-                completion(.failure(error))
-                return
-            }
-            // Check if the HTTP response is okay
-            guard let httpResponse = response as? HTTPURLResponse,
-                  (200...299).contains(httpResponse.statusCode) else {
-                Self.logger.warning("Server error: \(String(describing: response))")
-                completion(.failure(ALSClientError.httpStatus(response)))
-                return
-            }
-            // Check the response body
-            if let data = data {
-                if !data.isEmpty {
-                    // If response data is provided, drop the first bytes because they also contain a binary TLV header in the format start + end + start + end + size, and invoke the callback.
-                    completion(.success(data.dropFirst(10)))
-                } else {
-                    completion(.failure(ALSClientError.httpNoData(response)))
+        return try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Data, Error>) in
+            let task = URLSession.shared.dataTask(with: request) { data, response, error in
+                // Check if error is set and if yes execute block (https://stackoverflow.com/a/25193174)
+                if let error = error {
+                    Self.logger.warning("Client error: \(error)")
+                    continuation.resume(throwing: error)
+                    return
                 }
-            } else {
-                completion(.failure(ALSClientError.httpNoData(response)))
+                // Check if the HTTP response is okay
+                guard let httpResponse = response as? HTTPURLResponse,
+                      (200...299).contains(httpResponse.statusCode) else {
+                    Self.logger.warning("Server error: \(String(describing: response))")
+                    continuation.resume(throwing: ALSClientError.httpStatus(response))
+                    return
+                }
+                // Check the response body
+                if let data = data {
+                    if !data.isEmpty {
+                        // If response data is provided, drop the first bytes because they also contain a binary TLV header in the format start + end + start + end + size, and invoke the callback.
+                        continuation.resume(returning: data.dropFirst(10))
+                    } else {
+                        continuation.resume(throwing: ALSClientError.httpNoData(response))
+                    }
+                } else {
+                    continuation.resume(throwing: ALSClientError.httpNoData(response))
+                }
             }
+            task.resume()
         }
-        task.resume()
     }
     
     /// Build the TLV (type length value) header bytes for an ALS request.

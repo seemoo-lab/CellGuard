@@ -61,7 +61,7 @@
 		CF5EA78B29892F420061E9F1 /* CGTabBarAppearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5EA78A29892F420061E9F1 /* CGTabBarAppearance.swift */; };
 		CF5EF9202977FACA00C4F50A /* Formatters.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5EF91F2977FACA00C4F50A /* Formatters.swift */; };
 		CF5EF9222977FCF800C4F50A /* CellTechnologyFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5EF9212977FCF800C4F50A /* CellTechnologyFormatter.swift */; };
-		CF5EF9242978538E00C4F50A /* ALSVerifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5EF9232978538E00C4F50A /* ALSVerifier.swift */; };
+		CF5EF9242978538E00C4F50A /* CellVerifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5EF9232978538E00C4F50A /* CellVerifier.swift */; };
 		CF5EF9262978689B00C4F50A /* ALSVerifierTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5EF9252978689B00C4F50A /* ALSVerifierTests.swift */; };
 		CF5EF92829793F7500C4F50A /* TestDetection.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5EF92729793F7500C4F50A /* TestDetection.swift */; };
 		CF5EF92A2979B8D800C4F50A /* LocationSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5EF9292979B8D800C4F50A /* LocationSource.swift */; };
@@ -182,7 +182,7 @@
 		CF5EA78A29892F420061E9F1 /* CGTabBarAppearance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CGTabBarAppearance.swift; sourceTree = "<group>"; };
 		CF5EF91F2977FACA00C4F50A /* Formatters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Formatters.swift; sourceTree = "<group>"; };
 		CF5EF9212977FCF800C4F50A /* CellTechnologyFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellTechnologyFormatter.swift; sourceTree = "<group>"; };
-		CF5EF9232978538E00C4F50A /* ALSVerifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ALSVerifier.swift; sourceTree = "<group>"; };
+		CF5EF9232978538E00C4F50A /* CellVerifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellVerifier.swift; sourceTree = "<group>"; };
 		CF5EF9252978689B00C4F50A /* ALSVerifierTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ALSVerifierTests.swift; sourceTree = "<group>"; };
 		CF5EF92729793F7500C4F50A /* TestDetection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestDetection.swift; sourceTree = "<group>"; };
 		CF5EF9292979B8D800C4F50A /* LocationSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationSource.swift; sourceTree = "<group>"; };
@@ -263,6 +263,7 @@
 		CF07EFA12A3B4B3A005B53ED /* Cells */ = {
 			isa = PBXGroup;
 			children = (
+				CF7BE25D2A67EBCB007FF930 /* Verification */,
 				CF07EFA62A3B4C10005B53ED /* operator-definitions.json */,
 				CF07EFA42A3B4B56005B53ED /* OperatorDefinitions.swift */,
 			);
@@ -399,6 +400,15 @@
 			path = "User Interface";
 			sourceTree = "<group>";
 		};
+		CF7BE25D2A67EBCB007FF930 /* Verification */ = {
+			isa = PBXGroup;
+			children = (
+				CF446753298D2A040083EE63 /* CellLocationDistance.swift */,
+				CF5EF9232978538E00C4F50A /* CellVerifier.swift */,
+			);
+			path = Verification;
+			sourceTree = "<group>";
+		};
 		CF90EF182A30BD3000E7FDB0 /* Tweaks */ = {
 			isa = PBXGroup;
 			children = (
@@ -512,7 +522,6 @@
 			children = (
 				CF53DB41297473E8005DCD10 /* CoreLocationALS.pb.swift */,
 				CFD023692961ABA100AA5A1C /* ALSClient.swift */,
-				CF5EF9232978538E00C4F50A /* ALSVerifier.swift */,
 				CFCE7A8B29817E2500E28787 /* ALSTechnology.swift */,
 			);
 			path = "Apple Location Service";
@@ -534,7 +543,6 @@
 			children = (
 				CFB8B2872963417B00503189 /* LocationDataManager.swift */,
 				CF0FDCCC296B480B00A6FFE2 /* TrackedUserLocation.swift */,
-				CF446753298D2A040083EE63 /* CellLocationDistance.swift */,
 			);
 			path = Locations;
 			sourceTree = "<group>";
@@ -738,7 +746,7 @@
 				CF5672962A29E59000B6EA7C /* TweakInfoView.swift in Sources */,
 				CF54CCC12A331E7100961E4D /* PacketQMIDetailsView.swift in Sources */,
 				CF53DB42297473E8005DCD10 /* CoreLocationALS.pb.swift in Sources */,
-				CF5EF9242978538E00C4F50A /* ALSVerifier.swift in Sources */,
+				CF5EF9242978538E00C4F50A /* CellVerifier.swift in Sources */,
 				CFD023432961A10D00AA5A1C /* CellGuard.xcdatamodeld in Sources */,
 				CFDF5D7F297F05A0000708A8 /* SingleCellMap.swift in Sources */,
 				CF5EF92A2979B8D800C4F50A /* LocationSource.swift in Sources */,
@@ -947,7 +955,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 5;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"CellGuard/Preview Content\"";
 				DEVELOPMENT_TEAM = RJXNW62ZYN;
 				ENABLE_PREVIEWS = YES;
@@ -968,7 +976,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1.2;
+				MARKETING_VERSION = 1.2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = de.tudarmstadt.seemoo.CellGuard;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -983,7 +991,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 5;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"CellGuard/Preview Content\"";
 				DEVELOPMENT_TEAM = RJXNW62ZYN;
 				ENABLE_PREVIEWS = YES;
@@ -1004,7 +1012,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1.2;
+				MARKETING_VERSION = 1.2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = de.tudarmstadt.seemoo.CellGuard;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;

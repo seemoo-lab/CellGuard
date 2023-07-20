@@ -164,8 +164,14 @@ class PersistenceController {
         
         taskContext.performAndWait {
             do {
-                // Request transactions that happend since the lastToken
-                let changeRequest = NSPersistentHistoryChangeRequest.fetchHistory(after: self.lastToken)
+                // Request transactions that happened since the lastToken
+                let changeRequest: NSPersistentHistoryChangeRequest
+                // TODO: Maybe this is bad
+                if let lastToken = self.lastToken {
+                    changeRequest = NSPersistentHistoryChangeRequest.fetchHistory(after: lastToken)
+                } else {
+                    changeRequest = NSPersistentHistoryChangeRequest.fetchHistory(after: Date(timeIntervalSince1970: 0))
+                }
                 let historyResult = try taskContext.execute(changeRequest) as? NSPersistentHistoryResult
                 if let history = historyResult?.result as? [NSPersistentHistoryTransaction],
                    !history.isEmpty {

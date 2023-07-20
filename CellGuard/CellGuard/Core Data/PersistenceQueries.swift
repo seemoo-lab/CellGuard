@@ -8,9 +8,6 @@
 import CoreData
 
 extension PersistenceController {
-    // TODO: Import data from Wikipedia
-    // MCC -> Country Name
-    // MCC, MNC -> Network Operator Name
     
     /// Uses `NSBatchInsertRequest` (BIR) to import tweak cell properties into the Core Data store on a private queue.
     func importCollectedCells(from cells: [CCTCellProperties]) throws {
@@ -35,8 +32,10 @@ extension PersistenceController {
                     cells[index].applyTo(tweakCell: cell)
                     cell.imported = importedDate
                     cell.status = CellStatus.imported.rawValue
+                    cell.score = 0
+                    cell.nextVerification = Date()
                 }
-                    
+                
                 index += 1
                 return false
             })
@@ -51,8 +50,6 @@ extension PersistenceController {
             logger.debug("Failed to execute batch import request for tweak cells.")
             throw PersistenceError.batchInsertError
         }
-        
-        try? assignLocationsToTweakCells()
         
         logger.debug("Successfully inserted \(cells.count) tweak cells.")
     }
@@ -77,12 +74,12 @@ extension PersistenceController {
             // See: https://developer.apple.com/forums/thread/676651
             cells.forEach { queryCell in
                 // Don't add the check if it already exists
-                let existFetchRequets = NSFetchRequest<ALSCell>()
-                existFetchRequets.entity = ALSCell.entity()
-                existFetchRequets.predicate = sameCellPredicate(queryCell: queryCell)
+                let existFetchRequest = NSFetchRequest<ALSCell>()
+                existFetchRequest.entity = ALSCell.entity()
+                existFetchRequest.predicate = sameCellPredicate(queryCell: queryCell)
                 do {
                     // TODO: Update the date of existing cell
-                    if try taskContext.count(for: existFetchRequets) > 0 {
+                    if try taskContext.count(for: existFetchRequest) > 0 {
                         return
                     }
                 } catch {
@@ -108,7 +105,7 @@ extension PersistenceController {
                 return
             }
             tweakCell.status = CellStatus.verified.rawValue
-
+            
             // Fetch the verification cell for the tweak cell and assign it
             do {
                 let verifyCell = try fetchALSCell(from: tweakCell, context: taskContext)
@@ -137,7 +134,7 @@ extension PersistenceController {
         }
         
         logger.debug("Successfully inserted \(cells.count) ALS cells.")
-
+        
     }
     
     /// Calculates the distance between the location for the tweak cell and its verified counter part from Apple's database.
@@ -242,7 +239,7 @@ extension PersistenceController {
                     
                     dbPacket.imported = importedDate
                 }
-                    
+                
                 index += 1
                 return false
             })
@@ -291,7 +288,7 @@ extension PersistenceController {
                     
                     dbPacket.imported = importedDate
                 }
-                    
+                
                 index += 1
                 return false
             })
@@ -310,19 +307,21 @@ extension PersistenceController {
         logger.debug("Successfully inserted \(packets.count) tweak ARI packets.")
     }
     
-    func fetchLatestUnverifiedTweakCells(count: Int) throws -> [NSManagedObjectID : ALSQueryCell]  {
-        var queryCells: [NSManagedObjectID : ALSQueryCell] = [:]
+    func fetchLatestUnverifiedTweakCells(count: Int) throws -> (NSManagedObjectID, ALSQueryCell, CellStatus?)?  {
+        var cell: (NSManagedObjectID, ALSQueryCell, CellStatus?)? = nil
         var fetchError: Error? = nil
         newTaskContext().performAndWait {
             let request = NSFetchRequest<TweakCell>()
             request.entity = TweakCell.entity()
             request.fetchLimit = count
-            request.predicate = NSPredicate(format: "status == %@", CellStatus.imported.rawValue)
+            request.predicate = NSPredicate(format: "status != %@ and nextVerification <= %@", CellStatus.verified.rawValue, Date() as NSDate)
             request.sortDescriptors = [NSSortDescriptor(keyPath: \TweakCell.collected, ascending: false)]
             request.returnsObjectsAsFaults = false
             do {
                 let tweakCells = try request.execute()
-                queryCells = Dictionary(uniqueKeysWithValues: tweakCells.map { ($0.objectID, queryCell(from: $0)) })
+                if let first = tweakCells.first {
+                    cell = (first.objectID, self.queryCell(from: first), CellStatus(rawValue: first.status ?? ""))
+                }
             } catch {
                 fetchError = error
             }
@@ -333,7 +332,121 @@ extension PersistenceController {
             throw fetchError
         }
         
-        return queryCells
+        return cell
+    }
+    
+    func fetchCellLifespan(of tweakCellID: NSManagedObjectID) throws -> (start: Date, end: Date, after: NSManagedObjectID)? {
+        let taskContext = newTaskContext()
+        
+        var cellTuple: (start: Date, end: Date, after: NSManagedObjectID)? = nil
+        var fetchError: Error? = nil
+        taskContext.performAndWait {
+            guard let tweakCell = taskContext.object(with: tweakCellID) as? TweakCell else {
+                logger.warning("Can't convert NSManagedObjectID \(tweakCellID) to TweakCell")
+                return
+            }
+            
+            guard let startTimestamp = tweakCell.collected else {
+                logger.warning("TweakCell \(tweakCell) has not collected timestamp")
+                return
+            }
+            
+            let request = NSFetchRequest<TweakCell>()
+            request.entity = TweakCell.entity()
+            request.fetchLimit = 1
+            request.predicate = NSPredicate(format: "collected > %@", startTimestamp as NSDate)
+            request.sortDescriptors = [NSSortDescriptor(keyPath: \TweakCell.collected, ascending: true)]
+            request.returnsObjectsAsFaults = false
+            do {
+                let tweakCells = try request.execute()
+                if let tweakCell = tweakCells.first {
+                    if let endTimestamp = tweakCell.collected {
+                        cellTuple = (start: startTimestamp, end: endTimestamp, after: tweakCell.objectID)
+                    } else {
+                        logger.warning("TweakCell \(tweakCell) has not collected timestamp")
+                    }
+                }
+            } catch {
+                fetchError = error
+            }
+        }
+        
+        if let fetchError = fetchError {
+            logger.warning("Can' fetch the first cell after the cell \(tweakCellID): \(fetchError)")
+            throw fetchError
+        }
+        
+        return cellTuple
+    }
+    
+    func fetchQMIPackets(direction: CPTDirection, service: Int16, message: Int32, indication: Bool, start: Date, end: Date) throws -> [ParsedQMIPacket] {
+        var packets: [ParsedQMIPacket] = []
+        
+        var fetchError: Error? = nil
+        newTaskContext().performAndWait {
+            let request = NSFetchRequest<QMIPacket>()
+            request.entity = QMIPacket.entity()
+            request.predicate = NSPredicate(
+                format: "direction = %@ and service = %@ and message = %@ and indication = %@ and %@ <= collected and collected <= %@",
+                direction.rawValue as NSString, service as NSNumber, message as NSNumber, NSNumber(booleanLiteral: indication), start as NSDate, end as NSDate
+            )
+            request.sortDescriptors = [NSSortDescriptor(keyPath: \QMIPacket.collected, ascending: false)]
+            request.returnsObjectsAsFaults = false
+            do {
+                let qmiPackets = try request.execute()
+                for qmiPacket in qmiPackets {
+                    guard let data = qmiPacket.data else {
+                        logger.warning("Skipping packet \(qmiPacket) as it provides no binary data")
+                        continue
+                    }
+                    packets.append(try ParsedQMIPacket(nsData: data))
+                }
+            } catch {
+                fetchError = error
+            }
+        }
+        
+        if let fetchError = fetchError {
+            logger.warning("Can't fetch QMI packets (service=\(service), message=\(message), indication=\(indication)) from \(start) to \(end): \(fetchError)")
+            throw fetchError
+        }
+        
+        return packets
+    }
+    
+    func fetchARIPackets(direction: CPTDirection, group: Int16, type: Int32, start: Date, end: Date) throws -> [ParsedARIPacket] {
+        var packets: [ParsedARIPacket] = []
+        
+        var fetchError: Error? = nil
+        newTaskContext().performAndWait {
+            let request = NSFetchRequest<ARIPacket>()
+            request.entity = ARIPacket.entity()
+            request.predicate = NSPredicate(
+                format: "direction = %@ and group = %@ and type = %@ and %@ <= collected and collected <= %@",
+                direction.rawValue as NSString, group as NSNumber, type as NSNumber, start as NSDate, end as NSDate
+            )
+            request.sortDescriptors = [NSSortDescriptor(keyPath: \ARIPacket.collected, ascending: false)]
+            request.returnsObjectsAsFaults = false
+            do {
+                let ariPackets = try request.execute()
+                for ariPacket in ariPackets {
+                    guard let data = ariPacket.data else {
+                        logger.warning("Skipping packet \(ariPacket) as it provides no binary data")
+                        continue
+                    }
+                    packets.append(try ParsedARIPacket(data: data))
+                }
+            } catch {
+                fetchError = error
+            }
+        }
+        
+        if let fetchError = fetchError {
+            logger.warning("Can't fetch ARI packets (group=\(group), type=\(type)) from \(start) to \(end): \(fetchError)")
+            throw fetchError
+        }
+        
+        return packets
     }
     
     func assignExistingALSIfPossible(to tweakCellID: NSManagedObjectID) throws -> Bool {
@@ -368,7 +481,7 @@ extension PersistenceController {
         
         if let fetchError = fetchError {
             logger.warning(
-                "Can't fetch or save for assinging an existing ALS cell to a tweak cell (\(tweakCellID) if possible: \(fetchError)")
+                "Can't fetch or save for assigning an existing ALS cell to a tweak cell (\(tweakCellID) if possible: \(fetchError)")
             throw fetchError
         }
         
@@ -416,7 +529,7 @@ extension PersistenceController {
         )
     }
     
-    func storeCellStatus(cellId: NSManagedObjectID, status: CellStatus) throws {
+    func storeCellStatus(cellId: NSManagedObjectID, status: CellStatus, addToScore: Int16 = 0) throws {
         let taskContext = newTaskContext()
         
         taskContext.name = "updateContext"
@@ -426,6 +539,8 @@ extension PersistenceController {
         taskContext.performAndWait {
             if let tweakCell = taskContext.object(with: cellId) as? TweakCell {
                 tweakCell.status = status.rawValue
+                logger.debug("Adding \(addToScore) to score \(tweakCell.score) of \(tweakCell)")
+                tweakCell.score = tweakCell.score + addToScore
                 do {
                     try taskContext.save()
                 } catch {
@@ -443,110 +558,89 @@ extension PersistenceController {
         }
     }
     
-    /// Uses `NSBatchUpdateRequest` (BIR) to assign locations stored in Core Data  to cells on a private queue.
-    func assignLocationsToTweakCells() throws {
+    func storeVerificationDelay(cellId: NSManagedObjectID, seconds: Int) throws {
         let taskContext = newTaskContext()
         
-        taskContext.name = "updateContext"
-        taskContext.transactionAuthor = "assignLocationsToTweakCells"
+        var saveError: Error? = nil
+        taskContext.performAndWait {
+            if let tweakCell = taskContext.object(with: cellId) as? TweakCell {
+                tweakCell.nextVerification = Date().addingTimeInterval(Double(seconds))
+                do {
+                    try taskContext.save()
+                } catch {
+                    self.logger.warning("Can't save tweak cell (\(tweakCell)) with verification delay of \(seconds)s: \(error)")
+                    saveError = error
+                }
+            } else {
+                self.logger.warning("Can't add verification delay of \(seconds)s to the tweak cell with object ID: \(cellId)")
+                saveError = PersistenceError.objectIdNotFoundError
+            }
+        }
+        if let saveError = saveError {
+            throw saveError
+        }
+    }
+    
+    func assignLocation(to tweakCellID: NSManagedObjectID) throws -> (Bool, Date?) {
+        let taskContext = newTaskContext()
         
-        var successful: Int = 0
-        var count: Int = 0
-        var contextError: Error?
+        var saveError: Error? = nil
+        var foundLocation: Bool = false
+        var cellCollected: Date? = nil
         
         taskContext.performAndWait {
-            // Fetch all tweak cells without location
-            let cellFetchRequest = NSFetchRequest<TweakCell>()
-            cellFetchRequest.entity = TweakCell.entity()
-            cellFetchRequest.predicate = NSPredicate(format: "location == nil and collected != nil")
-            
-            let cells: [TweakCell]
-            do {
-                cells = try cellFetchRequest.execute()
-            } catch {
-                self.logger.warning("Can't fetch tweak cells without any location: \(error)")
-                contextError = error
+            guard let tweakCell = taskContext.object(with: tweakCellID) as? TweakCell else {
+                self.logger.warning("Can't assign location to the tweak cell with object ID: \(tweakCellID)")
+                saveError = PersistenceError.objectIdNotFoundError
                 return
             }
             
-            if cells.isEmpty {
-                self.logger.debug("There are no tweak cells without location data")
-                return
-            }
-            count = cells.count
+            cellCollected = tweakCell.collected
             
-            let calendar = Calendar.current
+            // Find the most precise user location within a two minute window
+            let fetchLocationRequest = NSFetchRequest<UserLocation>()
+            fetchLocationRequest.entity = UserLocation.entity()
+            fetchLocationRequest.fetchLimit = 1
+            fetchLocationRequest.predicate = NSPredicate(
+                format: "%@ >= collected and collected <= %@",
+                Date().addingTimeInterval(120) as NSDate, Date().addingTimeInterval(120) as NSDate
+            )
+            fetchLocationRequest.sortDescriptors = [
+                NSSortDescriptor(keyPath: \UserLocation.horizontalAccuracy, ascending: true)
+            ]
             
-            // TODO: Check if this does work correctly
-            let min = cells.min { $0.collected! < $1.collected! }?.collected
-            let max = cells.max { $0.collected! < $1.collected! }?.collected
-            
-            let minDay = calendar.date(byAdding: .day, value: -1, to: min!)!
-            let maxDay = calendar.date(byAdding: .day, value: 1, to: max!)!
-            
-            // Fetch locations in date range with a margin of one day
-            let locationFetchRequest = NSFetchRequest<UserLocation>()
-            locationFetchRequest.entity = UserLocation.entity()
-            locationFetchRequest.predicate = NSPredicate(format: "collected > %@ and collected < %@ and collected != nil", minDay as NSDate, maxDay as NSDate)
-            
+            // Execute the fetch request
             let locations: [UserLocation]
             do {
-                locations = try locationFetchRequest.execute()
+                locations = try fetchLocationRequest.execute()
             } catch {
-                self.logger.warning("Can't fetch user locations with in \(minDay) - \(maxDay): \(error)")
-                contextError = error
+                self.logger.warning("Can't query location for tweak cell \(tweakCell): \(error)")
+                saveError = error
                 return
             }
             
-            if locations.isEmpty {
-                self.logger.debug("There no user locations which can be assigned to \(cells.count) tweak cells")
+            // Return with foundLocation = false if we've found no location matching the criteria
+            guard let location = locations.first else {
                 return
             }
             
-            // Assign each tweak cell location with min (tweakCell.collected - location.timestamp) which is greater or equal to zero
-            var seenDates = Set<Date>()
-            let uniqueLocationsKV = locations
-                .filter { seenDates.insert( $0.collected!).inserted }
-                .map { ($0.collected!, $0) }
+            // We've found a location, assign it to the cell, and save the cel
+            foundLocation = true
+            tweakCell.location = location
             
-            let collectedLocationMap: [Date : UserLocation] = Dictionary(uniqueKeysWithValues: uniqueLocationsKV)
-            let collectedDates = collectedLocationMap.keys
-            
-            cells.forEach { cell in
-                let lastLocationBefore = collectedDates
-                    .filter { $0 > cell.collected! }
-                    .max(by: { $0 < $1 })
-                
-                // If we've got no location (because it could be older than a day), we'll dont set it
-                guard let lastLocationBefore = lastLocationBefore else {
-                    return
-                }
-                
-                // If the location is older than a day, we'll skip it
-                if cell.collected!.timeIntervalSince(lastLocationBefore) > 60 * 60 * 24 {
-                    // TODO: Somehow mark the cell not to scan it again?
-                    return
-                }
-                
-                // If not, we'll assign it
-                cell.location = collectedLocationMap[lastLocationBefore]
-                successful += 1
-            }
-            
-            // Save everything
             do {
                 try taskContext.save()
             } catch {
-                contextError = error
-                self.logger.debug("Can't save context with \(locations.count) locations assigned to \(cells.count) tweak cells: \(error)")
+                self.logger.warning("Can't save tweak cell (\(tweakCell)) with an assigned location: \(error)")
+                saveError = error
+                return
             }
         }
-        
-        if let contextError = contextError {
-            throw contextError
+        if let saveError = saveError {
+            throw saveError
         }
         
-        self.logger.debug("Successfully assigned user locations to \(successful) tweak cells of out \(count) cells.")
+        return (foundLocation, cellCollected)
     }
     
     func countPacketsByType(completion: @escaping (Result<(Int, Int), Error>) -> Void) {
@@ -593,7 +687,7 @@ extension PersistenceController {
                 self.logger.warning("Failed to delete old packets: \(error)")
             }
         }
-
+        
     }
     
     func deleteDataInBackground(categories: [PersistenceCategory], completion: @escaping (Result<Void, Error>) -> Void) {
@@ -656,5 +750,5 @@ extension PersistenceController {
         let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
         try context.persistentStoreCoordinator?.execute(deleteRequest, with: context)
     }
-
+    
 }
