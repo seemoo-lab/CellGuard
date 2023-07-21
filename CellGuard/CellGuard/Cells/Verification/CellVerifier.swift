@@ -93,7 +93,7 @@ struct CellVerifier {
             throw CellVerifierError.invalidCellStatus
         }
         
-        Self.logger.debug("Verifying cell \(queryCellID): \(queryCell)")
+        Self.logger.debug("Verifying cell \(queryCellID) with status \(queryCellStatus.rawValue): \(queryCell)")
         // Continue with the correct verification stage
         switch (queryCellStatus) {
         case .imported:
@@ -133,6 +133,7 @@ struct CellVerifier {
         
         // Check if the resulting ALS cell is valid
         if !(preciseAlsCells.first?.isValid() ?? false) {
+            Self.logger.info("The first cell is not valid (0/40): \(queryCell)")
             // If not, do not add any points to it and continue with the packet verification
             try? persistence.storeCellStatus(cellId: queryCellID, status: .processedLocation, addToScore: 0)
             try await verifyPacket(queryCell: queryCell, queryCellID: queryCellID)
@@ -147,6 +148,7 @@ struct CellVerifier {
         }
         
         // Award the points based on the distance
+        Self.logger.info("The ALS cells are valid (\(pointsALS)/\(pointsALS)): \(queryCell)")
         try? persistence.storeCellStatus(cellId: queryCellID, status: .processedCell, addToScore: Int16(pointsALS))
         try await verifyDistance(queryCell: queryCell, queryCellID: queryCellID)
     }
@@ -158,6 +160,7 @@ struct CellVerifier {
             // We've missing a location for the cell, so ...
             if (cellCollected ?? Date.distantPast) < Date().addingTimeInterval(-5 * 60) {
                 // If the cell is older than five minutes, we assume that we won't get the location data and just mark the location as checked
+                Self.logger.info("No location found for cell (\(pointsLocation)/\(pointsLocation)): \(queryCell)")
                 try? persistence.storeCellStatus(cellId: queryCellID, status: .processedLocation, addToScore: Int16(pointsLocation))
             } else {
                 // If the cell is younger than five minutes, we retry after 30s
@@ -166,16 +169,17 @@ struct CellVerifier {
         }
         
         // Calculate the distance between the location assigned to the tweak cells & the ALS cell
-        // TODO: Improve distance calculation by choosing the best location data near the cell (maybe wait 5 seconds or so?)
         guard let distance = persistence.calculateDistance(tweakCell: queryCellID) else {
-            // If we can't get
+            // If we can't get the distance, we delay the verification
             Self.logger.warning("Can't calculate distance for cell \(queryCellID)")
             try? persistence.storeVerificationDelay(cellId: queryCellID, seconds: 60)
             return
         }
         
-        let distancePoints = Double(pointsLocation) * (1.0 - distance.score())
-        try? persistence.storeCellStatus(cellId: queryCellID, status: .processedLocation, addToScore: Int16(distancePoints))
+        // The score is a percentage of how likely the cell is evil, so we calculate an inverse of that and multiple it by the points
+        let distancePoints = Int16(Double(pointsLocation) * (1.0 - distance.score()))
+        try? persistence.storeCellStatus(cellId: queryCellID, status: .processedLocation, addToScore: distancePoints)
+        Self.logger.info("Location verified for cell (\(distancePoints)/\(pointsLocation)): \(queryCell)")
         
         try await verifyPacket(queryCell: queryCell, queryCellID: queryCellID)
     }
@@ -198,11 +202,14 @@ struct CellVerifier {
         let ariPackets: [ParsedARIPacket]
         do {
             // Indication of QMI NAS Service with Network Reject packet
+            // The packet's Reject Cause TLV could be interesting (0x03)
+            // For a list of possibles causes, see: https://gitlab.freedesktop.org/mobile-broadband/libqmi/-/blob/main/src/libqmi-glib/qmi-enums-nas.h#L1663
             qmiPackets = try persistence.fetchQMIPackets(direction: .ingoing, service: 0x03, message: 0x0068, indication: true, start: start, end: end)
             
             // TODO: Find ARI Network Reject packet
             // Maybe IBINetRegistrationInfoIndCb -> [3] IBINetRegistrationRejectCause
-            // https://github.com/seemoo-lab/aristoteles/blob/master/types/structure/libari_dylib.lua
+            // There are also numerous IBI_NET_REGISTRATION_REJECT strings in libARI.dylib
+            // For a list of ARI packets, see: https://github.com/seemoo-lab/aristoteles/blob/master/types/structure/libari_dylib.lua
             ariPackets = []
         } catch {
             throw CellVerifierError.fetchPackets(error)
@@ -211,9 +218,11 @@ struct CellVerifier {
         if qmiPackets.count > 0 || ariPackets.count > 0 {
             // There's a suspicious packets, so we award zero points
             try? persistence.storeCellStatus(cellId: queryCellID, status: .verified, addToScore: 0)
+            Self.logger.info("Packet verification failed for cell (0/\(pointsPacket)): \(queryCell)")
         } else {
             // All packets are fine, so we award 40 points :)
             try? persistence.storeCellStatus(cellId: queryCellID, status: .verified, addToScore: Int16(pointsPacket))
+            Self.logger.info("Packet verified for cell (\(pointsPacket)/\(pointsPacket)): \(queryCell)")
         }
     }
     
