@@ -57,12 +57,12 @@ struct SummaryTabView: View {
                         Button {
                             showingCellList = true
                         } label: {
-                            Label("View all Cells", systemImage: "list.bullet")
+                            Label("Connected Cells", systemImage: "list.bullet")
                         }
                         Button {
                             showingHelp = true
                         } label: {
-                            Label("Learn more", systemImage: "questionmark.circle")
+                            Label("Help", systemImage: "questionmark.circle")
                         }
                         Button {
                             showingSettings = true

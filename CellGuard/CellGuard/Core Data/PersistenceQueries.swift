@@ -503,7 +503,7 @@ extension PersistenceController {
         }
     }
     
-    private func queryCell(from cell: TweakCell) -> ALSQueryCell {
+    func queryCell(from cell: TweakCell) -> ALSQueryCell {
         return ALSQueryCell(
             technology: ALSTechnology(rawValue: cell.technology ?? "") ?? .LTE,
             country: cell.country,

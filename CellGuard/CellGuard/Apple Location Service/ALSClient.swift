@@ -16,7 +16,7 @@ enum ALSClientError: Error {
     case noCells(Data)
 }
 
-struct ALSQueryLocation {
+struct ALSQueryLocation: Equatable {
     var latitude = 0.0
     var longitude = 0.0
     var accuracy = 0
@@ -44,7 +44,7 @@ struct ALSQueryLocation {
     }
 }
 
-struct ALSQueryCell: CustomStringConvertible {
+struct ALSQueryCell: CustomStringConvertible, Equatable {
     var technology: ALSTechnology
     
     var country: Int32 = 0
