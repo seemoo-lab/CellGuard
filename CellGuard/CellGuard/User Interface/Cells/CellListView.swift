@@ -103,9 +103,9 @@ private struct FilteredCellView: View {
         List(groupMeasurements()) { cellMeasurements in
             NavigationLink {
                 // The first entry should also update to include newer cell measurements
-                TweakCellDetailsView(
+                CellDetailsView(
                     // The init method of the GroupedMeasurement class guarantees that each instance contains at least one measurement 
-                    firstMeasurement: cellMeasurements.measurements.first!,
+                    cell: cellMeasurements.measurements.first!,
                     start: cellMeasurements.start,
                     end: cellMeasurements.openEnd ? nil : cellMeasurements.end
                 )
