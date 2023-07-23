@@ -65,7 +65,8 @@ private struct FilteredCellView: View {
     }
     
     private func groupMeasurements() -> [GroupedMeasurements] {
-        let queryCell = PersistenceController.shared.queryCell
+        // TODO: Also group by day?
+        let queryCell = PersistenceController.queryCell
         var groups: [GroupedMeasurements] = []
         
         // Iterate through all measurements and start a new group upon encountering a new cell

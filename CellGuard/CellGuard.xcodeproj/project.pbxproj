@@ -65,6 +65,7 @@
 		CF5EF92829793F7500C4F50A /* TestDetection.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5EF92729793F7500C4F50A /* TestDetection.swift */; };
 		CF5EF92A2979B8D800C4F50A /* LocationSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5EF9292979B8D800C4F50A /* LocationSource.swift */; };
 		CF6EC8AD2A6C4C88004CF0AB /* PreviewInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF6EC8AC2A6C4C88004CF0AB /* PreviewInfo.swift */; };
+		CF6EC8B12A6D9F99004CF0AB /* CellListFilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF6EC8B02A6D9F99004CF0AB /* CellListFilterView.swift */; };
 		CF86C7912A6A9086002EC9B6 /* CellListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF86C7902A6A9086002EC9B6 /* CellListView.swift */; };
 		CF86C7932A6AC25D002EC9B6 /* CellDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF86C7922A6AC25D002EC9B6 /* CellDetailsView.swift */; };
 		CF86C7972A6ACDAA002EC9B6 /* CellDetailsRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF86C7962A6ACDAA002EC9B6 /* CellDetailsRow.swift */; };
@@ -189,6 +190,7 @@
 		CF5EF92729793F7500C4F50A /* TestDetection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestDetection.swift; sourceTree = "<group>"; };
 		CF5EF9292979B8D800C4F50A /* LocationSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationSource.swift; sourceTree = "<group>"; };
 		CF6EC8AC2A6C4C88004CF0AB /* PreviewInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewInfo.swift; sourceTree = "<group>"; };
+		CF6EC8B02A6D9F99004CF0AB /* CellListFilterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellListFilterView.swift; sourceTree = "<group>"; };
 		CF86C7902A6A9086002EC9B6 /* CellListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellListView.swift; sourceTree = "<group>"; };
 		CF86C7922A6AC25D002EC9B6 /* CellDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellDetailsView.swift; sourceTree = "<group>"; };
 		CF86C7962A6ACDAA002EC9B6 /* CellDetailsRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellDetailsRow.swift; sourceTree = "<group>"; };
@@ -353,6 +355,7 @@
 			isa = PBXGroup;
 			children = (
 				CF86C7902A6A9086002EC9B6 /* CellListView.swift */,
+				CF6EC8B02A6D9F99004CF0AB /* CellListFilterView.swift */,
 				CF86C7922A6AC25D002EC9B6 /* CellDetailsView.swift */,
 				CF86C79C2A6AE0E3002EC9B6 /* TweakCellMeasurementView.swift */,
 				CFB51833297AEFA80006C690 /* CellStatusIcon.swift */,
@@ -766,6 +769,7 @@
 				CF6EC8AD2A6C4C88004CF0AB /* PreviewInfo.swift in Sources */,
 				CF0FDCB529698E1500A6FFE2 /* SummaryTabView.swift in Sources */,
 				CF2A1C1D2975C71000E8B61C /* BackgroundState.swift in Sources */,
+				CF6EC8B12A6D9F99004CF0AB /* CellListFilterView.swift in Sources */,
 				CF0FDCC22969AC1100A6FFE2 /* SettingsView.swift in Sources */,
 				CFD023682961AB9900AA5A1C /* CCTClient.swift in Sources */,
 				CF1FAFB32986B11200106930 /* CellReachOverlay.swift in Sources */,

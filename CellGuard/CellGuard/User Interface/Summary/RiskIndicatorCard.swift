@@ -20,13 +20,12 @@ enum RiskMediumCause: Equatable {
         case .Tweak:
             return "Ensure the tweak is active"
         case let .Cells(cellCount):
-            return "Detected \(cellCount) suspicious \(cellCount == 1 ? "cell measurement" : "cell measurements") in the last 14 days"
+            return "Detected \(cellCount) suspicious \(cellCount == 1 ? "cell" : "cells") in the last 14 days"
         }
     }
 }
 
 enum RiskLevel: Equatable {
-    // TODO: Show the real number of cells to be verified
     case Unknown
     case Low
     case LowMonitor
@@ -54,12 +53,12 @@ enum RiskLevel: Equatable {
         case let .Medium(cause):
             return cause.text()
         case let .High(cellCount):
-            return "Detected \(cellCount) potential malicious \(cellCount == 1 ? "cell measurement" : "cell measurements") in the last 14 days"
+            return "Detected \(cellCount) potential malicious \(cellCount == 1 ? "cell" : "cells") in the last 14 days"
         }
     }
     
     func color(dark: Bool) -> Color {
-        // TODO: Less saturated colors for the dark mode
+        // TODO: Less saturated colors for the dark mode (Test everything again in the dark mode)
         switch (self) {
         case .Unknown: return dark ? Color(UIColor.systemGray6) : .gray
         case .Low: return .green

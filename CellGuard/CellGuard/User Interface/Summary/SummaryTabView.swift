@@ -148,12 +148,13 @@ private struct CalculatedRiskView: View {
     
     var body: some View {
         if failedCells.count > 0 {
-            // TODO: Use a real cell count instead of measurements
-            return RiskIndicatorCard(risk: .High(cellCount: failedCells.count))
+            let cellCount = Dictionary(grouping: failedCells) { PersistenceController.queryCell(from: $0) }.count
+            return RiskIndicatorCard(risk: .High(cellCount: cellCount))
         }
         
         if suspiciousCells.count > 0 {
-            return RiskIndicatorCard(risk: .Medium(cause: .Cells(cellCount: suspiciousCells.count)))
+            let cellCount = Dictionary(grouping: suspiciousCells) { PersistenceController.queryCell(from: $0) }.count
+            return RiskIndicatorCard(risk: .Medium(cause: .Cells(cellCount: cellCount)))
         }
         
         // We keep the unknown status until all cells are verified (except the current cell which we are monitoring)

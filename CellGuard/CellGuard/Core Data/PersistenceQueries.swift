@@ -320,7 +320,7 @@ extension PersistenceController {
             do {
                 let tweakCells = try request.execute()
                 if let first = tweakCells.first {
-                    cell = (first.objectID, self.queryCell(from: first), CellStatus(rawValue: first.status ?? ""))
+                    cell = (first.objectID, Self.queryCell(from: first), CellStatus(rawValue: first.status ?? ""))
                 }
             } catch {
                 fetchError = error
@@ -503,7 +503,7 @@ extension PersistenceController {
         }
     }
     
-    func queryCell(from cell: TweakCell) -> ALSQueryCell {
+    static func queryCell(from cell: TweakCell) -> ALSQueryCell {
         return ALSQueryCell(
             technology: ALSTechnology(rawValue: cell.technology ?? "") ?? .LTE,
             country: cell.country,
