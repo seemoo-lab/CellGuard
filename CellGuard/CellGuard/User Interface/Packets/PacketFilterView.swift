@@ -175,7 +175,7 @@ private struct PacketFilterListView: View {
     @Binding var settings: PacketFilterSettings
     
     var body: some View {
-        return Form {
+        Form {
             Section(header: Text("Packets")) {
                 Picker("Protocol", selection: $settings.proto) {
                     ForEach(PacketFilterProtocol.allCases) { Text($0.rawValue.uppercased()) }

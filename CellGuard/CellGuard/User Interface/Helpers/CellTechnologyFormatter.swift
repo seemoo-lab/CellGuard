@@ -13,7 +13,7 @@ struct CellTechnologyFormatter {
     
     let technology: ALSTechnology
     
-    private init(technology: ALSTechnology) {
+    init(technology: ALSTechnology) {
         self.technology = technology
     }
     

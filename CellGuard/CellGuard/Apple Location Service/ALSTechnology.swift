@@ -13,12 +13,12 @@ private let logger = Logger(
     category: String(describing: ALSClient.self)
 )
 
-enum ALSTechnology: String {
+enum ALSTechnology: String, CaseIterable, Identifiable {
     case GSM
     case SCDMA
+    case CDMA
     case LTE
     case NR
-    case CDMA
     
     public static func from(cctTechnology: String) -> ALSTechnology {
         if cctTechnology == "UMTS" {
@@ -32,4 +32,6 @@ enum ALSTechnology: String {
             
         return alsTechnology
     }
+    
+    var id: Self { self }
 }

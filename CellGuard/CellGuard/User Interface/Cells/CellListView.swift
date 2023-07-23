@@ -13,19 +13,21 @@ import OSLog
 struct CellListView: View {
     
     @State private var isShowingFilterView = false
+    @State private var settings = CellListFilterSettings()
     
     var body: some View {
         VStack {
             // A workaround for that the NavigationLink on iOS does not respect the isShowingFilterView variable if it's embedded into a ToolbarItem.
             // See: https://www.hackingwithswift.com/quick-start/swiftui/how-to-use-programmatic-navigation-in-swiftui
+            // TODO: Upon pressing Apply the view sometimes forgets its origin (check view changes of the base NavigationView & this view)
             NavigationLink(isActive: $isShowingFilterView) {
-                Button("Close") {
+                CellListFilterView(settingsBound: $settings) {
                     isShowingFilterView = false
                 }
             } label: {
                 EmptyView()
             }
-            FilteredCellView()
+            FilteredCellView(settings: settings)
         }
         .navigationTitle("Cells")
         .toolbar {
@@ -54,12 +56,11 @@ private struct FilteredCellView: View {
     @FetchRequest
     private var measurements: FetchedResults<TweakCell>
     
-    init() {
+    init(settings: CellListFilterSettings) {
         let cellsRequest: NSFetchRequest<TweakCell> = TweakCell.fetchRequest()
-        cellsRequest.fetchBatchSize = 25
+        // cellsRequest.fetchBatchSize = 25
         cellsRequest.sortDescriptors = [NSSortDescriptor(keyPath: \TweakCell.collected, ascending: false)]
-        // TODO: Replace with filter (filter.applyTo(qmi: qmiRequest))
-        cellsRequest.predicate = NSPredicate(format: "collected >= %@", Calendar.current.startOfDay(for: Date()) as NSDate)
+        settings.applyTo(request: cellsRequest)
         
         self._measurements = FetchRequest(fetchRequest: cellsRequest, animation: .easeOut)
     }
@@ -101,6 +102,7 @@ private struct FilteredCellView: View {
     }
     
     var body: some View {
+        // TODO: Show a message if there's no group
         List(groupMeasurements()) { cellMeasurements in
             NavigationLink {
                 // The first entry should also update to include newer cell measurements
@@ -142,6 +144,7 @@ private struct ListPacketCell: View {
                 
                 Spacer()
             }
+            // TODO: This only updates, when a new cell arrives -> We would have to fetch it from the database
             HStack {
                 Text(verbatim: "\(cell.area) / \(cell.cell)")
                 Group {
