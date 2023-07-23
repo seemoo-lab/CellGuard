@@ -34,23 +34,24 @@
         <attribute name="direction" optional="YES" attributeType="String"/>
         <attribute name="imported" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="proto" optional="YES" attributeType="String"/>
+        <relationship name="rejectedCells" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TweakCell" inverseName="rejectPacket" inverseEntity="TweakCell"/>
     </entity>
     <entity name="QMIPacket" representedClassName="QMIPacket" parentEntity="Packet" syncable="YES" codeGenerationType="class">
         <attribute name="indication" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="message" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="service" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
-        <relationship name="rejectedCell" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TweakCell" inverseName="rejectQMIPacket" inverseEntity="TweakCell"/>
+        <relationship name="rejectedCell" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TweakCell"/>
     </entity>
     <entity name="TweakCell" representedClassName="TweakCell" parentEntity="Cell" syncable="YES" codeGenerationType="class">
         <attribute name="collected" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="json" optional="YES" attributeType="String"/>
-        <attribute name="neighbourTechnology" optional="YES" attributeType="String"/>
+        <attribute name="neighborTechnology" optional="YES" attributeType="String"/>
         <attribute name="nextVerification" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="preciseTechnology" optional="YES" attributeType="String"/>
         <attribute name="score" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="status" optional="YES" attributeType="String"/>
         <relationship name="location" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UserLocation" inverseName="cells" inverseEntity="UserLocation"/>
-        <relationship name="rejectQMIPacket" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="QMIPacket" inverseName="rejectedCell" inverseEntity="QMIPacket"/>
+        <relationship name="rejectPacket" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Packet" inverseName="rejectedCells" inverseEntity="Packet"/>
         <relationship name="verification" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ALSCell" inverseName="verified" inverseEntity="ALSCell"/>
     </entity>
     <entity name="TweakCellScore" representedClassName="TweakCellScore" syncable="YES" codeGenerationType="class"/>
@@ -60,6 +61,7 @@
         <attribute name="collected" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="preciseBackground" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="speed" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="speedAccuracy" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="verticalAccuracy" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <relationship name="cells" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="TweakCell" inverseName="location" inverseEntity="TweakCell"/>
     </entity>

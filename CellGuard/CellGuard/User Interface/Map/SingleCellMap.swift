@@ -12,8 +12,8 @@ import UIKit
 
 struct SingleCellMap: UIViewRepresentable {
     
-    let alsCells: FetchedResults<ALSCell>
-    let tweakCells: FetchedResults<TweakCell>
+    let alsCells: any BidirectionalCollection<ALSCell>
+    let tweakCells: any BidirectionalCollection<TweakCell>
     
     func makeUIView(context: Context) -> MKMapView {
         let mapView = MKMapView(frame: .zero)
@@ -75,7 +75,7 @@ struct SingleCellMap: UIViewRepresentable {
         return CellMapDelegate()
     }
     
-    static func hasAnyLocation(_ alsCells: FetchedResults<ALSCell>, _ tweakCells: FetchedResults<TweakCell>) -> Bool {
+    static func hasAnyLocation(_ alsCells: any BidirectionalCollection<ALSCell>, _ tweakCells: any BidirectionalCollection<TweakCell>) -> Bool {
         if alsCells.first(where: { $0.location != nil}) != nil {
             return true
         }

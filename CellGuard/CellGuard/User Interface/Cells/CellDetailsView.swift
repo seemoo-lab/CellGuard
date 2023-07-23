@@ -32,8 +32,6 @@ struct CellDetailsView: View {
         )
     }
     
-    // TODO: Improve this view
-    
     var body: some View {
         let (countryName, networkName) = OperatorDefinitions.shared.translate(country: cell.country, network: cell.network)
         
@@ -45,8 +43,8 @@ struct CellDetailsView: View {
             }
             
             Section(header: Text("Cellular Technology")) {
-                CellDetailsRows("Technology", cell.technology ?? "Unknown")
-                CellDetailsRows(techFormatter.frequency(), cell.frequency)
+                CellDetailsRow("Technology", cell.technology ?? "Unknown")
+                CellDetailsRow(techFormatter.frequency(), cell.frequency)
                 if let tweakCell = cell as? TweakCell {
                     NavigationLink {
                         CellJSONDataView(cell: tweakCell)
@@ -57,27 +55,27 @@ struct CellDetailsView: View {
             }
             
             Section(header: Text("Cell Identification")) {
-                CellDetailsRows("Country", countryName ?? "???")
-                CellDetailsRows(techFormatter.country(), cell.country)
-                CellDetailsRows("Network", networkName ?? "???")
-                CellDetailsRows(techFormatter.network(), cell.network)
-                CellDetailsRows(techFormatter.area(), cell.area)
-                CellDetailsRows(techFormatter.cell(), cell.cell)
+                CellDetailsRow("Country", countryName ?? "???")
+                CellDetailsRow(techFormatter.country(), cell.country)
+                CellDetailsRow("Network", networkName ?? "???")
+                CellDetailsRow(techFormatter.network(), cell.network)
+                CellDetailsRow(techFormatter.area(), cell.area)
+                CellDetailsRow(techFormatter.cell(), cell.cell)
             }
             
             Section(header: Text("Verification")) {
-                CellDetailsRows("Status", cellStatusDescription())
+                CellDetailsRow("Status", cellStatusDescription())
                 if let tweakCell = cell as? TweakCell {
-                    CellDetailsRows("Score", "\(tweakCell.score)")
+                    CellDetailsRow("Score", "\(tweakCell.score)")
                 }
                 if let alsImported = alsCells.first?.imported {
-                    CellDetailsRows("Fetched", mediumDateTimeFormatter.string(from: alsImported))
+                    CellDetailsRow("Fetched", mediumDateTimeFormatter.string(from: alsImported))
                 }
                 if let reach = alsCells.first?.location?.reach {
-                    CellDetailsRows("ALS Reach", "\(reach)m")
+                    CellDetailsRow("ALS Reach", "\(reach)m")
                 }
                 if let score = alsCells.first?.location?.score {
-                    CellDetailsRows("ALS Score", "\(score)")
+                    CellDetailsRow("ALS Score", "\(score)")
                 }
             }
             
@@ -88,18 +86,18 @@ struct CellDetailsView: View {
                 
                 Section(header: Text("Recorded Measurements")) {
                     // TODO: Show list of timestamps of all measurements which link to the recorded JSON data
-                    CellDetailsRows("Count", tweakCells.count)
+                    CellDetailsRow("Count", tweakCells.count)
                     if let firstCell = firstCell {
-                        CellDetailsRows("First Seen", mediumDateTimeFormatter.string(from: firstCell.collected!))
+                        CellDetailsRow("First Seen", mediumDateTimeFormatter.string(from: firstCell.collected!))
                     }
                     if let lastCell = lastCell {
-                        CellDetailsRows("Last Seen", mediumDateTimeFormatter.string(from: lastCell.collected!))
+                        CellDetailsRow("Last Seen", mediumDateTimeFormatter.string(from: lastCell.collected!))
                     }
                 }
             }
         }
         .listStyle(.insetGrouped)
-        .navigationTitle("\(cell.technology ?? "Unknwon") Cell")
+        .navigationTitle("\(cell.technology ?? "Unknown") Cell")
     }
     
     private func cellStatusDescription() -> String {
@@ -112,41 +110,9 @@ struct CellDetailsView: View {
             }
         }
         
-        return "Unkown"
+        return "Unknown"
     }
 
-}
-
-private struct CellDetailsRows: View {
-    
-    let description: String
-    let value: String
-    
-    init(_ description: String, _ value: Int) {
-        self.init(description, value as NSNumber)
-    }
-    
-    init(_ description: String, _ value: Int32) {
-        self.init(description, value as NSNumber)
-    }
-    
-    init(_ description: String, _ value: Int64) {
-        self.init(description, value as NSNumber)
-    }
-    
-    init(_ description: String, _ value: NSNumber) {
-        self.init(description, plainNumberFormatter.string(from: value) ?? "-")
-    }
-    
-    init(_ description: String, _ value: String) {
-        self.description = description
-        self.value = value
-    }
-    
-    var body: some View {
-        KeyValueListRow(key: description, value: value)
-    }
-    
 }
 
 struct CellDetailsView_Previews: PreviewProvider {

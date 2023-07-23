@@ -34,7 +34,7 @@ struct SummaryTabView: View {
         NavigationView {
             VStack {
                 NavigationLink(isActive: $showingCellList) {
-                    CellsListView()
+                    CellListView()
                 } label: {
                     EmptyView()
                 }

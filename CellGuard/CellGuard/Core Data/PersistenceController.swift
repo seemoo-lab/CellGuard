@@ -56,6 +56,14 @@ class PersistenceController {
     /// A persistence provider to use with canvas previews.
     static let preview = PersistencePreview.controller()
     
+    static func basedOnEnvironment() -> PersistenceController {
+        if PreviewInfo.active() {
+            return Self.preview
+        } else {
+            return Self.shared
+        }
+    }
+    
     
     /// A persistent container to set up the Core Data stack
     let container: NSPersistentContainer
@@ -68,8 +76,23 @@ class PersistenceController {
     private let inMemory: Bool
     private var notificationToken: NSObjectProtocol?
     
-    /// A persistent history token used for fetching transactions from the store.
-    private var lastToken: NSPersistentHistoryToken?
+    // Provide synchronized access to the lastToken variable
+    // See: https://stackoverflow.com/a/65849172
+    private let lastTokenLock = NSLock()
+    // A persistent history token used for fetching transactions from the store.
+    private var _lastToken: NSPersistentHistoryToken?
+    private var lastToken: NSPersistentHistoryToken? {
+        get {
+            lastTokenLock.lock()
+            defer { lastTokenLock.unlock() }
+            return _lastToken
+        }
+        set {
+            lastTokenLock.lock()
+            defer { lastTokenLock.unlock() }
+            _lastToken = newValue
+        }
+    }
     private let lastTokenUserDefaultsKey = "persistence-last-token"
 
     init(inMemory: Bool = false) {
@@ -166,12 +189,8 @@ class PersistenceController {
             do {
                 // Request transactions that happened since the lastToken
                 let changeRequest: NSPersistentHistoryChangeRequest
-                // TODO: Maybe this is bad
-                if let lastToken = self.lastToken {
-                    changeRequest = NSPersistentHistoryChangeRequest.fetchHistory(after: lastToken)
-                } else {
-                    changeRequest = NSPersistentHistoryChangeRequest.fetchHistory(after: Date(timeIntervalSince1970: 0))
-                }
+                // The locking implemented in the variable's accessor is important as this is an async task and the variable is set from the view task
+                changeRequest = NSPersistentHistoryChangeRequest.fetchHistory(after: lastToken)
                 let historyResult = try taskContext.execute(changeRequest) as? NSPersistentHistoryResult
                 if let history = historyResult?.result as? [NSPersistentHistoryTransaction],
                    !history.isEmpty {

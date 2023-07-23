@@ -19,10 +19,14 @@ struct CellStatusIcon: View {
     
     var body: some View {
         if status == .verified {
-            if score < 100 {
+            if score < CellVerifier.pointsUntrustedThreshold {
                 Image(systemName: "exclamationmark.shield")
                     .font(.title2)
-                    .foregroundColor(score >= CellVerifier.pointsUntrustedThreshold ? .yellow : .red)
+                    .foregroundColor(.red)
+            } else if score < CellVerifier.pointsSuspiciousThreshold {
+                Image(systemName: "shield")
+                    .font(.title2)
+                    .foregroundColor(.yellow)
             } else {
                 Image(systemName: "lock.shield")
                     .font(.title2)

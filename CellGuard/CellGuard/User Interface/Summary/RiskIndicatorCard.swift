@@ -121,19 +121,20 @@ private struct RiskIndicatorLink: View {
     var body: some View {
         switch (risk) {
         case .Low:
-            return AnyView(CellsListView())
+            return AnyView(CellListView())
         case .LowMonitor:
-            return AnyView(CellsListView())
+            return AnyView(CellListView())
         case let .Medium(cause):
             if cause == .Permissions {
                 return AnyView(SettingsView())
             } else if cause == .Tweak {
+                // TODO: Replace with help article
                 return AnyView(TweakInfoView())
             } else {
-                return AnyView(CellsListView())
+                return AnyView(CellListView())
             }
         case .High(_):
-            return AnyView(CellsListView())
+            return AnyView(CellListView())
         case .Unknown:
             return AnyView(VerificationProgressView())
         }

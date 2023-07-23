@@ -65,7 +65,13 @@
 		CF5EF9262978689B00C4F50A /* ALSVerifierTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5EF9252978689B00C4F50A /* ALSVerifierTests.swift */; };
 		CF5EF92829793F7500C4F50A /* TestDetection.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5EF92729793F7500C4F50A /* TestDetection.swift */; };
 		CF5EF92A2979B8D800C4F50A /* LocationSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5EF9292979B8D800C4F50A /* LocationSource.swift */; };
+		CF6EC8AD2A6C4C88004CF0AB /* PreviewInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF6EC8AC2A6C4C88004CF0AB /* PreviewInfo.swift */; };
 		CF86C7912A6A9086002EC9B6 /* CellListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF86C7902A6A9086002EC9B6 /* CellListView.swift */; };
+		CF86C7932A6AC25D002EC9B6 /* TweakCellDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF86C7922A6AC25D002EC9B6 /* TweakCellDetailsView.swift */; };
+		CF86C7952A6AC264002EC9B6 /* ALSCellDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF86C7942A6AC264002EC9B6 /* ALSCellDetailsView.swift */; };
+		CF86C7972A6ACDAA002EC9B6 /* CellDetailsRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF86C7962A6ACDAA002EC9B6 /* CellDetailsRow.swift */; };
+		CF86C7992A6AD51D002EC9B6 /* GroupedMeasurements.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF86C7982A6AD51D002EC9B6 /* GroupedMeasurements.swift */; };
+		CF86C79D2A6AE0E3002EC9B6 /* TweakCellMeasurementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF86C79C2A6AE0E3002EC9B6 /* TweakCellMeasurementView.swift */; };
 		CF90EF1B2A30BDD200E7FDB0 /* QMIParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF90EF1A2A30BDD200E7FDB0 /* QMIParserTests.swift */; };
 		CF90EF1D2A30E7FD00E7FDB0 /* ARIParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF90EF1C2A30E7FD00E7FDB0 /* ARIParserTests.swift */; };
 		CF9237112A3E069D00FC7D21 /* Gzip in Frameworks */ = {isa = PBXBuildFile; productRef = CF9237102A3E069D00FC7D21 /* Gzip */; };
@@ -187,7 +193,13 @@
 		CF5EF9252978689B00C4F50A /* ALSVerifierTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ALSVerifierTests.swift; sourceTree = "<group>"; };
 		CF5EF92729793F7500C4F50A /* TestDetection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestDetection.swift; sourceTree = "<group>"; };
 		CF5EF9292979B8D800C4F50A /* LocationSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationSource.swift; sourceTree = "<group>"; };
+		CF6EC8AC2A6C4C88004CF0AB /* PreviewInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewInfo.swift; sourceTree = "<group>"; };
 		CF86C7902A6A9086002EC9B6 /* CellListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellListView.swift; sourceTree = "<group>"; };
+		CF86C7922A6AC25D002EC9B6 /* TweakCellDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TweakCellDetailsView.swift; sourceTree = "<group>"; };
+		CF86C7942A6AC264002EC9B6 /* ALSCellDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ALSCellDetailsView.swift; sourceTree = "<group>"; };
+		CF86C7962A6ACDAA002EC9B6 /* CellDetailsRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellDetailsRow.swift; sourceTree = "<group>"; };
+		CF86C7982A6AD51D002EC9B6 /* GroupedMeasurements.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupedMeasurements.swift; sourceTree = "<group>"; };
+		CF86C79C2A6AE0E3002EC9B6 /* TweakCellMeasurementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TweakCellMeasurementView.swift; sourceTree = "<group>"; };
 		CF90EF1A2A30BDD200E7FDB0 /* QMIParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QMIParserTests.swift; sourceTree = "<group>"; };
 		CF90EF1C2A30E7FD00E7FDB0 /* ARIParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARIParserTests.swift; sourceTree = "<group>"; };
 		CF9237122A3E1BD300FC7D21 /* KeyValueListRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyValueListRow.swift; sourceTree = "<group>"; };
@@ -352,7 +364,12 @@
 				CFE4462A29705F0C006F2CF4 /* CellsListView.swift */,
 				CF0FDCC62969F8D300A6FFE2 /* CellDetailsView.swift */,
 				CFB51831297AD3C80006C690 /* CellJSONDataView.swift */,
+				CF86C7942A6AC264002EC9B6 /* ALSCellDetailsView.swift */,
+				CF86C7922A6AC25D002EC9B6 /* TweakCellDetailsView.swift */,
+				CF86C79C2A6AE0E3002EC9B6 /* TweakCellMeasurementView.swift */,
 				CFB51833297AEFA80006C690 /* CellStatusIcon.swift */,
+				CF86C7962A6ACDAA002EC9B6 /* CellDetailsRow.swift */,
+				CF86C7982A6AD51D002EC9B6 /* GroupedMeasurements.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -497,6 +514,7 @@
 			isa = PBXGroup;
 			children = (
 				CFD0233D2961A10D00AA5A1C /* Preview Assets.xcassets */,
+				CF6EC8AC2A6C4C88004CF0AB /* PreviewInfo.swift */,
 			);
 			path = "Preview Content";
 			sourceTree = "<group>";
@@ -725,6 +743,7 @@
 				CFD023402961A10D00AA5A1C /* PersistenceController.swift in Sources */,
 				CFCE7A8C29817E2500E28787 /* ALSTechnology.swift in Sources */,
 				CFDF5D85297F09D3000708A8 /* DatabaseAnnotation.swift in Sources */,
+				CF86C7992A6AD51D002EC9B6 /* GroupedMeasurements.swift in Sources */,
 				CF2A1C1529754AA400E8B61C /* LocalNetworkAuthorization.swift in Sources */,
 				CF9237132A3E1BD300FC7D21 /* KeyValueListRow.swift in Sources */,
 				CF54CCC52A33680200961E4D /* PacketCommonDetails.swift in Sources */,
@@ -738,6 +757,7 @@
 				CF5EF92829793F7500C4F50A /* TestDetection.swift in Sources */,
 				CF446756298D78F80083EE63 /* PersistenceQueries.swift in Sources */,
 				CFB51832297AD3C80006C690 /* CellJSONDataView.swift in Sources */,
+				CF86C7932A6AC25D002EC9B6 /* TweakCellDetailsView.swift in Sources */,
 				CFDF5D79297EF1EF000708A8 /* LocationAnnotationView.swift in Sources */,
 				CF320F5529620B16009BAD18 /* CCTParser.swift in Sources */,
 				CF2002F02A2F996A000922E6 /* TweakClient.swift in Sources */,
@@ -757,6 +777,7 @@
 				CF2A1C1B2975670000E8B61C /* CGNotificationManager.swift in Sources */,
 				CF4E53A62A32225300AE2059 /* ExportView.swift in Sources */,
 				CFDF5D87297F190A000708A8 /* PersistenceExporter.swift in Sources */,
+				CF6EC8AD2A6C4C88004CF0AB /* PreviewInfo.swift in Sources */,
 				CF0FDCB529698E1500A6FFE2 /* SummaryTabView.swift in Sources */,
 				CF2A1C1D2975C71000E8B61C /* BackgroundState.swift in Sources */,
 				CF0FDCC22969AC1100A6FFE2 /* SettingsView.swift in Sources */,
@@ -764,7 +785,9 @@
 				CF1FAFB32986B11200106930 /* CellReachOverlay.swift in Sources */,
 				CFB8B28A2963498200503189 /* CellGuardAppDelegate.swift in Sources */,
 				CF0FDCB729699E5100A6FFE2 /* MapTabView.swift in Sources */,
+				CF86C7952A6AC264002EC9B6 /* ALSCellDetailsView.swift in Sources */,
 				CF86C7912A6A9086002EC9B6 /* CellListView.swift in Sources */,
+				CF86C79D2A6AE0E3002EC9B6 /* TweakCellMeasurementView.swift in Sources */,
 				CF0FDCC02969A3E500A6FFE2 /* LargeButton.swift in Sources */,
 				CFDF5D7D297EF76C000708A8 /* LocationClusterAnnotation.swift in Sources */,
 				CF4E539C2A31E73F00AE2059 /* CommonDefinitions.swift in Sources */,
@@ -795,6 +818,7 @@
 				CF0FDCBD2969A21000A6FFE2 /* WelcomeSheet.swift in Sources */,
 				CF0FDCBB29699E8A00A6FFE2 /* CompositeTabView.swift in Sources */,
 				CF2002E82A2F2BE2000922E6 /* QMIParser.swift in Sources */,
+				CF86C7972A6ACDAA002EC9B6 /* CellDetailsRow.swift in Sources */,
 				CF5EF9222977FCF800C4F50A /* CellTechnologyFormatter.swift in Sources */,
 				CF93B85629800451003F9FFE /* CellFileKeys.swift in Sources */,
 			);

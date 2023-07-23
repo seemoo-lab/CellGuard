@@ -9,13 +9,30 @@ import CoreLocation
 
 struct CellLocationDistance {
     
+    // The distance in meter between the user's location and the location from ALS
     let distance: CLLocationDistance
+    // The horizontal accuracy in meters of the user's location
     let userAccuracy: CLLocationDistance
+    // The speed of the user in meters per seconds
     let userSpeed: Double
+    // The accuracy returned from ALS
     let alsAccuracy: CLLocationDistance
     
     let userLocationBackground: Bool
     let preciseBackground: Bool
+    
+    func correctedDistance() -> Double {
+        // The absolute maximum reach of a cell tower is about 75km, so we subtract it from the distance
+        let cellMaxReach = 75_000.0
+        // We subtract the inaccuracies of the location measurements from the distance
+        let inaccuracies = userAccuracy + alsAccuracy
+        // We subtract an additional error margin dependent on the user's speed
+        let userSpeedKmH = userSpeed * 3.6
+        let speedMargin = pow((userSpeedKmH / 2.0), 1.1) * 1000
+        
+        // Subtract all the possible error margins from the original distance calculated
+        return (distance - cellMaxReach - inaccuracies - speedMargin)
+    }
     
     func score() -> Double {
         // Sources:
@@ -23,12 +40,10 @@ struct CellLocationDistance {
         // - https://en.wikipedia.org/wiki/Cell_site#Operation
         
         // Calculate a percentage how likely it is that the cell's location is too far away based on the distance and the user's speed.
-        // The absolute maximum reach of a cell tower is about 75km, so we subtract it from the distance.
-        // We also subtract the inaccuracies of the location measurements and we subtract an additional margin dependent on the user's speed.
-        // This results in a number of kilometers that we divide by 150km, the absolute maximum error tolerance, to get a percentage.
+        // We divide a corrected distance (with error margins) by 150km, the absolute maximum error tolerance, to get a percentage.
         // If it's below zero, the cell at its right place.
         // If it's larger than 50%, we're sure that even with all of our margin, the cell is more than 75km away from its ALS location, and thus a possible threat.
-        let score = (distance - 75_000 - userAccuracy - alsAccuracy - pow((userSpeed / 2.0), 1.1) * 1000) / 150
+        let score = self.correctedDistance() / 150_000
         
         // The score should be within the range [0,1]
         if score > 1 {

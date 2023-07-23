@@ -44,17 +44,18 @@ struct OperatorDefinitions {
             .mapValues { Dictionary(grouping: $0) { $0.mnc } }
     }
     
-    func translate(country: Int32) -> String? {
-        return countries[Int(country)]?.first?.value.first?.countryName
+    func translate(country: Int32, iso: Bool = false) -> String? {
+        let firstNetworkOperator = countries[Int(country)]?.first?.value.first
+        return iso ? firstNetworkOperator?.countryIso : firstNetworkOperator?.countryName
     }
     
-    func translate(country: Int32, network: Int32) -> (String?, String?) {        
+    func translate(country: Int32, network: Int32, iso: Bool = false) -> (String?, String?) {
         if let networkOperator = networkOperator(country: country, network: network) {
-            return (networkOperator.countryName, networkOperator.networkName)
+            return (iso ? networkOperator.countryIso: networkOperator.countryName, networkOperator.networkName)
         }
         
         // Fallback to a random network operator to return at least the country name
-        return (translate(country: country), nil)
+        return (translate(country: country, iso: iso), nil)
     }
     
     private func networkOperator(country: Int32, network: Int32) -> NetworkOperator? {

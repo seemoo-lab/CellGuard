@@ -166,6 +166,7 @@ struct CellVerifier {
                 // If the cell is younger than five minutes, we retry after 30s
                 try? persistence.storeVerificationDelay(cellId: queryCellID, seconds: 30)
             }
+            return
         }
         
         // Calculate the distance between the location assigned to the tweak cells & the ALS cell
@@ -198,8 +199,8 @@ struct CellVerifier {
         }
         
         // We wait until we get a new cell measurements, as the disconnect packet can be sent rather late
-        let qmiPackets: [ParsedQMIPacket]
-        let ariPackets: [ParsedARIPacket]
+        let qmiPackets: [NSManagedObjectID: ParsedQMIPacket]
+        let ariPackets: [NSManagedObjectID: ParsedARIPacket]
         do {
             // Indication of QMI NAS Service with Network Reject packet
             // The packet's Reject Cause TLV could be interesting (0x03)
@@ -210,7 +211,7 @@ struct CellVerifier {
             // Maybe IBINetRegistrationInfoIndCb -> [3] IBINetRegistrationRejectCause
             // There are also numerous IBI_NET_REGISTRATION_REJECT strings in libARI.dylib
             // For a list of ARI packets, see: https://github.com/seemoo-lab/aristoteles/blob/master/types/structure/libari_dylib.lua
-            ariPackets = []
+            ariPackets = [:]
         } catch {
             throw CellVerifierError.fetchPackets(error)
         }
@@ -218,6 +219,11 @@ struct CellVerifier {
         if qmiPackets.count > 0 || ariPackets.count > 0 {
             // There's a suspicious packets, so we award zero points
             try? persistence.storeCellStatus(cellId: queryCellID, status: .verified, addToScore: 0)
+            if let firstQMIPacketID = qmiPackets.keys.first {
+                try? persistence.storeRejectPacket(cellId: queryCellID, packetId: firstQMIPacketID)
+            } else if let firstARIPacketID = ariPackets.keys.first {
+                try? persistence.storeRejectPacket(cellId: queryCellID, packetId: firstARIPacketID)
+            }
             Self.logger.info("Packet verification failed for cell (0/\(pointsPacket)): \(queryCell)")
         } else {
             // All packets are fine, so we award 40 points :)

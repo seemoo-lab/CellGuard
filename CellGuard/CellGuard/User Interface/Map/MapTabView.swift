@@ -23,10 +23,9 @@ struct MapTabView: View {
         predicate: NSPredicate(format: "location != nil")
     )
     private var alsCells: FetchedResults<ALSCell>
-
+    
     @State private var navigationActive = false
     @State private var navigationTarget: NSManagedObjectID? = nil
-    
     
     var body: some View {
         NavigationView {

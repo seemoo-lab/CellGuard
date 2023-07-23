@@ -22,7 +22,7 @@ enum CCTParserError: Error {
 
 enum CCTCellType: String {
     case Serving = "CellTypeServing"
-    case Neighbour = "CellTypeNeighbor"
+    case Neighbor = "CellTypeNeighbor"
     case Monitor = "CellTypeMonitor"
     case Detected = "CellTypeDetected"
 }
@@ -38,7 +38,7 @@ struct CCTCellProperties {
     var technology: ALSTechnology?
     var preciseTechnology: String?
     var frequency: Int32?
-    var neighbourRadio: String?
+    var neighborRadio: String?
     
     var timestamp: Date?
     
@@ -54,7 +54,7 @@ struct CCTCellProperties {
         tweakCell.preciseTechnology = self.preciseTechnology
         
         tweakCell.frequency = self.frequency ?? 0
-        tweakCell.neighbourTechnology = neighbourRadio
+        tweakCell.neighborTechnology = neighborRadio
         
         tweakCell.collected = self.timestamp
         tweakCell.json = self.json
@@ -80,17 +80,17 @@ struct CCTParser {
         }
         
         let servingCell = cells.first(where: { $0.type == CCTCellType.Serving})?.cell
-        let neighborCell = cells.first(where: { $0.type == CCTCellType.Neighbour})?.cell
+        let neighborCell = cells.first(where: { $0.type == CCTCellType.Neighbor})?.cell
         
         guard var servingCell = servingCell else {
             throw CCTParserError.noServingCell(sample)
         }
         
         if let neighborCell = neighborCell {
-            servingCell.neighbourRadio = neighborCell.preciseTechnology
+            servingCell.neighborRadio = neighborCell.preciseTechnology
         }
         
-        // We're using JSONSerilization because the JSONDecoder requires specific type information that we can't provide
+        // We're using JSONSerialization because the JSONDecoder requires specific type information that we can't provide
         servingCell.json = String(data: try JSONSerialization.data(withJSONObject: sample), encoding: .utf8)
         servingCell.timestamp = timestamp
         

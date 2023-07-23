@@ -20,6 +20,13 @@ let mediumDateFormatter: DateFormatter = {
     return formatter
 }()
 
+let mediumTimeFormatter: DateFormatter = {
+    let formatter = DateFormatter()
+    formatter.dateStyle = .none
+    formatter.timeStyle = .medium
+    return formatter
+}()
+
 let mediumDateTimeFormatter: DateFormatter = {
     let formatter = DateFormatter()
     formatter.dateStyle = .medium

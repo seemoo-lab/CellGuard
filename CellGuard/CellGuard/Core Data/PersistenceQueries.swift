@@ -379,8 +379,8 @@ extension PersistenceController {
         return cellTuple
     }
     
-    func fetchQMIPackets(direction: CPTDirection, service: Int16, message: Int32, indication: Bool, start: Date, end: Date) throws -> [ParsedQMIPacket] {
-        var packets: [ParsedQMIPacket] = []
+    func fetchQMIPackets(direction: CPTDirection, service: Int16, message: Int32, indication: Bool, start: Date, end: Date) throws -> [NSManagedObjectID: ParsedQMIPacket] {
+        var packets: [NSManagedObjectID: ParsedQMIPacket] = [:]
         
         var fetchError: Error? = nil
         newTaskContext().performAndWait {
@@ -399,7 +399,7 @@ extension PersistenceController {
                         logger.warning("Skipping packet \(qmiPacket) as it provides no binary data")
                         continue
                     }
-                    packets.append(try ParsedQMIPacket(nsData: data))
+                    packets[qmiPacket.objectID] = try ParsedQMIPacket(nsData: data)
                 }
             } catch {
                 fetchError = error
@@ -414,8 +414,8 @@ extension PersistenceController {
         return packets
     }
     
-    func fetchARIPackets(direction: CPTDirection, group: Int16, type: Int32, start: Date, end: Date) throws -> [ParsedARIPacket] {
-        var packets: [ParsedARIPacket] = []
+    func fetchARIPackets(direction: CPTDirection, group: Int16, type: Int32, start: Date, end: Date) throws -> [NSManagedObjectID: ParsedARIPacket] {
+        var packets: [NSManagedObjectID: ParsedARIPacket] = [:]
         
         var fetchError: Error? = nil
         newTaskContext().performAndWait {
@@ -434,7 +434,7 @@ extension PersistenceController {
                         logger.warning("Skipping packet \(ariPacket) as it provides no binary data")
                         continue
                     }
-                    packets.append(try ParsedARIPacket(data: data))
+                    packets[ariPacket.objectID] = try ParsedARIPacket(data: data)
                 }
             } catch {
                 fetchError = error
@@ -539,7 +539,6 @@ extension PersistenceController {
         taskContext.performAndWait {
             if let tweakCell = taskContext.object(with: cellId) as? TweakCell {
                 tweakCell.status = status.rawValue
-                logger.debug("Adding \(addToScore) to score \(tweakCell.score) of \(tweakCell)")
                 tweakCell.score = tweakCell.score + addToScore
                 do {
                     try taskContext.save()
@@ -581,6 +580,29 @@ extension PersistenceController {
         }
     }
     
+    func storeRejectPacket(cellId: NSManagedObjectID, packetId: NSManagedObjectID) throws {
+        let taskContext = newTaskContext()
+        
+        var saveError: Error? = nil
+        taskContext.performAndWait {
+            if let tweakCell = taskContext.object(with: cellId) as? TweakCell, let packet = taskContext.object(with: packetId) as? Packet {
+                tweakCell.rejectPacket = packet
+                do {
+                    try taskContext.save()
+                } catch {
+                    self.logger.warning("Can't save tweak cell (\(tweakCell)) with reject packet \(packet): \(error)")
+                    saveError = error
+                }
+            } else {
+                self.logger.warning("Can't add reject packet \(packetId) to the tweak cell with object ID: \(cellId)")
+                saveError = PersistenceError.objectIdNotFoundError
+            }
+        }
+        if let saveError = saveError {
+            throw saveError
+        }
+    }
+    
     func assignLocation(to tweakCellID: NSManagedObjectID) throws -> (Bool, Date?) {
         let taskContext = newTaskContext()
         
@@ -597,7 +619,7 @@ extension PersistenceController {
             
             cellCollected = tweakCell.collected
             
-            // Find the most precise user location within a two minute window
+            // Find the most precise user location within a four minute window
             let fetchLocationRequest = NSFetchRequest<UserLocation>()
             fetchLocationRequest.entity = UserLocation.entity()
             fetchLocationRequest.fetchLimit = 1

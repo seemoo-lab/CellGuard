@@ -15,6 +15,8 @@ private struct LocationDictKeys {
     static let horizontalAccuracy = "horizontalAccuracy"
     static let altitude = "altitude"
     static let verticalAccuracy = "verticalAccuracy"
+    static let speed = "speed"
+    static let speedAccuracy = "speedAccuracy"
     static let collected = "collected"
     static let background = "background"
     static let preciseBackground = "preciseBackground"
@@ -31,6 +33,9 @@ struct TrackedUserLocation {
     var altitude: Double?
     var verticalAccuracy: Double?
     
+    var speed: Double?
+    var speedAccuracy: Double?
+    
     var timestamp: Date?
     
     var background: Bool
@@ -43,6 +48,9 @@ struct TrackedUserLocation {
         
         self.altitude = location.altitude
         self.verticalAccuracy = location.verticalAccuracy
+        
+        self.speed = location.speed
+        self.speedAccuracy = location.speedAccuracy
         
         self.timestamp = location.timestamp
         
@@ -58,6 +66,9 @@ struct TrackedUserLocation {
         self.altitude = location.altitude
         self.verticalAccuracy = location.verticalAccuracy
         
+        self.speed = location.speed
+        self.speedAccuracy = location.speedAccuracy
+        
         self.timestamp = location.collected
         
         self.background = location.background
@@ -71,6 +82,9 @@ struct TrackedUserLocation {
         
         self.altitude = location[LocationDictKeys.altitude] as? Double
         self.verticalAccuracy = location[LocationDictKeys.verticalAccuracy] as? Double
+        
+        self.speed = location[LocationDictKeys.speed] as? Double
+        self.speedAccuracy = location[LocationDictKeys.speedAccuracy] as? Double
         
         if let timeSince1970 = location[LocationDictKeys.collected] as? Double {
             self.timestamp = Date(timeIntervalSince1970: timeSince1970)
@@ -90,6 +104,9 @@ struct TrackedUserLocation {
         location.altitude = self.altitude ?? 0
         location.verticalAccuracy = self.verticalAccuracy ?? 0
         
+        location.speed = self.speed ?? 0
+        location.speedAccuracy = self.speedAccuracy ?? 0
+        
         location.collected = self.timestamp
         
         location.background = background
@@ -103,6 +120,8 @@ struct TrackedUserLocation {
             LocationDictKeys.horizontalAccuracy: horizontalAccuracy ?? 0,
             LocationDictKeys.altitude: altitude ?? 0,
             LocationDictKeys.verticalAccuracy: verticalAccuracy ?? 0,
+            LocationDictKeys.speed: speed ?? 0,
+            LocationDictKeys.speedAccuracy: speedAccuracy ?? 0,
             LocationDictKeys.collected: timestamp?.timeIntervalSince1970 ?? 0,
             LocationDictKeys.background: background,
             LocationDictKeys.preciseBackground: preciseBackground

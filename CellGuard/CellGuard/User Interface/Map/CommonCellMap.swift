@@ -35,7 +35,7 @@ struct CommonCellMap {
     }
     
     private static func updateAnnotations<D: NSManagedObject, A: DatabaseAnnotation>(
-        data: any Sequence<D>, uiView: MKMapView, create: (D) -> A?
+        data: any BidirectionalCollection<D>, uiView: MKMapView, create: (D) -> A?
     ) -> (Int, Int) {
         // Pick all annotations of the given type
         let presentAnnotations = uiView.annotations
@@ -64,25 +64,25 @@ struct CommonCellMap {
             .compactMap { $0 }
         uiView.addAnnotations(addAnnotations)
         
-        // Return the number of cell wihch are added and the number of the ones which are removed
+        // Return the number of cell which are added and the number of the ones which are removed
         return (addAnnotations.count, removeAnnotations.count)
     }
     
-    static func updateCellAnnotations(data: FetchedResults<ALSCell>, uiView: MKMapView) -> (Int, Int) {
+    static func updateCellAnnotations(data: any BidirectionalCollection<ALSCell>, uiView: MKMapView) -> (Int, Int) {
         updateAnnotations(data: data, uiView: uiView) { cell in
             CellAnnotation(cell: cell)
         }
     }
     
-    static func updateLocationAnnotations(data: FetchedResults<TweakCell>, uiView: MKMapView) -> (Int, Int) {
-        let locations = Set(data.compactMap { $0.location })
+    static func updateLocationAnnotations(data: any BidirectionalCollection<TweakCell>, uiView: MKMapView) -> (Int, Int) {
+        let locations = Array(Set(data.compactMap { $0.location }))
         
         return updateAnnotations(data: locations, uiView: uiView) { location in
             LocationAnnotation(location: location)
         }
     }
     
-    private static func updateOverlay<D: NSManagedObject, A: CellReachOverlay>(data: any Sequence<D>, uiView: MKMapView, create: (D) -> A?) {
+    private static func updateOverlay<D: NSManagedObject, A: CellReachOverlay>(data: any BidirectionalCollection<D>, uiView: MKMapView, create: (D) -> A?) {
         // Pick all overlays of the given type
         let presentOverlays = uiView.overlays
             .map { $0 as? A }
@@ -112,7 +112,7 @@ struct CommonCellMap {
     }
     
     static func updateCellReachOverlay(data: FetchedResults<ALSCell>, uiView: MKMapView) {
-        let locations = Set(data.compactMap { $0.location })
+        let locations = Array(Set(data.compactMap { $0.location }))
         
         updateOverlay(data: locations, uiView: uiView) { location in
             CellReachOverlay(location: location)

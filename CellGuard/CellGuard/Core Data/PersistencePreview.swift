@@ -21,7 +21,6 @@ struct PersistencePreview {
     static func tweakCell(context: NSManagedObjectContext, imported: Date) -> TweakCell {
         let cell = TweakCell(context: context)
         cell.technology = "LTE"
-        cell.status = CellStatus.imported.rawValue
         cell.country = 262
         cell.network = 2
         cell.area = Int32.random(in: 1..<5000)
@@ -30,6 +29,9 @@ struct PersistencePreview {
         cell.imported = imported
         cell.location = location(location: UserLocation(context: context), error: 0.005)
         cell.location?.imported = cell.imported
+        cell.status = CellStatus.verified.rawValue
+        cell.score = Int16(CellVerifier.pointsSuspiciousThreshold)
+        cell.nextVerification = Date()
         
         return cell
     }
@@ -45,6 +47,9 @@ struct PersistencePreview {
         cell.imported = Calendar.current.date(byAdding: .hour, value: -Int.random(in: 0..<24), to: alsCell.imported!)
         cell.location = location(location: UserLocation(context: context), error: 0.01)
         cell.location?.imported = cell.imported
+        cell.status = CellStatus.imported.rawValue
+        cell.score = 0
+        cell.nextVerification = Date()
         
         return cell
 
@@ -97,7 +102,7 @@ struct PersistencePreview {
     static func packets(context: NSManagedObjectContext) -> [Packet] {
         var packets: [Packet] = []
         
-        // 4th packt from the test trace
+        // 4th packet from the test trace
         packets.append(packet(proto: .qmi, direction: .outgoing, data: "ARcAACIBAE8FUQALAAEBAAAQBAAHAAAA", major: 0x22, minor: 0x0051, indication: false, collected: Date().addingTimeInterval(-60*2), context: context))
         // 269th packet from the test trace
         packets.append(packet(proto: .qmi, direction: .ingoing, data: "ARcAgAAAASIiAAwAAgQAAAAAAAECADAM", major: 0x00, minor: 0x0022, indication: false, collected: Date().addingTimeInterval(-60*4), context: context))
