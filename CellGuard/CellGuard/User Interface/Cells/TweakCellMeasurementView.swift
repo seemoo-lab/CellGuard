@@ -93,6 +93,11 @@ private struct TweakCellMeasurementStatusView: View {
                         }
                     }
                     
+                    // TODO: We could show the ALS location and the user location on a map
+                    // Marker ALS Location: square.stack.3d.up
+                    // User Location: person
+                    // Distance Line between them with km written on it
+                    
                     Section(header: Text("Distance Verification")) {
                         CellDetailsRow("User Location", "Present")
                         if let distance = distanceUserAndALS {
