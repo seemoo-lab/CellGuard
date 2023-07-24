@@ -27,8 +27,14 @@ struct CellLocationDistance {
         // We subtract the inaccuracies of the location measurements from the distance
         let inaccuracies = userAccuracy + alsAccuracy
         // We subtract an additional error margin dependent on the user's speed
-        let userSpeedKmH = userSpeed * 3.6
-        let speedMargin = pow((userSpeedKmH / 2.0), 1.1) * 1000
+        // Some iPhones record negative speeds which can't be used with pow() as the function would produce a NaN which is dangerous.
+        let speedMargin: Double
+        if userSpeed.isFinite && userSpeed > 0 {
+            let userSpeedKmH = userSpeed * 3.6
+            speedMargin = pow((userSpeedKmH / 2.0), 1.1) * 1000.0
+        } else {
+            speedMargin = 0
+        }
         
         // Subtract all the possible error margins from the original distance calculated
         return (distance - cellMaxReach - inaccuracies - speedMargin)
