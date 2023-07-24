@@ -140,10 +140,24 @@ private struct CalculatedRiskView: View {
     )
     private var unknownCells: FetchedResults<TweakCell>
     
+    @FetchRequest private var qmiPackets: FetchedResults<QMIPacket>
+    @FetchRequest private var ariPackets: FetchedResults<ARIPacket>
+    
     let latestTweakCell: TweakCell?
     
     init(latestTweakCell: TweakCell?) {
         self.latestTweakCell = latestTweakCell
+        
+        let qmiPacketsRequest: NSFetchRequest<QMIPacket> = QMIPacket.fetchRequest()
+        qmiPacketsRequest.sortDescriptors = [NSSortDescriptor(keyPath: \QMIPacket.collected, ascending: false)]
+        qmiPacketsRequest.fetchLimit = 1
+        self._qmiPackets = FetchRequest(fetchRequest: qmiPacketsRequest)
+        
+        let ariPacketsRequest: NSFetchRequest<ARIPacket> = ARIPacket.fetchRequest()
+        ariPacketsRequest.sortDescriptors = [NSSortDescriptor(keyPath: \ARIPacket.collected, ascending: false)]
+        ariPacketsRequest.fetchLimit = 1
+        self._ariPackets = FetchRequest(fetchRequest: ariPacketsRequest)
+        
     }
     
     var body: some View {
@@ -167,11 +181,22 @@ private struct CalculatedRiskView: View {
         // We've received no cells for 30 minutes from the tweak, so we warn the user
         let ftMinutesAgo = Date() - 30 * 60
         guard let latestTweakCell = latestTweakCell else {
-            return RiskIndicatorCard(risk: .Medium(cause: .Tweak))
+            return RiskIndicatorCard(risk: .Medium(cause: .TweakCells))
+        }
+        if latestTweakCell.collected ?? Date.distantPast < ftMinutesAgo {
+            return RiskIndicatorCard(risk: .Medium(cause: .TweakCells))
         }
         
-        if latestTweakCell.collected ?? Date() < ftMinutesAgo {
-            return RiskIndicatorCard(risk: .Medium(cause: .Tweak))
+        
+        let latestPacket = [qmiPackets.first as Packet?, ariPackets.first as Packet?]
+            .compactMap { $0 }
+            .sorted { return $0.collected ?? Date.distantPast < $1.collected ?? Date.distantPast }
+            .last
+        guard let latestPacket = latestPacket else {
+            return RiskIndicatorCard(risk: .Medium(cause: .TweakPackets))
+        }
+        if latestPacket.collected ?? Date.distantPast < ftMinutesAgo {
+            return RiskIndicatorCard(risk: .Medium(cause: .TweakPackets))
         }
         
         // TODO: A condition is false at the first start of the app, figure out which

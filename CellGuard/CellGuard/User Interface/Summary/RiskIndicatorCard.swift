@@ -10,15 +10,18 @@ import SwiftUI
 
 enum RiskMediumCause: Equatable {
     case Permissions
-    case Tweak
+    case TweakCells
+    case TweakPackets
     case Cells(cellCount: Int)
     
     func text() -> String {
         switch (self) {
         case .Permissions:
             return "Ensure you've granted all required permissions"
-        case .Tweak:
-            return "Ensure the tweak is active"
+        case .TweakCells:
+            return "Ensure the CaptureCellsTweak is active"
+        case .TweakPackets:
+            return "Ensure the CapturePacketsTweak is active"
         case let .Cells(cellCount):
             return "Detected \(cellCount) suspicious \(cellCount == 1 ? "cell" : "cells") in the last 14 days"
         }
@@ -126,7 +129,7 @@ private struct RiskIndicatorLink: View {
         case let .Medium(cause):
             if cause == .Permissions {
                 return AnyView(SettingsView())
-            } else if cause == .Tweak {
+            } else if cause == .TweakCells || cause == .TweakPackets {
                 // TODO: Replace with help article
                 return AnyView(TweakInfoView())
             } else {
