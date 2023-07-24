@@ -38,13 +38,14 @@ def build_archive() -> Path:
     with yaspin(text="Building CellGuard...") as spinner:
         process = subprocess.run(
             ['xcodebuild', 'archive', '-scheme', 'CellGuard', '-archivePath', 'build/CellGuard.xcarchive',
-             '-configuration', 'Release', 'CODE_SIGN_IDENTITY=', 'CODE_SIGNING_REQUIRED=NO', 'CODE_SINGIN_ALLOWED=NO'],
+             '-configuration', 'Release', 'CODE_SIGN_IDENTITY=', 'CODE_SIGNING_REQUIRED=NO', 'CODE_SINGING_ALLOWED=NO'],
             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         if process.returncode == 0:
             spinner.ok("🟢")
         else:
             spinner.fail("🔴")
-            print(process.stderr)
+            print(str(process.stderr).replace('\\n', '\n').replace('\\t', '\t'))
+            print("Hint: First try \"Product -> Archive\" in XCode, then run this command again")
             exit(1)
 
     return Path('build', 'CellGuard.xcarchive')
