@@ -126,9 +126,10 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
             self.collectPacketsTask(collector: packetCollector)
         }
         
-        // Verify collected cells in the background, we start a new detached task for that
+        // Verify collected cells in the background, we start a new detached task for that.
+        // It's important that we specify a priority, otherwise this task ends up blocking the UI
         // See: https://docs.swift.org/swift-book/documentation/the-swift-programming-language/concurrency/#Unstructured-Concurrency
-        Task.detached {
+        Task.detached(priority: .background) {
             // When does the loop finishes? The neat thing is, it doesn't :)
             await CellVerifier.verificationLoop()
         }
