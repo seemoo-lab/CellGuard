@@ -455,6 +455,7 @@
 				CF93B85329800278003F9FFE /* PersistenceImporter.swift */,
 				CF0FDCC8296B310400A6FFE2 /* PersistencePreview.swift */,
 				CFF05F6E2A39ABF500DE6FB2 /* PersistenceCategories.swift */,
+				CF6EC8AC2A6C4C88004CF0AB /* PreviewInfo.swift */,
 			);
 			path = "Core Data";
 			sourceTree = "<group>";
@@ -505,7 +506,6 @@
 			isa = PBXGroup;
 			children = (
 				CFD0233D2961A10D00AA5A1C /* Preview Assets.xcassets */,
-				CF6EC8AC2A6C4C88004CF0AB /* PreviewInfo.swift */,
 			);
 			path = "Preview Content";
 			sourceTree = "<group>";
