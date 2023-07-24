@@ -104,7 +104,6 @@ extension PersistenceController {
                 self.logger.warning("Can't get tweak cell (\(source)) from its object ID")
                 return
             }
-            tweakCell.status = CellStatus.verified.rawValue
             
             // Fetch the verification cell for the tweak cell and assign it
             do {
@@ -145,18 +144,22 @@ extension PersistenceController {
         var distance: CellLocationDistance? = nil
         taskContext.performAndWait {
             guard let tweakCell = taskContext.object(with: tweakCellID) as? TweakCell else {
+                logger.warning("Can't calculate distance for cell \(tweakCellID): Cell missing from task context")
                 return
             }
             
             guard let alsCell = tweakCell.verification else {
+                logger.warning("Can't calculate distance for cell \(tweakCellID): No verification ALS cell")
                 return
             }
             
             guard let userLocation = tweakCell.location else {
+                logger.warning("Can't calculate distance for cell \(tweakCellID): Missing user location from cell")
                 return
             }
             
             guard let alsLocation = alsCell.location else {
+                logger.warning("Can't calculate distance for cell \(tweakCellID): Missing location from ALS cell")
                 return
             }
             
@@ -469,8 +472,7 @@ extension PersistenceController {
                 }
                 
                 found = true
-                
-                tweakCell.status = CellStatus.verified.rawValue
+
                 tweakCell.verification = alsCell
                 
                 try taskContext.save()
