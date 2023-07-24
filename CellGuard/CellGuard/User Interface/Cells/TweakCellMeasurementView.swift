@@ -96,7 +96,7 @@ private struct TweakCellMeasurementStatusView: View {
                     Section(header: Text("Distance Verification")) {
                         CellDetailsRow("User Location", "Present")
                         if let distance = distanceUserAndALS {
-                            CellDetailsRow("Raw Distance", "\(string(distance.distance)) km")
+                            CellDetailsRow("Raw Distance", "\(string(distance.distance)) m")
                             CellDetailsRow("Corrected Distance", "\(string(distance.correctedDistance() / 1000.0)) km")
                             CellDetailsRow("Genuine Percentage", "\(string((1 - distance.score()) * 100.0)) %")
                             CellDetailsRow("Score", "\(Int(1-distance.score()) * 20) / 20")
