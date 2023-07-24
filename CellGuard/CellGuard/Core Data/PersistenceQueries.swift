@@ -690,6 +690,25 @@ extension PersistenceController {
         }
     }
     
+    func countEntitiesOf<T>(_ request: NSFetchRequest<T>) -> Int? {
+        let taskContext = newTaskContext()
+        
+        // We can skip loading all the sub-entities
+        // See: https://stackoverflow.com/a/1134353
+        request.includesSubentities = false
+        
+        var count: Int? = nil
+        taskContext.performAndWait {
+            do {
+                count = try taskContext.count(for: request)
+            } catch {
+                logger.warning("Can't count the number of entities in the database for \(request)")
+            }
+        }
+        
+        return count
+    }
+    
     func deletePacketsOlderThan(days: Int) {
         let taskContext = newTaskContext()
         logger.debug("Start deleting packets older than \(days) day(s) from the store...")

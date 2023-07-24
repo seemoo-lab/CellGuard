@@ -8,17 +8,14 @@
 import SwiftUI
 
 struct DeleteView: View {
-    @FetchRequest(sortDescriptors: [])
-    private var connectedCellCount: FetchedResults<TweakCell>
-    @FetchRequest(sortDescriptors: [])
-    private var alsCellCount: FetchedResults<ALSCell>
-    @FetchRequest(sortDescriptors: [])
-    private var locationCount: FetchedResults<UserLocation>
-    @FetchRequest(sortDescriptors: [])
-    private var packetQMICount: FetchedResults<QMIPacket>
-    @FetchRequest(sortDescriptors: [])
-    private var packetARICount: FetchedResults<ARIPacket>
     
+    // We fetch the entity counts in intervals as live updates cause too much lag
+    @State private var cellMeasurements: Int = 0
+    @State private var alsCells: Int = 0
+    @State private var locations: Int = 0
+    @State private var packets: Int = 0
+    
+    // We fetch the database size in intervals as live updates wouldn't be possible
     @State private var databaseSize: UInt64 = 0
     
     @State private var doDeleteCells = true
@@ -33,16 +30,36 @@ struct DeleteView: View {
     @AppStorage(UserDefaultsKeys.packetRetention.rawValue)
     private var packetRetentionDays: Double = 14
     
+    @State private var timer: Timer? = nil
+    
     var body: some View {
         List {
             Section(
                 header: Text("Stored Datasets"),
                 footer: Text("CellGuard's database uses \(formatBytes(databaseSize)) on disk.")
             ) {
-                Toggle("Connected Cells (\(connectedCellCount.count))", isOn: $doDeleteCells)
-                Toggle("Cell Cache (\(alsCellCount.count))", isOn: $doDeleteALSCache)
-                Toggle("Locations (\(locationCount.count))", isOn: $doDeleteLocations)
-                Toggle("Packets (\(packetQMICount.count + packetARICount.count))", isOn: $doDeletePackets)
+                // The .id method is crucial for transitions
+                // See: https://stackoverflow.com/a/60136737
+                Toggle(isOn: $doDeleteCells) {
+                    Text("Cell Measurements (\(cellMeasurements))")
+                        .transition(.opacity)
+                        .id("DeleteView-CellMeasurements-\(cellMeasurements)")
+                }
+                Toggle(isOn: $doDeleteALSCache) {
+                    Text("ALS Cell Cache (\(alsCells))")
+                        .transition(.opacity)
+                        .id("DeleteView-ALSCellCache-\(alsCells)")
+                }
+                Toggle(isOn: $doDeleteLocations) {
+                    Text("Locations (\(locations))")
+                        .transition(.opacity)
+                        .id("DeleteView-Locations-\(locations)")
+                }
+                Toggle(isOn: $doDeletePackets) {
+                    Text("Packets (\(packets))")
+                        .transition(.opacity)
+                        .id("DeleteView-Packets-\(packets)")
+                }
             }
             .disabled(isDeletionInProgress)
             
@@ -85,14 +102,19 @@ struct DeleteView: View {
                 message: Text("Failed to delete the selected datasets: \(failReason ?? "Unknown")")
             )
         }
-        .onReceive(Timer.publish(every: 5, on: .main, in: .common).autoconnect()) { input in
-            // Again, a bit hacky. If we put the timer into the struct, it does not fire, but if we put it right here, it does work :)
-            // See: https://stackoverflow.com/a/69128879
-            // See: https://www.hackingwithswift.com/quick-start/swiftui/how-to-use-a-timer-with-swiftui
-            updateDatabaseSize()
-        }
         .onAppear() {
-            updateDatabaseSize()
+            updateCounts(first: true)
+            timer = Timer.scheduledTimer(withTimeInterval: 5, repeats: true, block: { _ in
+                // A bit hacky selfmade timer.
+                // If we put the timer into the struct or into a onReceive method, it does not fire, but if we put it right here, it does work :)
+                // See: https://stackoverflow.com/a/69128879
+                // See: https://www.hackingwithswift.com/quick-start/swiftui/how-to-use-a-timer-with-swiftui
+                updateCounts(first: false)
+            })
+            
+        }
+        .onDisappear() {
+            timer?.invalidate()
         }
     }
     
@@ -115,7 +137,7 @@ struct DeleteView: View {
         ].filter { $0.value }.map { $0.key }
         
         PersistenceController.shared.deleteDataInBackground(categories: deletionCategories) { result in
-            updateDatabaseSize()
+            updateCounts(first: false)
             isDeletionInProgress = false
             do {
                 // We don't have a deletion result, so we just check for an error
@@ -127,14 +149,28 @@ struct DeleteView: View {
         }
     }
     
-    func updateDatabaseSize() {
-        DispatchQueue.global(qos: .userInitiated).async {
+    func updateCounts(first: Bool) {
+        DispatchQueue.global(qos: .utility).async {
+            let persistence = PersistenceController.basedOnEnvironment()
+            
+            // Count entities of each database model
+            let cellMeasurements = persistence.countEntitiesOf(TweakCell.fetchRequest()) ?? self.cellMeasurements
+            let alsCells = persistence.countEntitiesOf(ALSCell.fetchRequest()) ?? self.alsCells
+            let locations = persistence.countEntitiesOf(UserLocation.fetchRequest()) ?? self.locations
+            let packets = (persistence.countEntitiesOf(QMIPacket.fetchRequest()) ?? 0) + (persistence.countEntitiesOf(ARIPacket.fetchRequest()) ?? 0)
+            
             // Calculate the size
             let size = PersistenceController.shared.size()
             
             // Set the size on the main queue
             DispatchQueue.main.async {
-                self.databaseSize = size
+                withAnimation(first ? .none : .easeIn) {
+                    self.cellMeasurements = cellMeasurements
+                    self.alsCells = alsCells
+                    self.locations = locations
+                    self.packets = packets
+                    self.databaseSize = size
+                }
             }
         }
     }
