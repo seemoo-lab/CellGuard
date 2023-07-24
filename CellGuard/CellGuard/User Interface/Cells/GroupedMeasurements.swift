@@ -40,9 +40,23 @@ struct GroupedMeasurements: Identifiable {
         self.start = start
         self.end = end
         
-        // Use the list's hash value to identify the list
+        let stats = Self.countByStatus(measurements: measurements)
+        
+        // Use the list's hash value to identify the list.
         // See: https://stackoverflow.com/a/68068346
-        self.id = measurements.hashValue
+        var hash = measurements.hashValue
+        // The measurement should also update if its number of cells in a category changes, so we must include them with the hashCode.
+        // 31 is a prime and thus good for a hash distribution.
+        // See: https://stackoverflow.com/a/3613423
+        // See: https://www.baeldung.com/java-hashcode#standard-hashcode-implementations
+        // We have to ignore the arithmetic overflow.
+        // See: https://stackoverflow.com/a/35974079
+        hash = 31 &* hash &+ stats.pending
+        hash = 31 &* hash &+ stats.untrusted
+        hash = 31 &* hash &+ stats.pending
+        hash = 31 &* hash &+ stats.trusted
+        // Use the hash code as the list's id
+        self.id = hash
     }
     
     static func countByStatus(measurements: any RandomAccessCollection<TweakCell>) -> (pending: Int, trusted: Int, suspicious: Int, untrusted: Int) {
