@@ -14,9 +14,7 @@ struct CellGuardApp: App {
     
     let persistenceController = PersistenceController.shared
     let locationManager = LocationDataManager.shared
-    let networkAuthorization = LocalNetworkAuthorization(
-        checkNow: UserDefaults.standard.bool(forKey: UserDefaultsKeys.introductionShown.rawValue)
-    )
+    let networkAuthorization = LocalNetworkAuthorization.shared
     let notificationManager = CGNotificationManager.shared
     let backgroundState = BackgroundState.shared
 

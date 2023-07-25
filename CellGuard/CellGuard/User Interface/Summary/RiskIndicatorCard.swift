@@ -13,6 +13,7 @@ enum RiskMediumCause: Equatable {
     case TweakCells
     case TweakPackets
     case Cells(cellCount: Int)
+    case CantCompute
     
     func text() -> String {
         switch (self) {
@@ -24,6 +25,8 @@ enum RiskMediumCause: Equatable {
             return "Ensure the CapturePacketsTweak is active"
         case let .Cells(cellCount):
             return "Detected \(cellCount) suspicious \(cellCount == 1 ? "cell" : "cells") in the last 14 days"
+        case .CantCompute:
+            return "Unable to determine your risk"
         }
     }
 }

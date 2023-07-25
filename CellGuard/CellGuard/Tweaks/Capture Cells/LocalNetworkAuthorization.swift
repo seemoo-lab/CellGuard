@@ -15,6 +15,10 @@ import OSLog
 @available(iOS 14.0, *)
 public class LocalNetworkAuthorization: NSObject, ObservableObject {
     
+    public static let shared = LocalNetworkAuthorization(
+        checkNow: UserDefaults.standard.bool(forKey: UserDefaultsKeys.introductionShown.rawValue)
+    )
+    
     private static let logger = Logger(
         subsystem: Bundle.main.bundleIdentifier!,
         category: String(describing: LocalNetworkAuthorization.self)

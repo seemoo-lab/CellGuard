@@ -136,6 +136,126 @@ extension PersistenceController {
         
     }
     
+    func determineDataRiskStatus() -> RiskLevel {
+        let taskContext = newTaskContext()
+        
+        let determine: () throws -> RiskLevel =  {
+            let calendar = Calendar.current
+            let ftDaysAgo = calendar.date(byAdding: .day, value: -14, to: calendar.startOfDay(for: Date()))!
+            let ftDayPredicate = NSPredicate(format: "collected >= %@", ftDaysAgo as NSDate)
+            
+            let tweakCelSortDescriptor = [NSSortDescriptor(keyPath: \TweakCell.collected, ascending: false)]
+            
+            // Failed Measurements
+            
+            let failedFetchRequest: NSFetchRequest<TweakCell> = TweakCell.fetchRequest()
+            failedFetchRequest.sortDescriptors = tweakCelSortDescriptor
+            failedFetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+                ftDayPredicate,
+                NSPredicate(format: "status == %@", CellStatus.verified.rawValue),
+                NSPredicate(format: "score < %@", CellVerifier.pointsUntrustedThreshold as NSNumber)
+            ])
+            let failed = try taskContext.fetch(failedFetchRequest)
+            if failed.count > 0 {
+                let cellCount = Dictionary(grouping: failed) { PersistenceController.queryCell(from: $0) }.count
+                return .High(cellCount: cellCount)
+            }
+            
+            // Suspicious Measurements
+            
+            let suspiciousFetchRequest: NSFetchRequest<TweakCell> = TweakCell.fetchRequest()
+            suspiciousFetchRequest.sortDescriptors = tweakCelSortDescriptor
+            suspiciousFetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+                ftDayPredicate,
+                NSPredicate(format: "status == %@", CellStatus.verified.rawValue),
+                NSPredicate(format: "score < %@", CellVerifier.pointsSuspiciousThreshold as NSNumber)
+            ])
+            let suspicious = try taskContext.fetch(suspiciousFetchRequest)
+            if suspicious.count > 0 {
+                let cellCount = Dictionary(grouping: suspicious) { PersistenceController.queryCell(from: $0) }.count
+                return .Medium(cause: .Cells(cellCount: cellCount))
+            }
+            
+            // Latest Measurement
+            
+            let allFetchRequest: NSFetchRequest<TweakCell> = TweakCell.fetchRequest()
+            allFetchRequest.fetchLimit = 1
+            allFetchRequest.sortDescriptors = tweakCelSortDescriptor
+            let all = try taskContext.fetch(allFetchRequest)
+            
+            // We've received no cells for 30 minutes from the tweak, so we warn the user
+            let ftMinutesAgo = Date() - 30 * 60
+            guard let latestTweakCell = all.first else {
+                return .Medium(cause: .TweakCells)
+            }
+            if latestTweakCell.collected ?? Date.distantPast < ftMinutesAgo {
+                return .Medium(cause: .TweakCells)
+            }
+            
+            // Latest Packet
+            
+            let allQMIPacketsFetchRequest: NSFetchRequest<QMIPacket> = QMIPacket.fetchRequest()
+            allQMIPacketsFetchRequest.fetchLimit = 1
+            allQMIPacketsFetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \QMIPacket.collected, ascending: false)]
+            let qmiPackets = try taskContext.fetch(allQMIPacketsFetchRequest)
+            
+            let allARIPacketsFetchRequest: NSFetchRequest<ARIPacket> = ARIPacket.fetchRequest()
+            allARIPacketsFetchRequest.fetchLimit = 1
+            allARIPacketsFetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \ARIPacket.collected, ascending: false)]
+            let ariPackets = try taskContext.fetch(allARIPacketsFetchRequest)
+            
+            let latestPacket = [qmiPackets.first as Packet?, ariPackets.first as Packet?]
+                .compactMap { $0 }
+                .sorted { return $0.collected ?? Date.distantPast < $1.collected ?? Date.distantPast }
+                .last
+            guard let latestPacket = latestPacket else {
+                return .Medium(cause: .TweakPackets)
+            }
+            if latestPacket.collected ?? Date.distantPast < ftMinutesAgo {
+                return .Medium(cause: .TweakPackets)
+            }
+            
+            // Permissions
+            
+            if (LocationDataManager.shared.authorizationStatus ?? .authorizedAlways) != .authorizedAlways ||
+                !(LocalNetworkAuthorization.shared.lastResult ?? true) ||
+                (CGNotificationManager.shared.authorizationStatus ?? .authorized) != .authorized {
+                return .Medium(cause: .Permissions)
+            }
+            
+            // Unverified Measurements
+            
+            let unknownFetchRequest: NSFetchRequest<TweakCell> = TweakCell.fetchRequest()
+            unknownFetchRequest.sortDescriptors = tweakCelSortDescriptor
+            unknownFetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+                ftDayPredicate,
+                NSPredicate(format: "status != %@", CellStatus.verified.rawValue),
+            ])
+            let unknowns = try taskContext.fetch(unknownFetchRequest)
+            
+            // We keep the unknown status until all cells are verified (except the current cell which we are monitoring)
+            if let unknownCell = unknowns.first, unknownCell.status == CellStatus.processedLocation.rawValue {
+                return .LowMonitor
+            } else if unknowns.count > 0 {
+                return .Unknown
+            }
+            
+            return .Low
+            
+        }
+        
+        var risk: RiskLevel = .Medium(cause: .CantCompute)
+        taskContext.performAndWait {
+            do {
+                risk = try determine()
+            } catch {
+                logger.warning("Can't determine risk level: \(error)")
+            }
+        }
+        
+        return risk
+    }
+    
     /// Calculates the distance between the location for the tweak cell and its verified counter part from Apple's database.
     /// If no verification or locations references cell exist, nil is returned.
     func calculateDistance(tweakCell tweakCellID: NSManagedObjectID) -> CellLocationDistance? {
@@ -159,9 +279,10 @@ extension PersistenceController {
             }
             
             guard let alsLocation = alsCell.location else {
+                // TODO: Sometimes this does not work ): -> imported = nil, other properties are there
                 logger.warning("Can't calculate distance for cell \(tweakCellID): Missing location from ALS cell")
                 return
-            }
+             }
             
             distance = CellLocationDistance.distance(userLocation: userLocation, alsLocation: alsLocation)
         }
