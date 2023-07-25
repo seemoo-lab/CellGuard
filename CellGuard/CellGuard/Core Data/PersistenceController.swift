@@ -159,6 +159,9 @@ class PersistenceController {
     
     /// Creates and configures a private queue context.
     func newTaskContext() -> NSManagedObjectContext {
+        // To fix possible issues, we could only write in one background queue
+        // See: https://stackoverflow.com/a/42745378
+        
         // Create a preview queue context.
         let taskContext = container.newBackgroundContext()
         taskContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
@@ -221,9 +224,14 @@ class PersistenceController {
         let viewContext = container.viewContext
         viewContext.perform {
             // Merge every transaction part of the history into the view context
+            var lastToken: NSPersistentHistoryToken? = nil
             for transaction in history {
                 viewContext.mergeChanges(fromContextDidSave: transaction.objectIDNotification())
-                self.lastToken = transaction.token
+                lastToken = transaction.token
+            }
+            // Only set the token once after every transaction to reduce the number of lock requests
+            if let lastToken = lastToken {
+                self.lastToken = lastToken
             }
         }
         
