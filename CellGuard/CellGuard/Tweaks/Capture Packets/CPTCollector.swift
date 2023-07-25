@@ -27,8 +27,9 @@ struct CPTCollector {
         client.queryPackets { result in
             do {
                 let packets = try result.get()
-                let numberOfStoredCells = try store(packets)
-                completion(.success(numberOfStoredCells))
+                let (qmiPackets, ariPackets) = try store(packets)
+                completion(.success((qmiPackets, ariPackets)))
+                Self.logger.debug("Imported \(qmiPackets) QMI and \(ariPackets) ARI packets")
             } catch {
                 // TODO: Count failures and if they exceed a given threshold, output a warning notification
                 Self.logger.warning("Can't request cells from tweak: \(error)")
