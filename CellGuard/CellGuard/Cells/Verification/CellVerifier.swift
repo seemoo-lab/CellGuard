@@ -102,9 +102,12 @@ struct CellVerifier {
             throw CellVerifierError.invalidCellStatus
         }
         
-        Self.logger.debug("Verifying cell \(queryCellID) with status \(queryCellStatus.rawValue): \(queryCell)")
-        // Continue with the correct verification stage
-        while (queryCellStatus != .verified) {
+        // Continue with the correct verification stage (at max. 10 verification stages each time)
+        outer: for i in 0...10 {
+            if i == 10 {
+                Self.logger.warning("Reached 10 verification iterations for \(queryCell)")
+            }
+            
             // Run the verification stage for the cell's current state
             let result = try await verifyStage(status: queryCellStatus, queryCell: queryCell, queryCellID: queryCellID)
             
@@ -112,14 +115,19 @@ struct CellVerifier {
             switch (result) {
                 
             case let .next(nextStatus, points):
+                Self.logger.debug("Result: .next(\(nextStatus.rawValue), \(points))")
                 // We store the resulting status and award the points, then the while-loop continues
                 try persistence.storeCellStatus(cellId: queryCellID, status: nextStatus, addToScore: Int16(points))
+                if nextStatus == .verified {
+                    break outer
+                }
                 queryCellStatus = nextStatus
                 
             case let .delay(delay):
+                Self.logger.debug("Delay: .next(\(delay))")
                 // We store the delay in the database and stop the verification loop
                 try persistence.storeVerificationDelay(cellId: queryCellID, seconds: delay)
-                break
+                break outer
             }
         }
         
@@ -128,6 +136,7 @@ struct CellVerifier {
     }
     
     private func verifyStage(status: CellStatus, queryCell: ALSQueryCell, queryCellID: NSManagedObjectID) async throws -> VerificationStageResult {
+        Self.logger.debug("Verification Stage: \(status.rawValue) for \(queryCellID) - \(queryCell)")
         switch (status) {
         case .imported:
             return try await verifyUsingALS(queryCell: queryCell, queryCellID: queryCellID)
