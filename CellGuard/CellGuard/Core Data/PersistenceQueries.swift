@@ -75,6 +75,7 @@ extension PersistenceController {
             cells.forEach { queryCell in
                 // Don't add the check if it already exists
                 let existFetchRequest = NSFetchRequest<ALSCell>()
+                existFetchRequest.fetchLimit = 1
                 existFetchRequest.entity = ALSCell.entity()
                 existFetchRequest.predicate = sameCellPredicate(queryCell: queryCell)
                 do {
@@ -96,6 +97,8 @@ extension PersistenceController {
                     let location = ALSLocation(context: taskContext)
                     queryLocation.applyTo(location: location)
                     cell.location = location
+                } else {
+                    self.logger.warning("Imported an ALS cell without a location: \(queryCell)")
                 }
             }
             
@@ -115,7 +118,7 @@ extension PersistenceController {
                     return
                 }
             } catch {
-                self.logger.warning("Can't execute a fetch request for getting a verfication cell for tweak cell: \(tweakCell)")
+                self.logger.warning("Can't execute a fetch request for getting a verification cell for tweak cell: \(tweakCell)")
                 return
             }
             
