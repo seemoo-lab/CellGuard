@@ -18,6 +18,12 @@ enum CellVerifierError: Error {
     case fetchPackets(Error)
 }
 
+private enum VerificationStageResult {
+    case delay(seconds: Int)
+    case next(status: CellStatus, points: Int)
+    
+}
+
 struct CellVerifier {
     
     private static let logger = Logger(
@@ -92,33 +98,53 @@ struct CellVerifier {
         }
         
         // Check if the cell status was parsed successfully
-        guard let queryCellStatus = queryCellStatus else {
+        guard var queryCellStatus = queryCellStatus else {
             throw CellVerifierError.invalidCellStatus
         }
         
         Self.logger.debug("Verifying cell \(queryCellID) with status \(queryCellStatus.rawValue): \(queryCell)")
         // Continue with the correct verification stage
-        switch (queryCellStatus) {
-        case .imported:
-            try await verifyUsingALS(queryCell: queryCell, queryCellID: queryCellID)
-        case .processedCell:
-            try await verifyDistance(queryCell: queryCell, queryCellID: queryCellID)
-        case .processedLocation:
-            try await verifyPacket(queryCell: queryCell, queryCellID: queryCellID)
-        case .verified:
-            throw CellVerifierError.verifiedCellFetched
+        while (queryCellStatus != .verified) {
+            // Run the verification stage for the cell's current state
+            let result = try await verifyStage(status: queryCellStatus, queryCell: queryCell, queryCellID: queryCellID)
+            
+            // Based on the stage's result, we choose our course of action
+            switch (result) {
+                
+            case let .next(nextStatus, points):
+                // We store the resulting status and award the points, then the while-loop continues
+                try persistence.storeCellStatus(cellId: queryCellID, status: nextStatus, addToScore: Int16(points))
+                queryCellStatus = nextStatus
+                
+            case let .delay(delay):
+                // We store the delay in the database and stop the verification loop
+                try persistence.storeVerificationDelay(cellId: queryCellID, seconds: delay)
+                break
+            }
         }
+        
         // We've verified a cell, so return true
         return true
     }
     
-    private func verifyUsingALS(queryCell: ALSQueryCell, queryCellID: NSManagedObjectID) async throws {
+    private func verifyStage(status: CellStatus, queryCell: ALSQueryCell, queryCellID: NSManagedObjectID) async throws -> VerificationStageResult {
+        switch (status) {
+        case .imported:
+            return try await verifyUsingALS(queryCell: queryCell, queryCellID: queryCellID)
+        case .processedCell:
+            return try await verifyDistance(queryCell: queryCell, queryCellID: queryCellID)
+        case .processedLocation:
+            return try await verifyPacket(queryCell: queryCell, queryCellID: queryCellID)
+        case .verified:
+            throw CellVerifierError.verifiedCellFetched
+        }
+    }
+    
+    private func verifyUsingALS(queryCell: ALSQueryCell, queryCellID: NSManagedObjectID) async throws -> VerificationStageResult {
         // Try to find the corresponding ALS cell in our database
         if let existing = try? persistence.assignExistingALSIfPossible(to: queryCellID), existing {
-            Self.logger.info("Verified tweak cell using the local ALS database: \(queryCell)")
-            try persistence.storeCellStatus(cellId: queryCellID, status: .processedCell, addToScore: Int16(pointsALS))
-            try await verifyDistance(queryCell: queryCell, queryCellID: queryCellID)
-            return
+            Self.logger.info("ALS verification using the local database successful: \(queryCell)")
+            return .next(status: .processedCell, points: pointsALS)
         }
         
         // If we can't find the cell in our database, we'll query ALS (and return to this thread)
@@ -136,11 +162,9 @@ struct CellVerifier {
         
         // Check if the resulting ALS cell is valid
         if !(preciseAlsCells.first?.isValid() ?? false) {
-            Self.logger.info("The first cell is not valid (0/40): \(queryCell)")
+            Self.logger.info("ALS Verification failed as the first cell is not valid (0/40): \(queryCell)")
             // If not, do not add any points to it and continue with the packet verification
-            try persistence.storeCellStatus(cellId: queryCellID, status: .processedLocation, addToScore: 0)
-            try await verifyPacket(queryCell: queryCell, queryCellID: queryCellID)
-            return
+            return .next(status: .processedLocation, points: 0)
         }
         
         // If the cell is valid, import all cells of the ALS response
@@ -151,12 +175,11 @@ struct CellVerifier {
         }
         
         // Award the points based on the distance
-        Self.logger.info("The ALS cells are valid (\(pointsALS)/\(pointsALS)): \(queryCell)")
-        try persistence.storeCellStatus(cellId: queryCellID, status: .processedCell, addToScore: Int16(pointsALS))
-        try await verifyDistance(queryCell: queryCell, queryCellID: queryCellID)
+        Self.logger.info("ALS verification successful (\(pointsALS)/\(pointsALS)): \(queryCell)")
+        return .next(status: .processedCell, points: pointsALS)
     }
     
-    private func verifyDistance(queryCell: ALSQueryCell, queryCellID: NSManagedObjectID) async throws {
+    private func verifyDistance(queryCell: ALSQueryCell, queryCellID: NSManagedObjectID) async throws -> VerificationStageResult {
         // Try to assign a location to the cell
         let (foundLocation, cellCollected) = try persistence.assignLocation(to: queryCellID)
         if !foundLocation {
@@ -164,41 +187,35 @@ struct CellVerifier {
             if (cellCollected ?? Date.distantPast) < Date().addingTimeInterval(-5 * 60) {
                 // If the cell is older than five minutes, we assume that we won't get the location data and just mark the location as checked
                 Self.logger.info("No location found for cell (\(pointsLocation)/\(pointsLocation)): \(queryCell)")
-                try persistence.storeCellStatus(cellId: queryCellID, status: .processedLocation, addToScore: Int16(pointsLocation))
+                return .next(status: .processedLocation, points: pointsLocation)
             } else {
                 // If the cell is younger than five minutes, we retry after 30s
-                try persistence.storeVerificationDelay(cellId: queryCellID, seconds: 30)
+                return .delay(seconds: 30)
             }
-            return
         }
         
         // Calculate the distance between the location assigned to the tweak cells & the ALS cell
         guard let distance = persistence.calculateDistance(tweakCell: queryCellID) else {
             // If we can't get the distance, we delay the verification
             Self.logger.warning("Can't calculate distance for cell \(queryCellID)")
-            try persistence.storeVerificationDelay(cellId: queryCellID, seconds: 60)
-            return
+            return .delay(seconds: 60)
         }
         
         // The score is a percentage of how likely the cell is evil, so we calculate an inverse of that and multiple it by the points
-        let distancePoints = Int16(Double(pointsLocation) * (1.0 - distance.score()))
-        try persistence.storeCellStatus(cellId: queryCellID, status: .processedLocation, addToScore: distancePoints)
+        let distancePoints = Int(Double(pointsLocation) * (1.0 - distance.score()))
         Self.logger.info("Location verified for cell (\(distancePoints)/\(pointsLocation)): \(queryCell)")
-        
-        try await verifyPacket(queryCell: queryCell, queryCellID: queryCellID)
+        return .next(status: .processedLocation, points: distancePoints)
     }
     
-    private func verifyPacket(queryCell: ALSQueryCell, queryCellID: NSManagedObjectID) async throws {
+    private func verifyPacket(queryCell: ALSQueryCell, queryCellID: NSManagedObjectID) async throws -> VerificationStageResult {
         // Delay the verification 20s if no newer cell exists, i.e., we are still connected to this cell
         guard let (start, end, _) = try persistence.fetchCellLifespan(of: queryCellID) else {
-            try persistence.storeVerificationDelay(cellId: queryCellID, seconds: 20)
-            return
+            return .delay(seconds: 20)
         }
         
         // ... or if the latest batch of packets has not been received from the tweak
         if CPTCollector.mostRecentPacket < end {
-            try persistence.storeVerificationDelay(cellId: queryCellID, seconds: 20)
-            return
+            return .delay(seconds: 20)
         }
         
         // We wait until we get a new cell measurements, as the disconnect packet can be sent rather late
@@ -226,12 +243,12 @@ struct CellVerifier {
             } else if let firstARIPacketID = ariPackets.keys.first {
                 try persistence.storeRejectPacket(cellId: queryCellID, packetId: firstARIPacketID)
             }
-            try persistence.storeCellStatus(cellId: queryCellID, status: .verified, addToScore: 0)
-            Self.logger.info("Packet verification failed for cell (0/\(pointsPacket)): \(queryCell)")
+            Self.logger.info("Reject packet present for cell (0/\(pointsPacket)): \(queryCell)")
+            return .next(status: .verified, points: 0)
         } else {
             // All packets are fine, so we award 40 points :)
-            try persistence.storeCellStatus(cellId: queryCellID, status: .verified, addToScore: Int16(pointsPacket))
-            Self.logger.info("Packet verified for cell (\(pointsPacket)/\(pointsPacket)): \(queryCell)")
+            Self.logger.info("Reject packet absent for cell (\(pointsPacket)/\(pointsPacket)): \(queryCell)")
+            return .next(status: .verified, points: pointsPacket)
         }
     }
     
