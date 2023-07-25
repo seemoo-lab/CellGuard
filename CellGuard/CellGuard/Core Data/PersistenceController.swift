@@ -140,11 +140,14 @@ class PersistenceController {
             self.logger.warning("Can't fetch last history token from user defaults: \(error)")
         }
         
+        // Use a serial dispatch queue for persistent store change notifications
+        let queue = DispatchQueue(label: "Persistent Store Remote Change", qos: .utility)
+        
         // We listen for remote store change notification which are sent from other queues.
         notificationToken = NotificationCenter.default.addObserver(forName: .NSPersistentStoreRemoteChange, object: nil, queue: nil) { note in
             self.logger.debug("Received a persistent store remote change notification.")
             // Once we receive such notification we update our queue-local history
-            Task {
+            queue.async {
                 self.fetchPersistentHistory()
             }
         }
@@ -199,13 +202,12 @@ class PersistenceController {
                    !history.isEmpty {
                     // If successful, merge them into the view context
                     self.mergePersistentHistoryChanges(from: history)
-                    return
+                } else {
+                    // This is normal at the first start of the app and doesn't require an exception
+                    logger.debug("No persistent history transactions found.")
+                    // throw PersistenceError.persistentHistoryChangeError
+                    // But we have to release the lock
                 }
-                
-                // This is normal at the first start of the app and doesn't require an exception
-                logger.debug("No persistent history transactions found.")
-                // throw PersistenceError.persistentHistoryChangeError
-                return
             } catch {
                 taskError = error
             }
@@ -222,15 +224,13 @@ class PersistenceController {
         
         // Update view context with objectIDs from history change request.
         let viewContext = container.viewContext
-        viewContext.perform {
+        viewContext.performAndWait {
             // Merge every transaction part of the history into the view context
-            var lastToken: NSPersistentHistoryToken? = nil
             for transaction in history {
                 viewContext.mergeChanges(fromContextDidSave: transaction.objectIDNotification())
-                lastToken = transaction.token
             }
             // Only set the token once after every transaction to reduce the number of lock requests
-            if let lastToken = lastToken {
+            if let lastToken = history.last?.token {
                 self.lastToken = lastToken
             }
         }
