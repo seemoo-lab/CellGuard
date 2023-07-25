@@ -99,31 +99,106 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
     }
     
     private func startTasks() {
-        let cellCollector = CCTCollector(client: CCTClient(queue: .global(qos: .default)))
-        
-        // Schedule a timer to continuously poll the latest cells while the app is active and instantly verify them
-        let cellCollectTimer = Timer.scheduledTimer(withTimeInterval: 30, repeats: true) { timer in
-            self.collectCellsTask(collector: cellCollector)
-        }
-        // We allow the timer a high tolerance of 50% as our collector is not time critical
-        cellCollectTimer.tolerance = 30
-        // We also start the function instantly to fetch the latest cells
-        DispatchQueue.global(qos: .default).async {
-            self.collectCellsTask(collector: cellCollector)
-        }
-        
-        let packetCollector = CPTCollector(client: CPTClient(queue: .global(qos: .default)))
-        
-        // TODO: Variable timeout based on whether a the app is open or not
-        // Schedule a timer to continuously poll the latest packets while the app is active
-        let packetCollectTimer = Timer.scheduledTimer(withTimeInterval: 15, repeats: true) { timer in
-            self.collectPacketsTask(collector: packetCollector)
-        }
-        // We allow the timer a tolerance of 50% as our collector is not time critical
-        packetCollectTimer.tolerance = 15
-        // We also start the function instantly to fetch the latest cells
-        DispatchQueue.global(qos: .default).async {
-            self.collectPacketsTask(collector: packetCollector)
+        Task.detached(priority: .background) {
+            let cellCollector = CCTCollector(client: CCTClient(queue: .global(qos: .background)))
+            let collectCellsTask: () -> () = {
+                // Only run tasks when we currently don't manually import any new data
+                guard !PersistenceImporter.importActive else { return }
+                
+                cellCollector.collectAndStore { result in
+                    do {
+                        // Get the number of successfully collected & stored cells
+                        _ = try result.get()
+                    } catch {
+                        // Print the error if the task execution was not successful
+                        Self.logger.warning("Failed to collect & store cells in scheduled timer: \(error)")
+                    }
+                }
+            }
+            // Schedule a timer to continuously poll the latest cells
+            Task {
+                while (true) {
+                    collectCellsTask()
+                    do {
+                        try await Task.sleep(nanoseconds: 30 * NSEC_PER_SEC)
+                    } catch {
+                        Self.logger.warning("Failed to sleep after collecting cells: \(error)")
+                    }
+                }
+            }
+            
+            let packetCollector = CPTCollector(client: CPTClient(queue: .global(qos: .background)))
+            let collectPacketsTask: () -> () = {
+                // Only run tasks when we currently don't manually import any new data
+                guard !PersistenceImporter.importActive else { return }
+                
+                packetCollector.collectAndStore { result in
+                    do {
+                        _ = try result.get()
+                    } catch {
+                        // Print the error if the task execution was not successful
+                        Self.logger.warning("Failed to collect & store packets in scheduled timer: \(error)")
+                    }
+                }
+            }
+            // Schedule a timer to continuously poll the latest packets
+            Task {
+                while (true) {
+                    collectPacketsTask()
+                    do {
+                        try await Task.sleep(nanoseconds: 15 * NSEC_PER_SEC)
+                    } catch {
+                        Self.logger.warning("Failed to sleep after collecting packets: \(error)")
+                    }
+                }
+             }
+            
+            // TODO: Add notification task which summarizes the untrusted / suspicious cells all five minutes
+            // Start it also instantly when running the app
+            // Add a new boolean CoreData model field to TweakCell: notified
+            // DB Query: notified = false and status == verified and score < ...
+            
+            // Clear the persistent history cache all five minutes after a start delay of one minute
+            Task {
+                do {
+                    try await Task.sleep(nanoseconds: 1 * 60 * NSEC_PER_SEC)
+                } catch {
+                    Self.logger.warning("Failed to sleep before cleaning the history cache: \(error)")
+                }
+                while (true) {
+                    guard !PersistenceImporter.importActive else { return }
+                    PersistenceController.shared.cleanPersistentHistoryChanges()
+                    do {
+                        try await Task.sleep(nanoseconds: 5 * 60 * NSEC_PER_SEC)
+                    } catch {
+                        Self.logger.warning("Failed to sleep after cleaning the history cache: \(error)")
+                    }
+                }
+            }
+            
+            // Clear the persistent history cache all two minutes after a start delay of two minutes
+            Task {
+                do {
+                    try await Task.sleep(nanoseconds: 2 * 60 * NSEC_PER_SEC)
+                } catch {
+                    Self.logger.warning("Failed to sleep before cleaning old packets: \(error)")
+                }
+                while (true) {
+                    guard !PersistenceImporter.importActive else { return }
+                    let days = UserDefaults.standard.object(forKey: UserDefaultsKeys.packetRetention.rawValue) as? Double ?? 15.0
+                    PersistenceController.shared.deletePacketsOlderThan(days: Int(days))
+                    do {
+                        try await Task.sleep(nanoseconds: 5 * 60 * NSEC_PER_SEC)
+                    } catch {
+                        Self.logger.warning("Failed to sleep after cleaning old packets: \(error)")
+                    }
+                }
+            }
+            
+            Self.logger.debug("Started all background tasks")
+            
+            // TODO: Add task to regularly delete old ALS cells (>= 90 days) to force a refresh
+            // -> Then, also reset the status of the associated tweak cells
         }
         
         // Verify collected cells in the background, we start a new detached task for that.
@@ -132,57 +207,6 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
         Task.detached(priority: .background) {
             // When does the loop finishes? The neat thing is, it doesn't :)
             await CellVerifier.verificationLoop()
-        }
-        
-        // TODO: Add notification task which summarizes the untrusted / suspicious cells all five minutes
-        // Start it also instantly when running the app
-        // Add a new boolean CoreData model field to TweakCell: notified
-        // DB Query: notified = false and status == verified and score < ...
-        
-        // Clear the persistent history cache all five minutes
-        let clearHistoryTimer = Timer.scheduledTimer(withTimeInterval: 60 * 5, repeats: true) { timer in
-            guard !PersistenceImporter.importActive else { return }
-            PersistenceController.shared.cleanPersistentHistoryChanges()
-        }
-        clearHistoryTimer.tolerance = 30
-        
-        let clearPacketTimer = Timer.scheduledTimer(withTimeInterval: 60 * 2, repeats: true) { timer in
-            guard !PersistenceImporter.importActive else { return }
-            let days = UserDefaults.standard.object(forKey: UserDefaultsKeys.packetRetention.rawValue) as? Double ?? 15.0
-            PersistenceController.shared.deletePacketsOlderThan(days: Int(days))
-        }
-        clearPacketTimer.tolerance = 30
-        
-        // TODO: Add task to regularly delete old ALS cells (>= 90 days) to force a refresh
-        // -> Then, also reset the status of the associated tweak cells
-    }
-    
-    private func collectCellsTask(collector: CCTCollector) {
-        // Only run tasks when we currently don't manually import any new data
-        guard !PersistenceImporter.importActive else { return }
-        
-        collector.collectAndStore { result in
-            do {
-                // Get the number of successfully collected & stored cells
-                _ = try result.get()
-            } catch {
-                // Print the error if the task execution was not successful
-                Self.logger.warning("Failed to collect & store cells in scheduled timer: \(error)")
-            }
-        }
-    }
-    
-    private func collectPacketsTask(collector: CPTCollector) {
-        // Only run tasks when we currently don't manually import any new data
-        guard !PersistenceImporter.importActive else { return }
-        
-        collector.collectAndStore { result in
-            do {
-                _ = try result.get()
-            } catch {
-                // Print the error if the task execution was not successful
-                Self.logger.warning("Failed to collect & store packets in scheduled timer: \(error)")
-            }
         }
     }
     
