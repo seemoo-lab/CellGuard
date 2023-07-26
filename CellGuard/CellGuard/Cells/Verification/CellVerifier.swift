@@ -236,11 +236,34 @@ struct CellVerifier {
             // For a list of possibles causes, see: https://gitlab.freedesktop.org/mobile-broadband/libqmi/-/blob/main/src/libqmi-glib/qmi-enums-nas.h#L1663
             qmiPackets = try persistence.fetchQMIPackets(direction: .ingoing, service: 0x03, message: 0x0068, indication: true, start: start, end: end)
             
-            // TODO: Find ARI Network Reject packet
             // Maybe IBINetRegistrationInfoIndCb -> [3] IBINetRegistrationRejectCause
             // There are also numerous IBI_NET_REGISTRATION_REJECT strings in libARI.dylib
             // For a list of ARI packets, see: https://github.com/seemoo-lab/aristoteles/blob/master/types/structure/libari_dylib.lua
-            ariPackets = [:]
+            let localAriPackets = try persistence.fetchARIPackets(direction: .ingoing, group: 7, type: 769, start: start, end: end)
+                .filter { (_, packet) in
+                    guard let registrationStatus = packet.tlvs.first(where: { $0.type == 2 })?.uint() else {
+                        return false
+                    }
+                    
+                    // The registration status must be IBI_NET_REGISTRATION_STATUS_LIMITED_SERVICE (2)
+                    // See: https://github.com/seemoo-lab/aristoteles/blob/07dbbaefc3f32bf007210219b6e2e4e84d82233f/types/asstring/ari_tlv_as_string_data.lua#L1434
+                    if registrationStatus != 2 {
+                        return false
+                    }
+                    
+                    guard let registrationRejectCause = packet.tlvs.first(where: { $0.type == 3 })?.uint() else {
+                        return false
+                    }
+                    
+                    // The registration reject cause must either be
+                    // - IBI_NET_REGISTRATION_REJECT_CAUSE_FORB_PLMN (9)
+                    // - IBI_NET_REGISTRATION_REJECT_CAUSE_INTERNAL_FAILURE (15)
+                    // See: https://github.com/seemoo-lab/aristoteles/blob/07dbbaefc3f32bf007210219b6e2e4e84d82233f/types/asstring/ari_tlv_as_string_data.lua#L1405
+                    return [9, 15].contains(registrationRejectCause)
+                }
+            // Only fail the verification if two packets matching the criteria appeared for the same cell
+            ariPackets = localAriPackets.count >= 2 ? localAriPackets : [:]
+            
         } catch {
             throw CellVerifierError.fetchPackets(error)
         }

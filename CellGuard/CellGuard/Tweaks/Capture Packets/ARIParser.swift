@@ -109,4 +109,18 @@ struct ARITLV {
         self.data = data.subdata(in: 4..<4+Int(length))
     }
     
+    func uint() -> UInt32? {
+        if data.count != 4 {
+            print("ARI TLV data has the wrong number of bytes \(data.count) for UInt32 conversion")
+            return nil
+        }
+        
+        do {
+            return try BinaryData(data: data, bigEndian: false).get(0)
+        } catch {
+            print("ARI TLV data to UInt32 conversion failed: \(error)")
+            return nil
+        }
+    }
+    
 }
