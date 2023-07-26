@@ -237,7 +237,7 @@ extension PersistenceController {
             let unknowns = try taskContext.fetch(unknownFetchRequest)
             
             // We keep the unknown status until all cells are verified (except the current cell which we are monitoring)
-            if let unknownCell = unknowns.first, unknownCell.status == CellStatus.processedLocation.rawValue {
+            if unknowns.count == 1, let unknownCell = unknowns.first, unknownCell.status == CellStatus.processedLocation.rawValue {
                 return .LowMonitor
             } else if unknowns.count > 0 {
                 return .Unknown
