@@ -12,6 +12,7 @@ enum CellStatus: String, Comparable {
     case processedCell
     case processedLocation
     // case processedPacket
+    case processedRejectPacket
     case verified
     
     func humanDescription() -> String {
@@ -19,7 +20,7 @@ enum CellStatus: String, Comparable {
         case .imported: return "Pending Verification"
         case .processedCell: return "Pending Location Verification"
         case .processedLocation: return "Pending Packet Verification"
-            // case .processedPacket: return "Verified Packet"
+        case .processedRejectPacket: return "Pending Signal Strength Verification"
         case .verified: return "Verification Complete"
         }
     }
@@ -29,7 +30,8 @@ enum CellStatus: String, Comparable {
         case .imported: return 0
         case .processedCell: return 1
         case .processedLocation: return 2
-        case .verified: return 3
+        case .processedRejectPacket: return 3
+        case .verified: return 4
         }
     }
     

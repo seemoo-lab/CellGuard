@@ -135,6 +135,8 @@ struct CellVerifier {
         return true
     }
     
+    // TODO: Bandwidth (100 -> 3, 50 -> 2, 20 -> 1, 10 -> 0)
+    
     private func verifyStage(status: CellStatus, queryCell: ALSQueryCell, queryCellID: NSManagedObjectID) async throws -> VerificationStageResult {
         Self.logger.debug("Verification Stage: \(status.rawValue) for \(queryCellID) - \(queryCell)")
         switch (status) {
@@ -143,7 +145,9 @@ struct CellVerifier {
         case .processedCell:
             return try await verifyDistance(queryCell: queryCell, queryCellID: queryCellID)
         case .processedLocation:
-            return try await verifyPacket(queryCell: queryCell, queryCellID: queryCellID)
+            return try await verifyRejectPacket(queryCell: queryCell, queryCellID: queryCellID)
+        case .processedRejectPacket:
+            return try await verifySignalStrength(queryCell: queryCell, queryCellID: queryCellID)
         case .verified:
             throw CellVerifierError.verifiedCellFetched
         }
@@ -216,7 +220,7 @@ struct CellVerifier {
         return .next(status: .processedLocation, points: distancePoints)
     }
     
-    private func verifyPacket(queryCell: ALSQueryCell, queryCellID: NSManagedObjectID) async throws -> VerificationStageResult {
+    private func verifyRejectPacket(queryCell: ALSQueryCell, queryCellID: NSManagedObjectID) async throws -> VerificationStageResult {
         // Delay the verification 20s if no newer cell exists, i.e., we are still connected to this cell
         guard let (start, end, _) = try persistence.fetchCellLifespan(of: queryCellID) else {
             return .delay(seconds: 20)
@@ -276,12 +280,41 @@ struct CellVerifier {
                 try persistence.storeRejectPacket(cellId: queryCellID, packetId: firstARIPacketID)
             }
             Self.logger.info("Reject packet present for cell (0/\(pointsPacket)): \(queryCell)")
-            return .next(status: .verified, points: 0)
+            return .next(status: .processedRejectPacket, points: 0)
         } else {
             // All packets are fine, so we award 40 points :)
             Self.logger.info("Reject packet absent for cell (\(pointsPacket)/\(pointsPacket)): \(queryCell)")
-            return .next(status: .verified, points: pointsPacket)
+            return .next(status: .processedRejectPacket, points: pointsPacket)
         }
+    }
+    
+    private func verifySignalStrength(queryCell: ALSQueryCell, queryCellID: NSManagedObjectID) async throws -> VerificationStageResult {
+        // Delay the verification 20s if no newer cell exists, i.e., we are still connected to this cell
+        guard let (start, end, _) = try persistence.fetchCellLifespan(of: queryCellID) else {
+            return .delay(seconds: 20)
+        }
+        
+        // ... or if the latest batch of packets has not been received from the tweak
+        if CPTCollector.mostRecentPacket < end {
+            return .delay(seconds: 20)
+        }
+        
+        // Signal Info Indication
+        try persistence.fetchQMIPackets(direction: .ingoing, service: 0x03, message: 0x0051, indication: true, start: start, end: end)
+            .compactMap { (_, packet) in
+                do {
+                    return try ParsedSignalInfoIndication(qmiPacket: packet)
+                } catch {
+                    Self.logger.warning("Can't extract signal strengths from a QMI packet")
+                    return nil
+                }
+            }
+            .forEach { (infoIndication: ParsedSignalInfoIndication) in
+                print("GSM: \(String(describing: infoIndication.gsm)) LTE: \(infoIndication.lte.debugDescription) NR: \(infoIndication.nr.debugDescription)")
+            }
+            
+        
+        return .next(status: .verified, points: 0)
     }
     
 }
