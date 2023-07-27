@@ -307,8 +307,8 @@
 				CF54CCBD2A330E6D00961E4D /* CommonParser.swift */,
 				CF2002E92A2F2BEA000922E6 /* ARIParser.swift */,
 				CF2002E72A2F2BE2000922E6 /* QMIParser.swift */,
-				CFD8DD252A715E8300954A25 /* QMIContentParser.swift */,
 				CFD8DD272A7175AF00954A25 /* ARIContentParser.swift */,
+				CFD8DD252A715E8300954A25 /* QMIContentParser.swift */,
 				CF2002F12A2F9FB5000922E6 /* CPTClient.swift */,
 				CF54CCBB2A33093800961E4D /* CPTCollector.swift */,
 			);

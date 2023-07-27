@@ -34,6 +34,7 @@ extension PersistenceController {
                     cell.status = CellStatus.imported.rawValue
                     cell.score = 0
                     cell.nextVerification = Date()
+                    cell.notificationSent = false
                 }
                 
                 index += 1
@@ -56,7 +57,7 @@ extension PersistenceController {
     
     /// Uses `NSBatchInsertRequest` (BIR) to import ALS cell properties into the Core Data store on a private queue.
     func importALSCells(from cells: [ALSQueryCell], source: NSManagedObjectID) throws {
-        // TODO: Add a constraint for technology,country,network,area,cell
+        // Idea: Add a constraint for technology,country,network,area,cell
         // Apparently this is not possible with parent entities. ):
         // See: https://developer.apple.com/forums/thread/36775
         
@@ -88,7 +89,7 @@ extension PersistenceController {
                     return
                 }
                 
-                // The cell don't exists, so we can add it
+                // The cell does not exists in our app's database, so we can add it
                 let cell = ALSCell(context: taskContext)
                 cell.imported = importedDate
                 queryCell.applyTo(alsCell: cell)
@@ -160,7 +161,7 @@ extension PersistenceController {
             ])
             let failed = try taskContext.fetch(failedFetchRequest)
             if failed.count > 0 {
-                let cellCount = Dictionary(grouping: failed) { PersistenceController.queryCell(from: $0) }.count
+                let cellCount = Dictionary(grouping: failed) { Self.queryCell(from: $0) }.count
                 return .High(cellCount: cellCount)
             }
             
@@ -175,7 +176,7 @@ extension PersistenceController {
             ])
             let suspicious = try taskContext.fetch(suspiciousFetchRequest)
             if suspicious.count > 0 {
-                let cellCount = Dictionary(grouping: suspicious) { PersistenceController.queryCell(from: $0) }.count
+                let cellCount = Dictionary(grouping: suspicious) { Self.queryCell(from: $0) }.count
                 return .Medium(cause: .Cells(cellCount: cellCount))
             }
             
@@ -827,6 +828,41 @@ extension PersistenceController {
                 count = try taskContext.count(for: request)
             } catch {
                 logger.warning("Can't count the number of entities in the database for \(request)")
+            }
+        }
+        
+        return count
+    }
+    
+    func fetchNotificationCellCounts() -> (suspicious: Int, untrusted: Int)? {
+        let taskContext = newTaskContext()
+        
+        var count: (Int, Int)? = nil
+        taskContext.performAndWait {
+            let request: NSFetchRequest<TweakCell> = TweakCell.fetchRequest()
+            request.predicate = NSPredicate(
+                format: "notificationSent == NO and status == %@ and score < %@",
+                CellStatus.verified.rawValue as NSString, CellVerifier.pointsSuspiciousThreshold as NSNumber
+            )
+            
+            do {
+                let measurements = try taskContext.fetch(request)
+                
+                // Choose the measurement with the lowest score for each cell
+                let cells = Dictionary(grouping: try taskContext.fetch(request)) { Self.queryCell(from: $0) }
+                    .compactMap { $0.value.min { $0.score < $1.score } }
+    
+                // Count the number suspicious and untrusted cells
+                count = (
+                    cells.filter {$0.score >= CellVerifier.pointsUntrustedThreshold}.count,
+                    cells.filter {$0.score < CellVerifier.pointsUntrustedThreshold}.count
+                )
+                
+                // Update all cells, so no multiple notification are sent
+                measurements.forEach { $0.notificationSent = true }
+                try taskContext.save()
+            } catch {
+                logger.warning("Can't count and update the measurements for notifications")
             }
         }
         

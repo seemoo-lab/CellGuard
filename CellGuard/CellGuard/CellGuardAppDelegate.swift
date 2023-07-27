@@ -153,45 +153,42 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
                 }
              }
             
-            // TODO: Add notification task which summarizes the untrusted / suspicious cells all five minutes
-            // Start it also instantly when running the app
-            // Add a new boolean CoreData model field to TweakCell: notified
-            // DB Query: notified = false and status == verified and score < ...
+            // This task sends a summary notification all two minutes if any untrusted or suspicious cells have been found
+            Task {
+                try? await Task.sleep(nanoseconds: 30 * NSEC_PER_SEC)
+                while (true) {
+                    guard !PersistenceImporter.importActive else {
+                        try? await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
+                        continue
+                    }
+                    CGNotificationManager.shared.queueNotifications()
+                    try? await Task.sleep(nanoseconds: 2 * 60 * NSEC_PER_SEC)
+                }
+            }
             
             // Clear the persistent history cache all five minutes after a start delay of one minute
             Task {
-                do {
-                    try await Task.sleep(nanoseconds: 1 * 60 * NSEC_PER_SEC)
-                } catch {
-                    Self.logger.warning("Failed to sleep before cleaning the history cache: \(error)")
-                }
+                try? await Task.sleep(nanoseconds: 60 * NSEC_PER_SEC)
                 while (true) {
-                    guard !PersistenceImporter.importActive else { return }
-                    PersistenceController.shared.cleanPersistentHistoryChanges()
-                    do {
-                        try await Task.sleep(nanoseconds: 5 * 60 * NSEC_PER_SEC)
-                    } catch {
-                        Self.logger.warning("Failed to sleep after cleaning the history cache: \(error)")
+                    guard !PersistenceImporter.importActive else {
+                        try? await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
+                        continue
                     }
+                    PersistenceController.shared.cleanPersistentHistoryChanges()
+                    try? await Task.sleep(nanoseconds: 5 * 60 * NSEC_PER_SEC)
                 }
             }
             
             // Clear the persistent history cache all two minutes after a start delay of two minutes
             Task {
-                do {
-                    try await Task.sleep(nanoseconds: 2 * 60 * NSEC_PER_SEC)
-                } catch {
-                    Self.logger.warning("Failed to sleep before cleaning old packets: \(error)")
-                }
+                try? await Task.sleep(nanoseconds: 2 * 60 * NSEC_PER_SEC)
                 while (true) {
-                    guard !PersistenceImporter.importActive else { return }
-                    let days = UserDefaults.standard.object(forKey: UserDefaultsKeys.packetRetention.rawValue) as? Double ?? 15.0
-                    PersistenceController.shared.deletePacketsOlderThan(days: Int(days))
-                    do {
-                        try await Task.sleep(nanoseconds: 5 * 60 * NSEC_PER_SEC)
-                    } catch {
-                        Self.logger.warning("Failed to sleep after cleaning old packets: \(error)")
+                    guard !PersistenceImporter.importActive else {
+                        try? await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
+                        continue
                     }
+                    CGNotificationManager.shared.queueNotifications()
+                    try? await Task.sleep(nanoseconds: 2 * 60 * NSEC_PER_SEC)
                 }
             }
             
@@ -212,6 +209,13 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
     
     private func assignNotificationCenterDelegate() {
         UNUserNotificationCenter.current().delegate = self
+    }
+    
+    func applicationWillEnterForeground(_ application: UIApplication) {
+        // Clear all notification when the users opens our app
+        // See: https://stackoverflow.com/a/38497700
+        // TODO: Enable function call (currently disabled for testing)
+        // CGNotificationManager.shared.clearNotifications()
     }
     
 }

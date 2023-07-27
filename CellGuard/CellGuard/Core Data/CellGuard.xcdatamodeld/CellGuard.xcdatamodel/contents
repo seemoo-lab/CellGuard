@@ -47,6 +47,7 @@
         <attribute name="json" optional="YES" attributeType="String"/>
         <attribute name="neighborTechnology" optional="YES" attributeType="String"/>
         <attribute name="nextVerification" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="notificationSent" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="preciseTechnology" optional="YES" attributeType="String"/>
         <attribute name="score" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="status" optional="YES" attributeType="String"/>

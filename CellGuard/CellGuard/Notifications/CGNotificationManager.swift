@@ -10,60 +10,6 @@ import MapKit
 import UserNotifications
 import OSLog
 
-enum CGNotificationLevel {
-    
-    case verificationFailure
-    case locationWarning(distance: CLLocationDistance)
-    case locationFailure(distance: CLLocationDistance)
-    
-    func title() -> String {
-        switch (self) {
-        case .verificationFailure: return "Cell Verification Failed"
-        case .locationWarning: return "Cell Distance Unusually High"
-        case .locationFailure: return "Cell Distance Too High"
-        }
-    }
-    
-    func body(cell: TweakCell) -> String {
-        let distanceFormatter = MKDistanceFormatter()
-        distanceFormatter.unitStyle = .abbreviated
-        
-        let techFormatter = CellTechnologyFormatter.from(technology: cell.technology)
-        
-        let cellIdStr = "\(techFormatter.country()): \(cell.country), " +
-        "\(techFormatter.network()): \(cell.network), " +
-        "\(techFormatter.area()): \(cell.area), " +
-        "\(techFormatter.cell()): \(cell.cell)"
-                
-        var dateStr: String? = nil
-        if let collected = cell.collected {
-            dateStr = " seen at \(mediumDateTimeFormatter.string(from: collected))"
-        }
-        
-        let cellStr = "\(cell.technology ?? "") cell (\(cellIdStr))\(dateStr ?? "")"
-        
-        switch (self) {
-        case .verificationFailure:
-            return "The \(cellStr) could not be found in Apple's database. Therefore, it could be rouge base station."
-        case let .locationWarning(distance):
-            let distanceStr = distanceFormatter.string(fromDistance: distance)
-            return "Your recorded location whilst connected to the \(cellStr) differs significantly (\(distanceStr)) from its location in Apple's database. This could be due to high speed travel."
-        case let .locationFailure(distance):
-            let distanceStr = distanceFormatter.string(fromDistance: distance)
-            return "Your recorded location whilst connected to the \(cellStr) is not plausible with a distance of (\(distanceStr)) to its location in Apple's database. Therefore, the cell could be rouge base station."
-        }
-    }
-    
-    func sound() -> UNNotificationSound? {
-        switch (self) {
-        case .verificationFailure: return .default
-        case .locationWarning: return nil
-        case .locationFailure: return .default
-        }
-    }
-    
-}
-
 class CGNotificationManager: ObservableObject {
     
     static let shared = CGNotificationManager()
@@ -75,9 +21,7 @@ class CGNotificationManager: ObservableObject {
     
     @Published var authorizationStatus: UNAuthorizationStatus? = nil
     
-    private init() {
-        
-    }
+    private init() { }
     
     func requestAuthorization(completion: @escaping (Bool) -> Void) {
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { success, error in
@@ -103,22 +47,36 @@ class CGNotificationManager: ObservableObject {
         }
     }
     
-    func notifyCell(level: CGNotificationLevel, source: NSManagedObjectID) {
+    // TODO: Clear notification upon starting CellGuard
+    
+    func queueNotifications() {
+        guard let counts = PersistenceController.shared.fetchNotificationCellCounts() else {
+            Self.logger.warning("Couldn't fetch the count of untrusted and suspicious measurements not yet sent as notifications")
+            return
+        }
+        
+        if counts.suspicious == 0 && counts.untrusted == 0 {
+            // Nothing to notify the user about :)
+            return
+        }
+        
         // https://developer.apple.com/documentation/usernotifications/scheduling_a_notification_locally_from_your_app
         // https://www.hackingwithswift.com/books/ios-swiftui/scheduling-local-notifications
         
         // Set the notification text
         let content = UNMutableNotificationContent()
-        content.title = level.title()
-        content.sound = level.sound()
+        content.title = counts.untrusted > 0 ? "Found Untrusted Cells" : "Found Suspicious Cells"
+        content.sound = counts.untrusted > 0 ? .default : nil
         
-        let taskContext = PersistenceController.shared.newTaskContext()
-        taskContext.performAndWait {
-            let cell = taskContext.object(with: source) as? TweakCell
-            if let cell = cell {
-                content.body = level.body(cell: cell)
-            }
+        var body = "Your iPhone recently connected to "
+        if counts.untrusted > 0 && counts.suspicious > 0 {
+            body.append("\(counts.untrusted) untrusted and \(counts.suspicious) suspicious cell" + ((counts.untrusted != 1 || counts.suspicious != 1 ? "s" : "")))
+        } else if counts.untrusted > 0 {
+            body.append("\(counts.untrusted) untrusted cell" + (counts.untrusted != 1 ? "s" : ""))
+        } else {
+            body.append("\(counts.suspicious) suspicious cell" + (counts.suspicious != 1 ? "s" : ""))
         }
+        content.body = body
         
         // Build the notification request and instantly deliver the notification (trigger: nil)
         let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
@@ -131,7 +89,10 @@ class CGNotificationManager: ObservableObject {
                 Self.logger.warning("Failed to schedule notification: \(error)")
             }
         }
-        
+    }
+    
+    func clearNotifications() {
+        UNUserNotificationCenter.current().removeAllDeliveredNotifications()
     }
     
 }

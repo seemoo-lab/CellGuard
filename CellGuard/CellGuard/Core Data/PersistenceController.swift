@@ -176,6 +176,8 @@ class PersistenceController {
     
     /// Fetches persistent history into the view context.
     func fetchPersistentHistory() {
+        // More useful resources:
+        // - https://www.avanderlee.com/swift/persistent-history-tracking-core-data/
         do {
             try fetchPersistentHistoryTransactionsAndChanges()
         } catch {
