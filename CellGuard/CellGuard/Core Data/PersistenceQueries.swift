@@ -881,7 +881,8 @@ extension PersistenceController {
                     return
                 }
                 logger.debug("Deleting packets older than \(startOfDay)")
-                let predicate = NSPredicate(format: "collected < %@", daysAgo as NSDate)
+                // Only delete packets not referenced by cells
+                let predicate = NSPredicate(format: "collected < %@ and rejectedCell = nil", daysAgo as NSDate)
                 
                 try deleteData(entity: QMIPacket.entity(), predicate: predicate, context: taskContext)
                 try deleteData(entity: ARIPacket.entity(), predicate: predicate, context: taskContext)

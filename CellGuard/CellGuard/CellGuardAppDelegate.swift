@@ -179,7 +179,7 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
                 }
             }
             
-            // Clear the persistent history cache all two minutes after a start delay of two minutes
+            // Delete packets older than a given amount of days as configured by the user
             Task {
                 try? await Task.sleep(nanoseconds: 2 * 60 * NSEC_PER_SEC)
                 while (true) {
@@ -187,8 +187,9 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
                         try? await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
                         continue
                     }
-                    CGNotificationManager.shared.queueNotifications()
-                    try? await Task.sleep(nanoseconds: 2 * 60 * NSEC_PER_SEC)
+                    let days = UserDefaults.standard.object(forKey: UserDefaultsKeys.packetRetention.rawValue) as? Double ?? 15.0
+                    PersistenceController.shared.deletePacketsOlderThan(days: Int(days))
+                    try? await Task.sleep(nanoseconds: 5 * 60 * NSEC_PER_SEC)
                 }
             }
             
