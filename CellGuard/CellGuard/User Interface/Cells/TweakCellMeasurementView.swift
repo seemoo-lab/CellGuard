@@ -200,6 +200,8 @@ private struct TweakCellMeasurementStatusView: View {
                 }
             }
             
+            // TODO: Add a diagram of the signal strength
+            
             if let json = measurement.json, let jsonPretty = try? self.formatJSON(json: json) {
                 Section(header: Text("iOS-Internal Data")) {
                     Text(jsonPretty)

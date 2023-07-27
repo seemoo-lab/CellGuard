@@ -136,6 +136,9 @@ struct CellVerifier {
     }
     
     // TODO: Bandwidth (100 -> 3, 50 -> 2, 20 -> 1, 10 -> 0)
+    // TODO: UARFCN & PID Check (-> Update UARFCN & PID & Date when receiving time; Store PID in DB)
+    // -> Request a neighboring cell after a successful request to receive this information?
+    // For now: Only implement this check for LTE & (maybe NRARFCN for 5GNR)
     
     private func verifyStage(status: CellStatus, queryCell: ALSQueryCell, queryCellID: NSManagedObjectID) async throws -> VerificationStageResult {
         Self.logger.debug("Verification Stage: \(status.rawValue) for \(queryCellID) - \(queryCell)")
@@ -299,8 +302,10 @@ struct CellVerifier {
             return .delay(seconds: 20)
         }
         
+        // TODO: Store the signal strength in the database
+        
         // QMI: Signal Info Indication
-        try persistence.fetchQMIPackets(direction: .ingoing, service: 0x03, message: 0x0051, indication: true, start: start, end: end)
+        let qmiSignalInfo = try persistence.fetchQMIPackets(direction: .ingoing, service: 0x03, message: 0x0051, indication: true, start: start, end: end)
             .compactMap { (_, packet) in
                 do {
                     return try ParsedQMISignalInfoIndication(qmiPacket: packet)
@@ -309,12 +314,44 @@ struct CellVerifier {
                     return nil
                 }
             }
-            .forEach { (infoIndication: ParsedQMISignalInfoIndication) in
+        if qmiSignalInfo.count > 0 {
+            qmiSignalInfo.forEach { (infoIndication: ParsedQMISignalInfoIndication) in
                 print("Signal Strength QMI: GSM: \(String(describing: infoIndication.gsm)) LTE: \(infoIndication.lte.debugDescription) NR: \(infoIndication.nr.debugDescription)")
             }
+            let gsmInfo = qmiSignalInfo.compactMap {$0.gsm}
+            let lteInfo = qmiSignalInfo.filter {$0.nr?.rsrp == NRSignalStrengthQMI.missing}.compactMap {$0.lte}
+            let nrInfo = qmiSignalInfo.compactMap {$0.nr}.filter {$0.rsrp != NRSignalStrengthQMI.missing}
+            
+            if nrInfo.count > 0 {
+                let rsrpAvg = nrInfo.map {Double($0.rsrp)}.reduce(0.0, +) / Double(nrInfo.count)
+                let rsrqAvg = nrInfo.map {Double($0.rsrq)}.reduce(0.0, +) / Double(nrInfo.count)
+                let snrAvg = nrInfo.map {Double($0.snr)}.reduce(0.0, +) / Double(nrInfo.count)
+        
+                // We don't have any measurements for 5GNR
+                if rsrqAvg >= -4 && rsrpAvg >= -100 && snrAvg >= 200 {
+                    print("Signal Strength QMI: 5GNR SUS")
+                }
+            } else if lteInfo.count > 0 {
+                let rssiAvg = lteInfo.map {Double($0.rssi)}.reduce(0.0, +) / Double(lteInfo.count)
+                let rsrqAvg = lteInfo.map {Double($0.rsrq)}.reduce(0.0, +) / Double(lteInfo.count)
+                let rsrpAvg = lteInfo.map {Double($0.rsrp)}.reduce(0.0, +) / Double(lteInfo.count)
+                let snrAvg = lteInfo.map {Double($0.snr)}.reduce(0.0, +) / Double(lteInfo.count)
+                
+                if rssiAvg >= -70 && rsrqAvg >= -4 && rsrpAvg >= -100 && snrAvg >= 200 {
+                    print("Signal Strength QMI: LTE SUS")
+                }
+            } else if gsmInfo.count > 0 {
+                let rssiAvg = gsmInfo.map {Double($0)}.reduce(0.0, +) / Double(gsmInfo.count)
+                
+                // We don't have any measurements for GSM
+                if rssiAvg >= -60 {
+                    print("Signal Strength QMI: GSM SUS")
+                }
+            }
+        }
         
         // ARI: IBINetRadioSignalIndCb
-        try persistence.fetchARIPackets(direction: .ingoing, group: 9, type: 772, start: start, end: end)
+        let ariSignalInfo = try persistence.fetchARIPackets(direction: .ingoing, group: 9, type: 772, start: start, end: end)
             .compactMap { (_, packet) in
                 do {
                     return try ParsedARIRadioSignalIndication(ariPacket: packet)
@@ -323,10 +360,28 @@ struct CellVerifier {
                     return nil
                 }
             }
-            .forEach { (infoIndication: ParsedARIRadioSignalIndication) in
+            .compactMap { (infoIndication: ParsedARIRadioSignalIndication) -> (ssr: Double, sqr: Double)? in
+                let ssr = Double(infoIndication.signalStrength) / Double(infoIndication.signalStrengthMax)
+                let sqr = Double(infoIndication.signalQuality) / Double(infoIndication.signalQualityMax)
                 print("Signal Strength ARI: \(infoIndication)")
+                
+                if sqr > 1 {
+                    // The iPhone has no service (usually: SQ = 99 and SQM = 7)
+                    return nil
+                }
+                
+                return (ssr, sqr)
             }
+        if ariSignalInfo.count > 0 {
+            let ssrAvg = ariSignalInfo.map {$0.ssr}.reduce(0.0, +) / Double(ariSignalInfo.count)
+            let sqrAvg = ariSignalInfo.map {$0.sqr}.reduce(0.0, +) / Double(ariSignalInfo.count)
             
+            if ssrAvg > 0.65 && sqrAvg > 0.85 {
+                print("Signal Strength ARI: SUS")
+                // TODO: Subtract points
+            }
+        }
+        
         
         return .next(status: .verified, points: 0)
     }
