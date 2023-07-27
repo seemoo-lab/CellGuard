@@ -12,6 +12,7 @@ enum ParsedContentARIPacketError: Error  {
     case wrongGroupId
     case wrongTypeId
     case tlvMissing(id: Int)
+    case tlvEmpty(id: Int)
 }
 
 struct ParsedARIRadioSignalIndication {
@@ -38,7 +39,11 @@ struct ParsedARIRadioSignalIndication {
                 throw ParsedContentARIPacketError.tlvMissing(id: tlvId)
             }
             
-            return try BinaryData(data: tlv.data).get(0)
+            if tlv.data.count == 0 {
+                throw ParsedContentARIPacketError.tlvEmpty(id: tlvId)
+            }
+            
+            return Int8(bitPattern: tlv.data[0])
         }
         
         let extractInt32: (Int) throws -> Int32 = { tlvId in
@@ -46,7 +51,7 @@ struct ParsedARIRadioSignalIndication {
                 throw ParsedContentARIPacketError.tlvMissing(id: tlvId)
             }
             
-            return try BinaryData(data: tlv.data).get(0)
+            return try BinaryData(data: tlv.data, bigEndian: false).get(0)
         }
         
         signalStrength = try extractInt8(2)
