@@ -97,6 +97,7 @@
 		CFD0236D2961AD1500AA5A1C /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = CFD0236C2961AD1500AA5A1C /* SwiftProtobuf */; };
 		CFD023742961DF7400AA5A1C /* ALSClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD023732961DF7400AA5A1C /* ALSClientTests.swift */; };
 		CFD8DD262A715E8300954A25 /* QMIContentParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD8DD252A715E8300954A25 /* QMIContentParser.swift */; };
+		CFD8DD282A7175AF00954A25 /* ARIContentParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD8DD272A7175AF00954A25 /* ARIContentParser.swift */; };
 		CFDF5D6F297EF05D000708A8 /* MultiCellMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFDF5D6E297EF05D000708A8 /* MultiCellMap.swift */; };
 		CFDF5D71297EF0C6000708A8 /* CellAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFDF5D70297EF0C6000708A8 /* CellAnnotation.swift */; };
 		CFDF5D73297EF0E4000708A8 /* CellAnnotationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFDF5D72297EF0E4000708A8 /* CellAnnotationView.swift */; };
@@ -224,6 +225,7 @@
 		CFD023692961ABA100AA5A1C /* ALSClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ALSClient.swift; sourceTree = "<group>"; };
 		CFD023732961DF7400AA5A1C /* ALSClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ALSClientTests.swift; sourceTree = "<group>"; };
 		CFD8DD252A715E8300954A25 /* QMIContentParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QMIContentParser.swift; sourceTree = "<group>"; };
+		CFD8DD272A7175AF00954A25 /* ARIContentParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARIContentParser.swift; sourceTree = "<group>"; };
 		CFDF5D6E297EF05D000708A8 /* MultiCellMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiCellMap.swift; sourceTree = "<group>"; };
 		CFDF5D70297EF0C6000708A8 /* CellAnnotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellAnnotation.swift; sourceTree = "<group>"; };
 		CFDF5D72297EF0E4000708A8 /* CellAnnotationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellAnnotationView.swift; sourceTree = "<group>"; };
@@ -306,6 +308,7 @@
 				CF2002E92A2F2BEA000922E6 /* ARIParser.swift */,
 				CF2002E72A2F2BE2000922E6 /* QMIParser.swift */,
 				CFD8DD252A715E8300954A25 /* QMIContentParser.swift */,
+				CFD8DD272A7175AF00954A25 /* ARIContentParser.swift */,
 				CF2002F12A2F9FB5000922E6 /* CPTClient.swift */,
 				CF54CCBB2A33093800961E4D /* CPTCollector.swift */,
 			);
@@ -731,6 +734,7 @@
 				CFDF5D73297EF0E4000708A8 /* CellAnnotationView.swift in Sources */,
 				CF5EA78B29892F420061E9F1 /* CGTabBarAppearance.swift in Sources */,
 				CFDF5D7B297EF71F000708A8 /* CellClusterAnnotation.swift in Sources */,
+				CFD8DD282A7175AF00954A25 /* ARIContentParser.swift in Sources */,
 				CF93B852297FFEF9003F9FFE /* URLIdentifiable.swift in Sources */,
 				CF0A5678298A7A910012B2A8 /* VerificationProgressView.swift in Sources */,
 				CF446754298D2A040083EE63 /* CellLocationDistance.swift in Sources */,

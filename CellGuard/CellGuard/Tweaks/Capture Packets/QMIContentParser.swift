@@ -8,32 +8,32 @@
 import Foundation
 import BinarySwift
 
-enum ParsedSignalInfoIndicationError: Error  {
+enum ParsedContentQMIPacketError: Error  {
     case wrongServiceId
     case wrongMessageId
     case noIndication
 }
 
-struct ParsedSignalInfoIndication {
+struct ParsedQMISignalInfoIndication {
     
     let gsm: Int8? // RSSI: dBm
-    let lte: LTESignalStrength?
-    let nr: NRSignalStrength?
+    let lte: LTESignalStrengthQMI?
+    let nr: NRSignalStrengthQMI?
     
     init(qmiPacket: ParsedQMIPacket) throws {
         // The packet is part of the NAS service
         if qmiPacket.qmuxHeader.serviceId != 0x03 {
-            throw ParsedSignalInfoIndicationError.wrongServiceId
+            throw ParsedContentQMIPacketError.wrongServiceId
         }
         
         // The packet is an indication
         if !qmiPacket.transactionHeader.indication {
-            throw ParsedSignalInfoIndicationError.noIndication
+            throw ParsedContentQMIPacketError.noIndication
         }
         
         // The packet has the message id of 0x0051
         if qmiPacket.messageHeader.messageId != 0x0051 {
-            throw ParsedSignalInfoIndicationError.wrongMessageId
+            throw ParsedContentQMIPacketError.wrongMessageId
         }
         
         if let gsmTLV = qmiPacket.tlvs.first(where: {$0.type == 0x12}), let gsmStrengthUInt = gsmTLV.data.first {
@@ -44,13 +44,13 @@ struct ParsedSignalInfoIndication {
         }
         
         if let lteTLV = qmiPacket.tlvs.first(where: { $0.type ==  0x14}) {
-            lte = try LTESignalStrength(data: lteTLV.data)
+            lte = try LTESignalStrengthQMI(data: lteTLV.data)
         } else {
             lte = nil
         }
         
         if let nrTLV = qmiPacket.tlvs.first(where: { $0.type == 0x17 }), let nrExtTLV = qmiPacket.tlvs.first(where: { $0.type == 0x18 }) {
-            nr = try NRSignalStrength(data: nrTLV.data, extendedData: nrExtTLV.data)
+            nr = try NRSignalStrengthQMI(data: nrTLV.data, extendedData: nrExtTLV.data)
         } else {
             nr = nil
         }
@@ -58,7 +58,7 @@ struct ParsedSignalInfoIndication {
     
 }
 
-struct LTESignalStrength {
+struct LTESignalStrengthQMI {
     
     // See:
     // - https://gitlab.freedesktop.org/mobile-broadband/libqmi/-/blob/main/data/qmi-service-nas.json#L4249
@@ -78,7 +78,7 @@ struct LTESignalStrength {
     }
 }
 
-struct NRSignalStrength {
+struct NRSignalStrengthQMI {
     
     static let missing: Int16 = Int16(bitPattern: UInt16(0x8000))
     

@@ -299,18 +299,32 @@ struct CellVerifier {
             return .delay(seconds: 20)
         }
         
-        // Signal Info Indication
+        // QMI: Signal Info Indication
         try persistence.fetchQMIPackets(direction: .ingoing, service: 0x03, message: 0x0051, indication: true, start: start, end: end)
             .compactMap { (_, packet) in
                 do {
-                    return try ParsedSignalInfoIndication(qmiPacket: packet)
+                    return try ParsedQMISignalInfoIndication(qmiPacket: packet)
                 } catch {
                     Self.logger.warning("Can't extract signal strengths from a QMI packet")
                     return nil
                 }
             }
-            .forEach { (infoIndication: ParsedSignalInfoIndication) in
-                print("GSM: \(String(describing: infoIndication.gsm)) LTE: \(infoIndication.lte.debugDescription) NR: \(infoIndication.nr.debugDescription)")
+            .forEach { (infoIndication: ParsedQMISignalInfoIndication) in
+                print("Signal Strength QMI: GSM: \(String(describing: infoIndication.gsm)) LTE: \(infoIndication.lte.debugDescription) NR: \(infoIndication.nr.debugDescription)")
+            }
+        
+        // ARI: IBINetRadioSignalIndCb
+        try persistence.fetchARIPackets(direction: .ingoing, group: 9, type: 772, start: start, end: end)
+            .compactMap { (_, packet) in
+                do {
+                    return try ParsedARIRadioSignalIndication(ariPacket: packet)
+                } catch {
+                    Self.logger.warning("Can't extract signal strengths from a ARI packet")
+                    return nil
+                }
+            }
+            .forEach { (infoIndication: ParsedARIRadioSignalIndication) in
+                print("Signal Strength ARI: \(infoIndication)")
             }
             
         
