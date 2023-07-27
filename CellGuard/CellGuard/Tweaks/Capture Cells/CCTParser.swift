@@ -38,6 +38,7 @@ struct CCTCellProperties {
     var technology: ALSTechnology?
     var preciseTechnology: String?
     var frequency: Int32?
+    var band: Int32?
     var neighborRadio: String?
     
     var timestamp: Date?
@@ -54,6 +55,7 @@ struct CCTCellProperties {
         tweakCell.preciseTechnology = self.preciseTechnology
         
         tweakCell.frequency = self.frequency ?? 0
+        tweakCell.band = self.band ?? 0
         tweakCell.neighborTechnology = neighborRadio
         
         tweakCell.collected = self.timestamp
@@ -169,8 +171,8 @@ struct CCTParser {
         cell.area = info["LAC"] as? Int32 ?? 0
         cell.cellId = info["CellId"] as? Int64 ?? 0
         
-        // We're using ARFCN here as BandInfo is always 0
         cell.frequency = info["ARFCN"] as? Int32 ?? 0
+        cell.band = info["BandInfo"] as? Int32 ?? 0
         
         return cell
     }
@@ -189,13 +191,14 @@ struct CCTParser {
         cell.area = info["LAC"] as? Int32 ?? 0
         cell.cellId = info["CellId"] as? Int64 ?? 0
         
-        cell.frequency = info["BandInfo"] as? Int32 ?? 0
+        cell.frequency = info["UARFCN"] as? Int32 ?? 0
+        cell.band = info["BandInfo"] as? Int32 ?? 0
         
         return cell
     }
     
     private func parseCDMA(_ info: CellInfo) throws -> CCTCellProperties {
-        // CDMA has been shutdown is most conutries:
+        // CDMA has been shutdown is most countries:
         // - https://www.verizon.com/about/news/3g-cdma-network-shut-date-set-december-31-2022
         // - https://www.digi.com/blog/post/2g-3g-4g-lte-network-shutdown-updates
         // - https://en.wikipedia.org/wiki/List_of_CDMA2000_networks
@@ -216,6 +219,7 @@ struct CCTParser {
         cell.area = info["PNOffset"] as? Int32 ?? 0
         cell.cellId = info["BaseStationId"] as? Int64 ?? 0
         
+        cell.band = info["ChannelNumber"] as? Int32 ?? 0
         cell.frequency = info["BandClass"] as? Int32 ?? 0
         
         return cell
@@ -230,7 +234,14 @@ struct CCTParser {
         cell.area = info["TAC"] as? Int32 ?? 0
         cell.cellId = info["CellId"] as? Int64 ?? 0
         
-        cell.frequency = info["BandInfo"] as? Int32 ?? 0
+        // Although the correct name is EARFCN, here Apple still uses the name UARFCN from UMTS
+        // See:
+        // - https://en.wikipedia.org/wiki/UMTS#UARFCN
+        // - https://de.wikipedia.org/wiki/UTRA_Absolute_Radio_Frequency_Channel_Number
+        cell.frequency = info["UARFCN"] as? Int32 ?? 0
+        cell.band = info["BandInfo"] as? Int32 ?? 0
+        
+        // Interesting additional attribute: PID (Physical Cell ID)
         
         return cell
     }
@@ -238,14 +249,16 @@ struct CCTParser {
     private func parseNR(_ info: CellInfo) throws -> CCTCellProperties {
         var cell = CCTCellProperties()
         
-        // Just a guess
+        // Just a guess, based on the strings of CommCenter (extracted with Ghidra)
         
         cell.mcc = info["MCC"] as? Int32 ?? 0
         cell.network = info["MNC"] as? Int32 ?? 0
         cell.area = info["TAC"] as? Int32 ?? 0
         cell.cellId = info["CellId"] as? Int64 ?? 0
         
-        cell.frequency = info["BandInfo"] as? Int32 ?? 0
+        // Usually the frequency is called ARFCN, but Apple apparently appended a NR to it
+        cell.frequency = info["NRARFCN"] as? Int32 ?? 0
+        cell.band = info["BandInfo"] as? Int32 ?? 0
 
         return cell
     }

@@ -48,11 +48,11 @@ struct CellTechnologyFormatter {
     
     public func frequency() -> String {
         switch (technology) {
-        case .CDMA: return "Bandclass"
+        case .CDMA: return "Channel"
         case .GSM: return "ARFCN"
         case .SCDMA: return "ARFCN"
-        case .LTE: return "UARFCN"
-        case .NR: return "NRARFCN"
+        case .LTE: return "EARFCN"
+        case .NR: return "ARFCN"
         }
     }
     

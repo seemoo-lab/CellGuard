@@ -194,6 +194,7 @@ private struct TweakCellMeasurementStatusView: View {
                     CellDetailsRow("Generation", rat)
                 }
                 CellDetailsRow(techFormatter.frequency(), measurement.frequency)
+                CellDetailsRow("Band", measurement.band)
                 if let neighborTechnology = measurement.neighborTechnology {
                     CellDetailsRow("Neighbor", neighborTechnology)
                 }

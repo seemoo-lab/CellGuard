@@ -47,7 +47,7 @@ struct CCTClient {
         
         let jsonFriendlyStr = "[\(string.split(whereSeparator: \.isNewline).joined(separator: ", "))]"
         
-        // We're using JSONSerilization because the JSONDecoder requires specific type information that we can't provide
+        // We're using JSONSerialization because the JSONDecoder requires specific type information that we can't provide
         return try JSONSerialization.jsonObject(with: jsonFriendlyStr.data(using: .utf8)!) as! [CellSample]
     }
     
