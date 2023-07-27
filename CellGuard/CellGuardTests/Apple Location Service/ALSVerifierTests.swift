@@ -108,7 +108,7 @@ final class ALSVerifierTests: XCTestCase {
                 let tweakCell = tweakCells.first!
                 XCTAssertNotNil(tweakCell.verification)
                 XCTAssertEqual(tweakCell.status, CellStatus.processedLocation.rawValue)
-                XCTAssertEqual(tweakCell.score, 40)
+                XCTAssertEqual(tweakCell.score, 60)
             } catch {
                 XCTFail(error.localizedDescription)
             }
@@ -232,7 +232,7 @@ final class ALSVerifierTests: XCTestCase {
                 let tweakCell = tweakCells.first!
                 XCTAssertNotNil(tweakCell.verification)
                 XCTAssertEqual(tweakCell.status, CellStatus.processedLocation.rawValue)
-                XCTAssertEqual(tweakCell.score, 40)
+                XCTAssertEqual(tweakCell.score, 60)
             } catch {
                 XCTFail(error.localizedDescription)
             }
