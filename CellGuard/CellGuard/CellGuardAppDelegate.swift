@@ -212,13 +212,6 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
         UNUserNotificationCenter.current().delegate = self
     }
     
-    func applicationWillEnterForeground(_ application: UIApplication) {
-        // Clear all notification when the users opens our app
-        // See: https://stackoverflow.com/a/38497700
-        // TODO: Enable function call (currently disabled for testing)
-        // CGNotificationManager.shared.clearNotifications()
-    }
-    
 }
 
 extension CellGuardAppDelegate: UNUserNotificationCenterDelegate {

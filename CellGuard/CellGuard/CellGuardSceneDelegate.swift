@@ -25,6 +25,10 @@ class CellGuardSceneDelegate: NSObject, UIWindowSceneDelegate, ObservableObject 
         // Update the notification permission when the app is opened again
         CGNotificationManager.shared.updateAuthorizationStatus()
         LocationDataManager.shared.enterForeground()
+        
+        // Clear all notification when the users opens our app
+        // See: https://stackoverflow.com/a/38497700
+        CGNotificationManager.shared.clearNotifications()
     }
     
     func sceneDidEnterBackground(_ scene: UIScene) {
@@ -65,12 +69,12 @@ class CellGuardSceneDelegate: NSObject, UIWindowSceneDelegate, ObservableObject 
             Self.logger.warning("Could not schedule the app verify processing task: \(Self.toDescription(taskSchedulerError: error as? BGTaskScheduler.Error)) -> \(error)")
         }
     }
-
+    
     private static func toDescription(taskSchedulerError: BGTaskScheduler.Error?) -> String {
         guard let error = taskSchedulerError else {
             return ""
         }
-
+        
         switch (error) {
         case BGTaskScheduler.Error.notPermitted: return "notPermitted"
         case BGTaskScheduler.Error.tooManyPendingTaskRequests: return "tooManyPendingTaskRequests"
