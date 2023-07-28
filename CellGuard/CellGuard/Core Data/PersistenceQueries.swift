@@ -80,8 +80,11 @@ extension PersistenceController {
                 existFetchRequest.entity = ALSCell.entity()
                 existFetchRequest.predicate = sameCellPredicate(queryCell: queryCell)
                 do {
-                    // TODO: Update the date of existing cell
-                    if try taskContext.count(for: existFetchRequest) > 0 {
+                    // If the cell exists, we update its attributes but not its location.
+                    // This is crucial for adding the PCI & EARFCN to an existing LTE cell.
+                    if let existingCell = try taskContext.fetch(existFetchRequest).first{
+                        existingCell.imported = importedDate
+                        queryCell.applyTo(alsCell: existingCell)
                         return
                     }
                 } catch {
@@ -238,7 +241,7 @@ extension PersistenceController {
             let unknowns = try taskContext.fetch(unknownFetchRequest)
             
             // We keep the unknown status until all cells are verified (except the current cell which we are monitoring)
-            if unknowns.count == 1, let unknownCell = unknowns.first, unknownCell.status == CellStatus.processedLocation.rawValue {
+            if unknowns.count == 1, let unknownCell = unknowns.first, unknownCell.status == CellStatus.processedBandwidth.rawValue {
                 return .LowMonitor
             } else if unknowns.count > 0 {
                 return .Unknown
@@ -575,6 +578,29 @@ extension PersistenceController {
         }
         
         return packets
+    }
+    
+    func fetchCellAttribute<T>(cell: NSManagedObjectID, extract: (TweakCell) throws -> T?) -> T? {
+        let context = newTaskContext()
+        
+        var fetchError: Error? = nil
+        var attribute: T? = nil
+        context.performAndWait {
+            do {
+                if let tweakCell = context.object(with: cell) as? TweakCell {
+                    attribute = try extract(tweakCell)
+                }
+            } catch {
+                fetchError = error
+            }
+        }
+        
+        if fetchError != nil {
+            logger.warning("Can't fetch attribute from TweakCell: \(fetchError)")
+            return nil
+        }
+        
+        return attribute
     }
     
     func assignExistingALSIfPossible(to tweakCellID: NSManagedObjectID) throws -> Bool {

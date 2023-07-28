@@ -30,7 +30,7 @@ struct PersistencePreview {
         cell.location = location(location: UserLocation(context: context), error: 0.005)
         cell.location?.imported = cell.imported
         cell.status = CellStatus.verified.rawValue
-        cell.score = Int16(CellVerifier.pointsSuspiciousThreshold)
+        cell.score = Int16(CellVerifier.pointsMax)
         cell.nextVerification = Date()
         
         return cell

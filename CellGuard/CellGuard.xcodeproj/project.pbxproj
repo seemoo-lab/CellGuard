@@ -79,6 +79,7 @@
 		CF93B852297FFEF9003F9FFE /* URLIdentifiable.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF93B851297FFEF9003F9FFE /* URLIdentifiable.swift */; };
 		CF93B85429800278003F9FFE /* PersistenceImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF93B85329800278003F9FFE /* PersistenceImporter.swift */; };
 		CF93B85629800451003F9FFE /* CellFileKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF93B85529800451003F9FFE /* CellFileKeys.swift */; };
+		CFA09CF92A73D4B000D16832 /* SwiftExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFA09CF82A73D4B000D16832 /* SwiftExtensions.swift */; };
 		CFB51834297AEFA80006C690 /* CellStatusIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB51833297AEFA80006C690 /* CellStatusIcon.swift */; };
 		CFB8B2882963417B00503189 /* LocationDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB8B2872963417B00503189 /* LocationDataManager.swift */; };
 		CFB8B28A2963498200503189 /* CellGuardAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB8B2892963498200503189 /* CellGuardAppDelegate.swift */; };
@@ -205,6 +206,7 @@
 		CF93B851297FFEF9003F9FFE /* URLIdentifiable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLIdentifiable.swift; sourceTree = "<group>"; };
 		CF93B85329800278003F9FFE /* PersistenceImporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceImporter.swift; sourceTree = "<group>"; };
 		CF93B85529800451003F9FFE /* CellFileKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellFileKeys.swift; sourceTree = "<group>"; };
+		CFA09CF82A73D4B000D16832 /* SwiftExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftExtensions.swift; sourceTree = "<group>"; };
 		CFB51833297AEFA80006C690 /* CellStatusIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellStatusIcon.swift; sourceTree = "<group>"; };
 		CFB8B2872963417B00503189 /* LocationDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationDataManager.swift; sourceTree = "<group>"; };
 		CFB8B2892963498200503189 /* CellGuardAppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellGuardAppDelegate.swift; sourceTree = "<group>"; };
@@ -504,6 +506,7 @@
 				CF320F5A29622B6D009BAD18 /* Info.plist */,
 				CF2A1C172975562800E8B61C /* UserDefaultsKeys.swift */,
 				CF5EF92729793F7500C4F50A /* TestDetection.swift */,
+				CFA09CF82A73D4B000D16832 /* SwiftExtensions.swift */,
 			);
 			path = CellGuard;
 			sourceTree = "<group>";
@@ -760,6 +763,7 @@
 				CFDF5D83297F0736000708A8 /* CommonCellMap.swift in Sources */,
 				CFDF5D75297EF127000708A8 /* CellClusterAnnotationView.swift in Sources */,
 				CFB51834297AEFA80006C690 /* CellStatusIcon.swift in Sources */,
+				CFA09CF92A73D4B000D16832 /* SwiftExtensions.swift in Sources */,
 				CFB8B291296359CC00503189 /* CCTCollector.swift in Sources */,
 				CF54CCC32A331ED300961E4D /* PacketCell.swift in Sources */,
 				CF5672962A29E59000B6EA7C /* TweakInfoView.swift in Sources */,
@@ -979,7 +983,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"CellGuard/Preview Content\"";
 				DEVELOPMENT_TEAM = RJXNW62ZYN;
 				ENABLE_PREVIEWS = YES;
@@ -1000,7 +1004,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.2.0;
+				MARKETING_VERSION = 1.2.1;
 				PRODUCT_BUNDLE_IDENTIFIER = de.tudarmstadt.seemoo.CellGuard;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -1015,7 +1019,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"CellGuard/Preview Content\"";
 				DEVELOPMENT_TEAM = RJXNW62ZYN;
 				ENABLE_PREVIEWS = YES;
@@ -1036,7 +1040,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.2.0;
+				MARKETING_VERSION = 1.2.1;
 				PRODUCT_BUNDLE_IDENTIFIER = de.tudarmstadt.seemoo.CellGuard;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;

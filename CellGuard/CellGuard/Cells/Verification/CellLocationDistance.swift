@@ -49,16 +49,10 @@ struct CellLocationDistance {
         // We divide a corrected distance (with error margins) by 150km, the absolute maximum error tolerance, to get a percentage.
         // If it's below zero, the cell at its right place.
         // If it's larger than 50%, we're sure that even with all of our margin, the cell is more than 75km away from its ALS location, and thus a possible threat.
-        let score = self.correctedDistance() / 150_000
+        let score = self.correctedDistance() / 150_000.0
         
         // The score should be within the range [0,1]
-        if score > 1 {
-            return 1
-        } else if score < 0 {
-            return 0
-        } else {
-            return score
-        }
+        return score.clamped(to: 0.0...1.0)
     }
     
     static func distance(userLocation: UserLocation, alsLocation: ALSLocation) -> CellLocationDistance {

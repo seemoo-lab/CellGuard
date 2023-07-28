@@ -11,7 +11,8 @@ enum CellStatus: String, Comparable {
     case imported
     case processedCell
     case processedLocation
-    // case processedPacket
+    case processedFrequency
+    case processedBandwidth
     case processedRejectPacket
     case verified
     
@@ -19,7 +20,9 @@ enum CellStatus: String, Comparable {
         switch (self) {
         case .imported: return "Pending Verification"
         case .processedCell: return "Pending Location Verification"
-        case .processedLocation: return "Pending Packet Verification"
+        case .processedLocation: return "Pending Frequency Verification"
+        case .processedFrequency: return "Pending Bandwidth Verification"
+        case .processedBandwidth: return "Pending Packet Verification"
         case .processedRejectPacket: return "Pending Signal Strength Verification"
         case .verified: return "Verification Complete"
         }
@@ -30,8 +33,10 @@ enum CellStatus: String, Comparable {
         case .imported: return 0
         case .processedCell: return 1
         case .processedLocation: return 2
-        case .processedRejectPacket: return 3
-        case .verified: return 4
+        case .processedFrequency: return 3
+        case .processedBandwidth: return 4
+        case .processedRejectPacket: return 5
+        case .verified: return 6
         }
     }
     

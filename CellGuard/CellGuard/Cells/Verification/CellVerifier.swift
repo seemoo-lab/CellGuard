@@ -73,15 +73,25 @@ struct CellVerifier {
         }
     }
     
-    public static let pointsSuspiciousThreshold = 100
+    public static let pointsMax = 100
+    public static let pointsSuspiciousThreshold = 95
     public static let pointsUntrustedThreshold = 50
     
-    private let pointsALS = 40
-    private let pointsLocation = 20
-    private let pointsPacket = 40
+    public static let pointsALS = 20
+    public static let pointsLocation = 20
+    public static let pointsFrequency = 5
+    public static let pointsBandwidth = 5
+    public static let pointsRejectPacket = 30
+    public static let pointsSignalStrength = 20
+    
+    public static let pointsFastVerification = Self.pointsALS + Self.pointsLocation + Self.pointsFrequency + Self.pointsBandwidth
     
     private let persistence = PersistenceController.shared
     private let alsClient = ALSClient()
+    
+    init() {
+        assert(Self.pointsALS + Self.pointsLocation + Self.pointsFrequency + Self.pointsBandwidth + Self.pointsRejectPacket + Self.pointsSignalStrength == 100, "The sum of all points must be 100")
+    }
     
     func verifyFirst() async throws -> Bool {
         let queryCell: (NSManagedObjectID, ALSQueryCell, CellStatus?)?
@@ -135,11 +145,6 @@ struct CellVerifier {
         return true
     }
     
-    // TODO: Bandwidth (100 -> 3, 50 -> 2, 20 -> 1, 10 -> 0)
-    // TODO: UARFCN & PID Check (-> Update UARFCN & PID & Date when receiving time; Store PID in DB)
-    // -> Request a neighboring cell after a successful request to receive this information?
-    // For now: Only implement this check for LTE & (maybe NRARFCN for 5GNR)
-    
     private func verifyStage(status: CellStatus, queryCell: ALSQueryCell, queryCellID: NSManagedObjectID) async throws -> VerificationStageResult {
         Self.logger.debug("Verification Stage: \(status.rawValue) for \(queryCellID) - \(queryCell)")
         switch (status) {
@@ -148,6 +153,10 @@ struct CellVerifier {
         case .processedCell:
             return try await verifyDistance(queryCell: queryCell, queryCellID: queryCellID)
         case .processedLocation:
+            return try await verifyFrequency(queryCell: queryCell, queryCellID: queryCellID)
+        case .processedFrequency:
+            return try await verifyBandwidth(queryCell: queryCell, queryCellID: queryCellID)
+        case .processedBandwidth:
             return try await verifyRejectPacket(queryCell: queryCell, queryCellID: queryCellID)
         case .processedRejectPacket:
             return try await verifySignalStrength(queryCell: queryCell, queryCellID: queryCellID)
@@ -160,7 +169,7 @@ struct CellVerifier {
         // Try to find the corresponding ALS cell in our database
         if let existing = try? persistence.assignExistingALSIfPossible(to: queryCellID), existing {
             Self.logger.info("ALS verification using the local database successful: \(queryCell)")
-            return .next(status: .processedCell, points: pointsALS)
+            return .next(status: .processedCell, points: Self.pointsALS)
         }
         
         // If we can't find the cell in our database, we'll query ALS (and return to this thread)
@@ -180,7 +189,7 @@ struct CellVerifier {
         if !(preciseAlsCells.first?.isValid() ?? false) {
             Self.logger.info("ALS Verification failed as the first cell is not valid (0/40): \(queryCell)")
             // If not, do not add any points to it and continue with the packet verification
-            return .next(status: .processedLocation, points: 0)
+            return .next(status: .processedFrequency, points: 0)
         }
         
         // If the cell is valid, import all cells of the ALS response
@@ -190,9 +199,27 @@ struct CellVerifier {
             throw CellVerifierError.importALSCells(error)
         }
         
+        // Issue: ALS does not include PID & EARFCN for the requested cells, but all others.
+        // We require this data for LTE cell verification, so we request the first neighboring cell to retrieve the attributes for our original cell.
+        if let first = preciseAlsCells.first, first.technology == .LTE, first.physicalCell == 0 || first.frequency == 0, preciseAlsCells.count >= 2 {
+            // Query ALS using the cell's first neighbor and search for the cell in the query results
+            let updatedFirst = try await alsClient.requestCells(origin: preciseAlsCells[1])
+                .filter { $0.hasCellId() && $0.isValid() }
+                .first { $0.compareToRequestAttributes(other: first) }
+            
+            // If successful, update the cell's properties
+            if let updatedFirst = updatedFirst {
+                do {
+                    try persistence.importALSCells(from: [updatedFirst], source: queryCellID)
+                } catch {
+                    throw CellVerifierError.importALSCells(error)
+                }
+            }
+        }
+        
         // Award the points based on the distance
-        Self.logger.info("ALS verification successful (\(pointsALS)/\(pointsALS)): \(queryCell)")
-        return .next(status: .processedCell, points: pointsALS)
+        Self.logger.info("ALS verification successful (\(Self.pointsALS)/\(Self.pointsALS)): \(queryCell)")
+        return .next(status: .processedCell, points: Self.pointsALS)
     }
     
     private func verifyDistance(queryCell: ALSQueryCell, queryCellID: NSManagedObjectID) async throws -> VerificationStageResult {
@@ -202,8 +229,8 @@ struct CellVerifier {
             // We've missing a location for the cell, so ...
             if (cellCollected ?? Date.distantPast) < Date().addingTimeInterval(-5 * 60) {
                 // If the cell is older than five minutes, we assume that we won't get the location data and just mark the location as checked
-                Self.logger.info("No location found for cell (\(pointsLocation)/\(pointsLocation)): \(queryCell)")
-                return .next(status: .processedLocation, points: pointsLocation)
+                Self.logger.info("No location found for cell (\(Self.pointsLocation)/\(Self.pointsLocation)): \(queryCell)")
+                return .next(status: .processedLocation, points: Self.pointsLocation)
             } else {
                 // If the cell is younger than five minutes, we retry after 30s
                 return .delay(seconds: 30)
@@ -218,11 +245,64 @@ struct CellVerifier {
         }
         
         // The score is a percentage of how likely the cell is evil, so we calculate an inverse of that and multiple it by the points
-        let distancePoints = Int(Double(pointsLocation) * (1.0 - distance.score()))
-        Self.logger.info("Location verified for cell (\(distancePoints)/\(pointsLocation)): \(queryCell)")
+        let distancePoints = Int(Double(Self.pointsLocation) * (1.0 - distance.score()))
+        Self.logger.info("Location verified for cell (\(distancePoints)/\(Self.pointsLocation)): \(queryCell)")
         return .next(status: .processedLocation, points: distancePoints)
     }
     
+    private func verifyFrequency(queryCell: ALSQueryCell, queryCellID: NSManagedObjectID) async throws -> VerificationStageResult {
+        // ALS only provides us with the attributes (PID & EARFCN) for LTE cells
+        // We could expand those checks for 5GNR SA cells (ARFCN), but we would require a real 5G SA cell to confirm the data of ALS
+        if queryCell.technology == .LTE {
+            let compareData = persistence.fetchCellAttribute(cell: queryCellID) { measurement in
+                if let alsCell = measurement.verification {
+                    return (
+                        measurement: (pid: measurement.physicalCell, frequency: measurement.frequency),
+                        als: (pid: alsCell.physicalCell, frequency: alsCell.frequency)
+                    )
+                }
+                return nil
+            }
+            if let (measurement, als) = compareData {
+                var localPoints = 2
+                
+                if measurement.frequency > 0 && als.frequency > 0 && measurement.frequency != als.frequency {
+                    localPoints -= 1
+                    Self.logger.info("Frequency Verification - EARFCN not equal: \(measurement.frequency) != \(als.frequency)")
+                }
+                if measurement.pid > 0 && als.pid > 0 && measurement.pid != als.pid {
+                    localPoints -= 1
+                    Self.logger.info("Frequency Verification - PID not equal: \(measurement.pid) != \(als.pid)")
+                }
+                
+                return .next(status: .processedFrequency, points: Int(Double(Self.pointsFrequency) * (2.0 / Double(localPoints))))
+            } else {
+                Self.logger.debug("Frequency Verification: No data for comparison")
+            }
+        }
+        
+        return .next(status: .processedFrequency, points: Self.pointsFrequency)
+    }
+    
+    private func verifyBandwidth(queryCell: ALSQueryCell, queryCellID: NSManagedObjectID) async throws -> VerificationStageResult {
+        if queryCell.technology == .LTE {
+            // For now, we could only verify it for LTE but not for 5GNR SA
+            
+            // If we didn't record a cell's bandwidth it's stored as zero in our DB
+            if let bandwidth = persistence.fetchCellAttribute(cell: queryCellID, extract: { $0.bandwidth }), bandwidth > 0 {
+                
+                // The bandwidth measurement that we get from the cell data, is multiplied by four
+                // The max bandwidth for LTE frequencies is 20 MHz, thus the max Apple-internal value is 100
+                // https://www.lte-anbieter.info/ratgeber/frequenzen-lte.php
+                // We subtract points linearly if it's lower
+                let bandwidthPercentage = (Double(bandwidth) / 100.0).clamped(to: 0.0...1.0)
+                return .next(status: .processedBandwidth, points: Int(floor(Double(Self.pointsBandwidth) * bandwidthPercentage)))
+            }
+        }
+        
+        return .next(status: .processedBandwidth, points: Self.pointsBandwidth)
+    }
+
     private func verifyRejectPacket(queryCell: ALSQueryCell, queryCellID: NSManagedObjectID) async throws -> VerificationStageResult {
         // Delay the verification 20s if no newer cell exists, i.e., we are still connected to this cell
         guard let (start, end, _) = try persistence.fetchCellLifespan(of: queryCellID) else {
@@ -270,6 +350,7 @@ struct CellVerifier {
                 }
             // Only fail the verification if two packets matching the criteria appeared for the same cell
             ariPackets = localAriPackets.count >= 2 ? localAriPackets : [:]
+            // TODO: Sometimes those packets are attributed to the wrong cell in ARI
             
         } catch {
             throw CellVerifierError.fetchPackets(error)
@@ -282,12 +363,12 @@ struct CellVerifier {
             } else if let firstARIPacketID = ariPackets.keys.first {
                 try persistence.storeRejectPacket(cellId: queryCellID, packetId: firstARIPacketID)
             }
-            Self.logger.info("Reject packet present for cell (0/\(pointsPacket)): \(queryCell)")
+            Self.logger.info("Reject packet present for cell (0/\(Self.pointsRejectPacket)): \(queryCell)")
             return .next(status: .processedRejectPacket, points: 0)
         } else {
             // All packets are fine, so we award 40 points :)
-            Self.logger.info("Reject packet absent for cell (\(pointsPacket)/\(pointsPacket)): \(queryCell)")
-            return .next(status: .processedRejectPacket, points: pointsPacket)
+            Self.logger.info("Reject packet absent for cell (\(Self.pointsRejectPacket)/\(Self.pointsRejectPacket)): \(queryCell)")
+            return .next(status: .processedRejectPacket, points: Self.pointsRejectPacket)
         }
     }
     
@@ -303,6 +384,7 @@ struct CellVerifier {
         }
         
         // TODO: Store the signal strength in the database
+        // We could also calculate the awarded points exponentially, but for now it's a binary decision
         
         // QMI: Signal Info Indication
         let qmiSignalInfo = try persistence.fetchQMIPackets(direction: .ingoing, service: 0x03, message: 0x0051, indication: true, start: start, end: end)
@@ -316,7 +398,7 @@ struct CellVerifier {
             }
         if qmiSignalInfo.count > 0 {
             qmiSignalInfo.forEach { (infoIndication: ParsedQMISignalInfoIndication) in
-                print("Signal Strength QMI: GSM: \(String(describing: infoIndication.gsm)) LTE: \(infoIndication.lte.debugDescription) NR: \(infoIndication.nr.debugDescription)")
+                Self.logger.debug("Signal Strength QMI: GSM: \(String(describing: infoIndication.gsm)) LTE: \(infoIndication.lte.debugDescription) NR: \(infoIndication.nr.debugDescription)")
             }
             let gsmInfo = qmiSignalInfo.compactMap {$0.gsm}
             let lteInfo = qmiSignalInfo.filter {$0.nr?.rsrp == NRSignalStrengthQMI.missing}.compactMap {$0.lte}
@@ -329,7 +411,9 @@ struct CellVerifier {
         
                 // We don't have any measurements for 5GNR
                 if rsrqAvg >= -4 && rsrpAvg >= -100 && snrAvg >= 200 {
-                    print("Signal Strength QMI: 5GNR SUS")
+                    // TODO: Above max. 25 and below and exponential thingy?
+                    Self.logger.info("Signal Strength QMI: 5GNR SUS")
+                    return .next(status: .verified, points: 0)
                 }
             } else if lteInfo.count > 0 {
                 let rssiAvg = lteInfo.map {Double($0.rssi)}.reduce(0.0, +) / Double(lteInfo.count)
@@ -338,14 +422,16 @@ struct CellVerifier {
                 let snrAvg = lteInfo.map {Double($0.snr)}.reduce(0.0, +) / Double(lteInfo.count)
                 
                 if rssiAvg >= -70 && rsrqAvg >= -4 && rsrpAvg >= -100 && snrAvg >= 200 {
-                    print("Signal Strength QMI: LTE SUS")
+                    Self.logger.info("Signal Strength QMI: LTE SUS")
+                    return .next(status: .verified, points: 0)
                 }
             } else if gsmInfo.count > 0 {
                 let rssiAvg = gsmInfo.map {Double($0)}.reduce(0.0, +) / Double(gsmInfo.count)
                 
                 // We don't have any measurements for GSM
                 if rssiAvg >= -60 {
-                    print("Signal Strength QMI: GSM SUS")
+                    Self.logger.info("Signal Strength QMI: GSM SUS")
+                    return .next(status: .verified, points: 0)
                 }
             }
         }
@@ -363,7 +449,7 @@ struct CellVerifier {
             .compactMap { (infoIndication: ParsedARIRadioSignalIndication) -> (ssr: Double, sqr: Double)? in
                 let ssr = Double(infoIndication.signalStrength) / Double(infoIndication.signalStrengthMax)
                 let sqr = Double(infoIndication.signalQuality) / Double(infoIndication.signalQualityMax)
-                print("Signal Strength ARI: \(infoIndication)")
+                Self.logger.debug("Signal Strength ARI: \(String(describing: infoIndication))")
                 
                 if sqr > 1 {
                     // The iPhone has no service (usually: SQ = 99 and SQM = 7)
@@ -377,13 +463,13 @@ struct CellVerifier {
             let sqrAvg = ariSignalInfo.map {$0.sqr}.reduce(0.0, +) / Double(ariSignalInfo.count)
             
             if ssrAvg > 0.65 && sqrAvg > 0.85 {
-                print("Signal Strength ARI: SUS")
-                // TODO: Subtract points
+                Self.logger.info("Signal Strength ARI: SUS")
+                return .next(status: .verified, points: 0)
             }
         }
         
         
-        return .next(status: .verified, points: 0)
+        return .next(status: .verified, points: Self.pointsSignalStrength)
     }
     
 }

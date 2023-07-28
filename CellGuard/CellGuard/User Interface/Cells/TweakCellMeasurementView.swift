@@ -46,6 +46,8 @@ private struct TweakCellMeasurementStatusView: View {
                 CellDetailsRow("State", status.humanDescription())
             }
             
+            // TODO: Show all cell details (MNC, MCC, ...) which were also shown before
+            
             if status >= .processedCell {
                 Section(header: Text("ALS Verification")) {
                     if let alsCell = measurement.verification {
@@ -62,10 +64,10 @@ private struct TweakCellMeasurementStatusView: View {
                             CellDetailsRow("Reach", "\(alsLocation.reach) m")
                             CellDetailsRow("ALS Score", alsLocation.score)
                         }
-                        CellDetailsRow("Score", "40 / 40")
+                        CellDetailsRow("Score", "\(CellVerifier.pointsALS) / \(CellVerifier.pointsALS)")
                     } else {
                         CellDetailsRow("ALS Counterpart", "Not Present")
-                        CellDetailsRow("Score", "0 / 40")
+                        CellDetailsRow("Score", "0 / \(CellVerifier.pointsALS)")
                     }
                 }
             }
@@ -106,7 +108,7 @@ private struct TweakCellMeasurementStatusView: View {
                             CellDetailsRow("Genuine Percentage", "\(string((1 - distance.score()) * 100.0)) %")
                             CellDetailsRow("Score", "\(Int(1-distance.score()) * 20) / 20")
                         } else if measurement.verification == nil {
-                            CellDetailsRow("Score", "0 / 20")
+                            CellDetailsRow("Score", "0 / \(CellVerifier.pointsLocation)")
                             CellDetailsRow("Reason", "ALS Location Missing")
                         } else {
                             CellDetailsRow("Score", "Calculating")
@@ -115,12 +117,33 @@ private struct TweakCellMeasurementStatusView: View {
                 } else {
                     Section(header: Text("Distance Verification")) {
                         CellDetailsRow("User Location", "Not Recorded")
-                        CellDetailsRow("Score", "20 / 20")
+                        CellDetailsRow("Score", "20 / \(CellVerifier.pointsLocation)")
                     }
                 }
             }
             
-            if status >= .verified {
+            if status >= .processedFrequency {
+                Section(header: Text("Frequency Verification")) {
+                    CellDetailsRow(techFormatter.frequency(), measurement.frequency)
+                    CellDetailsRow("Physical Cell ID", measurement.physicalCell)
+                    if let alsCell = measurement.verification {
+                        CellDetailsRow("\(techFormatter.frequency()) (ALS)", alsCell.frequency)
+                        CellDetailsRow("Physical Cell ID (ALS)", alsCell.physicalCell)
+                    }
+                    Text("TODO")
+                    // TODO: Extract values and compute score
+                }
+            }
+            
+            if status >= .processedBandwidth {
+                Section(header: Text("Bandwidth Verification")) {
+                    CellDetailsRow("Bandwidth", measurement.bandwidth)
+                    Text("TODO")
+                    // TODO: Compute score
+                }
+            }
+            
+            if status >= .processedRejectPacket {
                 Section(header: Text("Packet Verification")) {
                     if let packet = measurement.rejectPacket {
                         CellDetailsRow("Network Reject Packet", "Present")
@@ -161,15 +184,15 @@ private struct TweakCellMeasurementStatusView: View {
                             }
                             PacketDetailsRow("QMI Type ID", hex: UInt16(ariPacket.group))
                         }
-                        CellDetailsRow("Score", "0 / 40")
+                        CellDetailsRow("Score", "0 / \(CellVerifier.pointsRejectPacket)")
                     } else {
                         CellDetailsRow("Network Reject Packet", "Absent")
-                        CellDetailsRow("Score", "40 / 40")
+                        CellDetailsRow("Score", "\(CellVerifier.pointsRejectPacket) / \(CellVerifier.pointsRejectPacket)")
                     }
                 }
                 
                 Section(header: Text("Verification Result")) {
-                    CellDetailsRow("Score", "\(measurement.score) / 100")
+                    CellDetailsRow("Score", "\(measurement.score) / \(CellVerifier.pointsMax)")
                     if measurement.score >= CellVerifier.pointsSuspiciousThreshold {
                         CellDetailsRow("Verdict", "Trusted", icon: "lock.shield")
                     } else if measurement.score >= CellVerifier.pointsUntrustedThreshold {
@@ -177,6 +200,14 @@ private struct TweakCellMeasurementStatusView: View {
                     } else {
                         CellDetailsRow("Verdict", "Untrusted", icon: "exclamationmark.shield")
                     }
+                }
+            }
+            
+            if status >= .verified {
+                Section(header: Text("Signal Strength Verification")) {
+                    Text("TODO")
+                    // TODO: Show the average signal strength values
+                    // Add a diagram of the signal strength in the future
                 }
             }
             
@@ -199,8 +230,6 @@ private struct TweakCellMeasurementStatusView: View {
                     CellDetailsRow("Neighbor", neighborTechnology)
                 }
             }
-            
-            // TODO: Add a diagram of the signal strength
             
             if let json = measurement.json, let jsonPretty = try? self.formatJSON(json: json) {
                 Section(header: Text("iOS-Internal Data")) {
