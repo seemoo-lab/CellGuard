@@ -26,6 +26,7 @@
         <attribute name="frequency" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="imported" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="network" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="physicalCell" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="technology" optional="YES" attributeType="String"/>
     </entity>
     <entity name="Location" representedClassName="Location" isAbstract="YES" syncable="YES" codeGenerationType="class">
@@ -41,7 +42,7 @@
         <attribute name="imported" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="proto" optional="YES" attributeType="String"/>
         <relationship name="rejectedCell" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TweakCell" inverseName="rejectPacket" inverseEntity="TweakCell"/>
-        <relationship name="signalStrength" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SignalStrength" inverseName="from" inverseEntity="SignalStrength"/>
+        <relationship name="signalStrength" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SignalStrength" inverseName="fromPacket" inverseEntity="SignalStrength"/>
     </entity>
     <entity name="QMIPacket" representedClassName="QMIPacket" parentEntity="Packet" syncable="YES" codeGenerationType="class">
         <attribute name="indication" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
@@ -55,8 +56,8 @@
         <attribute name="snr" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
     </entity>
     <entity name="SignalStrength" representedClassName="SignalStrength" syncable="YES" codeGenerationType="class">
-        <relationship name="for" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TweakCell" inverseName="signalStrengths" inverseEntity="TweakCell"/>
-        <relationship name="from" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Packet" inverseName="signalStrength" inverseEntity="Packet"/>
+        <relationship name="forCell" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TweakCell" inverseName="signalStrengths" inverseEntity="TweakCell"/>
+        <relationship name="fromPacket" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Packet" inverseName="signalStrength" inverseEntity="Packet"/>
     </entity>
     <entity name="TweakCell" representedClassName="TweakCell" parentEntity="Cell" syncable="YES" codeGenerationType="class">
         <attribute name="band" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
@@ -66,13 +67,12 @@
         <attribute name="neighborTechnology" optional="YES" attributeType="String"/>
         <attribute name="nextVerification" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="notificationSent" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
-        <attribute name="physicalCellId" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="preciseTechnology" optional="YES" attributeType="String"/>
         <attribute name="score" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="status" optional="YES" attributeType="String"/>
         <relationship name="location" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UserLocation" inverseName="cells" inverseEntity="UserLocation"/>
         <relationship name="rejectPacket" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Packet" inverseName="rejectedCell" inverseEntity="Packet"/>
-        <relationship name="signalStrengths" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="SignalStrength" inverseName="for" inverseEntity="SignalStrength"/>
+        <relationship name="signalStrengths" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="SignalStrength" inverseName="forCell" inverseEntity="SignalStrength"/>
         <relationship name="verification" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ALSCell" inverseName="verified" inverseEntity="ALSCell"/>
     </entity>
     <entity name="UserLocation" representedClassName="UserLocation" parentEntity="Location" syncable="YES" codeGenerationType="class">

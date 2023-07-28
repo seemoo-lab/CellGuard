@@ -51,6 +51,7 @@ struct ALSQueryCell: CustomStringConvertible, Equatable, Hashable {
     var network: Int32 = 0
     var area: Int32 = 0
     var cell: Int64 = 0
+    var physicalCell: Int32? = nil
     
     var location: ALSQueryLocation? = nil
     var frequency: Int32? = nil
@@ -78,7 +79,7 @@ struct ALSQueryCell: CustomStringConvertible, Equatable, Hashable {
         self.area = proto.lacID
         self.cell = proto.cellID
         self.location = ALSQueryLocation(fromProto: proto.location)
-        self.frequency = proto.arfcn
+        self.frequency = proto.hasArfcn ? proto.arfcn : nil
     }
     
     init(fromScdmaProto proto: AlsProto_ScdmaCell) {
@@ -88,7 +89,7 @@ struct ALSQueryCell: CustomStringConvertible, Equatable, Hashable {
         self.area = proto.lacID
         self.cell = Int64(proto.cellID)
         self.location = ALSQueryLocation(fromProto: proto.location)
-        self.frequency = proto.arfcn
+        self.frequency = proto.hasArfcn ? proto.arfcn : nil
     }
     
     init(fromLteProto proto: AlsProto_LteCell) {
@@ -97,8 +98,9 @@ struct ALSQueryCell: CustomStringConvertible, Equatable, Hashable {
         self.network = proto.mnc
         self.area = proto.tacID
         self.cell = Int64(proto.cellID)
+        self.physicalCell = proto.hasPid ? proto.pid : nil
         self.location = ALSQueryLocation(fromProto: proto.location)
-        self.frequency = proto.uarfcn
+        self.frequency = proto.hasUarfcn ? proto.uarfcn : nil
     }
     
     init(fromNRProto proto: AlsProto_Nr5GCell) {
@@ -108,7 +110,7 @@ struct ALSQueryCell: CustomStringConvertible, Equatable, Hashable {
         self.area = proto.tacID
         self.cell = proto.cellID
         self.location = ALSQueryLocation(fromProto: proto.location)
-        self.frequency = proto.nrarfcn
+        self.frequency = proto.hasNrarfcn ? proto.nrarfcn : nil
     }
     
     init(fromCdmaProto proto: AlsProto_CdmaCell) {
@@ -168,19 +170,30 @@ struct ALSQueryCell: CustomStringConvertible, Equatable, Hashable {
     }
     
     func applyTo(alsCell: ALSCell) {
+        alsCell.technology = self.technology.rawValue
         alsCell.country = self.country
         alsCell.network = self.network
         alsCell.area = self.area
         alsCell.cell = self.cell
         
-        alsCell.frequency = self.frequency ?? -1
-        alsCell.technology = self.technology.rawValue
+        alsCell.frequency = self.frequency ?? 0
+        alsCell.physicalCell = self.physicalCell ?? 0
     }
     
     var description: String {
         "ALSQueryCell(technology=\(self.technology), country=\(self.country), network=\(self.network), " +
         "area=\(self.area), cell=\(self.cell), " +
         "location=\(String(describing: self.location)), frequency=\(String(describing: self.frequency)))"
+    }
+    
+    func compareToRequestAttributes(other: ALSQueryCell) -> Bool {
+        return (
+            self.technology == other.technology &&
+            self.country == other.country &&
+            self.network == other.network &&
+            self.area == other.area &&
+            self.cell == other.cell
+        )
     }
 }
 

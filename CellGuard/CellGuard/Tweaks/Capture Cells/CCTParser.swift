@@ -60,7 +60,7 @@ struct CCTCellProperties {
         tweakCell.frequency = self.frequency ?? 0
         tweakCell.band = self.band ?? 0
         tweakCell.bandwidth = self.bandwidth ?? 0
-        tweakCell.physicalCellId = self.physicalCellId ?? 0
+        tweakCell.physicalCell = self.physicalCellId ?? 0
         tweakCell.neighborTechnology = neighborRadio
         
         tweakCell.collected = self.timestamp
