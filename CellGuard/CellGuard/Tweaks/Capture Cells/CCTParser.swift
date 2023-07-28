@@ -34,12 +34,15 @@ struct CCTCellProperties {
     var network: Int32?
     var area: Int32?
     var cellId: Int64?
+    var physicalCellId: Int32?
     
     var technology: ALSTechnology?
     var preciseTechnology: String?
     var frequency: Int32?
     var band: Int32?
+    var bandwidth: Int32?
     var neighborRadio: String?
+    var deploymentType: Int32?
     
     var timestamp: Date?
     
@@ -56,6 +59,8 @@ struct CCTCellProperties {
         
         tweakCell.frequency = self.frequency ?? 0
         tweakCell.band = self.band ?? 0
+        tweakCell.bandwidth = self.bandwidth ?? 0
+        tweakCell.physicalCellId = self.physicalCellId ?? 0
         tweakCell.neighborTechnology = neighborRadio
         
         tweakCell.collected = self.timestamp
@@ -240,8 +245,18 @@ struct CCTParser {
         // - https://de.wikipedia.org/wiki/UTRA_Absolute_Radio_Frequency_Channel_Number
         cell.frequency = info["UARFCN"] as? Int32 ?? 0
         cell.band = info["BandInfo"] as? Int32 ?? 0
+        cell.bandwidth = info["Bandwidth"] as? Int32 ?? 0
+        cell.physicalCellId = info["PID"] as? Int32 ?? 0
         
-        // Interesting additional attribute: PID (Physical Cell ID)
+        // If a deployment type > 0 is set, the cell supports 5G NSA
+        cell.deploymentType = info["DeploymentType"] as? Int32 ?? 0
+        
+        // kCTCellMonitorDeploymentType = 3 -> 5G NSA
+        // From the field test mode (*3001#12345#*) on iOS 16
+        // What do the other deployment types could refer to?
+        // https://www.howardforums.com/showthread.php/1920794-5G-Nationwide-Speed-Test-Thread/page17
+        // Apparently independent of the value if the field field is set, the cell supports 5G NSA
+        // But we're only using it, if a neighboring NR cell appears in the data
         
         return cell
     }
@@ -256,9 +271,11 @@ struct CCTParser {
         cell.area = info["TAC"] as? Int32 ?? 0
         cell.cellId = info["CellId"] as? Int64 ?? 0
         
-        // Usually the frequency is called ARFCN, but Apple apparently appended a NR to it
+        // Usually the frequency is called ARFCN, but Apple apparently appended a prefix NR to it
         cell.frequency = info["NRARFCN"] as? Int32 ?? 0
         cell.band = info["BandInfo"] as? Int32 ?? 0
+        cell.bandwidth = info["Bandwidth"] as? Int32 ?? 0
+        cell.physicalCellId = info["PID"] as? Int32 ?? 0
 
         return cell
     }
