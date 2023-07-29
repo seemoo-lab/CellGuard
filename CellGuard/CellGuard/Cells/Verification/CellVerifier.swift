@@ -46,8 +46,6 @@ struct CellVerifier {
                 let taskResult = try await verifier.verifyFirst()
                 // Without checkCancellation, verifyFirst() would keep going until infinity
                 try Task.checkCancellation()
-                // Sleep 50ms after a cell verification
-                try await Task.sleep(nanoseconds: 50 * NSEC_PER_MSEC)
                 return taskResult
             }
             
