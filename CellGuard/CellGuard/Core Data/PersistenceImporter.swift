@@ -64,7 +64,7 @@ struct PersistenceImporter {
         }
     }
     
-    static func importInBackground(url: URL, completion: @escaping (Result<(Int, Int), Error>) -> Void) {
+    static func importInBackground(url: URL, completion: @escaping (Result<(cells: Int, locations: Int, packets: Int), Error>) -> Void) {
         importActive = true
         DispatchQueue.global(qos: .userInitiated).async {
             let result = Result.init {
@@ -81,7 +81,7 @@ struct PersistenceImporter {
         
     }
     
-    private func importData(from url: URL) throws -> (Int, Int) {
+    private func importData(from url: URL) throws -> (cells: Int, locations: Int, packets: Int) {
         let data = try read(url: url)
         return try store(json: data)
     }
@@ -124,13 +124,14 @@ struct PersistenceImporter {
         return jsonDict
     }
     
-    private func store(json: [String : Any]) throws -> (Int, Int) {
+    private func store(json: [String : Any]) throws -> (cells: Int, locations: Int, packets: Int) {
         let parser = CCTParser()
         
         // TODO: Import ALS Cache & Packets
         
         let cellsJson: [Any] = (json[CellFileKeys.connectedCells] as? [Any]) ?? []
         let locationsJson: [Any] = (json[CellFileKeys.locations] as? [Any]) ?? []
+        let packetsJson: [Any] = (json[CellFileKeys.packets] as? [Any]) ?? []
         
         let cells = cellsJson
             .compactMap { $0 as? CellSample }
@@ -147,12 +148,59 @@ struct PersistenceImporter {
             .compactMap { $0 as? [String: Any] }
             .map { TrackedUserLocation(from: $0) }
         
+        let packets = try packetsJson
+            .compactMap { (jsonElement: Any) -> CPTPacket? in
+                guard let packetJson = jsonElement as? [String: Any] else {
+                    Self.logger.warning("Skipped packet \(String(describing: jsonElement)) as there were no elements")
+                    return nil
+                }
+                
+                let directionStr = packetJson[PacketDictKeys.direction] as? String
+                let dataStr = packetJson[PacketDictKeys.data] as? String
+                let collectedDouble = packetJson[PacketDictKeys.collected] as? Double
+                
+                guard let directionStr = directionStr, let dataStr = dataStr, let collectedDouble = collectedDouble else {
+                    Self.logger.warning("Skipped packet \(packetJson) as some data was missing")
+                    return nil
+                }
+                
+                let direction = CPTDirection(rawValue: directionStr)
+                let data = Data(base64Encoded: dataStr)
+                let collected = Date(timeIntervalSince1970: collectedDouble)
+                
+                guard let direction = direction, let data = data else {
+                    Self.logger.warning("Skipped packet \(packetJson) as some data was invalid")
+                    return nil
+                }
+                
+                return try CPTPacket(direction: direction, data: data, timestamp: collected)
+            }
+        
+        let qmiPackets = packets.compactMap { packet -> (CPTPacket, ParsedQMIPacket)? in
+            guard let qmiPacket = try? ParsedQMIPacket(nsData: packet.data) else {
+                return nil
+            }
+            
+            return (packet, qmiPacket)
+        }
+        
+        let ariPackets = packets.compactMap { packet -> (CPTPacket, ParsedARIPacket)? in
+            guard let qmiPacket = try? ParsedARIPacket(data: packet.data) else {
+                return nil
+            }
+            
+            return (packet, qmiPacket)
+        }
+        
+        
         try PersistenceController.shared.importUserLocations(from: locations)
         try PersistenceController.shared.importCollectedCells(from: cells)
+        try PersistenceController.shared.importARIPackets(from: ariPackets)
+        try PersistenceController.shared.importQMIPackets(from: qmiPackets)
         
-        Self.logger.debug("Imported \(locations.count) locations and \(cells.count) cells")
+        Self.logger.debug("Imported \(locations.count) locations, \(cells.count) cells, \(qmiPackets.count) QMI packets, and \(ariPackets.count) ARI packets")
         
-        return (cells.count, locations.count)
+        return (cells.count, locations.count, qmiPackets.count + ariPackets.count)
     }
     
 }

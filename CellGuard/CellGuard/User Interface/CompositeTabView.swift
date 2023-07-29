@@ -29,7 +29,7 @@ private enum ShownSheet: Identifiable {
 
 private enum ShownAlert: Hashable, Identifiable {
     case importConfirm(URL)
-    case importSuccess(Int, Int)
+    case importSuccess(cells: Int, locations: Int, packets: Int)
     case importFailed(String)
     
     var id: Self {
@@ -130,9 +130,9 @@ struct CompositeTabView: View {
                         PersistenceImporter.importInBackground(url: url) { result in
                             showingImport = false
                             do {
-                                let (cells, locations) = try result.get()
-                                showingAlert = .importSuccess(cells, locations)
-                                Self.logger.info("Successfully imported \(cells) cells and \(locations) locations")
+                                let counts = try result.get()
+                                showingAlert = .importSuccess(cells: counts.cells, locations: counts.locations, packets: counts.packets)
+                                Self.logger.info("Successfully imported \(counts.cells) cells, \(counts.locations) locations, and \(counts.packets) packets.")
                             } catch {
                                 showingAlert = .importFailed(error.localizedDescription)
                                 Self.logger.info("Import failed due to \(error)")
@@ -149,10 +149,10 @@ struct CompositeTabView: View {
                         showingAlert = nil
                     }
                 )
-            case let .importSuccess(cells, locations):
+            case let .importSuccess(cells, locations, packets):
                 return Alert(
                     title: Text("Import Complete"),
-                    message: Text("Successfully imported \(cells) cells and \(locations) locations."),
+                    message: Text("Successfully imported \(cells) cells, \(locations) locations, and \(packets) packets."),
                     dismissButton: .default(Text("OK")) {
                         showingAlert = nil
                     }
