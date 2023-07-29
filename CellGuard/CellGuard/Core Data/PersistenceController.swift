@@ -147,7 +147,8 @@ class PersistenceController {
         notificationToken = NotificationCenter.default.addObserver(forName: .NSPersistentStoreRemoteChange, object: nil, queue: nil) { note in
             self.logger.debug("Received a persistent store remote change notification.")
             // Once we receive such notification we update our queue-local history
-            queue.async {
+            // It's important to wait until the completion of the block, otherwise the calling might assume that the DB has been updated when it has not. (I guess)
+            queue.sync {
                 self.fetchPersistentHistory()
             }
         }
