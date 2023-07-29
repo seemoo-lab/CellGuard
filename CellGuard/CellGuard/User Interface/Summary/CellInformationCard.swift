@@ -116,7 +116,7 @@ private struct CellInformationItem: View {
     
 }
 
-private struct CoordinateIdentifable: Identifiable {
+private struct CoordinateIdentifiable: Identifiable {
     
     let index: Int
     
