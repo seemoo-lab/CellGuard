@@ -776,10 +776,12 @@ extension PersistenceController {
             let fetchLocationRequest = NSFetchRequest<UserLocation>()
             fetchLocationRequest.entity = UserLocation.entity()
             fetchLocationRequest.fetchLimit = 1
-            fetchLocationRequest.predicate = NSPredicate(
-                format: "%@ >= collected and collected <= %@",
-                Date().addingTimeInterval(120) as NSDate, Date().addingTimeInterval(120) as NSDate
-            )
+            if let cellCollected = cellCollected {
+                fetchLocationRequest.predicate = NSPredicate(
+                    format: "%@ >= collected and collected <= %@",
+                    cellCollected.addingTimeInterval(120) as NSDate, cellCollected.addingTimeInterval(120) as NSDate
+                )
+            }
             fetchLocationRequest.sortDescriptors = [
                 NSSortDescriptor(keyPath: \UserLocation.horizontalAccuracy, ascending: true)
             ]
@@ -799,7 +801,7 @@ extension PersistenceController {
                 return
             }
             
-            // We've found a location, assign it to the cell, and save the cel
+            // We've found a location, assign it to the cell, and save the cell
             foundLocation = true
             tweakCell.location = location
             
