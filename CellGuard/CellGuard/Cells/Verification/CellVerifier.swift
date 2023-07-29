@@ -191,7 +191,7 @@ struct CellVerifier {
         if !(preciseAlsCells.first?.isValid() ?? false) {
             Self.logger.info("ALS Verification failed as the first cell is not valid (0/40): \(queryCell)")
             // If not, do not add any points to it and continue with the packet verification
-            return .next(status: .processedFrequency, points: 0)
+            return .next(status: .processedLocation, points: 0)
         }
         
         // If the cell is valid, import all cells of the ALS response
