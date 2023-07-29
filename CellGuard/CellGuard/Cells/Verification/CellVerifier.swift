@@ -77,8 +77,8 @@ struct CellVerifier {
     
     public static let pointsALS = 20
     public static let pointsLocation = 20
-    public static let pointsFrequency = 5
-    public static let pointsBandwidth = 5
+    public static let pointsFrequency = 8
+    public static let pointsBandwidth = 2
     public static let pointsRejectPacket = 30
     public static let pointsSignalStrength = 20
     
@@ -262,18 +262,18 @@ struct CellVerifier {
                 return nil
             }
             if let (measurement, als) = compareData {
-                var localPoints = 2
+                var localPoints = Self.pointsFrequency
                 
                 if measurement.frequency > 0 && als.frequency > 0 && measurement.frequency != als.frequency {
-                    localPoints -= 1
+                    localPoints -= 6
                     Self.logger.info("Frequency Verification - EARFCN not equal: \(measurement.frequency) != \(als.frequency)")
                 }
                 if measurement.pid > 0 && als.pid > 0 && measurement.pid != als.pid {
-                    localPoints -= 1
+                    localPoints -= 2
                     Self.logger.info("Frequency Verification - PID not equal: \(measurement.pid) != \(als.pid)")
                 }
                 
-                return .next(status: .processedFrequency, points: Int(Double(Self.pointsFrequency) * (2.0 / Double(localPoints))))
+                return .next(status: .processedFrequency, points: localPoints)
             } else {
                 Self.logger.debug("Frequency Verification: No data for comparison")
             }
