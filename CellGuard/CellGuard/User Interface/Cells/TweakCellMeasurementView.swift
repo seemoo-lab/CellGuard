@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import CoreData
 
 struct TweakCellMeasurementView: View {
     
@@ -83,7 +84,10 @@ private struct TweakCellMeasurementStatusView: View {
                         CellDetailsRow("Vertical Accuracy", "± \(string(userLocation.verticalAccuracy)) m")
                         CellDetailsRow("Speed", "\(string(userLocation.speed)) m/s")
                         CellDetailsRow("Speed Accuracy", "± \(string(userLocation.speedAccuracy)) m/s")
-                        CellDetailsRow("Recorded in Background?", "\(userLocation.background)")
+                        CellDetailsRow("App in Background?", "\(userLocation.background)")
+                        if let collected = userLocation.collected {
+                            CellDetailsRow("Recorded", mediumDateTimeFormatter.string(from: collected))
+                        }
                     }
                     .onAppear {
                         let objectId = measurement.objectID
@@ -106,7 +110,7 @@ private struct TweakCellMeasurementStatusView: View {
                             CellDetailsRow("Raw Distance", "\(string(distance.distance)) m")
                             CellDetailsRow("Corrected Distance", "\(string(distance.correctedDistance() / 1000.0)) km")
                             CellDetailsRow("Genuine Percentage", "\(string((1 - distance.score()) * 100.0)) %")
-                            CellDetailsRow("Score", "\(Int(1-distance.score()) * 20) / 20")
+                            CellDetailsRow("Score", "\(Int((1.0 - distance.score()) * 20.0)) / 20")
                         } else if measurement.verification == nil {
                             CellDetailsRow("Score", "0 / \(CellVerifier.pointsLocation)")
                             CellDetailsRow("Reason", "ALS Location Missing")
@@ -117,7 +121,7 @@ private struct TweakCellMeasurementStatusView: View {
                 } else {
                     Section(header: Text("Distance Verification")) {
                         CellDetailsRow("User Location", "Not Recorded")
-                        CellDetailsRow("Score", "20 / \(CellVerifier.pointsLocation)")
+                        CellDetailsRow("Score", "\(CellVerifier.pointsLocation) / \(CellVerifier.pointsLocation)")
                     }
                 }
             }
@@ -129,17 +133,17 @@ private struct TweakCellMeasurementStatusView: View {
                     if let alsCell = measurement.verification {
                         CellDetailsRow("\(techFormatter.frequency()) (ALS)", alsCell.frequency)
                         CellDetailsRow("Physical Cell ID (ALS)", alsCell.physicalCell)
+                        CellDetailsRow("Score", "\(frequencyPoints(measurement: measurement, als: alsCell)) / \(CellVerifier.pointsFrequency)")
+                    } else {
+                        CellDetailsRow("Score", "\(CellVerifier.pointsFrequency) / \(CellVerifier.pointsFrequency)")
                     }
-                    Text("TODO")
-                    // TODO: Extract values and compute score
                 }
             }
             
             if status >= .processedBandwidth {
                 Section(header: Text("Bandwidth Verification")) {
                     CellDetailsRow("Bandwidth", measurement.bandwidth)
-                    Text("TODO")
-                    // TODO: Compute score
+                    CellDetailsRow("Score", "\(bandwidthPoints(measurement: measurement)) / \(CellVerifier.pointsBandwidth)")
                 }
             }
             
@@ -191,6 +195,22 @@ private struct TweakCellMeasurementStatusView: View {
                     }
                 }
                 
+                if status >= .verified {
+                    Section(header: Text("Signal Strength Verification")) {
+                        Button("Run check") {
+                            let queryCell = PersistenceController.queryCell(from: measurement)
+                            let queryCellID = measurement.objectID
+                            Task(priority: .utility) {
+                                let result = try? await CellVerifier().verifySignalStrength(queryCell: queryCell, queryCellID: queryCellID)
+                                print(String(describing: result))
+                            }
+                        }
+                        Text("TODO")
+                        // TODO: Show the average signal strength values
+                        // Add a diagram of the signal strength in the future
+                    }
+                }
+                
                 Section(header: Text("Verification Result")) {
                     CellDetailsRow("Score", "\(measurement.score) / \(CellVerifier.pointsMax)")
                     if measurement.score >= CellVerifier.pointsSuspiciousThreshold {
@@ -200,14 +220,6 @@ private struct TweakCellMeasurementStatusView: View {
                     } else {
                         CellDetailsRow("Verdict", "Untrusted", icon: "exclamationmark.shield")
                     }
-                }
-            }
-            
-            if status >= .verified {
-                Section(header: Text("Signal Strength Verification")) {
-                    Text("TODO")
-                    // TODO: Show the average signal strength values
-                    // Add a diagram of the signal strength in the future
                 }
             }
             
@@ -293,6 +305,28 @@ private struct TweakCellMeasurementStatusView: View {
         let typeDef = groupDef?.types[typeId]
         
         return (groupDef?.name, typeDef?.name)
+    }
+    
+    // TODO: Somehow use the methods defined in the CellVerifier struct for the calculations
+    
+    private func bandwidthPoints(measurement: TweakCell) -> Int {
+        if measurement.bandwidth <= 0 {
+            return CellVerifier.pointsBandwidth
+        }
+        return Int(floor((Double(measurement.bandwidth) / 100.0).clamped(to: 0.0...1.0) * Double(CellVerifier.pointsBandwidth)))
+    }
+    
+    private func frequencyPoints(measurement: TweakCell, als: ALSCell) -> Int {
+        var localPoints = CellVerifier.pointsFrequency
+        
+        if measurement.frequency > 0 && als.frequency > 0 && measurement.frequency != als.frequency {
+            localPoints -= 6
+        }
+        if measurement.physicalCell > 0 && als.physicalCell > 0 && measurement.physicalCell != als.physicalCell {
+            localPoints -= 2
+        }
+        
+        return localPoints
     }
 }
 

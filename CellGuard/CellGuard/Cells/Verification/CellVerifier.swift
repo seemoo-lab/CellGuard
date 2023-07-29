@@ -18,7 +18,7 @@ enum CellVerifierError: Error {
     case fetchPackets(Error)
 }
 
-private enum VerificationStageResult {
+enum VerificationStageResult {
     case delay(seconds: Int)
     case next(status: CellStatus, points: Int)
     
@@ -374,7 +374,7 @@ struct CellVerifier {
         }
     }
     
-    private func verifySignalStrength(queryCell: ALSQueryCell, queryCellID: NSManagedObjectID) async throws -> VerificationStageResult {
+    func verifySignalStrength(queryCell: ALSQueryCell, queryCellID: NSManagedObjectID) async throws -> VerificationStageResult {
         // Delay the verification 20s if no newer cell exists, i.e., we are still connected to this cell
         guard let (start, end, _) = try persistence.fetchCellLifespan(of: queryCellID) else {
             return .delay(seconds: 20)
@@ -387,6 +387,8 @@ struct CellVerifier {
         
         // TODO: Store the signal strength in the database
         // We could also calculate the awarded points exponentially, but for now it's a binary decision
+        
+        // Idea to speed-up the packet fetching process: "Skip Tables" -> Store references to the relevant types of packets in a separate table, which we can query faster
         
         // QMI: Signal Info Indication
         let qmiSignalInfo = try persistence.fetchQMIPackets(direction: .ingoing, service: 0x03, message: 0x0051, indication: true, start: start, end: end)
