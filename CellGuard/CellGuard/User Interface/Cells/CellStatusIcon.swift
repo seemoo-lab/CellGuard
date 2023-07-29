@@ -32,7 +32,7 @@ struct CellStatusIcon: View {
                     .font(.title2)
                     .foregroundColor(.green)
             }
-        } else if status == .processedBandwidth && score == CellVerifier.pointsFastVerification {
+        } else if let status = status, status >= .processedBandwidth {
             // We still monitoring the cell, but so far everything looks okay
             Image(systemName: "lock.shield")
                 .font(.title2)
