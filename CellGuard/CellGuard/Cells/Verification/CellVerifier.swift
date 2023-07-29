@@ -92,7 +92,7 @@ struct CellVerifier {
     }
     
     func verifyFirst() async throws -> Bool {
-        let queryCell: (NSManagedObjectID, ALSQueryCell, CellStatus?)?
+        let queryCell: (NSManagedObjectID, ALSQueryCell, CellStatus?, Int16)?
         do {
             queryCell = try persistence.fetchLatestUnverifiedTweakCells(count: 1)
         } catch {
@@ -100,7 +100,7 @@ struct CellVerifier {
         }
         
         // Check if there is a cell to verify
-        guard let (queryCellID, queryCell, queryCellStatus) = queryCell else {
+        guard let (queryCellID, queryCell, queryCellStatus, startScore) = queryCell else {
             // There is currently no cell to verify
             return false
         }
@@ -109,6 +109,8 @@ struct CellVerifier {
         guard var queryCellStatus = queryCellStatus else {
             throw CellVerifierError.invalidCellStatus
         }
+        
+        var score = startScore
         
         // Continue with the correct verification stage (at max. 10 verification stages each time)
         outer: for i in 0...10 {
@@ -125,11 +127,11 @@ struct CellVerifier {
             case let .next(nextStatus, points):
                 Self.logger.debug("Result: .next(\(nextStatus.rawValue), \(points))")
                 // We store the resulting status and award the points, then the while-loop continues
-                try persistence.storeCellStatus(cellId: queryCellID, status: nextStatus, addToScore: Int16(points))
+                score += Int16(points)
+                queryCellStatus = nextStatus
                 if nextStatus == .verified {
                     break outer
                 }
-                queryCellStatus = nextStatus
                 
             case let .delay(delay):
                 Self.logger.debug("Delay: .next(\(delay))")
@@ -138,6 +140,8 @@ struct CellVerifier {
                 break outer
             }
         }
+        
+        try persistence.storeCellStatus(cellId: queryCellID, status: queryCellStatus, score: score)
         
         // We've verified a cell, so return true
         return true

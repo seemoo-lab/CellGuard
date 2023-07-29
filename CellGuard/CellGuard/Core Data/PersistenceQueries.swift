@@ -438,8 +438,8 @@ extension PersistenceController {
         logger.debug("Successfully inserted \(packets.count) tweak ARI packets.")
     }
     
-    func fetchLatestUnverifiedTweakCells(count: Int) throws -> (NSManagedObjectID, ALSQueryCell, CellStatus?)?  {
-        var cell: (NSManagedObjectID, ALSQueryCell, CellStatus?)? = nil
+    func fetchLatestUnverifiedTweakCells(count: Int) throws -> (NSManagedObjectID, ALSQueryCell, CellStatus?, Int16)?  {
+        var cell: (NSManagedObjectID, ALSQueryCell, CellStatus?, Int16)? = nil
         var fetchError: Error? = nil
         newTaskContext().performAndWait {
             let request = NSFetchRequest<TweakCell>()
@@ -451,7 +451,7 @@ extension PersistenceController {
             do {
                 let tweakCells = try request.execute()
                 if let first = tweakCells.first {
-                    cell = (first.objectID, Self.queryCell(from: first), CellStatus(rawValue: first.status ?? ""))
+                    cell = (first.objectID, Self.queryCell(from: first), CellStatus(rawValue: first.status ?? ""), first.score)
                 }
             } catch {
                 fetchError = error
@@ -682,7 +682,7 @@ extension PersistenceController {
         )
     }
     
-    func storeCellStatus(cellId: NSManagedObjectID, status: CellStatus, addToScore: Int16 = 0) throws {
+    func storeCellStatus(cellId: NSManagedObjectID, status: CellStatus, score: Int16) throws {
         let taskContext = newTaskContext()
         
         taskContext.name = "updateContext"
@@ -692,7 +692,7 @@ extension PersistenceController {
         taskContext.performAndWait {
             if let tweakCell = taskContext.object(with: cellId) as? TweakCell {
                 tweakCell.status = status.rawValue
-                tweakCell.score = tweakCell.score + addToScore
+                tweakCell.score = score
                 do {
                     try taskContext.save()
                 } catch {
