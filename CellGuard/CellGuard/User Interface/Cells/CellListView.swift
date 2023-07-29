@@ -32,6 +32,28 @@ struct CellListView: View {
         .navigationTitle("Cells")
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
+                if let pastDay = Calendar.current.date(byAdding: .day, value: -1, to: settings.date) {
+                    Button {
+                        settings.date = pastDay
+                        settings.timeFrame = .past
+                    } label: {
+                        Image(systemName: "chevron.left")
+                    }
+                }
+            }
+            ToolbarItem(placement: .navigationBarTrailing) {
+                let today = Calendar.current.startOfDay(for: Date())
+                if let nextDay = Calendar.current.date(byAdding: .day, value: 1, to: settings.date) {
+                    Button {
+                        settings.date = nextDay
+                        settings.timeFrame = nextDay == today ? .live : .past
+                    } label: {
+                        Image(systemName: "chevron.right")
+                    }
+                    .disabled(settings.date >= today)
+                }
+            }
+            ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
                     isShowingFilterView = true
                 } label: {
