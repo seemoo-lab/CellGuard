@@ -102,21 +102,26 @@ private struct FilteredCellView: View {
     }
     
     var body: some View {
-        // TODO: Show a message if there's no group
-        List(groupMeasurements()) { cellMeasurements in
-            NavigationLink {
-                // The first entry should also update to include newer cell measurements
-                CellDetailsView(
-                    // The init method of the GroupedMeasurement class guarantees that each instance contains at least one measurement 
-                    cell: cellMeasurements.measurements.first!,
-                    start: cellMeasurements.start,
-                    end: cellMeasurements.openEnd ? nil : cellMeasurements.end
-                )
-            } label: {
-                ListPacketCell(measurements: cellMeasurements)
+        let groupedMeasurements = groupMeasurements()
+        if !groupedMeasurements.isEmpty {
+            List(groupedMeasurements) { cellMeasurements in
+                NavigationLink {
+                    // The first entry should also update to include newer cell measurements
+                    CellDetailsView(
+                        // The init method of the GroupedMeasurement class guarantees that each instance contains at least one measurement
+                        cell: cellMeasurements.measurements.first!,
+                        start: cellMeasurements.start,
+                        end: cellMeasurements.openEnd ? nil : cellMeasurements.end
+                    )
+                } label: {
+                    ListPacketCell(measurements: cellMeasurements)
+                }
             }
+            .listStyle(.insetGrouped)
+        } else {
+            Text("No cell measurements match your search criteria.")
+                .multilineTextAlignment(.center)
         }
-        .listStyle(.insetGrouped)
     }
     
 }
