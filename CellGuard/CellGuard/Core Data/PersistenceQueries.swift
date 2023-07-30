@@ -775,12 +775,19 @@ extension PersistenceController {
             // Find the most precise user location within a four minute window
             let fetchLocationRequest = NSFetchRequest<UserLocation>()
             fetchLocationRequest.entity = UserLocation.entity()
-            fetchLocationRequest.fetchLimit = 1
+            // We don't set a fetch limit as it interferes the following predicate
             if let cellCollected = cellCollected {
-                fetchLocationRequest.predicate = NSPredicate(
-                    format: "%@ >= collected and collected <= %@",
-                    cellCollected.addingTimeInterval(120) as NSDate, cellCollected.addingTimeInterval(120) as NSDate
-                )
+                let before = cellCollected.addingTimeInterval(-120)
+                let after = cellCollected.addingTimeInterval(120)
+                
+                fetchLocationRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+                    NSPredicate(format: "collected != nil"),
+                    NSPredicate(format: "collected > %@", before as NSDate),
+                    NSPredicate(format: "collected < %@", after as NSDate),
+                ])
+            } else {
+                // No location without a date boundary as we would just pick a random location
+                return
             }
             fetchLocationRequest.sortDescriptors = [
                 NSSortDescriptor(keyPath: \UserLocation.horizontalAccuracy, ascending: true)
