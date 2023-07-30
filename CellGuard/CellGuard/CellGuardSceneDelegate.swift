@@ -39,6 +39,14 @@ class CellGuardSceneDelegate: NSObject, UIWindowSceneDelegate, ObservableObject 
         LocationDataManager.shared.enterBackground()
     }
     
+    func sceneDidDisconnect(_ scene: UIScene) {
+        // Detect when the user force-closes our app
+        // See: https://developer.apple.com/forums/thread/668595
+        
+        // ... and notify that this prevents our app from collecting locations in the background.
+        CGNotificationManager.shared.queueKeepOpenNotification()
+    }
+    
     private func scheduleAppRefresh() {
         // Schedule the background refresh task once the app goes into the background.
         // The task will be executed no earlier than 1 hour from now.

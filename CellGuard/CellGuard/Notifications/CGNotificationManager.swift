@@ -91,6 +91,21 @@ class CGNotificationManager: ObservableObject {
         }
     }
     
+    func queueKeepOpenNotification() {
+        let content = UNMutableNotificationContent()
+        content.title = "Keep CellGuard running"
+        content.sound = nil
+        content.body = "CellGuard works in the background to collect location data used to verify cells."
+        
+        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
+        
+        UNUserNotificationCenter.current().add(request) { error in
+            if let error = error {
+                Self.logger.warning("Failed to schedule keep open notification: \(error)")
+            }
+        }
+    }
+    
     func clearNotifications() {
         UNUserNotificationCenter.current().removeAllDeliveredNotifications()
     }
