@@ -22,6 +22,7 @@ struct CellListView: View {
             // TODO: Upon pressing Apply the view sometimes forgets its origin (check view changes of the base NavigationView & this view)
             NavigationLink(isActive: $isShowingFilterView) {
                 CellListFilterView(settingsBound: $settings) {
+                    // Somehow this does not work on iOS 14 if a sub navigation has been opened by the filter settings
                     isShowingFilterView = false
                 }
             } label: {
@@ -31,6 +32,7 @@ struct CellListView: View {
         }
         .navigationTitle("Cells")
         .toolbar {
+            // TODO: Put the two buttons into a menu appearing when holding the filter view button
             ToolbarItem(placement: .navigationBarTrailing) {
                 if let pastDay = Calendar.current.date(byAdding: .day, value: -1, to: settings.date) {
                     Button {
@@ -46,7 +48,7 @@ struct CellListView: View {
                 if let nextDay = Calendar.current.date(byAdding: .day, value: 1, to: settings.date) {
                     Button {
                         settings.date = nextDay
-                        settings.timeFrame = nextDay == today ? .live : .past
+                        settings.timeFrame = nextDay >= today ? .live : .past
                     } label: {
                         Image(systemName: "chevron.right")
                     }

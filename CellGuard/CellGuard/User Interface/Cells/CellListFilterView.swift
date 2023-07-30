@@ -10,8 +10,10 @@ import SwiftUI
 
 struct CellListFilterSettings {
     
+    var status: CellListFilterStatus = .all
+    
     var timeFrame: PacketFilterTimeFrame = .live
-    var date: Date = Date()
+    var date: Date = Calendar.current.startOfDay(for: Date())
     
     var technology: ALSTechnology?
     var country: Int?
@@ -46,10 +48,47 @@ struct CellListFilterSettings {
         if let endDate = Calendar.current.date(byAdding: .day, value: 1, to: beginDay) {
             predicateList.append(NSPredicate(format: "%@ <= collected and collected <= %@", beginDay as NSDate, endDate as NSDate))
         }
+        
+        let thresholdSuspicious = CellVerifier.pointsSuspiciousThreshold as NSNumber
+        let thresholdUntrusted = CellVerifier.pointsUntrustedThreshold as NSNumber
+        
+        switch (status) {
+        case .all:
+            break
+        case .processing:
+            predicateList.append(NSPredicate(format: "status != %@", CellStatus.verified.rawValue))
+        case .trusted:
+            predicateList.append(NSPredicate(format: "status == %@", CellStatus.verified.rawValue))
+            predicateList.append(NSPredicate(format: "score >= %@", thresholdSuspicious))
+        case .suspicious:
+            predicateList.append(NSPredicate(format: "status == %@", CellStatus.verified.rawValue))
+            predicateList.append(NSPredicate(format: "score >= %@ and score < %@", thresholdUntrusted, thresholdSuspicious))
+        case .untrusted:
+            predicateList.append(NSPredicate(format: "status == %@", CellStatus.verified.rawValue))
+            predicateList.append(NSPredicate(format: "score < %@", thresholdUntrusted))
+        }
 
         request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicateList)
     }
     
+}
+
+enum CellListFilterStatus: String, CaseIterable, Identifiable {
+    case all, processing, trusted, suspicious, untrusted
+    
+    var id: Self { self }
+}
+
+enum CellListFilterCustomOptions: String, CaseIterable, Identifiable {
+    case all, custom
+    
+    var id: Self { self }
+}
+
+enum CellListFilterPredefinedOptions: String, CaseIterable, Identifiable {
+    case all, predefined, custom
+    
+    var id: Self { self }
 }
 
 struct CellListFilterView: View {
@@ -65,16 +104,22 @@ struct CellListFilterView: View {
     }
     
     var body: some View {
-        CellListFilterSettingsView(settings: $settings)
+        CellListFilterSettingsView(settings: $settings, save: {
+            self.settingsBound = settings
+            self.close()
+        })
         .navigationTitle("Filter")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
-                Button {
-                    self.settingsBound = settings
-                    self.close()
-                } label: {
-                    Text("Apply")
+                // TOOD: Somehow taps on it result in the navigation stack disappearing on iOS 14
+                if #available(iOS 15, *) {
+                    Button {
+                        self.settingsBound = settings
+                        self.close()
+                    } label: {
+                        Text("Apply")
+                    }
                 }
             }
         }
@@ -82,23 +127,11 @@ struct CellListFilterView: View {
     }
 }
 
-enum CellListFilterCustomOptions: String, CaseIterable, Identifiable {
-    case all, custom
-    
-    var id: Self { self }
-}
-
-enum CellListFilterPredefinedOptions: String, CaseIterable, Identifiable {
-    case all, predefined, custom
-    
-    var id: Self { self }
-}
-
-
 
 private struct CellListFilterSettingsView: View {
     
     @Binding var settings: CellListFilterSettings
+    let save: () -> Void
     
     var body: some View {
         // TODO: Somehow the Pickers that open a navigation selection menu pose an issue for the navigation bar on iOS 14
@@ -116,6 +149,11 @@ private struct CellListFilterSettingsView: View {
                 LabelNumberField("Area", "LAC or TAC", $settings.area)
                 LabelNumberField("Cell", "Cell ID", $settings.cell)
             }
+            Section(header: Text("Verification")) {
+                Picker("Status", selection: $settings.status) {
+                    ForEach(CellListFilterStatus.allCases) { Text($0.rawValue.capitalized) }
+                }
+            }
             Section(header: Text("Data")) {
                 Picker("Display", selection: $settings.timeFrame) {
                     Text("Live").tag(PacketFilterTimeFrame.live)
@@ -123,6 +161,18 @@ private struct CellListFilterSettingsView: View {
                 }
                 if settings.timeFrame == .past {
                     DatePicker("Day", selection: $settings.date, in: ...Date(), displayedComponents: [.date])
+                }
+            }
+            
+            if #unavailable(iOS 15) {
+                Button {
+                    save()
+                } label: {
+                    HStack {
+                        Image(systemName: "tray.and.arrow.down")
+                        Text("Apply")
+                        Spacer()
+                    }
                 }
             }
         }
