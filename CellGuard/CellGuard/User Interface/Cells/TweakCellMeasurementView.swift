@@ -197,14 +197,14 @@ private struct TweakCellMeasurementStatusView: View {
                 
                 if status >= .verified {
                     Section(header: Text("Signal Strength Verification")) {
-                        Button("Run check") {
+                        /* Button("Run check") {
                             let queryCell = PersistenceController.queryCell(from: measurement)
                             let queryCellID = measurement.objectID
                             Task(priority: .utility) {
                                 let result = try? await CellVerifier().verifySignalStrength(queryCell: queryCell, queryCellID: queryCellID)
                                 print(String(describing: result))
                             }
-                        }
+                        } */
                         Text("TODO")
                         // TODO: Show the average signal strength values
                         // Add a diagram of the signal strength in the future
