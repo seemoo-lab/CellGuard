@@ -192,6 +192,8 @@ struct PersistenceImporter {
             return (packet, qmiPacket)
         }
         
+        // Set the packet retention time frame to infinite, so that older packets to-be-imported don't get deleted
+        UserDefaults.standard.setValue(DeleteView.packetRetentionInfinite, forKey: UserDefaultsKeys.packetRetention.rawValue)
         
         try PersistenceController.shared.importUserLocations(from: locations)
         try PersistenceController.shared.importCollectedCells(from: cells)

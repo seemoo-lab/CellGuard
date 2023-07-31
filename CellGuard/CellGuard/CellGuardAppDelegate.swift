@@ -187,8 +187,15 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
                         try? await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
                         continue
                     }
+                    
                     let days = UserDefaults.standard.object(forKey: UserDefaultsKeys.packetRetention.rawValue) as? Double ?? 15.0
+                    
+                    // Don't delete packets if the retention time frame is set to infinite
+                    if days >= DeleteView.packetRetentionInfinite {
+                        continue
+                    }
                     PersistenceController.shared.deletePacketsOlderThan(days: Int(days))
+                    
                     try? await Task.sleep(nanoseconds: 5 * 60 * NSEC_PER_SEC)
                 }
             }
