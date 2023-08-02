@@ -518,8 +518,8 @@ extension PersistenceController {
             let request = NSFetchRequest<QMIPacket>()
             request.entity = QMIPacket.entity()
             request.predicate = NSPredicate(
-                format: "direction = %@ and service = %@ and message = %@ and indication = %@ and %@ <= collected and collected <= %@",
-                direction.rawValue as NSString, service as NSNumber, message as NSNumber, NSNumber(booleanLiteral: indication), start as NSDate, end as NSDate
+                format: "indication = %@ and %@ <= collected and collected <= %@ and service = %@ and message = %@ and direction = %@",
+                NSNumber(booleanLiteral: indication), start as NSDate, end as NSDate, service as NSNumber, message as NSNumber, direction.rawValue as NSString
             )
             request.sortDescriptors = [NSSortDescriptor(keyPath: \QMIPacket.collected, ascending: false)]
             // See: https://stackoverflow.com/a/11165883
@@ -554,8 +554,8 @@ extension PersistenceController {
             let request = NSFetchRequest<ARIPacket>()
             request.entity = ARIPacket.entity()
             request.predicate = NSPredicate(
-                format: "direction = %@ and group = %@ and type = %@ and %@ <= collected and collected <= %@",
-                direction.rawValue as NSString, group as NSNumber, type as NSNumber, start as NSDate, end as NSDate
+                format: "group = %@ and type = %@ and %@ <= collected and collected <= %@ and direction = %@",
+                group as NSNumber, type as NSNumber, start as NSDate, end as NSDate, direction.rawValue as NSString
             )
             request.sortDescriptors = [NSSortDescriptor(keyPath: \ARIPacket.collected, ascending: false)]
             request.returnsObjectsAsFaults = false
