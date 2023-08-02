@@ -125,13 +125,30 @@ struct PersistenceImporter {
     }
     
     private func store(json: [String : Any]) throws -> (cells: Int, locations: Int, packets: Int) {
-        let parser = CCTParser()
+        let locations = try storeLocations(json: json)
+        let cells = try storeCells(json: json)
+        let packets = try storePackets(json: json)
         
-        // TODO: Import ALS Cache & Packets
+        Self.logger.debug("Imported \(locations) locations, \(cells) cells, \(packets.qmi) QMI packets, and \(packets.ari) ARI packets")
         
-        let cellsJson: [Any] = (json[CellFileKeys.connectedCells] as? [Any]) ?? []
+        return (cells, locations, packets.qmi + packets.ari)
+    }
+    
+    private func storeLocations(json: [String : Any]) throws -> Int {
         let locationsJson: [Any] = (json[CellFileKeys.locations] as? [Any]) ?? []
-        let packetsJson: [Any] = (json[CellFileKeys.packets] as? [Any]) ?? []
+        
+        let locations = locationsJson
+            .compactMap { $0 as? [String: Any] }
+            .map { TrackedUserLocation(from: $0) }
+        
+        try PersistenceController.shared.importUserLocations(from: locations)
+        
+        return locations.count
+    }
+    
+    private func storeCells(json: [String : Any]) throws -> Int {
+        let parser = CCTParser()
+        let cellsJson: [Any] = (json[CellFileKeys.connectedCells] as? [Any]) ?? []
         
         let cells = cellsJson
             .compactMap { $0 as? CellSample }
@@ -144,9 +161,13 @@ struct PersistenceImporter {
                 }
             }
         
-        let locations = locationsJson
-            .compactMap { $0 as? [String: Any] }
-            .map { TrackedUserLocation(from: $0) }
+        try PersistenceController.shared.importCollectedCells(from: cells)
+        
+        return cells.count
+    }
+    
+    private func storePackets(json: [String : Any]) throws -> (qmi: Int, ari: Int) {
+        let packetsJson: [Any] = (json[CellFileKeys.packets] as? [Any]) ?? []
         
         let packets = try packetsJson
             .compactMap { (jsonElement: Any) -> CPTPacket? in
@@ -176,6 +197,9 @@ struct PersistenceImporter {
                 return try CPTPacket(direction: direction, data: data, timestamp: collected)
             }
         
+        // Set the packet retention time frame to infinite, so that older packets to-be-imported don't get deleted
+        UserDefaults.standard.setValue(DeleteView.packetRetentionInfinite, forKey: UserDefaultsKeys.packetRetention.rawValue)
+        
         let qmiPackets = packets.compactMap { packet -> (CPTPacket, ParsedQMIPacket)? in
             guard let qmiPacket = try? ParsedQMIPacket(nsData: packet.data) else {
                 return nil
@@ -184,6 +208,8 @@ struct PersistenceImporter {
             return (packet, qmiPacket)
         }
         
+        try PersistenceController.shared.importQMIPackets(from: qmiPackets)
+        
         let ariPackets = packets.compactMap { packet -> (CPTPacket, ParsedARIPacket)? in
             guard let qmiPacket = try? ParsedARIPacket(data: packet.data) else {
                 return nil
@@ -191,18 +217,10 @@ struct PersistenceImporter {
             
             return (packet, qmiPacket)
         }
-        
-        // Set the packet retention time frame to infinite, so that older packets to-be-imported don't get deleted
-        UserDefaults.standard.setValue(DeleteView.packetRetentionInfinite, forKey: UserDefaultsKeys.packetRetention.rawValue)
-        
-        try PersistenceController.shared.importUserLocations(from: locations)
-        try PersistenceController.shared.importCollectedCells(from: cells)
+
         try PersistenceController.shared.importARIPackets(from: ariPackets)
-        try PersistenceController.shared.importQMIPackets(from: qmiPackets)
         
-        Self.logger.debug("Imported \(locations.count) locations, \(cells.count) cells, \(qmiPackets.count) QMI packets, and \(ariPackets.count) ARI packets")
-        
-        return (cells.count, locations.count, qmiPackets.count + ariPackets.count)
+        return (qmi: qmiPackets.count, ari: ariPackets.count)
     }
     
 }
