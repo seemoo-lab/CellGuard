@@ -220,6 +220,14 @@ private struct TweakCellMeasurementStatusView: View {
                     } else {
                         CellDetailsRow("Verdict", "Untrusted", icon: "exclamationmark.shield")
                     }
+                    Button {
+                        let measurementId = measurement.objectID
+                        Task(priority: .background) {
+                            try? PersistenceController.shared.clearVerificationData(tweakCellID: measurementId)
+                        }
+                    } label: {
+                        Text("Recalculate Score")
+                    }
                 }
             }
             

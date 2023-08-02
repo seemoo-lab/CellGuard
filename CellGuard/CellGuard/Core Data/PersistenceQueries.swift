@@ -522,7 +522,8 @@ extension PersistenceController {
                 direction.rawValue as NSString, service as NSNumber, message as NSNumber, NSNumber(booleanLiteral: indication), start as NSDate, end as NSDate
             )
             request.sortDescriptors = [NSSortDescriptor(keyPath: \QMIPacket.collected, ascending: false)]
-            request.returnsObjectsAsFaults = false
+            // See: https://stackoverflow.com/a/11165883
+            request.propertiesToFetch = ["data"]
             do {
                 let qmiPackets = try request.execute()
                 for qmiPacket in qmiPackets {
@@ -902,6 +903,33 @@ extension PersistenceController {
         }
         
         return count
+    }
+    
+    func clearVerificationData(tweakCellID: NSManagedObjectID) throws {
+        try performAndWait { taskContext in
+            guard let tweakCell = taskContext.object(with: tweakCellID) as? TweakCell else {
+                self.logger.warning("Can't clear verification data of the tweak cell with object ID: \(tweakCellID)")
+                throw PersistenceError.objectIdNotFoundError
+            }
+            
+            tweakCell.score = 0
+            tweakCell.status = CellStatus.imported.rawValue
+            tweakCell.notificationSent = false
+            
+            tweakCell.verification = nil
+            tweakCell.signalStrengths = []
+            tweakCell.rejectPacket = nil
+            tweakCell.location = nil
+            
+            do {
+                try taskContext.save()
+            } catch {
+                self.logger.warning("Can't save tweak cell (\(tweakCell)) with cleared verification properties: \(error)")
+                throw error
+            }
+            
+            self.logger.debug("Cleared verification data of \(tweakCell)")
+        }
     }
     
     func deletePacketsOlderThan(days: Int) {

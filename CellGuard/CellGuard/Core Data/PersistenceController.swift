@@ -186,6 +186,27 @@ class PersistenceController {
         }
     }
     
+    
+    func performAndWait<T>(task: (NSManagedObjectContext) throws -> T?) throws -> T? {
+        let context = newTaskContext()
+        var collectedError: Error? = nil
+        var result: T? = nil
+        
+        context.performAndWait {
+            do {
+                result = try task(context)
+            } catch {
+                collectedError = error
+            }
+        }
+        
+        if let collectedError = collectedError {
+            throw collectedError
+        }
+        
+        return result
+    }
+    
     /// Fetches persistent history transaction starting from the `lastToken` and merges it into the view context.
     func fetchPersistentHistoryTransactionsAndChanges() throws {
         let taskContext = newTaskContext()
