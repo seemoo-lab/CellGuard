@@ -190,20 +190,20 @@ struct CellVerifier {
         // Check if the resulting ALS cell is valid
         if !(preciseAlsCells.first?.isValid() ?? false) {
             Self.logger.info("ALS Verification failed as the first cell is not valid (0/40): \(queryCell)")
-            // If not, do not add any points to it and continue with the packet verification
-            return .next(status: .processedLocation, points: 0)
+            // If not, do not award any points in this category
+            return .next(status: .processedCell, points: 0)
         }
         
         // If the cell is valid, import all cells of the ALS response
         do {
-            try persistence.importALSCells(from: alsCells, source: queryCellID)
+            try persistence.importALSCells(from: preciseAlsCells, source: queryCellID)
         } catch {
             throw CellVerifierError.importALSCells(error)
         }
         
         // Issue: ALS does not include PID & EARFCN for the requested cells, but all others.
         // We require this data for LTE cell verification, so we request the first neighboring cell to retrieve the attributes for our original cell.
-        if let first = preciseAlsCells.first, first.technology == .LTE, first.physicalCell == 0 || first.frequency == 0, preciseAlsCells.count >= 2 {
+        /* if let first = preciseAlsCells.first, first.technology == .LTE, first.physicalCell == 0 || first.frequency == 0, preciseAlsCells.count >= 2 {
             // Query ALS using the cell's first neighbor and search for the cell in the query results
             let updatedFirst = try await alsClient.requestCells(origin: preciseAlsCells[1])
                 .filter { $0.hasCellId() && $0.isValid() }
@@ -217,7 +217,7 @@ struct CellVerifier {
                     throw CellVerifierError.importALSCells(error)
                 }
             }
-        }
+        } */
         
         // Award the points based on the distance
         Self.logger.info("ALS verification successful (\(Self.pointsALS)/\(Self.pointsALS)): \(queryCell)")
@@ -225,6 +225,11 @@ struct CellVerifier {
     }
     
     private func verifyDistance(queryCell: ALSQueryCell, queryCellID: NSManagedObjectID) async throws -> VerificationStageResult {
+        if persistence.fetchCellAttribute(cell: queryCellID, extract: { $0.verification == nil }) ?? true {
+            
+            return .next(status: .processedLocation, points: Self.pointsLocation)
+        }
+        
         // Try to assign a location to the cell
         let (foundLocation, cellCollected) = try persistence.assignLocation(to: queryCellID)
         if !foundLocation {
@@ -323,6 +328,7 @@ struct CellVerifier {
             // Indication of QMI NAS Service with Network Reject packet
             // The packet's Reject Cause TLV could be interesting (0x03)
             // For a list of possibles causes, see: https://gitlab.freedesktop.org/mobile-broadband/libqmi/-/blob/main/src/libqmi-glib/qmi-enums-nas.h#L1663
+            // This fetch request is just slow and I guess we can't do anything about it as there is a large number of packets
             qmiPackets = try persistence.fetchQMIPackets(direction: .ingoing, service: 0x03, message: 0x0068, indication: true, start: start, end: end)
             
             // Maybe IBINetRegistrationInfoIndCb -> [3] IBINetRegistrationRejectCause
