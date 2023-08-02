@@ -2,8 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>LSSupportsOpeningDocumentsInPlace</key>
-	<true/>
 	<key>BGTaskSchedulerPermittedIdentifiers</key>
 	<array>
 		<string>de.tudarmstadt.seemoo.CellGuard.refresh.packets</string>
@@ -20,6 +18,16 @@
 			<key>LSItemContentTypes</key>
 			<array>
 				<string>de.tudarmstadt.seemoo.CellGuard.export</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>System Diagnose Archive</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>public.archive</string>
 			</array>
 		</dict>
 	</array>
