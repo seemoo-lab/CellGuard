@@ -27,6 +27,7 @@ import SwiftUI
 struct SummaryTabView: View {
     
     @State private var showingCellList = false
+    @State private var showingStats = false
     @State private var showingHelp = false
     @State private var showingSettings = false
     
@@ -38,6 +39,12 @@ struct SummaryTabView: View {
                 } label: {
                     EmptyView()
                 }
+                NavigationLink(isActive: $showingStats) {
+                    DataSummaryView()
+                } label: {
+                    EmptyView()
+                }
+
                 NavigationLink(isActive: $showingHelp) {
                     Text("TODO")
                 } label: {
@@ -58,6 +65,11 @@ struct SummaryTabView: View {
                             showingCellList = true
                         } label: {
                             Label("Connected Cells", systemImage: "list.bullet")
+                        }
+                        Button {
+                            showingStats = true
+                        } label: {
+                            Label("Stats", systemImage: "chart.bar.xaxis")
                         }
                         Button {
                             showingHelp = true
