@@ -87,6 +87,11 @@ struct SettingsView: View {
             
             Section(header: Text("Local Database")) {
                 NavigationLink {
+                    ImportView()
+                } label: {
+                    Text("Import Data")
+                }
+                NavigationLink {
                     ExportView()
                 } label: {
                     Text("Export Data")

@@ -19,6 +19,7 @@
 		CF0FDCC9296B310400A6FFE2 /* PersistencePreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0FDCC8296B310400A6FFE2 /* PersistencePreview.swift */; };
 		CF0FDCCB296B466100A6FFE2 /* PersistenceError.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0FDCCA296B466100A6FFE2 /* PersistenceError.swift */; };
 		CF0FDCCD296B480B00A6FFE2 /* TrackedUserLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0FDCCC296B480B00A6FFE2 /* TrackedUserLocation.swift */; };
+		CF15E1FA2AA33EA200D440AD /* ImportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF15E1F92AA33EA200D440AD /* ImportView.swift */; };
 		CF1FAFB32986B11200106930 /* CellReachOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1FAFB22986B11200106930 /* CellReachOverlay.swift */; };
 		CF2002E82A2F2BE2000922E6 /* QMIParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2002E72A2F2BE2000922E6 /* QMIParser.swift */; };
 		CF2002EA2A2F2BEA000922E6 /* ARIParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2002E92A2F2BEA000922E6 /* ARIParser.swift */; };
@@ -148,6 +149,7 @@
 		CF0FDCC8296B310400A6FFE2 /* PersistencePreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistencePreview.swift; sourceTree = "<group>"; };
 		CF0FDCCA296B466100A6FFE2 /* PersistenceError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceError.swift; sourceTree = "<group>"; };
 		CF0FDCCC296B480B00A6FFE2 /* TrackedUserLocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackedUserLocation.swift; sourceTree = "<group>"; };
+		CF15E1F92AA33EA200D440AD /* ImportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportView.swift; sourceTree = "<group>"; };
 		CF1FAFB22986B11200106930 /* CellReachOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellReachOverlay.swift; sourceTree = "<group>"; };
 		CF2002E72A2F2BE2000922E6 /* QMIParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QMIParser.swift; sourceTree = "<group>"; };
 		CF2002E92A2F2BEA000922E6 /* ARIParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARIParser.swift; sourceTree = "<group>"; };
@@ -355,6 +357,7 @@
 			isa = PBXGroup;
 			children = (
 				CF0FDCC12969AC1100A6FFE2 /* SettingsView.swift */,
+				CF15E1F92AA33EA200D440AD /* ImportView.swift */,
 				CF4E53A52A32225300AE2059 /* ExportView.swift */,
 				CFF05F6C2A39AA3900DE6FB2 /* DeleteView.swift */,
 				CFDF5D88297F340E000708A8 /* ActivityViewController.swift */,
@@ -749,6 +752,7 @@
 				CFDF5D85297F09D3000708A8 /* DatabaseAnnotation.swift in Sources */,
 				CF86C7992A6AD51D002EC9B6 /* GroupedMeasurements.swift in Sources */,
 				CF2A1C1529754AA400E8B61C /* LocalNetworkAuthorization.swift in Sources */,
+				CF15E1FA2AA33EA200D440AD /* ImportView.swift in Sources */,
 				CF9237132A3E1BD300FC7D21 /* KeyValueListRow.swift in Sources */,
 				CF54CCC52A33680200961E4D /* PacketCommonDetails.swift in Sources */,
 				CFDF5D77297EF1E8000708A8 /* LocationAnnotation.swift in Sources */,
@@ -987,7 +991,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_ASSET_PATHS = "\"CellGuard/Preview Content\"";
 				DEVELOPMENT_TEAM = RJXNW62ZYN;
 				ENABLE_PREVIEWS = YES;
@@ -1024,7 +1028,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_ASSET_PATHS = "\"CellGuard/Preview Content\"";
 				DEVELOPMENT_TEAM = RJXNW62ZYN;
 				ENABLE_PREVIEWS = YES;

@@ -112,6 +112,7 @@ struct CompositeTabView: View {
             }
         }
         .alert(item: $showingAlert) { alert in
+            // TODO: Replace with a popup of the new ImportView 
             switch (alert) {
             case let .importConfirm(url):
                 return Alert(
