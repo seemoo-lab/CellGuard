@@ -32,9 +32,11 @@ struct DeleteView: View {
     
     @AppStorage(UserDefaultsKeys.packetRetention.rawValue)
     private var packetRetentionDays: Double = 3
+    @State private var deletingPackets: Bool = false
     
     @AppStorage(UserDefaultsKeys.locationRetention.rawValue)
     private var locationRetentionDays: Double = 7
+    @State private var deletingLocations: Bool = false
     
     @State private var timer: Timer? = nil
     
@@ -74,8 +76,11 @@ struct DeleteView: View {
                 footer: Text(
                     packetRetentionDays >= Self.packetRetentionInfinite
                     ? "Keeping packets for an infinite amount of days"
-                    : "Keeping packets for \(Int(packetRetentionDays)) \(Int(packetRetentionDays) != 1 ? "days" : "day").")
+                    : "Keeping packets for \(Int(packetRetentionDays)) \(Int(packetRetentionDays) != 1 ? "days" : "day"). Packets not relevant for cell scoring are deleted automatically in the background.")
             ) {
+                DeleteOldButton(text: "Delete old Packets", active: $deletingPackets) {
+                    PersistenceController.basedOnEnvironment().deletePacketsOlderThan(days: Int(packetRetentionDays))
+                }
                 Slider(value: $packetRetentionDays, in: 1...Self.packetRetentionInfinite, step: 1)
             }
             
@@ -84,8 +89,11 @@ struct DeleteView: View {
                 footer: Text(
                     locationRetentionDays >= Self.locationRetentionInfinite
                     ? "Keeping locations for an infinite amount of days"
-                    : "Keeping locations for \(Int(locationRetentionDays)) \(Int(locationRetentionDays) != 1 ? "days" : "day").")
+                    : "Keeping locations for \(Int(locationRetentionDays)) \(Int(locationRetentionDays) != 1 ? "days" : "day"). Locations not assigned to cells are deleted automatically in the background.")
             ) {
+                DeleteOldButton(text: "Delete old Locations", active: $deletingLocations) {
+                    PersistenceController.basedOnEnvironment().deleteLocationsOlderThan(days: Int(locationRetentionDays))
+                }
                 Slider(value: $locationRetentionDays, in: 1...Self.locationRetentionInfinite, step: 1)
             }
         }
@@ -192,6 +200,35 @@ struct DeleteView: View {
                 }
             }
         }
+    }
+    
+}
+
+private struct DeleteOldButton: View {
+    
+    let text: String
+    @Binding var active: Bool
+    let deleteAction: () -> Void
+    
+    var body: some View {
+        Button {
+            active = true
+            DispatchQueue.global(qos: .userInitiated).async {
+                deleteAction()
+                DispatchQueue.main.async {
+                    active = false
+                }
+            }
+        } label: {
+            HStack {
+                Text(text)
+                Spacer()
+                if active {
+                    ProgressView()
+                }
+            }
+        }
+        .disabled(active)
     }
     
 }
