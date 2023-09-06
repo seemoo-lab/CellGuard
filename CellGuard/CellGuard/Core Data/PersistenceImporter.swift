@@ -64,11 +64,28 @@ struct PersistenceImporter {
         }
     }
     
-    static func importInBackground(url: URL, completion: @escaping (Result<(cells: Int, locations: Int, packets: Int), Error>) -> Void) {
+    static func importInBackground(
+        url: URL,
+        progress: @escaping (Int, Int) -> Void,
+        completion: @escaping (Result<(cells: Int, locations: Int, packets: Int), Error>) -> Void
+    ) {
         importActive = true
+        
+        var internalProgressCount = 0
+        let progressMax = 4
+        
+        progress(0, progressMax)
+        
+        let internalProgress = {
+            DispatchQueue.main.async {
+                internalProgressCount += 1
+                progress(internalProgressCount, progressMax)
+            }
+        }
+        
         DispatchQueue.global(qos: .userInitiated).async {
             let result = Result.init {
-                try PersistenceImporter().importData(from: url)
+                try PersistenceImporter().importData(from: url, progress: internalProgress)
             }
             DispatchQueue.main.async {
                 completion(result)
@@ -81,9 +98,10 @@ struct PersistenceImporter {
         
     }
     
-    private func importData(from url: URL) throws -> (cells: Int, locations: Int, packets: Int) {
+    private func importData(from url: URL, progress: @escaping () -> Void) throws -> (cells: Int, locations: Int, packets: Int) {
         let data = try read(url: url)
-        return try store(json: data)
+        progress()
+        return try store(json: data, progress: progress)
     }
     
     private func read(url: URL) throws -> [String: Any] {
@@ -124,10 +142,13 @@ struct PersistenceImporter {
         return jsonDict
     }
     
-    private func store(json: [String : Any]) throws -> (cells: Int, locations: Int, packets: Int) {
+    private func store(json: [String : Any], progress: () -> Void) throws -> (cells: Int, locations: Int, packets: Int) {
         let locations = try storeLocations(json: json)
+        progress()
         let cells = try storeCells(json: json)
+        progress()
         let packets = try storePackets(json: json)
+        progress()
         
         Self.logger.debug("Imported \(locations) locations, \(cells) cells, \(packets.qmi) QMI packets, and \(packets.ari) ARI packets")
         

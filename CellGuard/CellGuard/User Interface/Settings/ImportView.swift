@@ -8,6 +8,40 @@
 import SwiftUI
 import OSLog
 
+enum ImportFileType {
+    case dataUncompressed
+    case dataCompressed
+    case sysdiagnose
+    case unknown
+    
+    func description() -> String {
+        switch(self) {
+        case .dataUncompressed:
+            return "CellGuard Data (Compressed)"
+        case .dataCompressed:
+            return "CellGuard Data"
+        case .sysdiagnose:
+            return "Sysdiagnose"
+        case .unknown:
+            return "Unknown"
+        }
+    }
+    
+    static func guess(url: URL) -> Self {
+        let lastComponent = url.lastPathComponent
+        
+        if lastComponent.hasSuffix(".cells.gz") {
+            return .dataCompressed
+        } else if lastComponent.hasSuffix(".cells") {
+            return .dataUncompressed
+        } else if lastComponent.hasPrefix("sysdiagnose") && lastComponent.hasSuffix(".tar.gz") {
+            return .sysdiagnose
+        } else {
+            return .unknown
+        }
+    }
+}
+
 struct ImportView: View {
     
     private static let logger = Logger(
@@ -17,15 +51,28 @@ struct ImportView: View {
     
     @State var fileImporterPresented: Bool = false
     @State var fileUrl: URL? = nil
+    let fileUrlFixed: Bool
     @State var fileSize: String? = nil
+    @State var fileType: ImportFileType? = nil
     
     @State var importInProgress: Bool = false
     @State var importFinished: Bool = false
     @State var importError: String? = nil
     
+    @State var importProgress = Float(0)
+    
     @State var importedCells = 0
     @State var importedLocations = 0
     @State var importedPackets = 0
+    
+    init() {
+        self.fileUrlFixed = false
+    }
+    
+    init(fileUrl: URL) {
+        self.fileUrlFixed = true
+        self._fileUrl = State(initialValue: fileUrl)
+    }
     
     var body: some View {
         List {
@@ -40,10 +87,16 @@ struct ImportView: View {
                         Image(systemName: "folder")
                     }
                 }
-                .disabled(importInProgress)
+                .disabled(importInProgress || fileUrlFixed)
                 
-                if let fileUrl = fileUrl {
-                    KeyValueListRow(key: "Type", value: Self.guessType(url: fileUrl))
+                if fileUrl != nil {
+                    KeyValueListRow(key: "Type") { () -> AnyView in
+                        if let fileType = fileType {
+                            return AnyView(Text(fileType.description()))
+                        } else {
+                            return AnyView(ProgressView())
+                        }
+                    }
                     KeyValueListRow(key: "Size") { () -> AnyView in
                         if let fileSize = fileSize {
                             return AnyView(Text(fileSize))
@@ -55,10 +108,13 @@ struct ImportView: View {
             }
             
             if let fileUrl = fileUrl {
-                Section(header: Text("Progress")) {
+                Section(header: Text("Actions"), footer: Text("Importing data can result in incorrect analysis of previously collected data. Make sure to backup collected data beforehand.")) {
                     Button {
                         importInProgress = true
-                        PersistenceImporter.importInBackground(url: fileUrl) { result in
+                        // TODO: Use different importers based on the file type
+                        PersistenceImporter.importInBackground(url: fileUrl) { currentProgress, totalProgress in
+                            importProgress = Float(currentProgress) / Float(totalProgress)
+                        } completion: { result in
                             do {
                                 let counts = try result.get()
                                 importedCells = counts.cells
@@ -78,7 +134,8 @@ struct ImportView: View {
                             Text("Import")
                             Spacer()
                             if importInProgress {
-                                ProgressView()
+                                CircularProgressView(progress: $importProgress)
+                                    .frame(width: 20, height: 20)
                             } else if importFinished {
                                 if importError != nil {
                                     Image(systemName: "xmark")
@@ -107,15 +164,35 @@ struct ImportView: View {
             }
         }
         .listStyle(.insetGrouped)
-        .navigationTitle("Data")
+        .navigationTitle("Import Data")
         .navigationBarTitleDisplayMode(.inline)
         .fileImporter(isPresented: $fileImporterPresented, allowedContentTypes: [.archive, .json]) { result in
             do {
                 let url = try result.get()
                 fileUrl = url
-                fileSize = Self.fileSize(url: url)
+                fileSize = nil
+                fileType = nil
+                updateFileProperties()
             } catch {
                 Self.logger.warning("Can't pick file: \(error)")
+            }
+        }
+        .onAppear() {
+            updateFileProperties()
+        }
+    }
+    
+    private func updateFileProperties() {
+        guard let url = fileUrl else {
+            return
+        }
+        
+        DispatchQueue.global(qos: .utility).async {
+            let fileSize = Self.fileSize(url: url)
+            let fileType = ImportFileType.guess(url: url)
+            DispatchQueue.main.async {
+                self.fileSize = fileSize
+                self.fileType = fileType
             }
         }
     }
@@ -136,20 +213,6 @@ struct ImportView: View {
         }
         
         return nil
-    }
-    
-    private static func guessType(url: URL) -> String {
-        let lastComponent = url.lastPathComponent
-        
-        if lastComponent.hasSuffix(".cells.gz") {
-            return "CellGuard Data (Compressed)"
-        } else if lastComponent.hasSuffix(".cells") {
-            return "CellGuard Data"
-        } else if lastComponent.hasPrefix("sysdiagnose") && lastComponent.hasSuffix(".tar.gz") {
-            return "Sysdiagnose"
-        } else {
-            return "Unknown"
-        }
     }
 }
 

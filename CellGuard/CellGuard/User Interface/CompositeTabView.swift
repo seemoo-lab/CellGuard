@@ -19,23 +19,13 @@ private enum ShownTab: Identifiable {
     }
 }
 
-private enum ShownSheet: Identifiable {
+private enum ShownSheet: Hashable, Identifiable {
     case welcome
+    case importFile(URL)
 
     var id: Self {
         return self
     }
-}
-
-private enum ShownAlert: Hashable, Identifiable {
-    case importConfirm(URL)
-    case importSuccess(cells: Int, locations: Int, packets: Int)
-    case importFailed(String)
-    
-    var id: Self {
-        return self
-    }
-    
 }
 
 struct CompositeTabView: View {
@@ -48,7 +38,6 @@ struct CompositeTabView: View {
     @State private var showingTab = ShownTab.summary
     @State private var showingImport = false
     @State private var showingSheet: ShownSheet?
-    @State private var showingAlert: ShownAlert?
     
     var body: some View {
         if showingImport {
@@ -96,6 +85,10 @@ struct CompositeTabView: View {
                 WelcomeSheet {
                     self.showingSheet = nil
                 }
+            case let .importFile(url):
+                NavigationView {
+                    ImportView(fileUrl: url)
+                }
             }
         }
         .onOpenURL { url in
@@ -108,56 +101,7 @@ struct CompositeTabView: View {
             // Wait a bit so the sheet can close and we can present the alert
             // See: https://stackoverflow.com/a/71638878
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                self.showingAlert = ShownAlert.importConfirm(url)
-            }
-        }
-        .alert(item: $showingAlert) { alert in
-            // TODO: Replace with a popup of the new ImportView 
-            switch (alert) {
-            case let .importConfirm(url):
-                return Alert(
-                    title: Text("Import Database"),
-                    message: Text(
-                        "Import the selected CellGuard database? " +
-                        "This can result in incorrect analysis. " +
-                        "It is advertised to export your local database before."
-                    ),
-                    primaryButton: .cancel() {
-                        showingAlert = nil
-                    },
-                    secondaryButton: .destructive(Text("Import")) {
-                        showingImport = true
-                        Self.logger.info("Start import from \(url)")
-                        PersistenceImporter.importInBackground(url: url) { result in
-                            showingImport = false
-                            do {
-                                let counts = try result.get()
-                                showingAlert = .importSuccess(cells: counts.cells, locations: counts.locations, packets: counts.packets)
-                                Self.logger.info("Successfully imported \(counts.cells) cells, \(counts.locations) locations, and \(counts.packets) packets.")
-                            } catch {
-                                showingAlert = .importFailed(error.localizedDescription)
-                                Self.logger.info("Import failed due to \(error)")
-                            }
-                        }
-                        showingAlert = nil
-                    }
-                )
-            case let .importFailed(error):
-                return Alert(
-                    title: Text("Import Failed"),
-                    message: Text(error),
-                    dismissButton: .default(Text("OK")) {
-                        showingAlert = nil
-                    }
-                )
-            case let .importSuccess(cells, locations, packets):
-                return Alert(
-                    title: Text("Import Complete"),
-                    message: Text("Successfully imported \(cells) cells, \(locations) locations, and \(packets) packets."),
-                    dismissButton: .default(Text("OK")) {
-                        showingAlert = nil
-                    }
-                )
+                self.showingSheet = ShownSheet.importFile(url)
             }
         }
         return AnyView(view)
