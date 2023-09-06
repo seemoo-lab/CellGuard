@@ -12,6 +12,7 @@ enum RiskMediumCause: Equatable {
     case Permissions
     case TweakCells
     case TweakPackets
+    case Location
     case Cells(cellCount: Int)
     case CantCompute
     
@@ -23,6 +24,8 @@ enum RiskMediumCause: Equatable {
             return "Ensure the CaptureCellsTweak is active"
         case .TweakPackets:
             return "Ensure the CapturePacketsTweak is active"
+        case .Location:
+            return "Ensure you've granted all location permissions"
         case let .Cells(cellCount):
             return "Detected \(cellCount) suspicious \(cellCount == 1 ? "cell" : "cells") in the last 14 days"
         case .CantCompute:
@@ -40,7 +43,7 @@ enum RiskLevel: Equatable {
     
     func header() -> String {
         switch (self) {
-        case .Unknown: return "Unkown"
+        case .Unknown: return "Unknown"
         case .Low: return "Low"
         case .LowMonitor: return "Low"
         case .Medium: return "Medium"
@@ -130,7 +133,7 @@ private struct RiskIndicatorLink: View {
         case .LowMonitor:
             return AnyView(CellListView())
         case let .Medium(cause):
-            if cause == .Permissions {
+            if cause == .Permissions || cause == .Location {
                 return AnyView(SettingsView())
             } else if cause == .TweakCells || cause == .TweakPackets {
                 // TODO: Replace with help article

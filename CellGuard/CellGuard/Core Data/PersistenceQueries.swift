@@ -222,6 +222,22 @@ extension PersistenceController {
                 return .Medium(cause: .TweakPackets)
             }
             
+            // Latest Location
+            
+            let locationFetchRequest: NSFetchRequest<UserLocation> = UserLocation.fetchRequest()
+            locationFetchRequest.fetchLimit = 1
+            locationFetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \UserLocation.collected, ascending: false)]
+            let location = try taskContext.fetch(locationFetchRequest)
+            
+            // We've received no location for 30 minutes from iOS, so we warn the user
+            guard let latestLocation = location.first else {
+                return .Medium(cause: .Location)
+            }
+            if latestLocation.collected ?? Date.distantPast < ftMinutesAgo {
+                return .Medium(cause: .Location)
+            }
+            
+            
             // Permissions
             
             if (LocationDataManager.shared.authorizationStatus ?? .authorizedAlways) != .authorizedAlways ||
