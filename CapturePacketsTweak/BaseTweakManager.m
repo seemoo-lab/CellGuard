@@ -114,24 +114,50 @@
         return;
     }
 
-    // Read the full content of the file into memory to lock the file as short as possible
-    NSError *fileError;
-    NSData *data = [NSData dataWithContentsOfURL:cacheFile options:0 error:&fileError];
-    if (fileError) {
-        [self log:@"Can't read the file %@ into memory: %@", cacheFile.path, fileError];
-        [self closeConnection];
-        return;
+    // Read the content of the file using an input stream to limit the memory usage, but do it synchronously to lock the file as short as possible
+    // How to use NSInputStream: https://stackoverflow.com/a/6688111
+    NSInputStream *inputStream = [NSInputStream inputStreamWithFileAtPath:cacheFile.path];
+
+    // We must open the input stream as we're reading a file
+    [inputStream open];
+
+    // bufferLength can be any positive integer
+    NSUInteger bufferLength = 1024 * 8;
+    uint8_t buffer[bufferLength];
+
+    NSInteger result;
+    NSInteger counter = 0;
+    while ((result = [inputStream read:buffer maxLength:bufferLength]) != 0) {
+        if (result > 0) {
+            // The buffer contains the result bytes of data to be handled
+
+            // Convert the data read from our buffer into dispatch_data_t
+            dispatch_data_t sendData = dispatch_data_create(buffer, (size_t) result, NULL, DISPATCH_DATA_DESTRUCTOR_DEFAULT);
+
+            // Send the data (but don't mark the stream as finished)
+            // We're marking every 10th message as finished, so that occasionally messages are transmitted
+            nw_connection_send(self.nw_inbound_connection, sendData, NW_CONNECTION_DEFAULT_MESSAGE_CONTEXT,
+                    counter % 10 == 0, ^(nw_error_t _Nullable error) {
+                        if (error != NULL) {
+                            // Print an error
+                            [self log:@"Can't send data over the wire (data): %@", error];
+                        }
+                    });
+            // [self log:@"Sending data of the size %ld", (long) result];
+            counter += 1;
+        } else {
+            // If the stream had an error, we print it and abort the stream
+            [self log:@"Can't read the file %@: %@", cacheFile.path, [inputStream streamError]];
+            [self closeConnection];
+        }
     }
 
-    // Convert the data read from NSData into dispatch_data_t
-    dispatch_data_t sendData = dispatch_data_create([data bytes], data.length, NULL, DISPATCH_DATA_DESTRUCTOR_DEFAULT);
-
-    // Send the data over the wire
-    nw_connection_send(self.nw_inbound_connection, sendData, NW_CONNECTION_DEFAULT_MESSAGE_CONTEXT, true,
+    // Mark the sending process as complete
+    nw_connection_send(self.nw_inbound_connection, NULL, NW_CONNECTION_DEFAULT_MESSAGE_CONTEXT, true,
             ^(nw_error_t _Nullable error) {
                 if (error != NULL) {
                     // Print an error
-                    [self log:@"Can't send data over the wire: %@", error];
+                    [self log:@"Can't send data over the wire (final message): %@", error];
                 } else {
                     // If everything was successful, clear the cache file
                     [self emptyCache];
