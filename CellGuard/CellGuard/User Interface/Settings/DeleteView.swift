@@ -30,7 +30,7 @@ struct DeleteView: View {
     @State private var failReason: String? = nil
     
     @AppStorage(UserDefaultsKeys.packetRetention.rawValue)
-    private var packetRetentionDays: Double = 14
+    private var packetRetentionDays: Double = 3
     
     @State private var timer: Timer? = nil
     

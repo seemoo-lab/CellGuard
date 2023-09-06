@@ -188,7 +188,7 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
                         continue
                     }
                     
-                    let days = UserDefaults.standard.object(forKey: UserDefaultsKeys.packetRetention.rawValue) as? Double ?? 15.0
+                    let days = UserDefaults.standard.object(forKey: UserDefaultsKeys.packetRetention.rawValue) as? Double ?? 3.0
                     
                     // Don't delete packets if the retention time frame is set to infinite
                     if days >= DeleteView.packetRetentionInfinite {
