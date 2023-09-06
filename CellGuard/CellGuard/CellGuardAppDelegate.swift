@@ -181,7 +181,7 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
             
             // Delete packets older than a given amount of days as configured by the user
             Task {
-                try? await Task.sleep(nanoseconds: 2 * 60 * NSEC_PER_SEC)
+                try? await Task.sleep(nanoseconds: 90 * NSEC_PER_SEC)
                 while (true) {
                     guard !PersistenceImporter.importActive else {
                         try? await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
@@ -195,6 +195,27 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
                         continue
                     }
                     PersistenceController.shared.deletePacketsOlderThan(days: Int(days))
+                    
+                    try? await Task.sleep(nanoseconds: 5 * 60 * NSEC_PER_SEC)
+                }
+            }
+            
+            // Delete locations older than a given amount of days as configured by the user
+            Task {
+                try? await Task.sleep(nanoseconds: 60 * NSEC_PER_SEC)
+                while (true) {
+                    guard !PersistenceImporter.importActive else {
+                        try? await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
+                        continue
+                    }
+                    
+                    let days = UserDefaults.standard.object(forKey: UserDefaultsKeys.locationRetention.rawValue) as? Double ?? 7.0
+                    
+                    // Don't delete locations if the retention time frame is set to infinite
+                    if days >= DeleteView.locationRetentionInfinite {
+                        continue
+                    }
+                    PersistenceController.shared.deleteLocationsOlderThan(days: Int(days))
                     
                     try? await Task.sleep(nanoseconds: 5 * 60 * NSEC_PER_SEC)
                 }

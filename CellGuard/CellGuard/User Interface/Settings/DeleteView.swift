@@ -10,6 +10,7 @@ import SwiftUI
 struct DeleteView: View {
     
     public static let packetRetentionInfinite = 35.0
+    public static let locationRetentionInfinite = 35.0
     
     // We fetch the entity counts in intervals as live updates cause too much lag
     @State private var cellMeasurements: Int = 0
@@ -31,6 +32,9 @@ struct DeleteView: View {
     
     @AppStorage(UserDefaultsKeys.packetRetention.rawValue)
     private var packetRetentionDays: Double = 3
+    
+    @AppStorage(UserDefaultsKeys.locationRetention.rawValue)
+    private var locationRetentionDays: Double = 7
     
     @State private var timer: Timer? = nil
     
@@ -73,6 +77,16 @@ struct DeleteView: View {
                     : "Keeping packets for \(Int(packetRetentionDays)) \(Int(packetRetentionDays) != 1 ? "days" : "day").")
             ) {
                 Slider(value: $packetRetentionDays, in: 1...Self.packetRetentionInfinite, step: 1)
+            }
+            
+            Section(
+                header: Text("Location Retention"),
+                footer: Text(
+                    locationRetentionDays >= Self.locationRetentionInfinite
+                    ? "Keeping locations for an infinite amount of days"
+                    : "Keeping locations for \(Int(locationRetentionDays)) \(Int(locationRetentionDays) != 1 ? "days" : "day").")
+            ) {
+                Slider(value: $locationRetentionDays, in: 1...Self.locationRetentionInfinite, step: 1)
             }
         }
         .listStyle(.insetGrouped)

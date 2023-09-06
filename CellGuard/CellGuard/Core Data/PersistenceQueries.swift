@@ -963,15 +963,40 @@ extension PersistenceController {
                 // Only delete packets not referenced by cells
                 let predicate = NSPredicate(format: "collected < %@ and rejectedCell = nil", daysAgo as NSDate)
                 
-                try deleteData(entity: QMIPacket.entity(), predicate: predicate, context: taskContext)
-                try deleteData(entity: ARIPacket.entity(), predicate: predicate, context: taskContext)
-                logger.debug("Successfully deleted old packets")
+                let qmiCount = try deleteData(entity: QMIPacket.entity(), predicate: predicate, context: taskContext)
+                let ariCount = try deleteData(entity: ARIPacket.entity(), predicate: predicate, context: taskContext)
+                logger.debug("Successfully deleted \(qmiCount + ariCount) old packets")
             } catch {
                 self.logger.warning("Failed to delete old packets: \(error)")
             }
         }
         
     }
+    
+    func deleteLocationsOlderThan(days: Int) {
+        let taskContext = newTaskContext()
+        logger.debug("Start deleting locations older than \(days) day(s) from the store...")
+        
+        taskContext.performAndWait {
+            do {
+                let startOfDay = Calendar.current.startOfDay(for: Date())
+                guard let daysAgo = Calendar.current.date(byAdding: .day, value: -days, to: startOfDay) else {
+                    logger.debug("Can't calculate the date for location deletion")
+                    return
+                }
+                logger.debug("Deleting locations older than \(startOfDay)")
+                // Only delete old locations not referenced by any cells
+                let predicate = NSPredicate(format: "collected < %@ and cells.@count == 0", daysAgo as NSDate)
+                
+                let count = try deleteData(entity: UserLocation.entity(), predicate: predicate, context: taskContext)
+                logger.debug("Successfully deleted \(count) old locations")
+            } catch {
+                self.logger.warning("Failed to delete old locations: \(error)")
+            }
+        }
+        
+    }
+    
     
     func deleteDataInBackground(categories: [PersistenceCategory], completion: @escaping (Result<Void, Error>) -> Void) {
         DispatchQueue.global(qos: .userInitiated).async {
@@ -1005,7 +1030,7 @@ extension PersistenceController {
                     .filter { categories.contains($0.key) }
                     .flatMap { $0.value }
                     .forEach { entity in
-                        try deleteData(entity: entity, predicate: nil, context: taskContext)
+                        _ = try deleteData(entity: entity, predicate: nil, context: taskContext)
                     }
             } catch {
                 self.logger.warning("Failed to delete data: \(error)")
@@ -1023,7 +1048,7 @@ extension PersistenceController {
     }
     
     /// Deletes all records belonging to a given entity
-    private func deleteData(entity: NSEntityDescription, predicate: NSPredicate?, context: NSManagedObjectContext) throws {
+    private func deleteData(entity: NSEntityDescription, predicate: NSPredicate?, context: NSManagedObjectContext) throws -> Int {
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>()
         fetchRequest.entity = entity
         if let predicate = predicate {
@@ -1031,7 +1056,9 @@ extension PersistenceController {
         }
         
         let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
-        try context.persistentStoreCoordinator?.execute(deleteRequest, with: context)
+        deleteRequest.resultType = .resultTypeCount
+        let result = try context.execute(deleteRequest)
+        return ((result as? NSBatchDeleteResult)?.result as? Int) ?? 0
     }
     
 }
