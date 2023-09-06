@@ -108,7 +108,7 @@ struct ImportView: View {
             }
             
             if let fileUrl = fileUrl {
-                Section(header: Text("Actions"), footer: Text("Importing data can result in incorrect analysis of previously collected data. Make sure to backup collected data beforehand.")) {
+                Section(header: Text("Actions"), footer: Text(footerInfoText())) {
                     Button {
                         importInProgress = true
                         // TODO: Use different importers based on the file type
@@ -179,6 +179,14 @@ struct ImportView: View {
         }
         .onAppear() {
             updateFileProperties()
+        }
+    }
+    
+    private func footerInfoText() -> String {
+        if importFinished {
+            return "Increased the packet and location retention durations to infinite. Make sure to lower them after all imported cells have been verified."
+        } else {
+            return "Importing data can result in incorrect analysis of previously collected data. Make sure to backup collected data beforehand."
         }
     }
     

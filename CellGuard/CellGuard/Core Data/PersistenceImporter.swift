@@ -220,6 +220,7 @@ struct PersistenceImporter {
         
         // Set the packet retention time frame to infinite, so that older packets to-be-imported don't get deleted
         UserDefaults.standard.setValue(DeleteView.packetRetentionInfinite, forKey: UserDefaultsKeys.packetRetention.rawValue)
+        UserDefaults.standard.setValue(DeleteView.locationRetentionInfinite, forKey: UserDefaultsKeys.locationRetention.rawValue)
         
         let qmiPackets = packets.compactMap { packet -> (CPTPacket, ParsedQMIPacket)? in
             guard let qmiPacket = try? ParsedQMIPacket(nsData: packet.data) else {
