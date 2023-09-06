@@ -2,9 +2,9 @@
 // Created by Lukas Arnold on 07.06.23.
 //
 
-#import "BaseTweakManager.h"
+#import "CPTBaseTweakManager.h"
 
-@interface BaseTweakManager ()
+@interface CPTBaseTweakManager ()
 
 - (void)handleInboundConnection:(nw_connection_t)connection;
 
@@ -22,7 +22,7 @@
 
 @end
 
-@implementation BaseTweakManager {
+@implementation CPTBaseTweakManager {
 
 }
 

@@ -2,10 +2,10 @@
 // Created by Lukas Arnold on 05.06.23.
 //
 
-#import "BaseTweakManager.h"
+#import "CPTBaseTweakManager.h"
 
 
-@interface CPTManager : BaseTweakManager
+@interface CPTManager : CPTBaseTweakManager
 
 + (instancetype)manager;
 

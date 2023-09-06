@@ -5,7 +5,7 @@
 #import <Foundation/Foundation.h>
 #import <Network/Network.h>
 
-@interface BaseTweakManager : NSObject
+@interface CCTBaseTweakManager : NSObject
 
 - (instancetype)initWithQueue:(NSString *)queueName :(NSString *)logPrefix :(NSString *)tweakName :(NSString *)cacheFileName;
 

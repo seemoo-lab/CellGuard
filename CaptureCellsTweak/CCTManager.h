@@ -4,10 +4,10 @@
 
 #import <Foundation/Foundation.h>
 #import <Network/Network.h>
-#import "BaseTweakManager.h"
+#import "CCTBaseTweakManager.h"
 
 
-@interface CCTManager : BaseTweakManager
+@interface CCTManager : CCTBaseTweakManager
 
 + (instancetype)manager;
 
