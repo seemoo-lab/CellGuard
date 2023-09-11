@@ -13,7 +13,10 @@ import OSLog
 struct CellListView: View {
     
     @State private var isShowingFilterView = false
+    @State private var isShowingDateSheet = false
     @State private var settings = CellListFilterSettings()
+    
+    @State private var sheetDate = Date()
     
     var body: some View {
         VStack {
@@ -32,27 +35,12 @@ struct CellListView: View {
         }
         .navigationTitle("Cells")
         .toolbar {
-            // TODO: Put the two buttons into a menu appearing when holding the filter view button
             ToolbarItem(placement: .navigationBarTrailing) {
-                if let pastDay = Calendar.current.date(byAdding: .day, value: -1, to: settings.date) {
-                    Button {
-                        settings.date = pastDay
-                        settings.timeFrame = .past
-                    } label: {
-                        Image(systemName: "chevron.left")
-                    }
-                }
-            }
-            ToolbarItem(placement: .navigationBarTrailing) {
-                let today = Calendar.current.startOfDay(for: Date())
-                if let nextDay = Calendar.current.date(byAdding: .day, value: 1, to: settings.date) {
-                    Button {
-                        settings.date = nextDay
-                        settings.timeFrame = nextDay >= today ? .live : .past
-                    } label: {
-                        Image(systemName: "chevron.right")
-                    }
-                    .disabled(settings.date >= today)
+                Button {
+                    sheetDate = settings.date
+                    isShowingDateSheet.toggle()
+                } label: {
+                    Image(systemName: "calendar")
                 }
             }
             ToolbarItem(placement: .navigationBarTrailing) {
@@ -63,6 +51,31 @@ struct CellListView: View {
                     Image(systemName: "line.horizontal.3.decrease.circle")
                 }
             }
+        }
+        .sheet(isPresented: $isShowingDateSheet) {
+            VStack {
+                Text("Select Date")
+                    .font(.headline)
+                Text("Choose a date to inspect cells")
+                    .font(.subheadline)
+                    .padding([.bottom], 40)
+                
+                DatePicker("Cell Date", selection: $sheetDate, in: Date.distantPast...Date(), displayedComponents: [.date])
+                    .datePickerStyle(.graphical)
+                
+                Button {
+                    let startOfToday = Calendar.current.startOfDay(for: Date())
+                    let startOfDate = Calendar.current.startOfDay(for: sheetDate)
+                    settings.timeFrame = startOfToday == startOfDate ? .live : .past
+                    settings.date = sheetDate
+                    isShowingDateSheet.toggle()
+                } label: {
+                    Text("Apply")
+                        .bold()
+                }
+                .padding([.top], 40)
+            }
+            .padding()
         }
         // Magic that prevents Pickers from closing
         // See: https://stackoverflow.com/a/70307271
