@@ -13,51 +13,40 @@ struct ExportView: View {
     @State private var doExportLocations = true
     @State private var doExportPackets = true
     
-    @State private var doCompressFile = true
-    
     @State private var isExportInProgress = false
+    @State private var exportProgress: Float = 0.0
     @State private var shareURL: URLIdentifiable? = nil
     @State private var showFailAlert: Bool = false
     @State private var failReason: String? = nil
     
     var body: some View {
         List {
-            Section(header: Text("Included Datasets"), footer: Text("Be aware that every category includes highly personal information. Only share this data with persons you trust.")) {
+            Section(header: Text("Datasets"), footer: Text("Be aware that every category includes highly personal information. Only share this data with persons you trust.")) {
                 Toggle("Connected Cells", isOn: $doExportCells)
                 Toggle("Cell Cache", isOn: $doExportALSCache)
                 Toggle("Locations", isOn: $doExportLocations)
                 Toggle("Packets", isOn: $doExportPackets)
             }
-            Section(header: Text("File"), footer: Text("Enable compression to decrease the file's size.")) {
-                Toggle("Compression", isOn: $doCompressFile)
+            Section(header: Text("Actions")) {
+                Button(action: export) {
+                    HStack {
+                        Text("Export")
+                        Spacer()
+                        if isExportInProgress {
+                            CircularProgressView(progress: $exportProgress)
+                                .frame(width: 20, height: 20)
+                        } else {
+                            Image(systemName: "square.and.arrow.up")
+                        }
+                    }
+                }
+                .disabled(!doExportCells && !doExportALSCache && !doExportLocations && !doExportPackets)
             }
         }
         .disabled(isExportInProgress)
         .listStyle(.insetGrouped)
-        .navigationTitle(Text("Data"))
+        .navigationTitle("Export Data")
         .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            // Prevent the "< Settings" button from disappearing on iOS 14
-            // See: https://stackoverflow.com/a/72432154
-            ToolbarItem(placement: .navigationBarLeading) {
-                Text("")
-            }
-            
-            ToolbarItem(placement: ToolbarItemPlacement.navigationBarTrailing) {
-                if (isExportInProgress) {
-                    ProgressView()
-                }
-            }
-            
-            ToolbarItem(placement: .confirmationAction) {
-                Button {
-                    export()
-                } label: {
-                    Text("Export")
-                }
-                .disabled(!doExportCells && !doExportALSCache && !doExportLocations && !doExportPackets || isExportInProgress)
-            }
-        }
         .sheet(item: $shareURL) { url in
             ActivityViewController(activityItems: [url.url])
         }
@@ -79,7 +68,9 @@ struct ExportView: View {
             PersistenceCategory.packets: doExportPackets,
         ].filter { $0.value }.map { $0.key }
         
-        PersistenceExporter.exportInBackground(categories: exportCategories, compress: doCompressFile) { result in
+        PersistenceCSVExporter.exportInBackground(categories: exportCategories) { currentProgress, totalProgress in
+            exportProgress = Float(currentProgress) / Float(totalProgress)
+        } completion: { result in
             isExportInProgress = false
             do {
                 self.shareURL = URLIdentifiable(url: try result.get())

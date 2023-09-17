@@ -112,7 +112,7 @@ struct ImportView: View {
                     Button {
                         importInProgress = true
                         // TODO: Use different importers based on the file type
-                        PersistenceImporter.importInBackground(url: fileUrl) { currentProgress, totalProgress in
+                        PersistenceJSONImporter.importInBackground(url: fileUrl) { currentProgress, totalProgress in
                             importProgress = Float(currentProgress) / Float(totalProgress)
                         } completion: { result in
                             do {

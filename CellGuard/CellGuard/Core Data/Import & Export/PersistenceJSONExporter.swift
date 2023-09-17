@@ -1,5 +1,5 @@
 //
-//  PersistenceExporter.swift
+//  PersistenceJSONExporter.swift
 //  CellGuard
 //
 //  Created by Lukas Arnold on 23.01.23.
@@ -16,11 +16,11 @@ enum PersistenceExportError: Error {
     case fetchOrSerializationFailed(Error)
 }
 
-struct PersistenceExporter {
+struct PersistenceJSONExporter {
     
     private static let logger = Logger(
         subsystem: Bundle.main.bundleIdentifier!,
-        category: String(describing: PersistenceExporter.self)
+        category: String(describing: PersistenceJSONExporter.self)
     )
     
     static func exportInBackground(categories: [PersistenceCategory], compress: Bool, completion: @escaping (Result<URL, Error>) -> Void) {
@@ -28,7 +28,7 @@ struct PersistenceExporter {
         
         // Run the export in the background
         DispatchQueue.global(qos: .userInitiated).async {
-            let exporter = PersistenceExporter(categories: categories, compress: compress)
+            let exporter = PersistenceJSONExporter(categories: categories, compress: compress)
             
             exporter.export { result in
                 // Call the callback on the main queue

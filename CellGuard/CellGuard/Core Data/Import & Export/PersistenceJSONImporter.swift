@@ -1,5 +1,5 @@
 //
-//  PersistenceImporter.swift
+//  PersistenceJSONImporter.swift
 //  CellGuard
 //
 //  Created by Lukas Arnold on 24.01.23.
@@ -12,7 +12,7 @@ enum PersistenceImportError: Error {
     case permissionDenied
     case iCloudDownload
     case readFailed(Error)
-    case deserilizationFailed(Error)
+    case deserializationFailed(Error)
     case invalidStructure
     case locationImportFailed(Error)
     case cellImportFailed(Error)
@@ -25,7 +25,7 @@ extension PersistenceImportError: LocalizedError {
         case .permissionDenied: return "Permission Denied"
         case .iCloudDownload: return "Download the file from iCloud using the Files app before opening it."
         case let .readFailed(error): return "Read Failed (\(error.localizedDescription))"
-        case let .deserilizationFailed(error): return "Derserilization Failed (\(error.localizedDescription))"
+        case let .deserializationFailed(error): return "Deserialization Failed (\(error.localizedDescription))"
         case .invalidStructure: return "Invalid JSON Structure"
         case let .locationImportFailed(error): return "Location Import Failed (\(error.localizedDescription))"
         case let .cellImportFailed(error): return "Cell Import Failed (\(error.localizedDescription))"
@@ -40,11 +40,11 @@ extension PersistenceImportError: LocalizedError {
 // https://stackoverflow.com/questions/69499921/adding-file-icon-to-custom-file-type-in-xcode
 // https://developer.apple.com/documentation/uikit/view_controllers/adding_a_document_browser_to_your_app/setting_up_a_document_browser_app
 
-struct PersistenceImporter {
+struct PersistenceJSONImporter {
     
     private static let logger = Logger(
         subsystem: Bundle.main.bundleIdentifier!,
-        category: String(describing: PersistenceImporter.self)
+        category: String(describing: PersistenceJSONImporter.self)
     )
     
     // Provide synchronized access to the import active variable
@@ -85,7 +85,7 @@ struct PersistenceImporter {
         
         DispatchQueue.global(qos: .userInitiated).async {
             let result = Result.init {
-                try PersistenceImporter().importData(from: url, progress: internalProgress)
+                try PersistenceJSONImporter().importData(from: url, progress: internalProgress)
             }
             DispatchQueue.main.async {
                 completion(result)
@@ -131,7 +131,7 @@ struct PersistenceImporter {
         do {
             json = try JSONSerialization.jsonObject(with: data)
         } catch {
-            throw PersistenceImportError.deserilizationFailed(error)
+            throw PersistenceImportError.deserializationFailed(error)
         }
         
         

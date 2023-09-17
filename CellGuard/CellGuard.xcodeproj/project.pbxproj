@@ -79,9 +79,12 @@
 		CF9237132A3E1BD300FC7D21 /* KeyValueListRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF9237122A3E1BD300FC7D21 /* KeyValueListRow.swift */; };
 		CF93B84E297FF5C3003F9FFE /* CellFileTypeIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = CF93B84D297FF5C3003F9FFE /* CellFileTypeIcon.png */; };
 		CF93B852297FFEF9003F9FFE /* URLIdentifiable.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF93B851297FFEF9003F9FFE /* URLIdentifiable.swift */; };
-		CF93B85429800278003F9FFE /* PersistenceImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF93B85329800278003F9FFE /* PersistenceImporter.swift */; };
+		CF93B85429800278003F9FFE /* PersistenceJSONImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF93B85329800278003F9FFE /* PersistenceJSONImporter.swift */; };
 		CF93B85629800451003F9FFE /* CellFileKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF93B85529800451003F9FFE /* CellFileKeys.swift */; };
+		CF9626C32AB7474500C46953 /* PersistenceCSVExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF9626C22AB7474500C46953 /* PersistenceCSVExporter.swift */; };
 		CFA09CF92A73D4B000D16832 /* SwiftExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFA09CF82A73D4B000D16832 /* SwiftExtensions.swift */; };
+		CFA632552AB3501800D46025 /* CSV in Frameworks */ = {isa = PBXBuildFile; productRef = CFA632542AB3501800D46025 /* CSV */; };
+		CFA632582AB3503400D46025 /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = CFA632572AB3503400D46025 /* ZIPFoundation */; };
 		CFB51834297AEFA80006C690 /* CellStatusIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB51833297AEFA80006C690 /* CellStatusIcon.swift */; };
 		CFB8B2882963417B00503189 /* LocationDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB8B2872963417B00503189 /* LocationDataManager.swift */; };
 		CFB8B28A2963498200503189 /* CellGuardAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB8B2892963498200503189 /* CellGuardAppDelegate.swift */; };
@@ -113,7 +116,7 @@
 		CFDF5D81297F05F1000708A8 /* CellMapDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFDF5D80297F05F1000708A8 /* CellMapDelegate.swift */; };
 		CFDF5D83297F0736000708A8 /* CommonCellMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFDF5D82297F0736000708A8 /* CommonCellMap.swift */; };
 		CFDF5D85297F09D3000708A8 /* DatabaseAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFDF5D84297F09D3000708A8 /* DatabaseAnnotation.swift */; };
-		CFDF5D87297F190A000708A8 /* PersistenceExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFDF5D86297F190A000708A8 /* PersistenceExporter.swift */; };
+		CFDF5D87297F190A000708A8 /* PersistenceJSONExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFDF5D86297F190A000708A8 /* PersistenceJSONExporter.swift */; };
 		CFDF5D89297F340E000708A8 /* ActivityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFDF5D88297F340E000708A8 /* ActivityViewController.swift */; };
 		CFE988DF2AA88A2B0039EDF9 /* CircularProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFE988DE2AA88A2B0039EDF9 /* CircularProgressView.swift */; };
 		CFF05F6D2A39AA3900DE6FB2 /* DeleteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFF05F6C2A39AA3900DE6FB2 /* DeleteView.swift */; };
@@ -209,8 +212,9 @@
 		CF9237122A3E1BD300FC7D21 /* KeyValueListRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyValueListRow.swift; sourceTree = "<group>"; };
 		CF93B84D297FF5C3003F9FFE /* CellFileTypeIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = CellFileTypeIcon.png; path = ../../../Icon/Apple/CellFileTypeIcon.png; sourceTree = "<group>"; };
 		CF93B851297FFEF9003F9FFE /* URLIdentifiable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLIdentifiable.swift; sourceTree = "<group>"; };
-		CF93B85329800278003F9FFE /* PersistenceImporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceImporter.swift; sourceTree = "<group>"; };
+		CF93B85329800278003F9FFE /* PersistenceJSONImporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceJSONImporter.swift; sourceTree = "<group>"; };
 		CF93B85529800451003F9FFE /* CellFileKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellFileKeys.swift; sourceTree = "<group>"; };
+		CF9626C22AB7474500C46953 /* PersistenceCSVExporter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PersistenceCSVExporter.swift; sourceTree = "<group>"; };
 		CFA09CF82A73D4B000D16832 /* SwiftExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftExtensions.swift; sourceTree = "<group>"; };
 		CFB51833297AEFA80006C690 /* CellStatusIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellStatusIcon.swift; sourceTree = "<group>"; };
 		CFB8B2872963417B00503189 /* LocationDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationDataManager.swift; sourceTree = "<group>"; };
@@ -245,7 +249,7 @@
 		CFDF5D80297F05F1000708A8 /* CellMapDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellMapDelegate.swift; sourceTree = "<group>"; };
 		CFDF5D82297F0736000708A8 /* CommonCellMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonCellMap.swift; sourceTree = "<group>"; };
 		CFDF5D84297F09D3000708A8 /* DatabaseAnnotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseAnnotation.swift; sourceTree = "<group>"; };
-		CFDF5D86297F190A000708A8 /* PersistenceExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceExporter.swift; sourceTree = "<group>"; };
+		CFDF5D86297F190A000708A8 /* PersistenceJSONExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceJSONExporter.swift; sourceTree = "<group>"; };
 		CFDF5D88297F340E000708A8 /* ActivityViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityViewController.swift; sourceTree = "<group>"; };
 		CFE988DE2AA88A2B0039EDF9 /* CircularProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularProgressView.swift; sourceTree = "<group>"; };
 		CFF05F6C2A39AA3900DE6FB2 /* DeleteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteView.swift; sourceTree = "<group>"; };
@@ -260,6 +264,8 @@
 				CFD0236D2961AD1500AA5A1C /* SwiftProtobuf in Frameworks */,
 				CF2002ED2A2F3244000922E6 /* BinarySwift in Frameworks */,
 				CF9237112A3E069D00FC7D21 /* Gzip in Frameworks */,
+				CFA632552AB3501800D46025 /* CSV in Frameworks */,
+				CFA632582AB3503400D46025 /* ZIPFoundation in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -457,9 +463,37 @@
 			path = "Capture Packets";
 			sourceTree = "<group>";
 		};
+		CFA145862AB3454800239C49 /* Import & Export */ = {
+			isa = PBXGroup;
+			children = (
+				CFF05F6E2A39ABF500DE6FB2 /* PersistenceCategories.swift */,
+				CFA145892AB3457100239C49 /* CSV */,
+				CFA145872AB3455E00239C49 /* JSON */,
+			);
+			path = "Import & Export";
+			sourceTree = "<group>";
+		};
+		CFA145872AB3455E00239C49 /* JSON */ = {
+			isa = PBXGroup;
+			children = (
+				CFDF5D86297F190A000708A8 /* PersistenceJSONExporter.swift */,
+				CF93B85329800278003F9FFE /* PersistenceJSONImporter.swift */,
+			);
+			name = JSON;
+			sourceTree = "<group>";
+		};
+		CFA145892AB3457100239C49 /* CSV */ = {
+			isa = PBXGroup;
+			children = (
+				CF9626C22AB7474500C46953 /* PersistenceCSVExporter.swift */,
+			);
+			name = CSV;
+			sourceTree = "<group>";
+		};
 		CFB8B28B2963560100503189 /* Core Data */ = {
 			isa = PBXGroup;
 			children = (
+				CFA145862AB3454800239C49 /* Import & Export */,
 				CF93B85529800451003F9FFE /* CellFileKeys.swift */,
 				CF93B84D297FF5C3003F9FFE /* CellFileTypeIcon.png */,
 				CFD023412961A10D00AA5A1C /* CellGuard.xcdatamodeld */,
@@ -468,10 +502,7 @@
 				CFD0233F2961A10D00AA5A1C /* PersistenceController.swift */,
 				CF446755298D78F80083EE63 /* PersistenceQueries.swift */,
 				CF0FDCCA296B466100A6FFE2 /* PersistenceError.swift */,
-				CFDF5D86297F190A000708A8 /* PersistenceExporter.swift */,
-				CF93B85329800278003F9FFE /* PersistenceImporter.swift */,
 				CF0FDCC8296B310400A6FFE2 /* PersistencePreview.swift */,
-				CFF05F6E2A39ABF500DE6FB2 /* PersistenceCategories.swift */,
 				CF6EC8AC2A6C4C88004CF0AB /* PreviewInfo.swift */,
 			);
 			path = "Core Data";
@@ -618,6 +649,8 @@
 				CFD0236C2961AD1500AA5A1C /* SwiftProtobuf */,
 				CF2002EC2A2F3244000922E6 /* BinarySwift */,
 				CF9237102A3E069D00FC7D21 /* Gzip */,
+				CFA632542AB3501800D46025 /* CSV */,
+				CFA632572AB3503400D46025 /* ZIPFoundation */,
 			);
 			productName = CellGuard;
 			productReference = CFD023332961A10D00AA5A1C /* CellGuard.app */;
@@ -695,6 +728,8 @@
 				CFD0236B2961AD1500AA5A1C /* XCRemoteSwiftPackageReference "swift-protobuf" */,
 				CF2002EB2A2F3244000922E6 /* XCRemoteSwiftPackageReference "BinarySwift" */,
 				CF92370F2A3E069D00FC7D21 /* XCRemoteSwiftPackageReference "GzipSwift" */,
+				CFA632532AB3501800D46025 /* XCRemoteSwiftPackageReference "CSV.swift" */,
+				CFA632562AB3503400D46025 /* XCRemoteSwiftPackageReference "ZIPFoundation" */,
 			);
 			productRefGroup = CFD023342961A10D00AA5A1C /* Products */;
 			projectDirPath = "";
@@ -747,6 +782,7 @@
 				CF5EA78B29892F420061E9F1 /* CGTabBarAppearance.swift in Sources */,
 				CFDF5D7B297EF71F000708A8 /* CellClusterAnnotation.swift in Sources */,
 				CFD8DD282A7175AF00954A25 /* ARIContentParser.swift in Sources */,
+				CF9626C32AB7474500C46953 /* PersistenceCSVExporter.swift in Sources */,
 				CF93B852297FFEF9003F9FFE /* URLIdentifiable.swift in Sources */,
 				CF0A5678298A7A910012B2A8 /* VerificationProgressView.swift in Sources */,
 				CF446754298D2A040083EE63 /* CellLocationDistance.swift in Sources */,
@@ -787,7 +823,7 @@
 				CF4E53A22A321B3000AE2059 /* PacketTabView.swift in Sources */,
 				CF2A1C1B2975670000E8B61C /* CGNotificationManager.swift in Sources */,
 				CF4E53A62A32225300AE2059 /* ExportView.swift in Sources */,
-				CFDF5D87297F190A000708A8 /* PersistenceExporter.swift in Sources */,
+				CFDF5D87297F190A000708A8 /* PersistenceJSONExporter.swift in Sources */,
 				CF6EC8AD2A6C4C88004CF0AB /* PreviewInfo.swift in Sources */,
 				CF0FDCB529698E1500A6FFE2 /* SummaryTabView.swift in Sources */,
 				CF2A1C1D2975C71000E8B61C /* BackgroundState.swift in Sources */,
@@ -804,7 +840,7 @@
 				CFDF5D7D297EF76C000708A8 /* LocationClusterAnnotation.swift in Sources */,
 				CF4E539C2A31E73F00AE2059 /* CommonDefinitions.swift in Sources */,
 				CFDF5D89297F340E000708A8 /* ActivityViewController.swift in Sources */,
-				CF93B85429800278003F9FFE /* PersistenceImporter.swift in Sources */,
+				CF93B85429800278003F9FFE /* PersistenceJSONImporter.swift in Sources */,
 				CFDF5D71297EF0C6000708A8 /* CellAnnotation.swift in Sources */,
 				CF208D9F2A387261003A73A7 /* PacketFilterView.swift in Sources */,
 				CF2A1C202975CDD200E8B61C /* RiskIndicatorCard.swift in Sources */,
@@ -1197,6 +1233,22 @@
 				minimumVersion = 6.0.0;
 			};
 		};
+		CFA632532AB3501800D46025 /* XCRemoteSwiftPackageReference "CSV.swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/yaslab/CSV.swift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
+		CFA632562AB3503400D46025 /* XCRemoteSwiftPackageReference "ZIPFoundation" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/weichsel/ZIPFoundation";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.9.16;
+			};
+		};
 		CFD0236B2961AD1500AA5A1C /* XCRemoteSwiftPackageReference "swift-protobuf" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/apple/swift-protobuf.git";
@@ -1217,6 +1269,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = CF92370F2A3E069D00FC7D21 /* XCRemoteSwiftPackageReference "GzipSwift" */;
 			productName = Gzip;
+		};
+		CFA632542AB3501800D46025 /* CSV */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CFA632532AB3501800D46025 /* XCRemoteSwiftPackageReference "CSV.swift" */;
+			productName = CSV;
+		};
+		CFA632572AB3503400D46025 /* ZIPFoundation */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CFA632562AB3503400D46025 /* XCRemoteSwiftPackageReference "ZIPFoundation" */;
+			productName = ZIPFoundation;
 		};
 		CFD0236C2961AD1500AA5A1C /* SwiftProtobuf */ = {
 			isa = XCSwiftPackageProductDependency;
