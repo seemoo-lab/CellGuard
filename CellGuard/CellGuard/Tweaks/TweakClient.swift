@@ -36,6 +36,12 @@ struct TweakClient {
         // Print the connection state
         connection.stateUpdateHandler = { state in
             Self.logger.trace("Connection State (\(self.port)) : \(String(describing: state))")
+            
+            // If the connection has been refused (because the tweak is not active), we'll close it.
+            // Otherwise CellGuard accumulates multiple waiting connections.
+            if state == .waiting(.posix(.ECONNREFUSED)) {
+                connection.cancel()
+            }
         }
         
         // Create a handler for the received message
