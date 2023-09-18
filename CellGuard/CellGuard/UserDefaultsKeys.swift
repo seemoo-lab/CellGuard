@@ -12,4 +12,5 @@ enum UserDefaultsKeys: String {
     case packetRetention
     case locationRetention
     case showTrackingMarker
+    case lastExportDate
 }

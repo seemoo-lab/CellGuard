@@ -23,6 +23,9 @@ struct ExportView: View {
     @State private var exportProgressLocations: Float = 0
     @State private var exportProgressPackets: Float = 0
     
+    @AppStorage(UserDefaultsKeys.lastExportDate.rawValue)
+    var lastExportDate: Double = -1.0
+    
     var body: some View {
         List {
             Section(header: Text("Datasets"), footer: Text("Be aware that every category includes highly personal information. Only share this data with persons you trust.")) {
@@ -31,7 +34,7 @@ struct ExportView: View {
                 ProgressToggle("Locations", isOn: $doExportLocations, processing: $isExportInProgress, progress: $exportProgressLocations)
                 ProgressToggle("Packets", isOn: $doExportPackets, processing: $isExportInProgress, progress: $exportProgressPackets)
             }
-            Section(header: Text("Actions")) {
+            Section(header: Text("Actions"), footer: Text(exportDateDescription())) {
                 Button(action: export) {
                     HStack {
                         Text("Export")
@@ -58,6 +61,16 @@ struct ExportView: View {
                 title: Text("Export Failed"),
                 message: Text("Failed to export the selected datasets: \(failReason ?? "Unknown")")
             )
+        }
+    }
+    
+    func exportDateDescription() -> String {
+        let prefix = "Last export: "
+        if lastExportDate < 0 {
+            return "\(prefix)Never"
+        } else {
+            let date = Date(timeIntervalSince1970: lastExportDate)
+            return "\(prefix)\(mediumDateTimeFormatter.string(for: date)!)"
         }
     }
     
@@ -99,6 +112,7 @@ struct ExportView: View {
             }
             
             isExportInProgress = false
+            UserDefaults.standard.setValue(Date().timeIntervalSince1970, forKey: UserDefaultsKeys.lastExportDate.rawValue)
         }
     }
 }
