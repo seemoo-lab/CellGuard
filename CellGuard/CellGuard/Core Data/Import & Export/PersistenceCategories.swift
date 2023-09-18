@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum PersistenceCategory {
+enum PersistenceCategory: Comparable {
     case info
     case connectedCells
     case alsCells

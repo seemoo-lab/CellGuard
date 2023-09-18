@@ -16,6 +16,8 @@ enum PersistenceCSVExporterError: Error {
     case noOutputStream
 }
 
+typealias ProgressFunc = (PersistenceCategory, Int, Int) -> Void
+
 struct PersistenceCSVExporter {
     
     private static let logger = Logger(
@@ -25,21 +27,14 @@ struct PersistenceCSVExporter {
     
     static func exportInBackground(
         categories: [PersistenceCategory],
-        progress: @escaping (Int, Int) -> Void,
+        progress: @escaping ProgressFunc,
         completion: @escaping (Result<URL, Error>) -> Void
     ) {
         
-        var progressCounter = 0
-        let progressMax = 5
-        let localProgress = { () in
-            progressCounter += 1
+        let localProgress = { (category, current, total) in
             DispatchQueue.main.async {
-                progress(progressCounter, progressMax)
+                progress(category, current, total)
             }
-        }
-        
-        DispatchQueue.main.async {
-            progress(0, progressMax)
         }
         
         // Run the export in the background
@@ -69,7 +64,7 @@ struct PersistenceCSVExporter {
         numberFormatter.usesSignificantDigits = false
     }
     
-    private func export(progress: @escaping () -> Void, completion: @escaping (Result<URL, Error>) -> Void) {
+    private func export(progress: @escaping ProgressFunc, completion: @escaping (Result<URL, Error>) -> Void) {
         completion(Result {
             do {
                 // Current date for directory and file URLs
@@ -95,7 +90,7 @@ struct PersistenceCSVExporter {
                 
                 Self.logger.debug("Compressing files into an archive")
                 try compress(directoryURL: directoryURL, archiveUrl: archiveURL)
-                progress()
+                // progress()
                 
                 Self.logger.debug("Cleaning temporary directory")
                 try clean(tmpDirectory: directoryURL)
@@ -109,31 +104,30 @@ struct PersistenceCSVExporter {
         })
     }
     
-    private func writeAll(categories: [PersistenceCategory], directoryURL: URL, progress: () -> Void) throws {
+    private func writeAll(categories: [PersistenceCategory], directoryURL: URL, progress: ProgressFunc) throws {
         var dataFiles: [String: Int] = [:]
         
-        for category in categories.filter({ $0 != .info }) {
-            let count = try write(category: category, url: category.url(directory: directoryURL))
+        for category in categories.sorted().filter({ $0 != .info }) {
+            let count = try write(category: category, url: category.url(directory: directoryURL), progress: progress)
             dataFiles[category.fileName()] = count
-            progress()
         }
         
-        try writeInfo(url: PersistenceCategory.info.url(directory: directoryURL), data: dataFiles)
+        try writeInfo(url: PersistenceCategory.info.url(directory: directoryURL), data: dataFiles, progress: progress)
     }
     
-    private func write(category: PersistenceCategory, url: URL) throws -> Int {
+    private func write(category: PersistenceCategory, url: URL, progress: ProgressFunc) throws -> Int {
         Self.logger.debug("Writing \(String(describing: category)) to \(url)")
         
         switch (category) {
         case .info: return 0
-        case .connectedCells: return try writeUserCells(url: url)
-        case .alsCells: return try writeAlsCells(url: url)
-        case .locations: return try writeLocations(url: url)
-        case .packets: return try writePackets(url: url)
+        case .connectedCells: return try writeUserCells(url: url, progress: progress)
+        case .alsCells: return try writeAlsCells(url: url, progress: progress)
+        case .locations: return try writeLocations(url: url, progress: progress)
+        case .packets: return try writePackets(url: url, progress: progress)
         }
     }
     
-    private func writeInfo(url: URL, data: [String: Int]) throws {
+    private func writeInfo(url: URL, data: [String: Int], progress: ProgressFunc) throws {
         // https://developer.apple.com/documentation/uikit/uidevice?language=objc
         let device = UIDevice.current
         
@@ -157,127 +151,144 @@ struct PersistenceCSVExporter {
         try json.write(to: url)
     }
     
-    private func openCSVWriter(url: URL) throws -> CSVWriter {
+    private func writeData<T>(
+        url: URL,
+        category: PersistenceCategory,
+        progress: ProgressFunc,
+        header: [String],
+        fetchRequest: () -> NSFetchRequest<T>,
+        write: (CSVWriter, T) throws -> Void
+    ) throws -> Int {
+        // Create the CSV file
         guard let stream = OutputStream(url: url, append: false) else {
             throw PersistenceCSVExporterError.noOutputStream
         }
+        defer { stream.close() }
         
-        return try CSVWriter(stream: stream)
-    }
-    
-    private func writeUserCells(url: URL) throws -> Int {
-        let csv = try openCSVWriter(url: url)
-        defer { csv.stream.close() }
+        // Write the CSV file's header
+        let csv = try CSVWriter(stream: stream)
+        try csv.write(row: header)
         
-        try csv.write(row: ["collected", "json", "status", "score"])
-        
+        // Request the data from the DB and write it sequentially to the file
         return try persistence.performAndWait { context in
-            let request: NSFetchRequest<TweakCell> = TweakCell.fetchRequest()
+            // Don't keep strong references to all objects loaded in this context as we just have to read them once
+            // See: https://developer.apple.com/documentation/coredata/nsmanagedobjectcontext/1506290-retainsregisteredobjects
+            context.retainsRegisteredObjects = false
+            
+            let request: NSFetchRequest<T> = fetchRequest()
             // Limit the number of entries concurrently loaded into memory
             // See: https://stackoverflow.com/a/52118107
             // See: https://developer.apple.com/documentation/coredata/nsfetchrequest/1506558-fetchbatchsize?language=objc
             request.fetchBatchSize = 100
             
-            let results = try request.execute()
-            for result in results {
-                try csv.write(row: [
-                    csvDate(result.collected),
-                    csvString(result.json),
-                    csvString(result.status),
-                    csvNumber(result.score)
-                ])
+            // Count the number of data points in the table & update the process
+            let count = try context.count(for: request)
+            var counter = 0
+            progress(category, counter, count)
+            
+            for result in try request.execute() {
+                // Write the data point to the CSV file
+                try write(csv, result)
+                
+                // Send counter updates only once every 100 data points
+                counter += 1
+                if counter % 100 == 0 {
+                    progress(category, counter, count)
+                }
             }
             
-            return results.count
+            progress(category, counter, count)
+            
+            return count
         } ?? 0
     }
     
-    private func writeAlsCells(url: URL) throws -> Int {
-        let csv = try openCSVWriter(url: url)
-        defer { csv.stream.close() }
-        
-        try csv.write(row: ["imported", "technology", "country", "network", "area", "cell", "frequency", "physicalCell", "latitude", "longitude", "horizontalAccuracy", "reach", "score"])
-        
-        return try persistence.performAndWait { context in
-            let request: NSFetchRequest<ALSCell> = ALSCell.fetchRequest()
-            request.fetchBatchSize = 100
-            request.relationshipKeyPathsForPrefetching = ["location"]
-            
-            let results = try request.execute()
-            for result in results {
-                let location = result.location
-                try csv.write(row: [
-                    csvDate(result.imported),
-                    csvString(result.technology),
-                    csvNumber(result.country),
-                    csvNumber(result.network),
-                    csvNumber(result.area),
-                    csvNumber(result.cell),
-                    csvNumber(result.frequency),
-                    csvNumber(result.physicalCell),
-                    csvNumber(location?.latitude),
-                    csvNumber(location?.longitude),
-                    csvNumber(location?.horizontalAccuracy),
-                    csvNumber(location?.reach),
-                    csvNumber(location?.score),
-                ])
-            }
-            
-            return results.count
-        } ?? 0
+    private func writeUserCells(url: URL, progress: ProgressFunc) throws -> Int {
+        return try writeData(
+            url: url,
+            category: .connectedCells,
+            progress: progress,
+            header: ["collected", "json", "status", "score"],
+            fetchRequest: TweakCell.fetchRequest
+        ) { csv, result in
+            try csv.write(row: [
+                csvDate(result.collected),
+                csvString(result.json),
+                csvString(result.status),
+                csvNumber(result.score)
+            ])
+        }
     }
     
-    private func writeLocations(url: URL) throws -> Int {
-        let csv = try openCSVWriter(url: url)
-        defer { csv.stream.close() }
-        
-        try csv.write(row: ["collected", "latitude", "longitude", "horizontalAccuracy", "altitude", "verticalAccuracy", "speed", "speedAccuracy", "background"])
-        
-        return try persistence.performAndWait { context in
-            let request: NSFetchRequest<UserLocation> = UserLocation.fetchRequest()
-            request.fetchBatchSize = 100
-            
-            let results = try request.execute()
-            for result in results {
-                try csv.write(row: [
-                    csvDate(result.collected),
-                    csvNumber(result.latitude),
-                    csvNumber(result.longitude),
-                    csvNumber(result.horizontalAccuracy),
-                    csvNumber(result.altitude),
-                    csvNumber(result.verticalAccuracy),
-                    csvNumber(result.speed),
-                    csvNumber(result.speedAccuracy),
-                    csvBool(result.background)
-                ])
+    private func writeAlsCells(url: URL, progress: ProgressFunc) throws -> Int {
+        return try writeData(
+            url: url,
+            category: .alsCells,
+            progress: progress,
+            header: ["imported", "technology", "country", "network", "area", "cell", "frequency", "physicalCell", "latitude", "longitude", "horizontalAccuracy", "reach", "score"],
+            fetchRequest: {
+                let request: NSFetchRequest<ALSCell> = ALSCell.fetchRequest()
+                request.relationshipKeyPathsForPrefetching = ["location"]
+                return request
             }
+        ) { csv, result in
+            let location = result.location
             
-            return results.count
-        } ?? 0
+            try csv.write(row: [
+                csvDate(result.imported),
+                csvString(result.technology),
+                csvNumber(result.country),
+                csvNumber(result.network),
+                csvNumber(result.area),
+                csvNumber(result.cell),
+                csvNumber(result.frequency),
+                csvNumber(result.physicalCell),
+                csvNumber(location?.latitude),
+                csvNumber(location?.longitude),
+                csvNumber(location?.horizontalAccuracy),
+                csvNumber(location?.reach),
+                csvNumber(location?.score),
+            ])
+        }
     }
     
-    private func writePackets(url: URL) throws -> Int {
-        let csv = try openCSVWriter(url: url)
-        defer { csv.stream.close() }
-        
-        try csv.write(row: ["collected", "direction", "proto", "data"])
-        
-        return try persistence.performAndWait { context in
-            let request: NSFetchRequest<Packet> = Packet.fetchRequest()
-            request.fetchBatchSize = 100
-            
-            let results = try request.execute()
-            for result in results {
-                try csv.write(row: [
-                    csvDate(result.collected),
-                    csvString(result.direction),
-                    csvString(result.proto),
-                    csvString(result.data?.base64EncodedString())
-                ])
-            }
-            
-            return results.count
-        } ?? 0
+    private func writeLocations(url: URL, progress: ProgressFunc) throws -> Int {
+        return try writeData(
+            url: url,
+            category: .locations,
+            progress: progress,
+            header: ["collected", "latitude", "longitude", "horizontalAccuracy", "altitude", "verticalAccuracy", "speed", "speedAccuracy", "background"],
+            fetchRequest: UserLocation.fetchRequest
+        ) { csv, result in
+            try csv.write(row: [
+                csvDate(result.collected),
+                csvNumber(result.latitude),
+                csvNumber(result.longitude),
+                csvNumber(result.horizontalAccuracy),
+                csvNumber(result.altitude),
+                csvNumber(result.verticalAccuracy),
+                csvNumber(result.speed),
+                csvNumber(result.speedAccuracy),
+                csvBool(result.background)
+            ])
+        }
+    }
+    
+    private func writePackets(url: URL, progress: ProgressFunc) throws -> Int {
+        return try writeData(
+            url: url,
+            category: .packets,
+            progress: progress,
+            header: ["collected", "direction", "proto", "data"],
+            fetchRequest: Packet.fetchRequest
+        ) { csv, result in
+            try csv.write(row: [
+                csvDate(result.collected),
+                csvString(result.direction),
+                csvString(result.proto),
+                csvString(result.data?.base64EncodedString())
+            ])
+        }
     }
     
     private func csvString(_ string: String?) -> String {
