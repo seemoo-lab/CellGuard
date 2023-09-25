@@ -352,7 +352,9 @@ struct PersistenceCSVImporter {
                 
                 return (packet, qmiPacket)
             }
-            try PersistenceController.shared.importQMIPackets(from: qmiPackets)
+            if qmiPackets.count > 0 {
+                try PersistenceController.shared.importQMIPackets(from: qmiPackets)
+            }
             
             let ariPackets = packets.compactMap { packet -> (CPTPacket, ParsedARIPacket)? in
                 guard let qmiPacket = try? ParsedARIPacket(data: packet.data) else {
@@ -361,7 +363,9 @@ struct PersistenceCSVImporter {
                 
                 return (packet, qmiPacket)
             }
-            try PersistenceController.shared.importARIPackets(from: ariPackets)
+            if ariPackets.count > 0 {
+                try PersistenceController.shared.importARIPackets(from: ariPackets)
+            }
         }
     }
     
