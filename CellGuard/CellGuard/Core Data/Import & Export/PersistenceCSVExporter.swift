@@ -16,7 +16,7 @@ enum PersistenceCSVExporterError: Error {
     case noOutputStream
 }
 
-typealias ProgressFunc = (PersistenceCategory, Int, Int) -> Void
+typealias CSVProgressFunc = (PersistenceCategory, Int, Int) -> Void
 
 struct PersistenceCSVExporter {
     
@@ -27,9 +27,10 @@ struct PersistenceCSVExporter {
     
     static func exportInBackground(
         categories: [PersistenceCategory],
-        progress: @escaping ProgressFunc,
+        progress: @escaping CSVProgressFunc,
         completion: @escaping (Result<URL, Error>) -> Void
     ) {
+        PortStatus.exportActive.store(true, ordering: .relaxed)
         
         let localProgress = { (category, current, total) in
             DispatchQueue.main.async {
@@ -47,6 +48,7 @@ struct PersistenceCSVExporter {
                 DispatchQueue.main.async {
                     completion(result)
                 }
+                PortStatus.exportActive.store(false, ordering: .relaxed)
             })
         }
     }
@@ -64,7 +66,7 @@ struct PersistenceCSVExporter {
         numberFormatter.usesSignificantDigits = false
     }
     
-    private func export(progress: @escaping ProgressFunc, completion: @escaping (Result<URL, Error>) -> Void) {
+    private func export(progress: @escaping CSVProgressFunc, completion: @escaping (Result<URL, Error>) -> Void) {
         completion(Result {
             do {
                 // Current date for directory and file URLs
@@ -104,7 +106,7 @@ struct PersistenceCSVExporter {
         })
     }
     
-    private func writeAll(categories: [PersistenceCategory], directoryURL: URL, progress: ProgressFunc) throws {
+    private func writeAll(categories: [PersistenceCategory], directoryURL: URL, progress: CSVProgressFunc) throws {
         var dataFiles: [String: Int] = [:]
         
         for category in categories.sorted().filter({ $0 != .info }) {
@@ -115,7 +117,7 @@ struct PersistenceCSVExporter {
         try writeInfo(url: PersistenceCategory.info.url(directory: directoryURL), data: dataFiles, progress: progress)
     }
     
-    private func write(category: PersistenceCategory, url: URL, progress: ProgressFunc) throws -> Int {
+    private func write(category: PersistenceCategory, url: URL, progress: CSVProgressFunc) throws -> Int {
         Self.logger.debug("Writing \(String(describing: category)) to \(url)")
         
         switch (category) {
@@ -127,7 +129,7 @@ struct PersistenceCSVExporter {
         }
     }
     
-    private func writeInfo(url: URL, data: [String: Int], progress: ProgressFunc) throws {
+    private func writeInfo(url: URL, data: [String: Int], progress: CSVProgressFunc) throws {
         // https://developer.apple.com/documentation/uikit/uidevice?language=objc
         let device = UIDevice.current
         
@@ -154,7 +156,7 @@ struct PersistenceCSVExporter {
     private func writeData<T>(
         url: URL,
         category: PersistenceCategory,
-        progress: ProgressFunc,
+        progress: CSVProgressFunc,
         header: [String],
         fetchRequest: () -> NSFetchRequest<T>,
         write: (CSVWriter, T) throws -> Void
@@ -203,7 +205,7 @@ struct PersistenceCSVExporter {
         } ?? 0
     }
     
-    private func writeUserCells(url: URL, progress: ProgressFunc) throws -> Int {
+    private func writeUserCells(url: URL, progress: CSVProgressFunc) throws -> Int {
         return try writeData(
             url: url,
             category: .connectedCells,
@@ -215,12 +217,12 @@ struct PersistenceCSVExporter {
                 csvDate(result.collected),
                 csvString(result.json),
                 csvString(result.status),
-                csvNumber(result.score)
+                csvInt(result.score)
             ])
         }
     }
     
-    private func writeAlsCells(url: URL, progress: ProgressFunc) throws -> Int {
+    private func writeAlsCells(url: URL, progress: CSVProgressFunc) throws -> Int {
         return try writeData(
             url: url,
             category: .alsCells,
@@ -237,22 +239,22 @@ struct PersistenceCSVExporter {
             try csv.write(row: [
                 csvDate(result.imported),
                 csvString(result.technology),
-                csvNumber(result.country),
-                csvNumber(result.network),
-                csvNumber(result.area),
-                csvNumber(result.cell),
-                csvNumber(result.frequency),
-                csvNumber(result.physicalCell),
-                csvNumber(location?.latitude),
-                csvNumber(location?.longitude),
-                csvNumber(location?.horizontalAccuracy),
-                csvNumber(location?.reach),
-                csvNumber(location?.score),
+                csvInt(result.country),
+                csvInt(result.network),
+                csvInt(result.area),
+                csvInt(result.cell),
+                csvInt(result.frequency),
+                csvInt(result.physicalCell),
+                csvDouble(location?.latitude),
+                csvDouble(location?.longitude),
+                csvDouble(location?.horizontalAccuracy),
+                csvInt(location?.reach),
+                csvInt(location?.score),
             ])
         }
     }
     
-    private func writeLocations(url: URL, progress: ProgressFunc) throws -> Int {
+    private func writeLocations(url: URL, progress: CSVProgressFunc) throws -> Int {
         return try writeData(
             url: url,
             category: .locations,
@@ -262,19 +264,19 @@ struct PersistenceCSVExporter {
         ) { csv, result in
             try csv.write(row: [
                 csvDate(result.collected),
-                csvNumber(result.latitude),
-                csvNumber(result.longitude),
-                csvNumber(result.horizontalAccuracy),
-                csvNumber(result.altitude),
-                csvNumber(result.verticalAccuracy),
-                csvNumber(result.speed),
-                csvNumber(result.speedAccuracy),
+                csvDouble(result.latitude),
+                csvDouble(result.longitude),
+                csvDouble(result.horizontalAccuracy),
+                csvDouble(result.altitude),
+                csvDouble(result.verticalAccuracy),
+                csvDouble(result.speed),
+                csvDouble(result.speedAccuracy),
                 csvBool(result.background)
             ])
         }
     }
     
-    private func writePackets(url: URL, progress: ProgressFunc) throws -> Int {
+    private func writePackets(url: URL, progress: CSVProgressFunc) throws -> Int {
         return try writeData(
             url: url,
             category: .packets,
@@ -300,10 +302,10 @@ struct PersistenceCSVExporter {
     }
     
     private func csvDate(_ date: Date?) -> String {
-        return csvNumber(date?.timeIntervalSince1970)
+        return csvDouble(date?.timeIntervalSince1970)
     }
     
-    private func csvNumber(_ value: (any BinaryInteger)?) -> String {
+    private func csvInt(_ value: (any BinaryInteger)?) -> String {
         if let value = value {
             return String(value)
         } else {
@@ -311,7 +313,7 @@ struct PersistenceCSVExporter {
         }
     }
     
-    private func csvNumber(_ value: Double?) -> String {
+    private func csvDouble(_ value: Double?) -> String {
         if let value = value {
             return String(value)
         } else {

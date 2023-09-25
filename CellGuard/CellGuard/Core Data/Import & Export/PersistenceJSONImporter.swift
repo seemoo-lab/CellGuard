@@ -47,29 +47,12 @@ struct PersistenceJSONImporter {
         category: String(describing: PersistenceJSONImporter.self)
     )
     
-    // Provide synchronized access to the import active variable
-    // See: https://stackoverflow.com/a/65849172
-    private static let importLock = NSLock()
-    private static var _importActive = false
-    static var importActive: Bool {
-        get {
-            importLock.lock()
-            defer { importLock.unlock() }
-            return _importActive
-        }
-        set {
-            importLock.lock()
-            defer { importLock.unlock() }
-            _importActive = newValue
-        }
-    }
-    
     static func importInBackground(
         url: URL,
         progress: @escaping (Int, Int) -> Void,
-        completion: @escaping (Result<(cells: Int, locations: Int, packets: Int), Error>) -> Void
+        completion: @escaping (Result<ImportResult, Error>) -> Void
     ) {
-        importActive = true
+        PortStatus.importActive.store(true, ordering: .relaxed)
         
         var internalProgressCount = 0
         let progressMax = 4
@@ -90,7 +73,7 @@ struct PersistenceJSONImporter {
             DispatchQueue.main.async {
                 completion(result)
             }
-            importActive = false
+            PortStatus.importActive.store(false, ordering: .relaxed)
         }
     }
     
@@ -98,7 +81,7 @@ struct PersistenceJSONImporter {
         
     }
     
-    private func importData(from url: URL, progress: @escaping () -> Void) throws -> (cells: Int, locations: Int, packets: Int) {
+    private func importData(from url: URL, progress: @escaping () -> Void) throws -> ImportResult {
         let data = try read(url: url)
         progress()
         return try store(json: data, progress: progress)
@@ -142,7 +125,7 @@ struct PersistenceJSONImporter {
         return jsonDict
     }
     
-    private func store(json: [String : Any], progress: () -> Void) throws -> (cells: Int, locations: Int, packets: Int) {
+    private func store(json: [String : Any], progress: () -> Void) throws -> ImportResult {
         let locations = try storeLocations(json: json)
         progress()
         let cells = try storeCells(json: json)
@@ -152,7 +135,7 @@ struct PersistenceJSONImporter {
         
         Self.logger.debug("Imported \(locations) locations, \(cells) cells, \(packets.qmi) QMI packets, and \(packets.ari) ARI packets")
         
-        return (cells, locations, packets.qmi + packets.ari)
+        return (cells, 0, locations, packets.qmi + packets.ari)
     }
     
     private func storeLocations(json: [String : Any]) throws -> Int {

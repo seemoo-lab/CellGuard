@@ -31,6 +31,14 @@ struct ALSQueryLocation: Equatable, Hashable {
         self.score = Int(proto.score)
     }
     
+    init(fromImport latitude: Double, longitude: Double, accuracy: Int, reach: Int, score: Int) {
+        self.latitude = latitude
+        self.longitude = longitude
+        self.accuracy = accuracy
+        self.reach = reach
+        self.score = score
+    }
+    
     func isValid() -> Bool {
         return self.accuracy > 0
     }
@@ -121,6 +129,17 @@ struct ALSQueryCell: CustomStringConvertible, Equatable, Hashable {
         self.cell = Int64(proto.bsid)
         self.location = ALSQueryLocation(fromProto: proto.location)
         self.frequency = proto.bandclass
+    }
+    
+    init(fromImport technology: ALSTechnology, country: Int32, network: Int32, area: Int32, cell: Int64, physicalCell: Int32, frequency: Int32, location: ALSQueryLocation) {
+        self.technology = technology
+        self.country = country
+        self.network = network
+        self.area = area
+        self.cell = cell
+        self.physicalCell = physicalCell
+        self.frequency = frequency
+        self.location = location
     }
     
     

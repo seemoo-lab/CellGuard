@@ -36,7 +36,7 @@ struct CellVerifier {
         
         while (true) {
             // Don't verify cells while an import process is active
-            if PersistenceJSONImporter.importActive {
+            if PortStatus.importActive.load(ordering: .relaxed) {
                 // Sleep for one second
                 try? await Task.sleep(nanoseconds: NSEC_PER_SEC)
             }

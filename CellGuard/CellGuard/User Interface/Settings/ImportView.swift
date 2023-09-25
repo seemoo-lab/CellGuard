@@ -11,6 +11,7 @@ import OSLog
 enum ImportFileType {
     case dataUncompressed
     case dataCompressed
+    case archive
     case sysdiagnose
     case unknown
     
@@ -20,6 +21,8 @@ enum ImportFileType {
             return "CellGuard Data (Compressed)"
         case .dataCompressed:
             return "CellGuard Data"
+        case .archive:
+            return "CellGuard Archive"
         case .sysdiagnose:
             return "Sysdiagnose"
         case .unknown:
@@ -30,7 +33,9 @@ enum ImportFileType {
     static func guess(url: URL) -> Self {
         let lastComponent = url.lastPathComponent
         
-        if lastComponent.hasSuffix(".cells.gz") {
+        if lastComponent.hasSuffix(".cells2") {
+            return .archive
+        } else if lastComponent.hasSuffix(".cells.gz") {
             return .dataCompressed
         } else if lastComponent.hasSuffix(".cells") {
             return .dataUncompressed
@@ -40,6 +45,30 @@ enum ImportFileType {
             return .unknown
         }
     }
+}
+
+private enum ImportStatus: Equatable {
+    
+    case none
+    case count(Int)
+    case progress(Float)
+    
+    var progress: Float {
+        get {
+            switch (self) {
+            case let .progress(progress): return progress
+            default: return 0
+            }
+        }
+        set {
+            switch (self) {
+            case .progress: self = .progress(newValue)
+            default: break
+            }
+        }
+        
+    }
+    
 }
 
 struct ImportView: View {
@@ -59,11 +88,12 @@ struct ImportView: View {
     @State var importFinished: Bool = false
     @State var importError: String? = nil
     
-    @State var importProgress = Float(0)
+    @State var importProgress = Float(-1)
     
-    @State var importedCells = 0
-    @State var importedLocations = 0
-    @State var importedPackets = 0
+    @State private var importStatusUserCells: ImportStatus = .none
+    @State private var importStatusALSCells: ImportStatus = .none
+    @State private var importStatusLocations: ImportStatus = .none
+    @State private var importStatusPackets: ImportStatus = .none
     
     init() {
         self.fileUrlFixed = false
@@ -107,35 +137,31 @@ struct ImportView: View {
                 }
             }
             
+            if importStatusUserCells != .none || importStatusALSCells != .none || importStatusLocations != .none || importStatusPackets != .none {
+                Section(header: Text("Datasets")) {
+                    ImportStatusRow("Connected Cells", $importStatusUserCells)
+                    ImportStatusRow("Cell Cache", $importStatusALSCells)
+                    ImportStatusRow("Locations", $importStatusLocations)
+                    ImportStatusRow("Packets", $importStatusPackets)
+                }
+            }
+            
             if let fileUrl = fileUrl {
                 Section(header: Text("Actions"), footer: Text(footerInfoText())) {
                     Button {
                         importInProgress = true
-                        // TODO: Use different importers based on the file type
-                        PersistenceJSONImporter.importInBackground(url: fileUrl) { currentProgress, totalProgress in
-                            importProgress = Float(currentProgress) / Float(totalProgress)
-                        } completion: { result in
-                            do {
-                                let counts = try result.get()
-                                importedCells = counts.cells
-                                importedLocations = counts.locations
-                                importedPackets = counts.packets
-                                Self.logger.info("Successfully imported \(counts.cells) cells, \(counts.locations) locations, and \(counts.packets) packets.")
-                            } catch {
-                                importError = error.localizedDescription
-                                Self.logger.info("Import failed due to \(error)")
-                                
-                            }
-                            importInProgress = false
-                            importFinished = true
-                        }
+                        importFile(fileUrl)
                     } label: {
                         HStack {
                             Text("Import")
                             Spacer()
                             if importInProgress {
-                                CircularProgressView(progress: $importProgress)
-                                    .frame(width: 20, height: 20)
+                                if importProgress >= 0 {
+                                    CircularProgressView(progress: $importProgress)
+                                        .frame(width: 20, height: 20)
+                                } else {
+                                    ProgressView()
+                                }
                             } else if importFinished {
                                 if importError != nil {
                                     Image(systemName: "xmark")
@@ -147,17 +173,12 @@ struct ImportView: View {
                             }
                         }
                     }
-                    .disabled(importInProgress || importFinished)
+                    .disabled(importInProgress || importFinished || fileType == .dataCompressed || fileType == .sysdiagnose)
                     // TODO: Add a text or popup about the dangers of importing
                     
                     if importFinished {
                         if let importError = importError {
                             Text(importError)
-                        } else {
-                            // TODO: Update values during the import process
-                            KeyValueListRow(key: "Cells", value: "\(importedCells)")
-                            KeyValueListRow(key: "Locations", value: "\(importedLocations)")
-                            KeyValueListRow(key: "Packets", value: "\(importedPackets)")
                         }
                     }
                 }
@@ -182,6 +203,63 @@ struct ImportView: View {
         }
     }
     
+    private func importFile(_ url: URL) {
+        guard let fileType = fileType else {
+            return
+        }
+        
+        // Use different importers based on the file type
+        switch (fileType) {
+        case .archive:
+            importProgress = Float(-1)
+            
+            PersistenceCSVImporter.importInBackground(url: url) { category, currentProgress, totalProgress in
+                let progress = Float(currentProgress) / Float(totalProgress)
+                switch (category) {
+                case .connectedCells: importStatusUserCells = .progress(progress)
+                case .alsCells: importStatusALSCells = .progress(progress)
+                case .locations: importStatusLocations = .progress(progress)
+                case .packets: importStatusPackets = .progress(progress)
+                case .info: break
+                }
+            } completion: {
+                finishImport(result: $0)
+            }
+            break
+        case .dataCompressed:
+            // TODO: Implement
+            break
+        case .dataUncompressed:
+            PersistenceJSONImporter.importInBackground(url: url) { currentProgress, totalProgress in
+                importProgress = Float(currentProgress) / Float(totalProgress)
+            } completion: {
+                finishImport(result: $0)
+            }
+        case .sysdiagnose:
+            // TODO: Implement
+            break
+        case .unknown:
+            break
+        }
+    }
+    
+    private func finishImport(result: Result<ImportResult, Error>) {
+        do {
+            let counts = try result.get()
+            importStatusUserCells = .count(counts.cells)
+            importStatusALSCells = .count(counts.alsCells)
+            importStatusLocations = .count(counts.locations)
+            importStatusPackets = .count(counts.packets)
+            Self.logger.info("Successfully imported \(counts.cells) cells, \(counts.locations) locations, and \(counts.packets) packets.")
+        } catch {
+            importError = error.localizedDescription
+            Self.logger.info("Import failed due to \(error)")
+            
+        }
+        importInProgress = false
+        importFinished = true
+    }
+    
     private func footerInfoText() -> String {
         if importFinished {
             return "Increased the packet and location retention durations to infinite. Make sure to lower them after all imported cells have been verified."
@@ -198,9 +276,19 @@ struct ImportView: View {
         DispatchQueue.global(qos: .utility).async {
             let fileSize = Self.fileSize(url: url)
             let fileType = ImportFileType.guess(url: url)
+            
+            // TODO: Extract device name, CG version and count from backup and show them in the UI before importing
+            /* let fromName = ""
+            let fromCGVersion = "" */
+            
             DispatchQueue.main.async {
                 self.fileSize = fileSize
                 self.fileType = fileType
+                
+                self.importStatusUserCells = .none
+                self.importStatusALSCells = .none
+                self.importStatusLocations = .none
+                self.importStatusPackets = .none
             }
         }
     }
@@ -221,6 +309,37 @@ struct ImportView: View {
         }
         
         return nil
+    }
+}
+
+private struct ImportStatusRow: View {
+    
+    let text: String
+    @Binding var status: ImportStatus
+    
+    init(_ text: String, _ status: Binding<ImportStatus>) {
+        self.text = text
+        self._status = status
+    }
+    
+    var body: some View {
+        return HStack {
+            Text(text)
+            Spacer()
+            content
+        }
+    }
+    
+    var content: AnyView {
+        switch (status) {
+        case .none:
+            return AnyView(EmptyView())
+        case let .count(count):
+            return AnyView(Text("\(count)"))
+        case .progress:
+            return AnyView(CircularProgressView(progress: $status.progress)
+                .frame(width: 20, height: 20))
+        }
     }
 }
 

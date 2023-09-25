@@ -96,6 +96,23 @@ struct TrackedUserLocation {
         self.preciseBackground = location[LocationDictKeys.preciseBackground] as? Bool ?? false
     }
     
+    init(timestamp: Date, latitude: Double, longitude: Double, horizontalAccuracy: Double, altitude: Double, verticalAccuracy: Double, speed: Double, speedAccuracy: Double, background: Bool) {
+        self.latitude = latitude
+        self.longitude = longitude
+        self.horizontalAccuracy = horizontalAccuracy
+        
+        self.altitude = altitude
+        self.verticalAccuracy = verticalAccuracy
+        
+        self.speed = speed
+        self.speedAccuracy = speedAccuracy
+        
+        self.timestamp = timestamp
+        
+        self.background = background
+        self.preciseBackground = true
+    }
+    
     func applyTo(location: UserLocation) {
         location.latitude = self.latitude ?? 0
         location.longitude = self.longitude ?? 0

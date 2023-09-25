@@ -103,7 +103,7 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
             let cellCollector = CCTCollector(client: CCTClient(queue: .global(qos: .background)))
             let collectCellsTask: () -> () = {
                 // Only run tasks when we currently don't manually import any new data
-                guard !PersistenceJSONImporter.importActive else { return }
+                guard !PortStatus.importActive.load(ordering: .relaxed) else { return }
                 
                 cellCollector.collectAndStore { result in
                     do {
@@ -130,7 +130,7 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
             let packetCollector = CPTCollector(client: CPTClient(queue: .global(qos: .background)))
             let collectPacketsTask: () -> () = {
                 // Only run tasks when we currently don't manually import any new data
-                guard !PersistenceJSONImporter.importActive else { return }
+                guard !PortStatus.importActive.load(ordering: .relaxed) else { return }
                 
                 packetCollector.collectAndStore { result in
                     do {
@@ -157,7 +157,7 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
             Task {
                 try? await Task.sleep(nanoseconds: 30 * NSEC_PER_SEC)
                 while (true) {
-                    guard !PersistenceJSONImporter.importActive else {
+                    guard !PortStatus.importActive.load(ordering: .relaxed) else {
                         try? await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
                         continue
                     }
@@ -170,7 +170,7 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
             Task {
                 try? await Task.sleep(nanoseconds: 60 * NSEC_PER_SEC)
                 while (true) {
-                    guard !PersistenceJSONImporter.importActive else {
+                    guard !PortStatus.importActive.load(ordering: .relaxed) else {
                         try? await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
                         continue
                     }
@@ -183,7 +183,7 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
             Task {
                 try? await Task.sleep(nanoseconds: 90 * NSEC_PER_SEC)
                 while (true) {
-                    guard !PersistenceJSONImporter.importActive else {
+                    guard !PortStatus.importActive.load(ordering: .relaxed) else {
                         try? await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
                         continue
                     }
@@ -204,7 +204,7 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
             Task {
                 try? await Task.sleep(nanoseconds: 60 * NSEC_PER_SEC)
                 while (true) {
-                    guard !PersistenceJSONImporter.importActive else {
+                    guard !PortStatus.importActive.load(ordering: .relaxed) else {
                         try? await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
                         continue
                     }

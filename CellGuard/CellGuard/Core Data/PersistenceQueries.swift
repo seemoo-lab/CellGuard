@@ -56,7 +56,7 @@ extension PersistenceController {
     }
     
     /// Uses `NSBatchInsertRequest` (BIR) to import ALS cell properties into the Core Data store on a private queue.
-    func importALSCells(from cells: [ALSQueryCell], source: NSManagedObjectID) throws {
+    func importALSCells(from cells: [ALSQueryCell], source: NSManagedObjectID?) throws {
         // Idea: Add a constraint for technology,country,network,area,cell
         // Apparently this is not possible with parent entities. ):
         // See: https://developer.apple.com/forums/thread/36775
@@ -106,24 +106,26 @@ extension PersistenceController {
                 }
             }
             
-            // Get the tweak cell managed object from its ID
-            guard let tweakCell = try? taskContext.existingObject(with: source) as? TweakCell else {
-                self.logger.warning("Can't get tweak cell (\(source)) from its object ID")
-                return
-            }
-            
-            // Fetch the verification cell for the tweak cell and assign it
-            do {
-                let verifyCell = try fetchALSCell(from: tweakCell, context: taskContext)
-                if let verifyCell = verifyCell {
-                    tweakCell.verification = verifyCell
-                } else {
-                    self.logger.warning("Can't assign a verification cell for tweak cell: \(tweakCell)")
+            if let source = source {
+                // Get the tweak cell managed object from its ID
+                guard let tweakCell = try? taskContext.existingObject(with: source) as? TweakCell else {
+                    self.logger.warning("Can't get tweak cell (\(source)) from its object ID")
                     return
                 }
-            } catch {
-                self.logger.warning("Can't execute a fetch request for getting a verification cell for tweak cell: \(tweakCell)")
-                return
+                
+                // Fetch the verification cell for the tweak cell and assign it
+                do {
+                    let verifyCell = try fetchALSCell(from: tweakCell, context: taskContext)
+                    if let verifyCell = verifyCell {
+                        tweakCell.verification = verifyCell
+                    } else {
+                        self.logger.warning("Can't assign a verification cell for tweak cell: \(tweakCell)")
+                        return
+                    }
+                } catch {
+                    self.logger.warning("Can't execute a fetch request for getting a verification cell for tweak cell: \(tweakCell)")
+                    return
+                }
             }
             
             // Save the task context

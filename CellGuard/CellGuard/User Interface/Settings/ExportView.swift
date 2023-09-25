@@ -146,7 +146,6 @@ private struct ProgressToggle: View {
             Toggle(text, isOn: $isOn)
         }
     }
-    
 }
 
 struct ExportView_Previews: PreviewProvider {

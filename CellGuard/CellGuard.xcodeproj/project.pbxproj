@@ -73,6 +73,9 @@
 		CF86C7972A6ACDAA002EC9B6 /* CellDetailsRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF86C7962A6ACDAA002EC9B6 /* CellDetailsRow.swift */; };
 		CF86C7992A6AD51D002EC9B6 /* GroupedMeasurements.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF86C7982A6AD51D002EC9B6 /* GroupedMeasurements.swift */; };
 		CF86C79D2A6AE0E3002EC9B6 /* TweakCellMeasurementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF86C79C2A6AE0E3002EC9B6 /* TweakCellMeasurementView.swift */; };
+		CF8D331C2AC19293009CA3F0 /* PersistenceCSVImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF8D331B2AC19293009CA3F0 /* PersistenceCSVImporter.swift */; };
+		CF8D331E2AC192B6009CA3F0 /* PortStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF8D331D2AC192B6009CA3F0 /* PortStatus.swift */; };
+		CF8D33212AC194A4009CA3F0 /* Atomics in Frameworks */ = {isa = PBXBuildFile; productRef = CF8D33202AC194A4009CA3F0 /* Atomics */; };
 		CF90EF1B2A30BDD200E7FDB0 /* QMIParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF90EF1A2A30BDD200E7FDB0 /* QMIParserTests.swift */; };
 		CF90EF1D2A30E7FD00E7FDB0 /* ARIParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF90EF1C2A30E7FD00E7FDB0 /* ARIParserTests.swift */; };
 		CF9237112A3E069D00FC7D21 /* Gzip in Frameworks */ = {isa = PBXBuildFile; productRef = CF9237102A3E069D00FC7D21 /* Gzip */; };
@@ -207,6 +210,8 @@
 		CF86C7962A6ACDAA002EC9B6 /* CellDetailsRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellDetailsRow.swift; sourceTree = "<group>"; };
 		CF86C7982A6AD51D002EC9B6 /* GroupedMeasurements.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupedMeasurements.swift; sourceTree = "<group>"; };
 		CF86C79C2A6AE0E3002EC9B6 /* TweakCellMeasurementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TweakCellMeasurementView.swift; sourceTree = "<group>"; };
+		CF8D331B2AC19293009CA3F0 /* PersistenceCSVImporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceCSVImporter.swift; sourceTree = "<group>"; };
+		CF8D331D2AC192B6009CA3F0 /* PortStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PortStatus.swift; sourceTree = "<group>"; };
 		CF90EF1A2A30BDD200E7FDB0 /* QMIParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QMIParserTests.swift; sourceTree = "<group>"; };
 		CF90EF1C2A30E7FD00E7FDB0 /* ARIParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARIParserTests.swift; sourceTree = "<group>"; };
 		CF9237122A3E1BD300FC7D21 /* KeyValueListRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyValueListRow.swift; sourceTree = "<group>"; };
@@ -264,6 +269,7 @@
 				CFD0236D2961AD1500AA5A1C /* SwiftProtobuf in Frameworks */,
 				CF2002ED2A2F3244000922E6 /* BinarySwift in Frameworks */,
 				CF9237112A3E069D00FC7D21 /* Gzip in Frameworks */,
+				CF8D33212AC194A4009CA3F0 /* Atomics in Frameworks */,
 				CFA632552AB3501800D46025 /* CSV in Frameworks */,
 				CFA632582AB3503400D46025 /* ZIPFoundation in Frameworks */,
 			);
@@ -466,6 +472,7 @@
 		CFA145862AB3454800239C49 /* Import & Export */ = {
 			isa = PBXGroup;
 			children = (
+				CF8D331D2AC192B6009CA3F0 /* PortStatus.swift */,
 				CFF05F6E2A39ABF500DE6FB2 /* PersistenceCategories.swift */,
 				CFA145892AB3457100239C49 /* CSV */,
 				CFA145872AB3455E00239C49 /* JSON */,
@@ -486,6 +493,7 @@
 			isa = PBXGroup;
 			children = (
 				CF9626C22AB7474500C46953 /* PersistenceCSVExporter.swift */,
+				CF8D331B2AC19293009CA3F0 /* PersistenceCSVImporter.swift */,
 			);
 			name = CSV;
 			sourceTree = "<group>";
@@ -651,6 +659,7 @@
 				CF9237102A3E069D00FC7D21 /* Gzip */,
 				CFA632542AB3501800D46025 /* CSV */,
 				CFA632572AB3503400D46025 /* ZIPFoundation */,
+				CF8D33202AC194A4009CA3F0 /* Atomics */,
 			);
 			productName = CellGuard;
 			productReference = CFD023332961A10D00AA5A1C /* CellGuard.app */;
@@ -730,6 +739,7 @@
 				CF92370F2A3E069D00FC7D21 /* XCRemoteSwiftPackageReference "GzipSwift" */,
 				CFA632532AB3501800D46025 /* XCRemoteSwiftPackageReference "CSV.swift" */,
 				CFA632562AB3503400D46025 /* XCRemoteSwiftPackageReference "ZIPFoundation" */,
+				CF8D331F2AC194A4009CA3F0 /* XCRemoteSwiftPackageReference "swift-atomics" */,
 			);
 			productRefGroup = CFD023342961A10D00AA5A1C /* Products */;
 			projectDirPath = "";
@@ -804,6 +814,7 @@
 				CF446756298D78F80083EE63 /* PersistenceQueries.swift in Sources */,
 				CF86C7932A6AC25D002EC9B6 /* CellDetailsView.swift in Sources */,
 				CFDF5D79297EF1EF000708A8 /* LocationAnnotationView.swift in Sources */,
+				CF8D331E2AC192B6009CA3F0 /* PortStatus.swift in Sources */,
 				CF320F5529620B16009BAD18 /* CCTParser.swift in Sources */,
 				CF2002F02A2F996A000922E6 /* TweakClient.swift in Sources */,
 				CFDF5D83297F0736000708A8 /* CommonCellMap.swift in Sources */,
@@ -852,6 +863,7 @@
 				CFF05F6F2A39ABF500DE6FB2 /* PersistenceCategories.swift in Sources */,
 				CF0FDCC9296B310400A6FFE2 /* PersistencePreview.swift in Sources */,
 				CF07EFA52A3B4B56005B53ED /* OperatorDefinitions.swift in Sources */,
+				CF8D331C2AC19293009CA3F0 /* PersistenceCSVImporter.swift in Sources */,
 				CFD0236A2961ABA100AA5A1C /* ALSClient.swift in Sources */,
 				CFF05F6D2A39AA3900DE6FB2 /* DeleteView.swift in Sources */,
 				CF0FDCCB296B466100A6FFE2 /* PersistenceError.swift in Sources */,
@@ -1225,6 +1237,14 @@
 				kind = branch;
 			};
 		};
+		CF8D331F2AC194A4009CA3F0 /* XCRemoteSwiftPackageReference "swift-atomics" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-atomics.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.1.0;
+			};
+		};
 		CF92370F2A3E069D00FC7D21 /* XCRemoteSwiftPackageReference "GzipSwift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/1024jp/GzipSwift";
@@ -1264,6 +1284,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = CF2002EB2A2F3244000922E6 /* XCRemoteSwiftPackageReference "BinarySwift" */;
 			productName = BinarySwift;
+		};
+		CF8D33202AC194A4009CA3F0 /* Atomics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CF8D331F2AC194A4009CA3F0 /* XCRemoteSwiftPackageReference "swift-atomics" */;
+			productName = Atomics;
 		};
 		CF9237102A3E069D00FC7D21 /* Gzip */ = {
 			isa = XCSwiftPackageProductDependency;
