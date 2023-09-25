@@ -13,7 +13,7 @@ struct TweakClient {
     
     private static let logger = Logger(
         subsystem: Bundle.main.bundleIdentifier!,
-        category: String(describing: CCTClient.self)
+        category: String(describing: TweakClient.self)
     )
     
     /// The port of the tweak
@@ -28,7 +28,7 @@ struct TweakClient {
     }
     
     /// Connects to the tweak, fetches all cells, and converts them into a dictionary structure.
-    func query(completion: @escaping (Result<Data, Error>) -> ()) {
+    func query(completion: @escaping (Result<Data, Error>) -> (), ready: @escaping () -> ()) {
         // Create a connection to localhost on the given port
         let nwPort = NWEndpoint.Port(integerLiteral: UInt16(port))
         let connection = NWConnection(host: "127.0.0.1", port: nwPort, using: NWParameters.tcp)
@@ -36,6 +36,10 @@ struct TweakClient {
         // Print the connection state
         connection.stateUpdateHandler = { state in
             Self.logger.trace("Connection State (\(self.port)) : \(String(describing: state))")
+            
+            if state == .ready {
+                ready()
+            }
             
             // If the connection has been refused (because the tweak is not active), we'll close it.
             // Otherwise CellGuard accumulates multiple waiting connections.

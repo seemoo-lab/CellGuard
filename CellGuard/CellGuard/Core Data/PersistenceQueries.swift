@@ -193,10 +193,10 @@ extension PersistenceController {
             // We've received no cells for 30 minutes from the tweak, so we warn the user
             let ftMinutesAgo = Date() - 30 * 60
             guard let latestTweakCell = all.first else {
-                return .Medium(cause: .TweakCells)
+                return CCTClient.lastConnectionReady > ftMinutesAgo ? .Unknown : .Medium(cause: .TweakCells)
             }
             if latestTweakCell.collected ?? Date.distantPast < ftMinutesAgo {
-                return .Medium(cause: .TweakCells)
+                return CCTClient.lastConnectionReady > ftMinutesAgo ? .Unknown : .Medium(cause: .TweakCells)
             }
             
             // Latest Packet
@@ -216,10 +216,10 @@ extension PersistenceController {
                 .sorted { return $0.collected ?? Date.distantPast < $1.collected ?? Date.distantPast }
                 .last
             guard let latestPacket = latestPacket else {
-                return .Medium(cause: .TweakPackets)
+                return CPTClient.lastConnectionReady > ftMinutesAgo ? .Unknown : .Medium(cause: .TweakPackets)
             }
             if latestPacket.collected ?? Date.distantPast < ftMinutesAgo {
-                return .Medium(cause: .TweakPackets)
+                return CPTClient.lastConnectionReady > ftMinutesAgo ? .Unknown : .Medium(cause: .TweakPackets)
             }
             
             // Latest Location
