@@ -181,7 +181,7 @@ struct PersistenceCSVExporter {
             // Limit the number of entries concurrently loaded into memory
             // See: https://stackoverflow.com/a/52118107
             // See: https://developer.apple.com/documentation/coredata/nsfetchrequest/1506558-fetchbatchsize?language=objc
-            request.fetchBatchSize = 100
+            request.fetchBatchSize = 1000
             
             // Count the number of data points in the table & update the process
             let count = try context.count(for: request)
@@ -194,7 +194,7 @@ struct PersistenceCSVExporter {
                 
                 // Send counter updates only once every 100 data points
                 counter += 1
-                if counter % 100 == 0 {
+                if counter % 1000 == 0 {
                     progress(category, counter, count)
                 }
             }
