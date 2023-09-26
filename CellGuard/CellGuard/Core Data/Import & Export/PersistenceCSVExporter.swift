@@ -14,6 +14,7 @@ import ZIPFoundation
 
 enum PersistenceCSVExporterError: Error {
     case noOutputStream
+    case noCSVDataInMemory
 }
 
 typealias CSVProgressFunc = (PersistenceCategory, Int, Int) -> Void
@@ -161,15 +162,10 @@ struct PersistenceCSVExporter {
         fetchRequest: () -> NSFetchRequest<T>,
         write: (CSVWriter, T) throws -> Void
     ) throws -> Int {
-        // Create the CSV file
-        guard let stream = OutputStream(url: url, append: false) else {
-            throw PersistenceCSVExporterError.noOutputStream
-        }
-        defer { stream.close() }
-        
-        // Write the CSV file's header
-        let csv = try CSVWriter(stream: stream)
-        try csv.write(row: header)
+        // Create the CSV file and its file handle
+        FileManager.default.createFile(atPath: url.path, contents: nil)
+        let fileHandle = try FileHandle(forWritingTo: url)
+        defer { try? fileHandle.close() }
         
         // Request the data from the DB and write it sequentially to the file
         return try persistence.performAndWait { context in
@@ -188,6 +184,13 @@ struct PersistenceCSVExporter {
             var counter = 0
             progress(category, counter, count)
             
+            // It's faster to write 1000 objects to memory and then to write them in bulk to disk
+            // See: https://github.com/yaslab/CSV.swift#write-to-memory-and-get-a-csv-string
+            var csv = try CSVWriter(stream: .toMemory())
+            
+            // Write the header row
+            try csv.write(row: header)
+            
             for result in try request.execute() {
                 // Write the data point to the CSV file
                 try write(csv, result)
@@ -195,9 +198,30 @@ struct PersistenceCSVExporter {
                 // Send counter updates only once every 100 data points
                 counter += 1
                 if counter % 1000 == 0 {
+                    // Get the CSV data from memory
+                    csv.stream.close()
+                    guard let data = csv.stream.property(forKey: .dataWrittenToMemoryStreamKey) as? Data else {
+                        throw PersistenceCSVExporterError.noCSVDataInMemory
+                    }
+                    
+                    // Write data to the file
+                    try fileHandle.write(contentsOf: data)
+
+                    // Create a new CSV write
+                    csv = try CSVWriter(stream: .toMemory())
+                    
                     progress(category, counter, count)
                 }
             }
+            
+            // Get the final CSV data from memory
+            csv.stream.close()
+            guard let data = csv.stream.property(forKey: .dataWrittenToMemoryStreamKey) as? Data else {
+                throw PersistenceCSVExporterError.noCSVDataInMemory
+            }
+            
+            // Write data to the file
+            try fileHandle.write(contentsOf: data)
             
             progress(category, counter, count)
             
