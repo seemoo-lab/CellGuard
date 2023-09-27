@@ -153,7 +153,10 @@
     }
 
     // Mark the sending process as complete
-    nw_connection_send(self.nw_inbound_connection, NULL, NW_CONNECTION_DEFAULT_MESSAGE_CONTEXT, true,
+    [self log:@"Sending final message after sending %d data messages", counter];
+
+    // Mark the sending process as complete
+    nw_connection_send(self.nw_inbound_connection, NULL, NW_CONNECTION_FINAL_MESSAGE_CONTEXT, true,
             ^(nw_error_t _Nullable error) {
                 if (error != NULL) {
                     // Print an error
@@ -162,8 +165,12 @@
                     // If everything was successful, clear the cache file
                     [self emptyCache];
                 }
+
+                // Close the connection
+                nw_connection_cancel(self.nw_inbound_connection);
+
                 // In any case, close the connection
-                [self closeConnection];
+                self.nw_inbound_connection = NULL;
             });
 }
 
