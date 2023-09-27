@@ -33,12 +33,49 @@ struct TweakClient {
         let nwPort = NWEndpoint.Port(integerLiteral: UInt16(port))
         let connection = NWConnection(host: "127.0.0.1", port: nwPort, using: NWParameters.tcp)
         
+        // Store the data sent over multiple messages
+        var data = Data()
+        
+        func receiveNextMessage() {
+            connection.receiveMessage { content, context, complete, error in
+                Self.logger.trace("Received Message (\(self.port)): \(content?.debugDescription ?? "nil") - \(context.debugDescription) - \(complete) - \(context?.isFinal ?? false) - \(error)")
+                
+                if let error = error {
+                    // We've got an error
+                    completion(.failure(error))
+                    
+                    // Close the connection after a successful query to deregister the handlers
+                    // See: https://stackoverflow.com/a/63599285
+                    connection.cancel()
+                    return
+                }
+                
+                if let content = content {
+                    // We've got a full response with data and we'll append it to the cache
+                    data.append(contentsOf: content)
+                }
+                
+                if context?.isFinal ?? false {
+                    // If it's the last message, we'll call the callback
+                    completion(.success(data))
+                    
+                    // Close the connection after a successful query to deregister the handlers
+                    // See: https://stackoverflow.com/a/63599285
+                    connection.cancel()
+                } else {
+                    // If it's not the last message, we'll wait for the next one
+                    receiveNextMessage()
+                }
+            }
+        }
+        
         // Print the connection state
         connection.stateUpdateHandler = { state in
             Self.logger.trace("Connection State (\(self.port)) : \(String(describing: state))")
             
             if state == .ready {
                 ready()
+                receiveNextMessage()
             }
             
             // If the connection has been refused (because the tweak is not active), we'll close it.
@@ -48,27 +85,6 @@ struct TweakClient {
             }
         }
         
-        // Create a handler for the received message
-        var completed = false
-        
-        connection.receiveMessage { content, context, complete, error in
-            Self.logger.trace("Received Message (\(self.port)): \(content?.debugDescription ?? "nil") - \(context.debugDescription) - \(complete) - \(error)")
-            if let error = error {
-                // We've got an error
-                completion(.failure(error))
-            } else if let content = content {
-                // We've got a full response with data
-                completion(.success(content))
-            } else if !completed {
-                // We've got an empty response
-                completion(.success(Data()))
-            }
-            completed = true
-            // Close the connection after a successful query to deregister the handlers
-            // See: https://stackoverflow.com/a/63599285
-            connection.cancel()
-        }
-
         // Open the connection
         connection.start(queue: self.queue)
     }
