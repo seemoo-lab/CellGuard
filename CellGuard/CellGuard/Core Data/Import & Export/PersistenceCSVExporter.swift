@@ -195,7 +195,7 @@ struct PersistenceCSVExporter {
                 // Write the data point to the CSV file
                 try write(csv, result)
                 
-                // Send counter updates only once every 100 data points
+                // Send counter updates only once every 1000 data points
                 counter += 1
                 if counter % 1000 == 0 {
                     // Get the CSV data from memory
@@ -206,6 +206,9 @@ struct PersistenceCSVExporter {
                     
                     // Write data to the file
                     try fileHandle.write(contentsOf: data)
+                    
+                    // Append a new line as the string produced by the library doesn't end with one
+                    try fileHandle.write(contentsOf: "\n".data(using: .utf8)!)
 
                     // Create a new CSV write
                     csv = try CSVWriter(stream: .toMemory())
@@ -222,6 +225,9 @@ struct PersistenceCSVExporter {
             
             // Write data to the file
             try fileHandle.write(contentsOf: data)
+            
+            // Append a new line as the string produced by the library doesn't end with one
+            try fileHandle.write(contentsOf: "\n".data(using: .utf8)!)
             
             progress(category, counter, count)
             
