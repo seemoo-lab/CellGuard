@@ -56,7 +56,6 @@ struct TweakClient {
             if let error = error {
                 // We've got an error
                 completion(.failure(error))
-                connection.cancel()
             } else if let content = content {
                 // We've got a full response with data
                 completion(.success(content))
@@ -65,6 +64,9 @@ struct TweakClient {
                 completion(.success(Data()))
             }
             completed = true
+            // Close the connection after a successful query to deregister the handlers
+            // See: https://stackoverflow.com/a/63599285
+            connection.cancel()
         }
 
         // Open the connection
