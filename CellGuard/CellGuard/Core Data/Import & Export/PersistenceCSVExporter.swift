@@ -169,10 +169,15 @@ struct PersistenceCSVExporter {
         
         // Request the data from the DB and write it sequentially to the file
         return try persistence.performAndWait { context in
+            // General advice for reducing the memory footprint of Core Data
+            // See: https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/CoreData/Performance.html#//apple_ref/doc/uid/TP40001075-CH25-SW10
+            context.undoManager = nil
+            
             // Don't keep strong references to all objects loaded in this context as we just have to read them once
             // See: https://developer.apple.com/documentation/coredata/nsmanagedobjectcontext/1506290-retainsregisteredobjects
             context.retainsRegisteredObjects = false
             
+            // Init the fetch request object
             let request: NSFetchRequest<T> = fetchRequest()
             // Limit the number of entries concurrently loaded into memory
             // See: https://stackoverflow.com/a/52118107
@@ -191,29 +196,35 @@ struct PersistenceCSVExporter {
             // Write the header row
             try csv.write(row: header)
             
+            // Execute the request and process its entries
             for result in try request.execute() {
-                // Write the data point to the CSV file
-                try write(csv, result)
-                
-                // Send counter updates only once every 1000 data points
-                counter += 1
-                if counter % 1000 == 0 {
-                    // Get the CSV data from memory
-                    csv.stream.close()
-                    guard let data = csv.stream.property(forKey: .dataWrittenToMemoryStreamKey) as? Data else {
-                        throw PersistenceCSVExporterError.noCSVDataInMemory
-                    }
+                // Use an autorelease pool to reduce the memory impact when exporting (very important)
+                // See: https://swiftrocks.com/autoreleasepool-in-swift
+                // See: https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/MemoryMgmt/Articles/mmAutoreleasePools.html
+                try autoreleasepool {
+                    // Write the data point to the CSV file
+                    try write(csv, result)
                     
-                    // Write data to the file
-                    try fileHandle.write(contentsOf: data)
-                    
-                    // Append a new line as the string produced by the library doesn't end with one
-                    try fileHandle.write(contentsOf: "\n".data(using: .utf8)!)
+                    // Send counter updates only once every 1000 data points
+                    counter += 1
+                    if counter % 1000 == 0 {
+                        // Get the CSV data from memory
+                        csv.stream.close()
+                        guard let data = csv.stream.property(forKey: .dataWrittenToMemoryStreamKey) as? Data else {
+                            throw PersistenceCSVExporterError.noCSVDataInMemory
+                        }
+                        
+                        // Write data to the file
+                        try fileHandle.write(contentsOf: data)
+                        
+                        // Append a new line as the string produced by the library doesn't end with one
+                        try fileHandle.write(contentsOf: "\n".data(using: .utf8)!)
 
-                    // Create a new CSV write
-                    csv = try CSVWriter(stream: .toMemory())
-                    
-                    progress(category, counter, count)
+                        // Create a new CSV writer
+                        csv = try CSVWriter(stream: .toMemory())
+                        
+                        progress(category, counter, count)
+                    }
                 }
             }
             
