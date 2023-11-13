@@ -111,10 +111,18 @@ private struct SelectCellDateView: View {
                 .datePickerStyle(.graphical)
             
             Button {
+                let selectedDate: Date
+                if let lastDate = lastMeasurement.first?.collected {
+                    selectedDate = sheetDate > lastDate ? lastDate : sheetDate
+                } else {
+                    selectedDate = sheetDate
+                }
+                
                 let startOfToday = Calendar.current.startOfDay(for: Date())
-                let startOfDate = Calendar.current.startOfDay(for: sheetDate)
+                let startOfDate: Date = Calendar.current.startOfDay(for: selectedDate)
+                
                 settings.timeFrame = startOfToday == startOfDate ? .live : .past
-                settings.date = sheetDate
+                settings.date = selectedDate
                 isShowingDateSheet.toggle()
             } label: {
                 Text("Apply")
