@@ -16,7 +16,7 @@ struct VerificationProgressView: View {
     
     var body: some View {
         ProgressView {
-            Text("Verifying \(unverifiedCells.count) \(unverifiedCells.count == 1 ? "cell" : "cells")")
+            Text("Verifying \(unverifiedCells.count) cellular \(unverifiedCells.count == 1 ? "measurement" : "measurements")")
         }
     }
 }
