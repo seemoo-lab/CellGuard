@@ -17,6 +17,7 @@ struct CellListView: View {
     @State private var settings = CellListFilterSettings()
     
     @State private var sheetDate = Date()
+    @Environment(\.managedObjectContext) var managedObjectContext
     
     var body: some View {
         VStack {
@@ -53,34 +54,77 @@ struct CellListView: View {
             }
         }
         .sheet(isPresented: $isShowingDateSheet) {
-            VStack {
-                Text("Select Date")
-                    .font(.headline)
-                Text("Choose a date to inspect cells")
-                    .font(.subheadline)
-                    .padding([.bottom], 40)
-                
-                DatePicker("Cell Date", selection: $sheetDate, in: Date.distantPast...Date(), displayedComponents: [.date])
-                    .datePickerStyle(.graphical)
-                
-                Button {
-                    let startOfToday = Calendar.current.startOfDay(for: Date())
-                    let startOfDate = Calendar.current.startOfDay(for: sheetDate)
-                    settings.timeFrame = startOfToday == startOfDate ? .live : .past
-                    settings.date = sheetDate
-                    isShowingDateSheet.toggle()
-                } label: {
-                    Text("Apply")
-                        .bold()
-                }
-                .padding([.top], 40)
-            }
-            .padding()
+            SelectCellDateView(settings: $settings, sheetDate: $sheetDate, isShowingDateSheet: $isShowingDateSheet)
+                .environment(\.managedObjectContext, managedObjectContext)
         }
         // Magic that prevents Pickers from closing
         // See: https://stackoverflow.com/a/70307271
         .navigationViewStyle(.stack)
     }
+}
+
+private struct SelectCellDateView: View {
+    
+    @Binding var settings: CellListFilterSettings
+    @Binding var sheetDate: Date
+    @Binding var isShowingDateSheet: Bool
+    
+    @FetchRequest
+    private var firstMeasurement: FetchedResults<TweakCell>
+    
+    @FetchRequest
+    private var lastMeasurement: FetchedResults<TweakCell>
+    
+    init(settings: Binding<CellListFilterSettings>, sheetDate: Binding<Date>, isShowingDateSheet: Binding<Bool>) {
+        self._settings = settings
+        self._sheetDate = sheetDate
+        self._isShowingDateSheet = isShowingDateSheet
+        
+        let firstMeasurementRequest: NSFetchRequest<TweakCell> = TweakCell.fetchRequest()
+        firstMeasurementRequest.fetchLimit = 1
+        firstMeasurementRequest.sortDescriptors = [NSSortDescriptor(keyPath: \TweakCell.collected, ascending: true)]
+        firstMeasurementRequest.propertiesToFetch = ["collected"]
+        self._firstMeasurement = FetchRequest(fetchRequest: firstMeasurementRequest)
+        
+        let lastMeasurementRequest: NSFetchRequest<TweakCell> = TweakCell.fetchRequest()
+        lastMeasurementRequest.fetchLimit = 1
+        lastMeasurementRequest.sortDescriptors = [NSSortDescriptor(keyPath: \TweakCell.collected, ascending: false)]
+        lastMeasurementRequest.propertiesToFetch = ["collected"]
+        self._lastMeasurement = FetchRequest(fetchRequest: lastMeasurementRequest)
+    }
+    
+    var dateRange: ClosedRange<Date> {
+        let start = firstMeasurement.first?.collected ?? Date.distantPast
+        let end = lastMeasurement.first?.collected ?? Date()
+        return start...end
+    }
+    
+    var body: some View {
+        VStack {
+            Text("Select Date")
+                .font(.headline)
+            Text("Choose a date to inspect cells")
+                .font(.subheadline)
+                .padding([.bottom], 40)
+            
+            DatePicker("Cell Date", selection: $sheetDate, in: dateRange, displayedComponents: [.date])
+                .datePickerStyle(.graphical)
+            
+            Button {
+                let startOfToday = Calendar.current.startOfDay(for: Date())
+                let startOfDate = Calendar.current.startOfDay(for: sheetDate)
+                settings.timeFrame = startOfToday == startOfDate ? .live : .past
+                settings.date = sheetDate
+                isShowingDateSheet.toggle()
+            } label: {
+                Text("Apply")
+                    .bold()
+            }
+            .padding([.top], 40)
+        }
+        .padding()
+    }
+    
 }
 
 private struct FilteredCellView: View {
