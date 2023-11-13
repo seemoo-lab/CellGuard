@@ -294,12 +294,8 @@ struct ImportView: View {
     }
     
     private static func fileSize(url: URL) -> String? {
-        guard url.startAccessingSecurityScopedResource() else {
-            // TODO: If the sysdiagnose is directly shared from the System Settings we can't access it
-            // So we should show a dialogue explaining that it first must be saved to Files and then shared with CellGuard
-            return nil
-        }
-        defer { url.stopAccessingSecurityScopedResource() }
+        let securityScoped = url.startAccessingSecurityScopedResource()
+        defer { if securityScoped { url.stopAccessingSecurityScopedResource() } }
         
         do {
             let attributes = try FileManager.default.attributesOfItem(atPath: url.path)

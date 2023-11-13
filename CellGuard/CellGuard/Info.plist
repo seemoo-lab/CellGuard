@@ -34,7 +34,7 @@
 			<key>CFBundleTypeName</key>
 			<string>CellGuard Archive</string>
 			<key>LSHandlerRank</key>
-			<string>Default</string>
+			<string>Owner</string>
 			<key>LSItemContentTypes</key>
 			<array>
 				<string>de.tudarmstadt.seemoo.CellGuard.export2</string>
@@ -85,7 +85,9 @@
 			<key>UTTypeDescription</key>
 			<string>CellGuard Archive</string>
 			<key>UTTypeIconFiles</key>
-			<array/>
+			<array>
+				<string>CellFileTypeIcon</string>
+			</array>
 			<key>UTTypeIdentifier</key>
 			<string>de.tudarmstadt.seemoo.CellGuard.export2</string>
 			<key>UTTypeTagSpecification</key>

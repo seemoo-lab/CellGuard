@@ -81,10 +81,8 @@ struct PersistenceCSVImporter {
         let fileManager = FileManager.default
         
         // This function call is required on iOS 16 to read files to be imported
-        guard url.startAccessingSecurityScopedResource() else {
-            throw PersistenceCSVImporterError.permissionDenied
-        }
-        defer { url.stopAccessingSecurityScopedResource() }
+        let securityScoped = url.startAccessingSecurityScopedResource()
+        defer { if securityScoped { url.stopAccessingSecurityScopedResource() } }
         Self.logger.debug("Access to security scoped resources")
         
         // Create a temporary directory for extracting the file and remove it afterwards
@@ -122,10 +120,8 @@ struct PersistenceCSVImporter {
         let infoFile = PersistenceCategory.info.fileName()
         
         // This function call is required on iOS 16 to read files to be imported
-        guard url.startAccessingSecurityScopedResource() else {
-            throw PersistenceCSVImporterError.permissionDenied
-        }
-        defer { url.stopAccessingSecurityScopedResource() }
+        let securityScoped = url.startAccessingSecurityScopedResource()
+        defer { if securityScoped { url.stopAccessingSecurityScopedResource() } }
         
         // Only extract the info.json from the archive
         guard let archive = Archive(url: url, accessMode: .read) else  {

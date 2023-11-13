@@ -89,9 +89,8 @@ struct PersistenceJSONImporter {
     
     private func read(url: URL) throws -> [String: Any] {
         // This function call is required on iOS 16 to read files to be imported
-        guard url.startAccessingSecurityScopedResource() else {
-            throw PersistenceImportError.permissionDenied
-        }
+        let securityScoped = url.startAccessingSecurityScopedResource()
+        defer { if securityScoped { url.stopAccessingSecurityScopedResource() } }
         
         let data: Data
         do {
