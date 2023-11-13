@@ -546,6 +546,8 @@ extension PersistenceController {
         return cellTuple
     }
     
+    /// Fetches QMI packets with the specified properties from Core Data.
+    /// Remember to update the fetch index `byQMIPacketPropertiesIndex` when fetching new types of packets, otherwise the query slows down significantly.
     func fetchQMIPackets(direction: CPTDirection, service: Int16, message: Int32, indication: Bool, start: Date, end: Date) throws -> [NSManagedObjectID: ParsedQMIPacket] {
         var packets: [NSManagedObjectID: ParsedQMIPacket] = [:]
         
@@ -582,6 +584,8 @@ extension PersistenceController {
         return packets
     }
     
+    /// Fetches ARI packets with the specified properties from Core Data.
+    /// Remember to update the fetch index `byARIPacketPropertiesIndex` when fetching new types of packets, otherwise the query slows down significantly.
     func fetchARIPackets(direction: CPTDirection, group: Int16, type: Int32, start: Date, end: Date) throws -> [NSManagedObjectID: ParsedARIPacket] {
         var packets: [NSManagedObjectID: ParsedARIPacket] = [:]
         

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21754" systemVersion="22F82" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22225" systemVersion="23B81" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="ALSCell" representedClassName="ALSCell" parentEntity="Cell" syncable="YES" codeGenerationType="class">
         <relationship name="location" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ALSLocation" inverseName="cells" inverseEntity="ALSLocation"/>
         <relationship name="verified" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="TweakCell" inverseName="verification" inverseEntity="TweakCell"/>
@@ -12,6 +12,12 @@
     <entity name="ARIPacket" representedClassName="ARIPacket" parentEntity="Packet" syncable="YES" codeGenerationType="class">
         <attribute name="group" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="type" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <fetchIndex name="byARIPacketPropertiesIndex" partialIndexPredicate="(group == 7 AND type == 769) OR (group == 9 AND type == 772)">
+            <fetchIndexElement property="group" type="Binary" order="ascending"/>
+            <fetchIndexElement property="type" type="Binary" order="ascending"/>
+            <fetchIndexElement property="collected" type="Binary" order="ascending"/>
+            <fetchIndexElement property="direction" type="Binary" order="ascending"/>
+        </fetchIndex>
     </entity>
     <entity name="ARISignalStrength" representedClassName="ARISignalStrength" parentEntity="SignalStrength" syncable="YES" codeGenerationType="class">
         <attribute name="signalQuality" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
@@ -48,6 +54,13 @@
         <attribute name="indication" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="message" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="service" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <fetchIndex name="byQMIPacketPropertiesIndex" partialIndexPredicate="indication == 1 AND service == 3 AND (message == 104 OR message == 81)">
+            <fetchIndexElement property="collected" type="Binary" order="ascending"/>
+            <fetchIndexElement property="direction" type="Binary" order="ascending"/>
+            <fetchIndexElement property="indication" type="Binary" order="ascending"/>
+            <fetchIndexElement property="message" type="Binary" order="ascending"/>
+            <fetchIndexElement property="service" type="Binary" order="ascending"/>
+        </fetchIndex>
     </entity>
     <entity name="QMISignalStrength" representedClassName="QMISignalStrength" parentEntity="SignalStrength" syncable="YES" codeGenerationType="class">
         <attribute name="rsrp" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
