@@ -13,4 +13,38 @@ enum UserDefaultsKeys: String {
     case locationRetention
     case showTrackingMarker
     case lastExportDate
+    case appMode
+}
+
+enum AppModes: String, CaseIterable, Identifiable {
+    case jailbroken
+    case nonJailbroken
+    case analysis
+    
+    var id: Self { self }
+    
+    var description: String {
+        switch self {
+        case .analysis: return "Analysis"
+        case .nonJailbroken: return "Non-Jailbroken"
+        case .jailbroken: return "Jailbroken"
+        }
+    }
+}
+
+extension UserDefaults {
+    
+    func appMode() -> AppModes {
+        let appModeString = UserDefaults.standard.string(forKey: UserDefaultsKeys.appMode.rawValue)
+        guard let appModeString = appModeString else {
+            return .jailbroken
+        }
+        
+        guard let appMode = AppModes(rawValue: appModeString) else {
+            return .jailbroken
+        }
+        
+        return appMode
+    }
+    
 }

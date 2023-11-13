@@ -152,8 +152,11 @@ extension PersistenceController {
             let calendar = Calendar.current
             let ftDaysAgo = calendar.date(byAdding: .day, value: -14, to: calendar.startOfDay(for: Date()))!
             let ftDayPredicate = NSPredicate(format: "collected >= %@", ftDaysAgo as NSDate)
+            let thirtyMinutesAgo = Date() - 30 * 60
             
             let tweakCelSortDescriptor = [NSSortDescriptor(keyPath: \TweakCell.collected, ascending: false)]
+            
+            let appMode = UserDefaults.standard.appMode()
             
             // Failed Measurements
             
@@ -164,6 +167,7 @@ extension PersistenceController {
                 NSPredicate(format: "status == %@", CellStatus.verified.rawValue),
                 NSPredicate(format: "score < %@", CellVerifier.pointsUntrustedThreshold as NSNumber)
             ])
+            failedFetchRequest.fetchLimit = 1
             let failed = try taskContext.fetch(failedFetchRequest)
             if failed.count > 0 {
                 let cellCount = Dictionary(grouping: failed) { Self.queryCell(from: $0) }.count
@@ -179,64 +183,72 @@ extension PersistenceController {
                 NSPredicate(format: "status == %@", CellStatus.verified.rawValue),
                 NSPredicate(format: "score < %@", CellVerifier.pointsSuspiciousThreshold as NSNumber)
             ])
+            suspiciousFetchRequest.fetchLimit = 1
             let suspicious = try taskContext.fetch(suspiciousFetchRequest)
             if suspicious.count > 0 {
                 let cellCount = Dictionary(grouping: suspicious) { Self.queryCell(from: $0) }.count
                 return .Medium(cause: .Cells(cellCount: cellCount))
             }
             
-            // Latest Measurement
-            
-            let allFetchRequest: NSFetchRequest<TweakCell> = TweakCell.fetchRequest()
-            allFetchRequest.fetchLimit = 1
-            allFetchRequest.sortDescriptors = tweakCelSortDescriptor
-            let all = try taskContext.fetch(allFetchRequest)
-            
-            // We've received no cells for 30 minutes from the tweak, so we warn the user
-            let ftMinutesAgo = Date() - 30 * 60
-            guard let latestTweakCell = all.first else {
-                return CCTClient.lastConnectionReady > ftMinutesAgo ? .Unknown : .Medium(cause: .TweakCells)
+            // Only check data received from tweaks if the device is jailbroken
+            if appMode == .jailbroken {
+                
+                // Latest Measurement
+                
+                let allFetchRequest: NSFetchRequest<TweakCell> = TweakCell.fetchRequest()
+                allFetchRequest.fetchLimit = 1
+                allFetchRequest.sortDescriptors = tweakCelSortDescriptor
+                let all = try taskContext.fetch(allFetchRequest)
+                
+                // We've received no cells for 30 minutes from the tweak, so we warn the user
+                guard let latestTweakCell = all.first else {
+                    return CCTClient.lastConnectionReady > thirtyMinutesAgo ? .Unknown : .Medium(cause: .TweakCells)
+                }
+                if latestTweakCell.collected ?? Date.distantPast < thirtyMinutesAgo {
+                    return CCTClient.lastConnectionReady > thirtyMinutesAgo ? .Unknown : .Medium(cause: .TweakCells)
+                }
+                
+                // Latest Packet
+                
+                let allQMIPacketsFetchRequest: NSFetchRequest<QMIPacket> = QMIPacket.fetchRequest()
+                allQMIPacketsFetchRequest.fetchLimit = 1
+                allQMIPacketsFetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \QMIPacket.collected, ascending: false)]
+                let qmiPackets = try taskContext.fetch(allQMIPacketsFetchRequest)
+                
+                let allARIPacketsFetchRequest: NSFetchRequest<ARIPacket> = ARIPacket.fetchRequest()
+                allARIPacketsFetchRequest.fetchLimit = 1
+                allARIPacketsFetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \ARIPacket.collected, ascending: false)]
+                let ariPackets = try taskContext.fetch(allARIPacketsFetchRequest)
+                
+                let latestPacket = [qmiPackets.first as Packet?, ariPackets.first as Packet?]
+                    .compactMap { $0 }
+                    .sorted { return $0.collected ?? Date.distantPast < $1.collected ?? Date.distantPast }
+                    .last
+                guard let latestPacket = latestPacket else {
+                    return CPTClient.lastConnectionReady > thirtyMinutesAgo ? .Unknown : .Medium(cause: .TweakPackets)
+                }
+                if latestPacket.collected ?? Date.distantPast < thirtyMinutesAgo {
+                    return CPTClient.lastConnectionReady > thirtyMinutesAgo ? .Unknown : .Medium(cause: .TweakPackets)
+                }
             }
-            if latestTweakCell.collected ?? Date.distantPast < ftMinutesAgo {
-                return CCTClient.lastConnectionReady > ftMinutesAgo ? .Unknown : .Medium(cause: .TweakCells)
-            }
             
-            // Latest Packet
-            
-            let allQMIPacketsFetchRequest: NSFetchRequest<QMIPacket> = QMIPacket.fetchRequest()
-            allQMIPacketsFetchRequest.fetchLimit = 1
-            allQMIPacketsFetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \QMIPacket.collected, ascending: false)]
-            let qmiPackets = try taskContext.fetch(allQMIPacketsFetchRequest)
-            
-            let allARIPacketsFetchRequest: NSFetchRequest<ARIPacket> = ARIPacket.fetchRequest()
-            allARIPacketsFetchRequest.fetchLimit = 1
-            allARIPacketsFetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \ARIPacket.collected, ascending: false)]
-            let ariPackets = try taskContext.fetch(allARIPacketsFetchRequest)
-            
-            let latestPacket = [qmiPackets.first as Packet?, ariPackets.first as Packet?]
-                .compactMap { $0 }
-                .sorted { return $0.collected ?? Date.distantPast < $1.collected ?? Date.distantPast }
-                .last
-            guard let latestPacket = latestPacket else {
-                return CPTClient.lastConnectionReady > ftMinutesAgo ? .Unknown : .Medium(cause: .TweakPackets)
-            }
-            if latestPacket.collected ?? Date.distantPast < ftMinutesAgo {
-                return CPTClient.lastConnectionReady > ftMinutesAgo ? .Unknown : .Medium(cause: .TweakPackets)
-            }
-            
-            // Latest Location
-            
-            let locationFetchRequest: NSFetchRequest<UserLocation> = UserLocation.fetchRequest()
-            locationFetchRequest.fetchLimit = 1
-            locationFetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \UserLocation.collected, ascending: false)]
-            let location = try taskContext.fetch(locationFetchRequest)
-            
-            // We've received no location for 30 minutes from iOS, so we warn the user
-            guard let latestLocation = location.first else {
-                return .Medium(cause: .Location)
-            }
-            if latestLocation.collected ?? Date.distantPast < ftMinutesAgo {
-                return .Medium(cause: .Location)
+            // Only check locations if the analysis mode is not active
+            if appMode != .analysis {
+                
+                // Latest Location
+                
+                let locationFetchRequest: NSFetchRequest<UserLocation> = UserLocation.fetchRequest()
+                locationFetchRequest.fetchLimit = 1
+                locationFetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \UserLocation.collected, ascending: false)]
+                let location = try taskContext.fetch(locationFetchRequest)
+                
+                // We've received no location for 30 minutes from iOS, so we warn the user
+                guard let latestLocation = location.first else {
+                    return .Medium(cause: .Location)
+                }
+                if latestLocation.collected ?? Date.distantPast < thirtyMinutesAgo {
+                    return .Medium(cause: .Location)
+                }
             }
             
             
@@ -252,10 +264,16 @@ extension PersistenceController {
             
             let unknownFetchRequest: NSFetchRequest<TweakCell> = TweakCell.fetchRequest()
             unknownFetchRequest.sortDescriptors = tweakCelSortDescriptor
-            unknownFetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
-                ftDayPredicate,
-                NSPredicate(format: "status != %@", CellStatus.verified.rawValue),
-            ])
+            // Check for all cells if the analysis mode is active
+            if appMode == .analysis {
+                unknownFetchRequest.predicate = NSPredicate(format: "status != %@", CellStatus.verified.rawValue)
+            } else {
+                unknownFetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+                    ftDayPredicate,
+                    NSPredicate(format: "status != %@", CellStatus.verified.rawValue),
+                ])
+            }
+            unknownFetchRequest.fetchLimit = 1
             let unknowns = try taskContext.fetch(unknownFetchRequest)
             
             // We keep the unknown status until all cells are verified (except the current cell which we are monitoring)
@@ -307,7 +325,7 @@ extension PersistenceController {
                 // TODO: Sometimes this does not work ): -> imported = nil, other properties are there
                 logger.warning("Can't calculate distance for cell \(tweakCellID): Missing location from ALS cell")
                 return
-             }
+            }
             
             distance = CellLocationDistance.distance(userLocation: userLocation, alsLocation: alsLocation)
         }
@@ -642,7 +660,7 @@ extension PersistenceController {
                 }
                 
                 found = true
-
+                
                 tweakCell.verification = alsCell
                 
                 try taskContext.save()
@@ -905,7 +923,7 @@ extension PersistenceController {
                 // Choose the measurement with the lowest score for each cell
                 let cells = Dictionary(grouping: try taskContext.fetch(request)) { Self.queryCell(from: $0) }
                     .compactMap { $0.value.min { $0.score < $1.score } }
-    
+                
                 // Count the number suspicious and untrusted cells
                 count = (
                     cells.filter {$0.score >= CellVerifier.pointsUntrustedThreshold}.count,

@@ -97,6 +97,9 @@ class LocationDataManager : NSObject, CLLocationManagerDelegate, ObservableObjec
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        // Don't import locations if the analysis mode is active
+        guard UserDefaults.standard.appMode() != .analysis else { return }
+        
         Self.logger.log("New Locations: \(locations)")
         
         let importLocations = locations.map { TrackedUserLocation(from: $0, background: background, preciseBackground: true) }
@@ -116,6 +119,9 @@ class LocationDataManager : NSObject, CLLocationManagerDelegate, ObservableObjec
     }
     
     func locationManager(_ manager: CLLocationManager, didVisit visit: CLVisit) {
+        // Don't import visits if the analysis mode is active
+        guard UserDefaults.standard.appMode() != .analysis else { return }
+        
         Self.logger.log("New Visit: \(visit)")
         
         // TODO: Also record visits as locations

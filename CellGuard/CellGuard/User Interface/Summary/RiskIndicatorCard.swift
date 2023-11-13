@@ -52,17 +52,19 @@ enum RiskLevel: Equatable {
     }
     
     func description() -> String {
+        let ftDaysSuffix = UserDefaults.standard.appMode() != .analysis ? " of the last 14 days" : ""
+        
         switch (self) {
         case .Unknown:
             return "Collecting and processing data"
         case .Low:
-            return "Verified all cells of the last 14 days"
+            return "Verified all cells\(ftDaysSuffix)"
         case .LowMonitor:
             return "Monitoring the connected cell and verified the remaining cells"
         case let .Medium(cause):
             return cause.text()
         case let .High(cellCount):
-            return "Detected \(cellCount) potential malicious \(cellCount == 1 ? "cell" : "cells") in the last 14 days"
+            return "Detected \(cellCount) potential malicious \(cellCount == 1 ? "cell" : "cells")\(ftDaysSuffix)"
         }
     }
     

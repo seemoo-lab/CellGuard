@@ -102,7 +102,10 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
         Task.detached(priority: .background) {
             let cellCollector = CCTCollector(client: CCTClient(queue: .global(qos: .background)))
             let collectCellsTask: () -> () = {
-                // Only run tasks when we currently don't manually import any new data
+                // Only run the task if the jailbreak mode is active
+                guard UserDefaults.standard.appMode() == .jailbroken else { return }
+                
+                // Only run task when we currently don't manually import any new data
                 guard !PortStatus.importActive.load(ordering: .relaxed) else { return }
                 
                 cellCollector.collectAndStore { result in
@@ -129,7 +132,10 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
             
             let packetCollector = CPTCollector(client: CPTClient(queue: .global(qos: .background)))
             let collectPacketsTask: () -> () = {
-                // Only run tasks when we currently don't manually import any new data
+                // Only run the task if the jailbreak mode is active
+                guard UserDefaults.standard.appMode() == .jailbroken else { return }
+                
+                // Only run the task when we currently don't manually import any new data
                 guard !PortStatus.importActive.load(ordering: .relaxed) else { return }
                 
                 packetCollector.collectAndStore { result in
@@ -183,6 +189,9 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
             Task {
                 try? await Task.sleep(nanoseconds: 90 * NSEC_PER_SEC)
                 while (true) {
+                    // Only run the task if the analysis mode is not active
+                    guard UserDefaults.standard.appMode() != .analysis else { return }
+                    
                     guard !PortStatus.importActive.load(ordering: .relaxed) else {
                         try? await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
                         continue
@@ -203,6 +212,9 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
             Task {
                 try? await Task.sleep(nanoseconds: 60 * NSEC_PER_SEC)
                 while (true) {
+                    // Only run the task if the analysis mode is not active
+                    guard UserDefaults.standard.appMode() != .analysis else { return }
+                    
                     guard !PortStatus.importActive.load(ordering: .relaxed) else {
                         try? await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
                         continue

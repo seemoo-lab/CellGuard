@@ -20,6 +20,7 @@ enum SettingsCloseReason {
 struct SettingsView: View {
     
     @AppStorage(UserDefaultsKeys.showTrackingMarker.rawValue) var showTrackingMarker: Bool = false
+    @AppStorage(UserDefaultsKeys.appMode.rawValue) var appMode: AppModes = AppModes.jailbroken
     
     @EnvironmentObject var locationManager: LocationDataManager
     @EnvironmentObject var networkAuthorization: LocalNetworkAuthorization
@@ -73,6 +74,12 @@ struct SettingsView: View {
 
     var body: some View {
         List {
+            Section(header: Text("App Features"), footer: Text("The selected mode determines the actions of the app executed in the background.")) {
+                Picker("Mode", selection: $appMode) {
+                    ForEach(AppModes.allCases) { Text($0.description) }
+                }
+            }
+            
             Section(header: Text("Permissions")) {
                 Toggle("Local Network", isOn: isPermissionLocalNetwork)
                 // The permission can't be revoked once granted

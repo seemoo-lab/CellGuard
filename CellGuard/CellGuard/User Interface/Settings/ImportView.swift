@@ -39,7 +39,7 @@ enum ImportFileType {
             return .dataCompressed
         } else if lastComponent.hasSuffix(".cells") {
             return .dataUncompressed
-        } else if lastComponent.hasPrefix("sysdiagnose") && lastComponent.hasSuffix(".tar.gz") {
+        } else if lastComponent.hasPrefix("sysdiagnose_") && lastComponent.hasSuffix(".gz") {
             return .sysdiagnose
         } else {
             return .unknown
@@ -295,14 +295,16 @@ struct ImportView: View {
     
     private static func fileSize(url: URL) -> String? {
         guard url.startAccessingSecurityScopedResource() else {
+            // TODO: If the sysdiagnose is directly shared from the System Settings we can't access it
+            // So we should show a dialogue explaining that it first must be saved to Files and then shared with CellGuard
             return nil
         }
         defer { url.stopAccessingSecurityScopedResource() }
         
         do {
             let attributes = try FileManager.default.attributesOfItem(atPath: url.path)
-            if let size = attributes[FileAttributeKey.size] as? NSNumber {
-                return ByteCountFormatter().string(fromByteCount: size.int64Value)
+            if let size = attributes[FileAttributeKey.size] as? UInt64 {
+                return ByteCountFormatter().string(fromByteCount: Int64(size))
             }
         } catch {
             Self.logger.warning("Can't get file size of \(url)")
