@@ -44,7 +44,9 @@ class CellGuardSceneDelegate: NSObject, UIWindowSceneDelegate, ObservableObject 
         // See: https://developer.apple.com/forums/thread/668595
         
         // ... and notify that this prevents our app from collecting locations in the background.
-        CGNotificationManager.shared.queueKeepOpenNotification()
+        if UserDefaults.standard.appMode() != .analysis {
+            CGNotificationManager.shared.queueKeepOpenNotification()
+        }
     }
     
     private func scheduleAppRefresh() {
