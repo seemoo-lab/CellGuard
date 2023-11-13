@@ -27,12 +27,12 @@ struct CellInformationCard: View {
         
         self._alsCells = FetchRequest(
             sortDescriptors: [NSSortDescriptor(keyPath: \ALSCell.imported, ascending: false)],
-            predicate: PersistenceController.shared.sameCellPredicate(cell: cell),
+            predicate: PersistenceController.shared.sameCellPredicate(cell: cell, mergeUMTS: true),
             animation: .default
         )
         self._tweakCells = FetchRequest(
             sortDescriptors: [NSSortDescriptor(keyPath: \TweakCell.collected, ascending: false)],
-            predicate: PersistenceController.shared.sameCellPredicate(cell: cell),
+            predicate: PersistenceController.shared.sameCellPredicate(cell: cell, mergeUMTS: false),
             animation: .default
         )
 

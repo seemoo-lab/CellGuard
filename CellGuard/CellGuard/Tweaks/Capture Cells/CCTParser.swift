@@ -122,12 +122,12 @@ struct CCTParser {
             cell.technology = .GSM
         case "RadioAccessTechnologyUMTS":
             cell = try parseUTMS(info)
-            cell.technology = .LTE
+            cell.technology = .UMTS
         case "RadioAccessTechnologyUTRAN":
             // UMTS Terrestrial Radio Access Network
             // https://en.wikipedia.org/wiki/UMTS_Terrestrial_Radio_Access_Network
             cell = try parseUTMS(info)
-            cell.technology = .LTE
+            cell.technology = .UMTS
         case "RadioAccessTechnologyCDMA1x":
             // https://en.wikipedia.org/wiki/CDMA2000
             cell = try parseCDMA(info)
@@ -190,6 +190,9 @@ struct CCTParser {
         
         // Therefore this is just a guess and not tested but it should be the similar to GSM
         // https://en.wikipedia.org/wiki/Mobility_management#Location_area
+        
+        // With some data collected in Austria, we could confirm this
+        // There's also the field "SCN" which could be an abbreviation for sub-channel number
         
         cell.mcc = info["MCC"] as? Int32 ?? 0
         cell.network = info["MNC"] as? Int32 ?? 0

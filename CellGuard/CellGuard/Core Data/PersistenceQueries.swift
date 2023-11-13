@@ -78,7 +78,7 @@ extension PersistenceController {
                 let existFetchRequest = NSFetchRequest<ALSCell>()
                 existFetchRequest.fetchLimit = 1
                 existFetchRequest.entity = ALSCell.entity()
-                existFetchRequest.predicate = sameCellPredicate(queryCell: queryCell)
+                existFetchRequest.predicate = sameCellPredicate(queryCell: queryCell, mergeUMTS: true)
                 do {
                     // If the cell exists, we update its attributes but not its location.
                     // This is crucial for adding the PCI & EARFCN to an existing LTE cell.
@@ -686,7 +686,7 @@ extension PersistenceController {
         let fetchRequest = NSFetchRequest<ALSCell>()
         fetchRequest.entity = ALSCell.entity()
         fetchRequest.fetchLimit = 1
-        fetchRequest.predicate = sameCellPredicate(cell: tweakCell)
+        fetchRequest.predicate = sameCellPredicate(cell: tweakCell, mergeUMTS: true)
         
         do {
             let result = try fetchRequest.execute()
@@ -707,15 +707,19 @@ extension PersistenceController {
         )
     }
     
-    func sameCellPredicate(cell: Cell) -> NSPredicate {
+    func sameCellPredicate(cell: Cell, mergeUMTS: Bool) -> NSPredicate {
+        let technology = mergeUMTS && cell.technology == ALSTechnology.UMTS.rawValue ? ALSTechnology.GSM.rawValue : cell.technology
+        
         return NSPredicate(
             format: "technology = %@ and country = %@ and network = %@ and area = %@ and cell = %@",
-            cell.technology ?? "", cell.country as NSNumber, cell.network as NSNumber,
+            technology ?? "", cell.country as NSNumber, cell.network as NSNumber,
             cell.area as NSNumber, cell.cell as NSNumber
         )
     }
     
-    func sameCellPredicate(queryCell cell: ALSQueryCell) -> NSPredicate {
+    func sameCellPredicate(queryCell cell: ALSQueryCell, mergeUMTS: Bool) -> NSPredicate {
+        let technology = mergeUMTS && cell.technology == ALSTechnology.UMTS ? ALSTechnology.GSM.rawValue : cell.technology.rawValue
+        
         return NSPredicate(
             format: "technology = %@ and country = %@ and network = %@ and area = %@ and cell = %@",
             cell.technology.rawValue, cell.country as NSNumber, cell.network as NSNumber,

@@ -14,6 +14,7 @@ enum ALSClientError: Error {
     case httpStatus(URLResponse?)
     case httpNoData(URLResponse?)
     case noCells(Data)
+    case cellIdTooLarge
 }
 
 struct ALSQueryLocation: Equatable, Hashable {
@@ -152,8 +153,12 @@ struct ALSQueryCell: CustomStringConvertible, Equatable, Hashable {
         }
     }
     
-    func toScdmaProto() -> AlsProto_ScdmaCell {
-        AlsProto_ScdmaCell.with {
+    func toScdmaProto() throws -> AlsProto_ScdmaCell {
+        if self.cell > Int32.max {
+            throw ALSClientError.cellIdTooLarge
+        }
+        
+        return AlsProto_ScdmaCell.with {
             $0.mcc = self.country
             $0.mnc = self.network
             $0.lacID = self.area
@@ -161,11 +166,16 @@ struct ALSQueryCell: CustomStringConvertible, Equatable, Hashable {
         }
     }
     
-    func toLteProto() -> AlsProto_LteCell {
-        AlsProto_LteCell.with {
+    func toLteProto() throws  -> AlsProto_LteCell {
+        if self.cell > Int32.max {
+            throw ALSClientError.cellIdTooLarge
+        }
+        
+        return AlsProto_LteCell.with {
             $0.mcc = self.country
             $0.mnc = self.network
             $0.tacID = self.area
+            print(self.cell)
             $0.cellID = Int32(self.cell)
         }
     }
@@ -179,8 +189,12 @@ struct ALSQueryCell: CustomStringConvertible, Equatable, Hashable {
         }
     }
     
-    func toCDMAProto() -> AlsProto_CdmaCell {
-        AlsProto_CdmaCell.with {
+    func toCDMAProto() throws  -> AlsProto_CdmaCell {
+        if self.cell > Int32.max {
+            throw ALSClientError.cellIdTooLarge
+        }
+        
+        return AlsProto_CdmaCell.with {
             $0.mcc = self.country
             $0.sid = self.network
             $0.nid = self.area
@@ -241,26 +255,28 @@ struct ALSClient {
     ///   - origin: the cell used as origin for the request, it doesn't require a location
     ///   - completion: called upon success with a list of nearby cells
     func requestCells(origin: ALSQueryCell) async throws -> [ALSQueryCell] {
-        let protoRequest = AlsProto_ALSLocationRequest.with {
-            switch (origin.technology) {
-            case .GSM:
-                $0.gsmCells = [origin.toGsmProto()]
-            case .SCDMA:
-                $0.scdmaCells = [origin.toScdmaProto()]
-            case .LTE:
-                $0.lteCells = [origin.toLteProto()]
-            case .NR:
-                $0.nr5Gcells = [origin.toNRProto()]
-            case .CDMA:
-                $0.cdmaCells = [origin.toCDMAProto()]
-            }
-            $0.numberOfSurroundingCells = 0
-            $0.numberOfSurroundingWifis = 1
-            $0.surroundingWifiBands = [1]
-        }
-        
         let data: Data;
         do {
+            let protoRequest = try AlsProto_ALSLocationRequest.with {
+                switch (origin.technology) {
+                case .GSM:
+                    $0.gsmCells = [origin.toGsmProto()]
+                case .UMTS:
+                    $0.gsmCells = [origin.toGsmProto()]
+                case .SCDMA:
+                    $0.scdmaCells = [try origin.toScdmaProto()]
+                case .LTE:
+                    $0.lteCells = [try origin.toLteProto()]
+                case .NR:
+                    $0.nr5Gcells = [origin.toNRProto()]
+                case .CDMA:
+                    $0.cdmaCells = [try origin.toCDMAProto()]
+                }
+                $0.numberOfSurroundingCells = 0
+                $0.numberOfSurroundingWifis = 1
+                $0.surroundingWifiBands = [1]
+            }
+            
             data = try protoRequest.serializedData()
         } catch {
             Self.logger.warning("Can't encode proto request: \(error)")

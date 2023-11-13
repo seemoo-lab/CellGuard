@@ -174,6 +174,13 @@ struct CellVerifier {
             return .next(status: .processedCell, points: Self.pointsALS)
         }
         
+        // In ARI devices, a cell ID larger than Int32.max for UMTS connections, indicates that there's no cellular connection available.
+        // Thus, there's nothing to verify.
+        // We assume ARI modems use the constant 0xFFFFFFFF for that purpose (whereas Int32.max is 0x7FFFFFFF)
+        if queryCell.technology == .UMTS && queryCell.cell == 0xFFFFFFFF {
+            return .next(status: .verified, points: Self.pointsMax)
+        }
+        
         // If we can't find the cell in our database, we'll query ALS (and return to this thread)
         Self.logger.info("Requesting tweak cell from the remote ALS database: \(queryCell)")
         let alsCells: [ALSQueryCell]

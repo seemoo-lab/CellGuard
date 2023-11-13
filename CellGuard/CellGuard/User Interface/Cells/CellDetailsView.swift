@@ -51,11 +51,11 @@ struct CellDetailsView: View {
     private func fetchRequests() -> (FetchRequest<ALSCell>, FetchRequest<TweakCell>) {
         let alsCellsRequest = FetchRequest<ALSCell>(
             sortDescriptors: [NSSortDescriptor(keyPath: \ALSCell.imported, ascending: false)],
-            predicate: PersistenceController.shared.sameCellPredicate(cell: cell),
+            predicate: PersistenceController.shared.sameCellPredicate(cell: cell, mergeUMTS: true),
             animation: .default
         )
         
-        var measurementPredicates = [PersistenceController.shared.sameCellPredicate(cell: cell)]
+        var measurementPredicates = [PersistenceController.shared.sameCellPredicate(cell: cell, mergeUMTS: false)]
         if !showAll {
             if let start = start {
                 measurementPredicates.append(NSPredicate(format: "collected >= %@", start as NSDate))

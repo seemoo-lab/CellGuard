@@ -17,14 +17,11 @@ enum ALSTechnology: String, CaseIterable, Identifiable {
     case GSM
     case SCDMA
     case CDMA
+    case UMTS
     case LTE
     case NR
     
     public static func from(cctTechnology: String) -> ALSTechnology {
-        if cctTechnology == "UMTS" {
-            return .LTE
-        }
-        
         guard let alsTechnology = ALSTechnology(rawValue: cctTechnology) else {
             logger.warning("Unable to find the according ALS technology for '\(cctTechnology)'")
             return .LTE

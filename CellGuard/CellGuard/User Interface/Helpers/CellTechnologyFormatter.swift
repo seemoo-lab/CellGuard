@@ -50,6 +50,7 @@ struct CellTechnologyFormatter {
         switch (technology) {
         case .CDMA: return "Channel"
         case .GSM: return "ARFCN"
+        case .UMTS: return "ARFCN"
         case .SCDMA: return "ARFCN"
         case .LTE: return "EARFCN"
         case .NR: return "ARFCN"
@@ -64,6 +65,7 @@ struct CellTechnologyFormatter {
         switch (technology) {
         case .CDMA: return "c"
         case .GSM: return "g"
+        case .UMTS: return "u"
         case .SCDMA: return "s"
         case .LTE: return "l"
         case .NR: return "n"
@@ -74,6 +76,7 @@ struct CellTechnologyFormatter {
         switch (technology) {
         case .CDMA: return .orange
         case .GSM: return .green
+        case .UMTS: return .green
         case .SCDMA: return .pink
         case .LTE: return .blue
         case .NR: return .red
@@ -84,11 +87,6 @@ struct CellTechnologyFormatter {
         // Return a default formatter if no technology is given
         guard var technology = technology?.uppercased() else {
             return CellTechnologyFormatter(technology: .LTE)
-        }
-        
-        // UMTS and LTE technologies are handled the same
-        if technology == "UMTS" {
-            technology = "LTE"
         }
         
         if let alsTech = ALSTechnology(rawValue: technology) {
@@ -104,6 +102,7 @@ struct CellTechnologyFormatter {
         switch (technology) {
         case .CDMA: return .systemOrange
         case .GSM: return .systemGreen
+        case .UMTS: return .systemGreen
         case .SCDMA: return .systemPink
         case .LTE: return .systemBlue
         case .NR: return .systemRed

@@ -46,5 +46,13 @@ final class ALSClientTests: XCTestCase {
         print("First cell: \(cells[0])")
         XCTAssertGreaterThan(cells.count, 0)
     }
+    
+    func testRequestUMTSCell() async throws {
+        let client = ALSClient()
+        let cells = try await client.requestCells(origin: ALSQueryCell(technology: .UMTS, country: 232, network: 1, area: 4106, cell: 3403674))
+        print("Got \(cells.count) cells")
+        print("First cell: \(cells[0])")
+        XCTAssertGreaterThan(cells.count, 0)
+    }
 
 }

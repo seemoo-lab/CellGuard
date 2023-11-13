@@ -429,8 +429,8 @@ struct AlsProto_LteCell {
   /// Clears the value of `uarfcn`. Subsequent reads from it will return its default value.
   mutating func clearUarfcn() {self._uarfcn = nil}
 
-  /// Number with unknown meaning, only sometimes set for cells in responses.
-  /// According to https://3gpp.guru it could be a protocol identifier?
+  /// This number could reference to the cell's PCI (Physical Cell Identity)
+  /// See http://people.csail.mit.edu/bkph/cellular_repeater_numerology.shtml
   var pid: Int32 {
     get {return _pid ?? 0}
     set {_pid = newValue}
@@ -453,7 +453,9 @@ struct AlsProto_LteCell {
   fileprivate var _pid: Int32? = nil
 }
 
-/// We're able to confirm our assumptions with a field test.
+/// This message not only refers to GSM but also to UMTS cells.
+/// In the source code it is simply named "ALSCellTower".
+/// We're able to confirm our assumptions with field tests for GSM and UMTS cells.
 struct AlsProto_GsmCell {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
@@ -639,7 +641,7 @@ struct AlsProto_CdmaCell {
   /// Clears the value of `channel`. Subsequent reads from it will return its default value.
   mutating func clearChannel() {_uniqueStorage()._channel = nil}
 
-  /// Number to identify a basestation
+  /// Number to identify a basestation, only set for cells in responses
   /// See https://en.wikipedia.org/wiki/List_of_CDMA_terminology
   var pnoffset: Int32 {
     get {return _storage._pnoffset ?? 0}
