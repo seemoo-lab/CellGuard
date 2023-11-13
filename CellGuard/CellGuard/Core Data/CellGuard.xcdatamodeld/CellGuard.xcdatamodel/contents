@@ -97,5 +97,8 @@
         <attribute name="speedAccuracy" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="verticalAccuracy" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <relationship name="cells" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="TweakCell" inverseName="location" inverseEntity="TweakCell"/>
+        <fetchIndex name="byUserLocationTimestamp">
+            <fetchIndexElement property="collected" type="Binary" order="ascending"/>
+        </fetchIndex>
     </entity>
 </model>
