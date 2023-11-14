@@ -175,7 +175,6 @@ struct ALSQueryCell: CustomStringConvertible, Equatable, Hashable {
             $0.mcc = self.country
             $0.mnc = self.network
             $0.tacID = self.area
-            print(self.cell)
             $0.cellID = Int32(self.cell)
         }
     }

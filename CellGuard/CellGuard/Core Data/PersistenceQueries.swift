@@ -722,7 +722,7 @@ extension PersistenceController {
         
         return NSPredicate(
             format: "technology = %@ and country = %@ and network = %@ and area = %@ and cell = %@",
-            cell.technology.rawValue, cell.country as NSNumber, cell.network as NSNumber,
+            technology, cell.country as NSNumber, cell.network as NSNumber,
             cell.area as NSNumber, cell.cell as NSNumber
         )
     }

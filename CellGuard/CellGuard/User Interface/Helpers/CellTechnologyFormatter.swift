@@ -85,7 +85,7 @@ struct CellTechnologyFormatter {
     
     public static func from(technology: String?) -> CellTechnologyFormatter {
         // Return a default formatter if no technology is given
-        guard var technology = technology?.uppercased() else {
+        guard let technology = technology?.uppercased() else {
             return CellTechnologyFormatter(technology: .LTE)
         }
         
