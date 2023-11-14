@@ -55,20 +55,23 @@ class CellGuardSceneDelegate: NSObject, UIWindowSceneDelegate, ObservableObject 
         // This methods is also called once the task was executed in the background and thus, schedules another execution.
         // (Or at least I hope that)
         
-        do {
-            let refreshTask = BGAppRefreshTaskRequest(identifier: CellGuardAppDelegate.cellRefreshTaskIdentifier)
-            refreshTask.earliestBeginDate = Date(timeIntervalSinceNow: 60 * 60)
-            try BGTaskScheduler.shared.submit(refreshTask)
-        } catch {
-            Self.logger.warning("Could not schedule the app cell refresh task: \(Self.toDescription(taskSchedulerError: error as? BGTaskScheduler.Error)) -> \(error)")
-        }
-        
-        do {
-            let refreshTask = BGAppRefreshTaskRequest(identifier: CellGuardAppDelegate.packetRefreshTaskIdentifier)
-            refreshTask.earliestBeginDate = Date(timeIntervalSinceNow: 60 * 60)
-            try BGTaskScheduler.shared.submit(refreshTask)
-        } catch {
-            Self.logger.warning("Could not schedule the app packet refresh task: \(Self.toDescription(taskSchedulerError: error as? BGTaskScheduler.Error)) -> \(error)")
+        // Only schedule refresh tasks to fetch cells & packets if the jailbroken mode is active
+        if UserDefaults.standard.appMode() == .jailbroken {
+            do {
+                let refreshTask = BGAppRefreshTaskRequest(identifier: CellGuardAppDelegate.cellRefreshTaskIdentifier)
+                refreshTask.earliestBeginDate = Date(timeIntervalSinceNow: 60 * 60)
+                try BGTaskScheduler.shared.submit(refreshTask)
+            } catch {
+                Self.logger.warning("Could not schedule the app cell refresh task: \(Self.toDescription(taskSchedulerError: error as? BGTaskScheduler.Error)) -> \(error)")
+            }
+            
+            do {
+                let refreshTask = BGAppRefreshTaskRequest(identifier: CellGuardAppDelegate.packetRefreshTaskIdentifier)
+                refreshTask.earliestBeginDate = Date(timeIntervalSinceNow: 60 * 60)
+                try BGTaskScheduler.shared.submit(refreshTask)
+            } catch {
+                Self.logger.warning("Could not schedule the app packet refresh task: \(Self.toDescription(taskSchedulerError: error as? BGTaskScheduler.Error)) -> \(error)")
+            }
         }
         
         do {

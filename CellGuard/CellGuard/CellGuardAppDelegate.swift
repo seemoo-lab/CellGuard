@@ -61,6 +61,12 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
         // Register a background refresh task to poll the tweak continuously in the background
         // https://developer.apple.com/documentation/uikit/app_and_environment/scenes/preparing_your_ui_to_run_in_the_background/using_background_tasks_to_update_your_app
         BGTaskScheduler.shared.register(forTaskWithIdentifier: Self.cellRefreshTaskIdentifier, using: nil) { task in
+            // Only collect cells in the background if the app runs on a jailbroken device
+            if UserDefaults.standard.appMode() != AppModes.jailbroken {
+                task.setTaskCompleted(success: true)
+                return
+            }
+            
             // Use to cancel operations:
             // let queue = OperationQueue()
             // queue.maxConcurrentOperationCount = 1
@@ -78,6 +84,12 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
         }
         
         BGTaskScheduler.shared.register(forTaskWithIdentifier: Self.packetRefreshTaskIdentifier, using: nil) { task in
+            // Only collect cells in the background if the app runs on a jailbroken device
+            if UserDefaults.standard.appMode() != AppModes.jailbroken {
+                task.setTaskCompleted(success: true)
+                return
+            }
+            
             let collector = CPTCollector(client: CPTClient(queue: DispatchQueue.global()))
             
             collector.collectAndStore { result in
