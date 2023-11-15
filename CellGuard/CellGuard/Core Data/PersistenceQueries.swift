@@ -150,13 +150,36 @@ extension PersistenceController {
         
         let determine: () throws -> RiskLevel =  {
             let calendar = Calendar.current
-            let ftDaysAgo = calendar.date(byAdding: .day, value: -14, to: calendar.startOfDay(for: Date()))!
-            let ftDayPredicate = NSPredicate(format: "collected >= %@", ftDaysAgo as NSDate)
             let thirtyMinutesAgo = Date() - 30 * 60
+            let ftDaysAgo = calendar.date(byAdding: .day, value: -14, to: calendar.startOfDay(for: Date()))!
+            
+            // Consider all cells if the analysis mode is active, otherwise only those of the last 14 days
+            let ftDayPredicate: NSPredicate
+            if UserDefaults.standard.appMode() == .analysis {
+                // This predicate always evaluates to true
+                ftDayPredicate = NSPredicate(value: true)
+            } else {
+                ftDayPredicate = NSPredicate(format: "collected >= %@", ftDaysAgo as NSDate)
+            }
             
             let tweakCelSortDescriptor = [NSSortDescriptor(keyPath: \TweakCell.collected, ascending: false)]
-            
             let appMode = UserDefaults.standard.appMode()
+            
+            // Unverified Measurements
+            
+            let unknownFetchRequest: NSFetchRequest<TweakCell> = TweakCell.fetchRequest()
+            unknownFetchRequest.sortDescriptors = tweakCelSortDescriptor
+            unknownFetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+                ftDayPredicate,
+                NSPredicate(format: "status != %@", CellStatus.verified.rawValue),
+            ])
+            unknownFetchRequest.fetchLimit = 1
+            let unknowns = try taskContext.fetch(unknownFetchRequest)
+            
+            // We show the unknown status if there's work left and were in the analysis mode
+            if unknowns.count > 0 && appMode == .analysis {
+                return .Unknown
+            }
             
             // Failed Measurements
             
@@ -260,23 +283,8 @@ extension PersistenceController {
                 return .Medium(cause: .Permissions)
             }
             
-            // Unverified Measurements
-            
-            let unknownFetchRequest: NSFetchRequest<TweakCell> = TweakCell.fetchRequest()
-            unknownFetchRequest.sortDescriptors = tweakCelSortDescriptor
-            // Check for all cells if the analysis mode is active
-            if appMode == .analysis {
-                unknownFetchRequest.predicate = NSPredicate(format: "status != %@", CellStatus.verified.rawValue)
-            } else {
-                unknownFetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
-                    ftDayPredicate,
-                    NSPredicate(format: "status != %@", CellStatus.verified.rawValue),
-                ])
-            }
-            unknownFetchRequest.fetchLimit = 1
-            let unknowns = try taskContext.fetch(unknownFetchRequest)
-            
             // We keep the unknown status until all cells are verified (except the current cell which we are monitoring)
+            // If the analysis mode is not active, we the unknown mode has a lower priority
             if unknowns.count == 1, let unknownCell = unknowns.first, unknownCell.status == CellStatus.processedBandwidth.rawValue {
                 return .LowMonitor
             } else if unknowns.count > 0 {

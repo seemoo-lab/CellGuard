@@ -17,6 +17,8 @@ enum RiskMediumCause: Equatable {
     case CantCompute
     
     func text() -> String {
+        let ftDaysSuffix = UserDefaults.standard.appMode() != .analysis ? " in the last 14 days" : ""
+        
         switch (self) {
         case .Permissions:
             return "Ensure you've granted all required permissions"
@@ -27,7 +29,7 @@ enum RiskMediumCause: Equatable {
         case .Location:
             return "Ensure you've granted all location permissions"
         case let .Cells(cellCount):
-            return "Detected \(cellCount) suspicious \(cellCount == 1 ? "cell" : "cells") in the last 14 days"
+            return "Detected \(cellCount) suspicious \(cellCount == 1 ? "cell" : "cells")\(ftDaysSuffix)"
         case .CantCompute:
             return "Unable to determine your risk"
         }
