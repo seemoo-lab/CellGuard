@@ -179,19 +179,54 @@ struct DataSummaryView: View {
                 return
             }
             
-            let qmiRequest: NSFetchRequest<QMIPacket> = QMIPacket.fetchRequest()
-            qmiRequest.predicate = collectedPredicate
+            let packets: (first: Date?, last: Date?, qmi: Int?, ari: Int?)? = try persistence.performAndWait { context in
+                let qmiRequest: NSFetchRequest<QMIPacket> = QMIPacket.fetchRequest()
+                qmiRequest.predicate = collectedPredicate
+                qmiRequest.includesSubentities = false
+                let qmiPacketCount = try context.count(for: qmiRequest)
+                
+                let ariRequest: NSFetchRequest<ARIPacket> = ARIPacket.fetchRequest()
+                ariRequest.predicate = collectedPredicate
+                ariRequest.includesSubentities = false
+                let ariPacketCount = try context.count(for: ariRequest)
+                
+                if qmiPacketCount > 0 {
+                    let firstQMIRequest: NSFetchRequest<QMIPacket> = QMIPacket.fetchRequest()
+                    firstQMIRequest.sortDescriptors = [NSSortDescriptor(keyPath: \QMIPacket.collected, ascending: true)]
+                    firstQMIRequest.fetchLimit = 1
+                    
+                    let lastQMIRequest: NSFetchRequest<QMIPacket> = QMIPacket.fetchRequest()
+                    lastQMIRequest.sortDescriptors = [NSSortDescriptor(keyPath: \QMIPacket.collected, ascending: false)]
+                    lastQMIRequest.fetchLimit = 1
+                    
+                    return (
+                        try context.fetch(firstQMIRequest).first?.collected,
+                        try context.fetch(lastQMIRequest).first?.collected,
+                        qmiPacketCount,
+                        ariPacketCount
+                    )
+                } else {
+                    let firstARIRequest: NSFetchRequest<ARIPacket> = ARIPacket.fetchRequest()
+                    firstARIRequest.sortDescriptors = [NSSortDescriptor(keyPath: \ARIPacket.collected, ascending: true)]
+                    firstARIRequest.fetchLimit = 1
+                    
+                    let lastARIRequest: NSFetchRequest<ARIPacket> = ARIPacket.fetchRequest()
+                    lastARIRequest.sortDescriptors = [NSSortDescriptor(keyPath: \ARIPacket.collected, ascending: false)]
+                    lastARIRequest.fetchLimit = 1
+                    
+                    return (
+                        try context.fetch(firstARIRequest).first?.collected,
+                        try context.fetch(lastARIRequest).first?.collected,
+                        qmiPacketCount,
+                        ariPacketCount
+                    )
+                }
+            }
             
-            let ariRequest: NSFetchRequest<ARIPacket> = ARIPacket.fetchRequest()
-            ariRequest.predicate = collectedPredicate
-            
-            // TODO: Fetch first and last packets
-            let packets: (first: Date?, last: Date?, qmi: Int?, ari: Int?) = (
-                nil,
-                nil,
-                persistence.countEntitiesOf(qmiRequest),
-                persistence.countEntitiesOf(ariRequest)
-            )
+            guard let packets = packets else {
+                print("No Packets ):")
+                return
+            }
             
             DispatchQueue.main.async {
                 self.measurements = measurementCellsResults.measurements
