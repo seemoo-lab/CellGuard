@@ -119,13 +119,15 @@ struct CellVerifier {
             }
             
             // Run the verification stage for the cell's current state
+            let beforeStageTime = CFAbsoluteTimeGetCurrent()
             let result = try await verifyStage(status: queryCellStatus, queryCell: queryCell, queryCellID: queryCellID)
+            let stageTime = CFAbsoluteTimeGetCurrent() - beforeStageTime
             
             // Based on the stage's result, we choose our course of action
             switch (result) {
                 
             case let .next(nextStatus, points):
-                Self.logger.debug("Result: .next(\(nextStatus.rawValue), \(points))")
+                Self.logger.debug("Result: .next(\(nextStatus.rawValue), \(points)) - Took \(stageTime)s")
                 // We store the resulting status and award the points, then the while-loop continues
                 score += Int16(points)
                 queryCellStatus = nextStatus
@@ -134,7 +136,7 @@ struct CellVerifier {
                 }
                 
             case let .delay(delay):
-                Self.logger.debug("Delay: .next(\(delay))")
+                Self.logger.debug("Delay: .next(\(delay)) - Took \(stageTime)s")
                 // We store the delay in the database and stop the verification loop
                 try persistence.storeVerificationDelay(cellId: queryCellID, seconds: delay)
                 break outer
