@@ -87,6 +87,9 @@
         <relationship name="rejectPacket" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Packet" inverseName="rejectedCell" inverseEntity="Packet"/>
         <relationship name="signalStrengths" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="SignalStrength" inverseName="forCell" inverseEntity="SignalStrength"/>
         <relationship name="verification" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ALSCell" inverseName="verified" inverseEntity="ALSCell"/>
+        <fetchIndex name="byTweakCellCollected">
+            <fetchIndexElement property="collected" type="Binary" order="descending"/>
+        </fetchIndex>
     </entity>
     <entity name="UserLocation" representedClassName="UserLocation" parentEntity="Location" syncable="YES" codeGenerationType="class">
         <attribute name="altitude" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
