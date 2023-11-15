@@ -564,8 +564,8 @@ extension PersistenceController {
             let request = NSFetchRequest<QMIPacket>()
             request.entity = QMIPacket.entity()
             request.predicate = NSPredicate(
-                format: "indication = %@ and %@ <= collected and collected <= %@ and service = %@ and message = %@ and direction = %@",
-                NSNumber(booleanLiteral: indication), start as NSDate, end as NSDate, service as NSNumber, message as NSNumber, direction.rawValue as NSString
+                format: "indication = %@ and service = %@ and message = %@ and %@ <= collected and collected <= %@ and direction = %@",
+                NSNumber(booleanLiteral: indication), service as NSNumber, message as NSNumber, start as NSDate, end as NSDate, direction.rawValue as NSString
             )
             request.sortDescriptors = [NSSortDescriptor(keyPath: \QMIPacket.collected, ascending: false)]
             // See: https://stackoverflow.com/a/11165883
