@@ -251,13 +251,18 @@ struct PersistenceCSVExporter {
             url: url,
             category: .connectedCells,
             progress: progress,
-            header: ["collected", "json", "status", "score"],
+            header: ["collected", "json", "status", "technology", "country", "network", "area", "cell", "score"],
             fetchRequest: TweakCell.fetchRequest
         ) { csv, result in
             try csv.write(row: [
                 csvDate(result.collected),
                 csvString(result.json),
                 csvString(result.status),
+                csvString(result.technology),
+                csvInt(result.country),
+                csvInt(result.network),
+                csvInt(result.area),
+                csvInt(result.cell),
                 csvInt(result.score)
             ])
         }
