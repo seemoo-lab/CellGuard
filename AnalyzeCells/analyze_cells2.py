@@ -146,7 +146,7 @@ def process_user_cells(df: pd.DataFrame) -> tuple[int, int, int, int]:
         unique_cell_count = len(unique_df.index)
 
         unique_score_series = unique_df['score'].apply(cell_score_category)
-        unique_category_count: dict[str, int] = unique_score_series.groupby(score_series).count().to_dict()
+        unique_category_count: dict[str, int] = unique_score_series.groupby(unique_score_series).count().to_dict()
 
         unique_untrusted = unique_category_count.get("Untrusted", 0)
         unique_suspicious = unique_category_count.get("Suspicious", 0)
@@ -199,7 +199,6 @@ def process_time(df: pd.DataFrame, graph: bool) -> tuple[int, int]:
         for date in daterange(start, end):
             if date not in day_series.index:
                 day_series[date] = 0
-            print(date)
 
         fig, ax = plt.subplots()
         ax.set_ylabel("Cell Measurements")
@@ -224,6 +223,7 @@ def process_latex(
 
     print('LaTeX Table Row:')
     print(
+        f'  '
         f'number & model & baseband & {n(days_active)} & {n(days_total)} & '
         f'{n(untrusted_cells)} & {n(suspicious_cells)} & {n(trusted_cells)} & '
         f'{n(cell_measurements)} & {n(packets)} & {n(locations)} \\\\'
