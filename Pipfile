@@ -8,6 +8,8 @@ yaspin = "*"
 luaparser = "*"
 beautifulsoup4 = "*"
 requests = "*"
+pandas = "*"
+matplotlib= "*"
 
 [dev-packages]
 
