@@ -190,7 +190,6 @@ extension PersistenceController {
                 NSPredicate(format: "status == %@", CellStatus.verified.rawValue),
                 NSPredicate(format: "score < %@", CellVerifier.pointsUntrustedThreshold as NSNumber)
             ])
-            failedFetchRequest.fetchLimit = 100
             let failed = try taskContext.fetch(failedFetchRequest)
             if failed.count > 0 {
                 let cellCount = Dictionary(grouping: failed) { Self.queryCell(from: $0) }.count
@@ -206,7 +205,6 @@ extension PersistenceController {
                 NSPredicate(format: "status == %@", CellStatus.verified.rawValue),
                 NSPredicate(format: "score < %@", CellVerifier.pointsSuspiciousThreshold as NSNumber)
             ])
-            suspiciousFetchRequest.fetchLimit = 100
             let suspicious = try taskContext.fetch(suspiciousFetchRequest)
             if suspicious.count > 0 {
                 let cellCount = Dictionary(grouping: suspicious) { Self.queryCell(from: $0) }.count
