@@ -5,6 +5,7 @@ import zipfile
 from dataclasses import dataclass
 from datetime import datetime, time, timedelta
 from pathlib import Path
+from typing import Optional
 
 import pandas as pd
 from matplotlib import pyplot as plt
@@ -59,6 +60,14 @@ def process_info(dirs: list[Path]):
     print()
 
 
+def filter_start_end(df: pd.DataFrame, start: Optional[datetime], end: Optional[datetime]) -> pd.DataFrame:
+    if start:
+        df = df[df['collected'] >= start.timestamp()]
+    if end:
+        df = df[df['collected'] <= end.timestamp()]
+    return df
+
+
 def process_als_cells(dirs: list[Path]) -> int:
     dfs = [pd.read_csv(d.joinpath('als-cells.csv')) for d in dirs]
     df = pd.concat(dfs)
@@ -73,9 +82,9 @@ def process_als_cells(dirs: list[Path]) -> int:
     return als_cell_count
 
 
-def process_locations(dirs: list[Path]) -> int:
+def process_locations(dirs: list[Path], start: Optional[datetime], end: Optional[datetime]) -> int:
     dfs = [pd.read_csv(d.joinpath('locations.csv')) for d in dirs]
-    df = pd.concat(dfs)
+    df = filter_start_end(pd.concat(dfs), start, end)
 
     location_count = len(df.index)
 
@@ -88,9 +97,9 @@ def process_locations(dirs: list[Path]) -> int:
     return location_count
 
 
-def process_packets(dirs: list[Path]):
+def process_packets(dirs: list[Path], start: Optional[datetime], end: Optional[datetime]):
     dfs = [pd.read_csv(d.joinpath('packets.csv'), usecols=['collected', 'direction', 'proto']) for d in dirs]
-    df = pd.concat(dfs)
+    df = filter_start_end(pd.concat(dfs), start, end)
 
     packet_count = len(df.index)
 
@@ -107,11 +116,11 @@ def process_packets(dirs: list[Path]):
     return packet_count
 
 
-def load_user_cells(dirs: list[Path]) -> pd.DataFrame:
+def load_user_cells(dirs: list[Path], start: Optional[datetime], end: Optional[datetime]) -> pd.DataFrame:
     # https://stackoverflow.com/a/63002444/4106848
     columns = ['collected', 'status', 'score', 'technology', 'country', 'network', 'area', 'cell']
     dfs = [pd.read_csv(d.joinpath('user-cells.csv'), usecols=lambda x: x in columns) for d in dirs]
-    df = pd.concat(dfs)
+    df = filter_start_end(pd.concat(dfs), start, end)
 
     # Only consider cells whose verification is complete
     return df[df['status'] == 'verified']
@@ -239,11 +248,15 @@ def main():
     parser.add_argument('path', type=Path)
     parser.add_argument('-t', '--latex-table', action='store_true')
     parser.add_argument('-g', '--graph', action='store_true')
+    parser.add_argument('-s', '--start', type=int)
+    parser.add_argument('-e', '--end', type=int)
 
     args = parser.parse_args()
     path: Path = args.path
     latex_table: bool = args.latex_table
     graph: bool = args.graph
+    start_time: datetime = datetime.fromtimestamp(args.start) if args.start else None
+    end_time: datetime = datetime.fromtimestamp(args.end) if args.end else None
 
     cells2_files = []
     if path.is_dir():
@@ -274,11 +287,11 @@ def main():
     tmp_dirs = list(tmp_name_dirs.values())
 
     process_info(tmp_dirs)
-    location_count = process_locations(tmp_dirs)
-    packet_count = process_packets(tmp_dirs)
+    location_count = process_locations(tmp_dirs, start_time, end_time)
+    packet_count = process_packets(tmp_dirs, start_time, end_time)
     process_als_cells(tmp_dirs)
 
-    user_cells_df = load_user_cells(tmp_dirs)
+    user_cells_df = load_user_cells(tmp_dirs, start_time, end_time)
     cell_measurements, unique_untrusted, unique_suspicious, unique_trusted = process_user_cells(user_cells_df)
     days_active, days_total = process_time(user_cells_df, graph)
     if latex_table:
