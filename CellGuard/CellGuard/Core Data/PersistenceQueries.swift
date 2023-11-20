@@ -383,14 +383,11 @@ extension PersistenceController {
     
     /// Uses `NSBatchInsertRequest` (BIR) to import QMI packets into the Core Data store on a private queue.
     func importQMIPackets(from packets: [(CPTPacket, ParsedQMIPacket)]) throws {
-        let taskContext = newTaskContext()
+        if packets.isEmpty {
+            return
+        }
         
-        taskContext.name = "importContext"
-        taskContext.transactionAuthor = "importQMIPackets"
-        
-        var success = false
-        
-        taskContext.performAndWait {
+        let objectIds: [NSManagedObjectID] = try performAndWait(name: "importContext", author: "importQMIPackets") { context in
             var index = 0
             let total = packets.count
             
@@ -417,13 +414,50 @@ extension PersistenceController {
                 return false
             })
             
-            if let fetchResult = try? taskContext.execute(batchInsertRequest),
-               let batchInsertResult = fetchResult as? NSBatchInsertResult {
-                success = batchInsertResult.result as? Bool ?? false
+            batchInsertRequest.resultType = .objectIDs
+            
+            guard let fetchResult = try? context.execute(batchInsertRequest),
+                  let batchInsertResult = fetchResult as? NSBatchInsertResult else {
+                return []
+            }
+            
+            return batchInsertResult.result as? [NSManagedObjectID]
+        } ?? []
+        
+        try performAndWait { context in
+            var added = false
+            
+            for id in objectIds {
+                guard let qmiPacket = context.object(with: id) as? QMIPacket else {
+                    continue
+                }
+                
+                if qmiPacket.indication == PacketConstants.qmiRejectIndication
+                    && qmiPacket.service == PacketConstants.qmiRejectService
+                    && qmiPacket.direction == PacketConstants.qmiRejectDirection.rawValue {
+                    
+                    if qmiPacket.message == PacketConstants.qmiRejectMessage {
+                        let index = PacketIndexQMI(context: context)
+                        index.collected = qmiPacket.collected
+                        index.reject = true
+                        qmiPacket.index = index
+                        added = true
+                    } else if qmiPacket.message == PacketConstants.qmiSignalMessage {
+                        let index = PacketIndexQMI(context: context)
+                        index.collected = qmiPacket.collected
+                        index.signal = true
+                        qmiPacket.index = index
+                        added = true
+                    }
+                }
+            }
+            
+            if added {
+                try context.save()
             }
         }
         
-        if !success {
+        if objectIds.isEmpty {
             logger.debug("Failed to execute batch import request for QMI packets.")
             throw PersistenceError.batchInsertError
         }
@@ -433,14 +467,11 @@ extension PersistenceController {
     
     /// Uses `NSBatchInsertRequest` (BIR) to import ARI packets into the Core Data store on a private queue.
     func importARIPackets(from packets: [(CPTPacket, ParsedARIPacket)]) throws {
-        let taskContext = newTaskContext()
+        if packets.isEmpty {
+            return
+        }
         
-        taskContext.name = "importContext"
-        taskContext.transactionAuthor = "importARIPackets"
-        
-        var success = false
-        
-        taskContext.performAndWait {
+        let objectIds: [NSManagedObjectID] = try performAndWait(name: "importContext", author: "importARIPackets") { context in
             var index = 0
             let total = packets.count
             
@@ -466,13 +497,47 @@ extension PersistenceController {
                 return false
             })
             
-            if let fetchResult = try? taskContext.execute(batchInsertRequest),
-               let batchInsertResult = fetchResult as? NSBatchInsertResult {
-                success = batchInsertResult.result as? Bool ?? false
+            batchInsertRequest.resultType = .objectIDs
+            
+            guard let fetchResult = try? context.execute(batchInsertRequest),
+                  let batchInsertResult = fetchResult as? NSBatchInsertResult else {
+                return []
+            }
+            
+            return batchInsertResult.result as? [NSManagedObjectID]
+        } ?? []
+        
+        try performAndWait { context in
+            var added = false
+            
+            for id in objectIds {
+                guard let ariPacket = context.object(with: id) as? ARIPacket else {
+                    continue
+                }
+                
+                if ariPacket.direction == PacketConstants.ariRejectDirection.rawValue {
+                    if ariPacket.group == PacketConstants.ariRejectGroup && ariPacket.type == PacketConstants.ariRejectType {
+                        let index = PacketIndexARI(context: context)
+                        index.reject = true
+                        index.collected = ariPacket.collected
+                        ariPacket.index = index
+                        added = true
+                    } else if ariPacket.group == PacketConstants.ariSignalGroup && ariPacket.type == PacketConstants.ariSignalType {
+                        let index = PacketIndexARI(context: context)
+                        index.signal = true
+                        index.collected = ariPacket.collected
+                        ariPacket.index = index
+                        added = true
+                    }
+                }
+            }
+            
+            if added {
+                try context.save()
             }
         }
         
-        if !success {
+        if objectIds.isEmpty {
             logger.debug("Failed to execute batch import request for ARI packets.")
             throw PersistenceError.batchInsertError
         }
@@ -588,6 +653,63 @@ extension PersistenceController {
         }
         
         return packets
+    }
+    
+    func fetchIndexedQMIPackets(start: Date, end: Date, reject: Bool = false, signal: Bool = false) throws -> [NSManagedObjectID: ParsedQMIPacket] {
+        return try performAndWait { context in
+            let request = PacketIndexQMI.fetchRequest()
+            
+            request.predicate = NSPredicate(
+                format: "reject = %@ and signal = %@ and %@ <= collected and collected <= %@",
+                NSNumber(booleanLiteral: reject), NSNumber(booleanLiteral: signal), start as NSDate, end as NSDate
+            )
+            request.sortDescriptors = [NSSortDescriptor(keyPath: \PacketIndexQMI.collected, ascending: false)]
+            request.includesSubentities = true
+        
+            var packets: [NSManagedObjectID: ParsedQMIPacket] = [:]
+            for indexedQMIPacket in try request.execute() {
+                guard let packet = indexedQMIPacket.packet else {
+                    logger.warning("No QMI packet for indexed packet \(indexedQMIPacket)")
+                    continue
+                }
+                guard let data = packet.data else {
+                    logger.warning("Skipping packet \(packet) as it provides no binary data")
+                    continue
+                }
+                
+                packets[packet.objectID] = try ParsedQMIPacket(nsData: data)
+            }
+
+            return packets
+        } ?? [:]
+    }
+    
+    func fetchIndexedARIPackets(start: Date, end: Date, reject: Bool = false, signal: Bool = false) throws -> [NSManagedObjectID: ParsedARIPacket] {
+        return try performAndWait { context in
+            let request = PacketIndexARI.fetchRequest()
+            
+            request.predicate = NSPredicate(
+                format: "reject = %@ and signal = %@ and %@ <= collected and collected <= %@",
+                NSNumber(booleanLiteral: reject), NSNumber(booleanLiteral: signal), start as NSDate, end as NSDate
+            )
+            request.sortDescriptors = [NSSortDescriptor(keyPath: \PacketIndexARI.collected, ascending: false)]
+            request.includesSubentities = true
+        
+            var packets: [NSManagedObjectID: ParsedARIPacket] = [:]
+            for indexedARIPacket in try request.execute() {
+                guard let packet = indexedARIPacket.packet else {
+                    logger.warning("No ARI packet for indexed packet \(indexedARIPacket)")
+                    continue
+                }
+                guard let data = packet.data else {
+                    logger.warning("Skipping packet \(packet) as it provides no binary data")
+                    continue
+                }
+                packets[packet.objectID] = try ParsedARIPacket(data: data)
+            }
+
+            return packets
+        } ?? [:]
     }
     
     /// Fetches ARI packets with the specified properties from Core Data.

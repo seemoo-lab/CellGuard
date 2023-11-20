@@ -187,8 +187,15 @@ class PersistenceController {
     }
     
     
-    func performAndWait<T>(task: (NSManagedObjectContext) throws -> T?) throws -> T? {
+    func performAndWait<T>(name: String? = nil, author: String? = nil, task: (NSManagedObjectContext) throws -> T?) throws -> T? {
         let context = newTaskContext()
+        if let name = name {
+            context.name = name
+        }
+        if let author = author {
+            context.transactionAuthor = author
+        }
+        
         var collectedError: Error? = nil
         var result: T? = nil
         

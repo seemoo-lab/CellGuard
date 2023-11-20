@@ -33,6 +33,7 @@
 		CF2A1C1D2975C71000E8B61C /* BackgroundState.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2A1C1C2975C71000E8B61C /* BackgroundState.swift */; };
 		CF2A1C202975CDD200E8B61C /* RiskIndicatorCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2A1C1F2975CDD200E8B61C /* RiskIndicatorCard.swift */; };
 		CF2A1C222975DB8100E8B61C /* CellInformationCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2A1C212975DB8100E8B61C /* CellInformationCard.swift */; };
+		CF2B94B32B0B676F00F24ED1 /* PacketConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2B94B22B0B676F00F24ED1 /* PacketConstants.swift */; };
 		CF320F5529620B16009BAD18 /* CCTParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF320F5429620B16009BAD18 /* CCTParser.swift */; };
 		CF320F5729621C42009BAD18 /* CCTClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF320F5629621C42009BAD18 /* CCTClientTests.swift */; };
 		CF320F59296225F9009BAD18 /* CCTResponse.txt in Resources */ = {isa = PBXBuildFile; fileRef = CF320F582962208B009BAD18 /* CCTResponse.txt */; };
@@ -169,6 +170,7 @@
 		CF2A1C1C2975C71000E8B61C /* BackgroundState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundState.swift; sourceTree = "<group>"; };
 		CF2A1C1F2975CDD200E8B61C /* RiskIndicatorCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RiskIndicatorCard.swift; sourceTree = "<group>"; };
 		CF2A1C212975DB8100E8B61C /* CellInformationCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellInformationCard.swift; sourceTree = "<group>"; };
+		CF2B94B22B0B676F00F24ED1 /* PacketConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacketConstants.swift; sourceTree = "<group>"; };
 		CF320F5429620B16009BAD18 /* CCTParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CCTParser.swift; sourceTree = "<group>"; };
 		CF320F5629621C42009BAD18 /* CCTClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CCTClientTests.swift; sourceTree = "<group>"; };
 		CF320F582962208B009BAD18 /* CCTResponse.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CCTResponse.txt; sourceTree = "<group>"; };
@@ -332,6 +334,7 @@
 				CFD8DD252A715E8300954A25 /* QMIContentParser.swift */,
 				CF2002F12A2F9FB5000922E6 /* CPTClient.swift */,
 				CF54CCBB2A33093800961E4D /* CPTCollector.swift */,
+				CF2B94B22B0B676F00F24ED1 /* PacketConstants.swift */,
 			);
 			path = "Capture Packets";
 			sourceTree = "<group>";
@@ -833,6 +836,7 @@
 				CF5EF92A2979B8D800C4F50A /* LocationSource.swift in Sources */,
 				CF4E53A22A321B3000AE2059 /* PacketTabView.swift in Sources */,
 				CF2A1C1B2975670000E8B61C /* CGNotificationManager.swift in Sources */,
+				CF2B94B32B0B676F00F24ED1 /* PacketConstants.swift in Sources */,
 				CF4E53A62A32225300AE2059 /* ExportView.swift in Sources */,
 				CFDF5D87297F190A000708A8 /* PersistenceJSONExporter.swift in Sources */,
 				CF6EC8AD2A6C4C88004CF0AB /* PreviewInfo.swift in Sources */,

@@ -345,12 +345,12 @@ struct CellVerifier {
             // The packet's Reject Cause TLV could be interesting (0x03)
             // For a list of possibles causes, see: https://gitlab.freedesktop.org/mobile-broadband/libqmi/-/blob/main/src/libqmi-glib/qmi-enums-nas.h#L1663
             // This fetch request is just slow and I guess we can't do anything about it as there is a large number of packets
-            qmiPackets = try persistence.fetchQMIPackets(direction: .ingoing, service: 0x03, message: 0x0068, indication: true, start: start, end: end)
+            qmiPackets = try persistence.fetchIndexedQMIPackets(start: start, end: end, reject: true)
             
             // Maybe IBINetRegistrationInfoIndCb -> [3] IBINetRegistrationRejectCause
             // There are also numerous IBI_NET_REGISTRATION_REJECT strings in libARI.dylib
             // For a list of ARI packets, see: https://github.com/seemoo-lab/aristoteles/blob/master/types/structure/libari_dylib.lua
-            let localAriPackets = try persistence.fetchARIPackets(direction: .ingoing, group: 7, type: 769, start: start, end: end)
+            let localAriPackets = try persistence.fetchIndexedARIPackets(start: start, end: end, reject: true)
                 .filter { (_, packet) in
                     guard let registrationStatus = packet.tlvs.first(where: { $0.type == 2 })?.uint() else {
                         return false
@@ -420,7 +420,7 @@ struct CellVerifier {
         // Idea to speed-up the packet fetching process: "Skip Tables" -> Store references to the relevant types of packets in a separate table, which we can query faster
         
         // QMI: Signal Info Indication
-        let qmiSignalInfo = try persistence.fetchQMIPackets(direction: .ingoing, service: 0x03, message: 0x0051, indication: true, start: start, end: end)
+        let qmiSignalInfo = try persistence.fetchIndexedQMIPackets(start: start, end: end, signal: true)
             .compactMap { (_, packet) in
                 do {
                     return try ParsedQMISignalInfoIndication(qmiPacket: packet)
@@ -470,7 +470,7 @@ struct CellVerifier {
         }
         
         // ARI: IBINetRadioSignalIndCb
-        let ariSignalInfo = try persistence.fetchARIPackets(direction: .ingoing, group: 9, type: 772, start: start, end: end)
+        let ariSignalInfo = try persistence.fetchIndexedARIPackets(start: start, end: end, signal: true)
             .compactMap { (_, packet) in
                 do {
                     return try ParsedARIRadioSignalIndication(ariPacket: packet)

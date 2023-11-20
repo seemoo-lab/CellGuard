@@ -12,6 +12,7 @@
     <entity name="ARIPacket" representedClassName="ARIPacket" parentEntity="Packet" syncable="YES" codeGenerationType="class">
         <attribute name="group" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="type" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="index" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="PacketIndexARI" inverseName="packet" inverseEntity="PacketIndexARI"/>
         <fetchIndex name="byARIPacketPropertiesIndex" partialIndexPredicate="(group == 7 AND type == 769) OR (group == 9 AND type == 772)">
             <fetchIndexElement property="group" type="Binary" order="ascending"/>
             <fetchIndexElement property="type" type="Binary" order="ascending"/>
@@ -50,10 +51,39 @@
         <relationship name="rejectedCell" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TweakCell" inverseName="rejectPacket" inverseEntity="TweakCell"/>
         <relationship name="signalStrength" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SignalStrength" inverseName="fromPacket" inverseEntity="SignalStrength"/>
     </entity>
+    <entity name="PacketIndexARI" representedClassName="PacketIndexARI" syncable="YES" codeGenerationType="class">
+        <attribute name="collected" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="reject" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="signal" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <relationship name="packet" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ARIPacket" inverseName="index" inverseEntity="ARIPacket"/>
+        <fetchIndex name="byRejectedPackets" partialIndexPredicate="reject == 1 AND signal == 0">
+            <fetchIndexElement property="reject" type="Binary" order="ascending"/>
+            <fetchIndexElement property="collected" type="Binary" order="descending"/>
+        </fetchIndex>
+        <fetchIndex name="bySignalPackets" partialIndexPredicate="signal == 1 AND reject == 0">
+            <fetchIndexElement property="signal" type="Binary" order="ascending"/>
+            <fetchIndexElement property="collected" type="Binary" order="descending"/>
+        </fetchIndex>
+    </entity>
+    <entity name="PacketIndexQMI" representedClassName="PacketIndexQMI" syncable="YES" codeGenerationType="class">
+        <attribute name="collected" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="reject" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="signal" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <relationship name="packet" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="QMIPacket" inverseName="index" inverseEntity="QMIPacket"/>
+        <fetchIndex name="byRejectedPackets" partialIndexPredicate="reject == 1 AND signal == 0">
+            <fetchIndexElement property="reject" type="Binary" order="ascending"/>
+            <fetchIndexElement property="collected" type="Binary" order="descending"/>
+        </fetchIndex>
+        <fetchIndex name="bySignalPackets" partialIndexPredicate="signal == 1 AND reject == 0">
+            <fetchIndexElement property="collected" type="Binary" order="descending"/>
+            <fetchIndexElement property="signal" type="Binary" order="ascending"/>
+        </fetchIndex>
+    </entity>
     <entity name="QMIPacket" representedClassName="QMIPacket" parentEntity="Packet" syncable="YES" codeGenerationType="class">
         <attribute name="indication" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="message" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="service" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="index" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="PacketIndexQMI" inverseName="packet" inverseEntity="PacketIndexQMI"/>
         <fetchIndex name="byQMIPacketPropertiesIndex" partialIndexPredicate="indication == 1 AND service == 3 AND (message == 104 OR message == 81)">
             <fetchIndexElement property="collected" type="Binary" order="ascending"/>
             <fetchIndexElement property="direction" type="Binary" order="ascending"/>

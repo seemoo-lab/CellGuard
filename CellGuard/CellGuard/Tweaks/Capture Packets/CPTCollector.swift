@@ -32,7 +32,7 @@ struct CPTCollector {
                 Self.logger.debug("Imported \(qmiPackets) QMI and \(ariPackets) ARI packets")
             } catch {
                 // TODO: Count failures and if they exceed a given threshold, output a warning notification
-                Self.logger.warning("Can't request cells from tweak: \(error)")
+                Self.logger.warning("Can't request packets from tweak: \(error)")
                 completion(.failure(error))
             }
         }
