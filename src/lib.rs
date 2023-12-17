@@ -10,7 +10,7 @@ mod ffi {
         #[swift_bridge(init)]
         fn new() -> RustApp;
 
-        fn parse_system_log(&self, input: &str, output: &str) -> &str;
+        fn parse_system_log(&self, input: &str, output: &str) -> u32;
     }
 
     extern "Swift" {
@@ -25,10 +25,8 @@ impl RustApp {
         RustApp {}
     }
 
-    fn parse_system_log(&self, input: &str, output: &str) -> &str {
+    fn parse_system_log(&self, input: &str, output: &str) -> u32 {
         csv_parser::output_header(output).unwrap();
-        csv_parser::parse_log_archive(input, output);
-        // TODO: Return error or so or the number things parsed
-        return "Hoo";
+        return csv_parser::parse_log_archive(input, output);
     }
 }

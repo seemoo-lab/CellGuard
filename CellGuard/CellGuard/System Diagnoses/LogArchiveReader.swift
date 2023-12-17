@@ -177,4 +177,5 @@ struct LogArchiveReader {
 
 func swift_parse_trace_file(path: RustStr, count: UInt32) {
     // TODO: Implement
+    print("Swift: Already parsed \(count), now \(path.toString())")
 }

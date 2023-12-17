@@ -5,7 +5,6 @@
 // is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and limitations under the License.
 
-use alloc::ffi;
 use std::error::Error;
 use std::fs;
 use std::fs::OpenOptions;
@@ -17,10 +16,10 @@ use macos_unifiedlogs::parser::{
 use macos_unifiedlogs::timesync::TimesyncBoot;
 use macos_unifiedlogs::unified_log::{LogData, UnifiedLogData};
 use macos_unifiedlogs::uuidtext::UUIDText;
-use log::log;
+use crate::ffi;
 
 // Parse a provided directory path. Currently expect the path to follow macOS log collect structure
-pub fn parse_log_archive(path: &str, output_path: &str) {
+pub fn parse_log_archive(path: &str, output_path: &str) -> u32 {
     let mut archive_path = PathBuf::from(path);
 
     // Parse all UUID files which contain strings and other metadata
@@ -39,7 +38,7 @@ pub fn parse_log_archive(path: &str, output_path: &str) {
 
     // Keep UUID, UUID cache, timesync files in memory while we parse all tracev3 files
     // Allows for faster lookups
-    parse_trace_file(
+    let log_count = parse_trace_file(
         &string_results,
         &shared_strings_results,
         &timesync_data,
@@ -48,6 +47,7 @@ pub fn parse_log_archive(path: &str, output_path: &str) {
     );
 
     println!("\nFinished parsing Unified Log data. Saved results to: output.csv");
+    return log_count
 }
 
 // Use the provided strings, shared strings, timesync data to parse the Unified Log data at provided path.
@@ -58,7 +58,7 @@ fn parse_trace_file(
     timesync_data: &[TimesyncBoot],
     path: &str,
     output_path: &str,
-) {
+) -> u32 {
     // We need to persist the Oversize log entries (they contain large strings that don't fit in normal log entries)
     // Some log entries have Oversize strings located in different tracev3 files.
     // This is very rare. Seen in ~20 log entries out of ~700,000. Seen in ~700 out of ~18 million
@@ -76,7 +76,7 @@ fn parse_trace_file(
     let mut archive_path = PathBuf::from(path);
     archive_path.push("Persist");
 
-    let mut log_count = 0;
+    let mut log_count: usize = 0;
     if archive_path.exists() {
         let paths = fs::read_dir(&archive_path).unwrap();
 
@@ -85,6 +85,7 @@ fn parse_trace_file(
             let data = log_path.unwrap();
             let full_path = data.path().display().to_string();
             println!("Parsing: {}", full_path);
+            ffi::swift_parse_trace_file(full_path.as_str(), u32::try_from(log_count).unwrap_or(0));
 
             let log_data = if data.path().exists() {
                 parse_log(&full_path).unwrap()
@@ -124,6 +125,7 @@ fn parse_trace_file(
             let data = log_path.unwrap();
             let full_path = data.path().display().to_string();
             println!("Parsing: {}", full_path);
+            ffi::swift_parse_trace_file(full_path.as_str(), u32::try_from(log_count).unwrap_or(0));
 
             let mut log_data = if data.path().exists() {
                 parse_log(&full_path).unwrap()
@@ -162,6 +164,7 @@ fn parse_trace_file(
             let data = log_path.unwrap();
             let full_path = data.path().display().to_string();
             println!("Parsing: {}", full_path);
+            ffi::swift_parse_trace_file(full_path.as_str(), u32::try_from(log_count).unwrap_or(0));
 
             let log_data = if data.path().exists() {
                 parse_log(&full_path).unwrap()
@@ -196,6 +199,7 @@ fn parse_trace_file(
             let data = log_path.unwrap();
             let full_path = data.path().display().to_string();
             println!("Parsing: {}", full_path);
+            ffi::swift_parse_trace_file(full_path.as_str(), u32::try_from(log_count).unwrap_or(0));
 
             let log_data = if data.path().exists() {
                 parse_log(&full_path).unwrap()
@@ -268,6 +272,8 @@ fn parse_trace_file(
         output(&results, output_path).unwrap();
     }
     println!("Parsed {} log entries", log_count);
+
+    return u32::try_from(log_count).unwrap_or(0);
 }
 
 // Create csv file and create headers
