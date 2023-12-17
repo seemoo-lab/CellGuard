@@ -56,6 +56,11 @@
 		CF54CCC52A33680200961E4D /* PacketCommonDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF54CCC42A33680200961E4D /* PacketCommonDetails.swift */; };
 		CF54CCC72A33699A00961E4D /* PacketARIDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF54CCC62A33699A00961E4D /* PacketARIDetailsView.swift */; };
 		CF5672962A29E59000B6EA7C /* TweakInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5672952A29E59000B6EA7C /* TweakInfoView.swift */; };
+		CF57560E2B2F22EA00C7C60A /* libcellguard.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF57560D2B2F22BE00C7C60A /* libcellguard.a */; };
+		CF5756152B2F232A00C7C60A /* cellguard.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5756122B2F232A00C7C60A /* cellguard.swift */; };
+		CF57561A2B2F25DB00C7C60A /* SwiftBridgeCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5756182B2F25DB00C7C60A /* SwiftBridgeCore.swift */; };
+		CF57561D2B2F263500C7C60A /* LogArchiveReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF57561C2B2F263500C7C60A /* LogArchiveReader.swift */; };
+		CF5756202B2F266700C7C60A /* SWCompression in Frameworks */ = {isa = PBXBuildFile; productRef = CF57561F2B2F266700C7C60A /* SWCompression */; };
 		CF5AB2C02975458D00896ADC /* CellStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5AB2BF2975458D00896ADC /* CellStatus.swift */; };
 		CF5CBB8D29687CBB001CE9BE /* CCTParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5CBB8C29687CBB001CE9BE /* CCTParserTests.swift */; };
 		CF5CBB9529689FFE001CE9BE /* CellGuardSceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5CBB9429689FFE001CE9BE /* CellGuardSceneDelegate.swift */; };
@@ -194,6 +199,13 @@
 		CF54CCC42A33680200961E4D /* PacketCommonDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacketCommonDetails.swift; sourceTree = "<group>"; };
 		CF54CCC62A33699A00961E4D /* PacketARIDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacketARIDetailsView.swift; sourceTree = "<group>"; };
 		CF5672952A29E59000B6EA7C /* TweakInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TweakInfoView.swift; sourceTree = "<group>"; };
+		CF57560D2B2F22BE00C7C60A /* libcellguard.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcellguard.a; path = ../target/universal/debug/libcellguard.a; sourceTree = "<group>"; };
+		CF5756122B2F232A00C7C60A /* cellguard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = cellguard.swift; sourceTree = "<group>"; };
+		CF5756132B2F232A00C7C60A /* cellguard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cellguard.h; sourceTree = "<group>"; };
+		CF5756172B2F259100C7C60A /* BridgingHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BridgingHeader.h; sourceTree = "<group>"; };
+		CF5756182B2F25DB00C7C60A /* SwiftBridgeCore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SwiftBridgeCore.swift; path = Generated/SwiftBridgeCore.swift; sourceTree = "<group>"; };
+		CF5756192B2F25DB00C7C60A /* SwiftBridgeCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SwiftBridgeCore.h; path = Generated/SwiftBridgeCore.h; sourceTree = "<group>"; };
+		CF57561C2B2F263500C7C60A /* LogArchiveReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogArchiveReader.swift; sourceTree = "<group>"; };
 		CF5AB2BF2975458D00896ADC /* CellStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellStatus.swift; sourceTree = "<group>"; };
 		CF5CBB8C29687CBB001CE9BE /* CCTParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CCTParserTests.swift; sourceTree = "<group>"; };
 		CF5CBB9429689FFE001CE9BE /* CellGuardSceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellGuardSceneDelegate.swift; sourceTree = "<group>"; };
@@ -268,6 +280,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF57560E2B2F22EA00C7C60A /* libcellguard.a in Frameworks */,
+				CF5756202B2F266700C7C60A /* SWCompression in Frameworks */,
 				CFD0236D2961AD1500AA5A1C /* SwiftProtobuf in Frameworks */,
 				CF2002ED2A2F3244000922E6 /* BinarySwift in Frameworks */,
 				CF9237112A3E069D00FC7D21 /* Gzip in Frameworks */,
@@ -410,6 +424,42 @@
 			path = Packets;
 			sourceTree = "<group>";
 		};
+		CF57560C2B2F22BE00C7C60A /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				CF57560D2B2F22BE00C7C60A /* libcellguard.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		CF5756112B2F232A00C7C60A /* cellguard */ = {
+			isa = PBXGroup;
+			children = (
+				CF5756122B2F232A00C7C60A /* cellguard.swift */,
+				CF5756132B2F232A00C7C60A /* cellguard.h */,
+			);
+			name = cellguard;
+			path = Generated/cellguard;
+			sourceTree = "<group>";
+		};
+		CF5756162B2F244700C7C60A /* Generated */ = {
+			isa = PBXGroup;
+			children = (
+				CF5756192B2F25DB00C7C60A /* SwiftBridgeCore.h */,
+				CF5756182B2F25DB00C7C60A /* SwiftBridgeCore.swift */,
+				CF5756112B2F232A00C7C60A /* cellguard */,
+			);
+			name = Generated;
+			sourceTree = "<group>";
+		};
+		CF57561B2B2F261F00C7C60A /* System Diagnoses */ = {
+			isa = PBXGroup;
+			children = (
+				CF57561C2B2F263500C7C60A /* LogArchiveReader.swift */,
+			);
+			path = "System Diagnoses";
+			sourceTree = "<group>";
+		};
 		CF5CBB8A29687BD8001CE9BE /* Capture Cells */ = {
 			isa = PBXGroup;
 			children = (
@@ -522,10 +572,13 @@
 		CFD0232A2961A10D00AA5A1C = {
 			isa = PBXGroup;
 			children = (
+				CF5756172B2F259100C7C60A /* BridgingHeader.h */,
 				CFD023352961A10D00AA5A1C /* CellGuard */,
 				CFD0234B2961A10E00AA5A1C /* CellGuardTests */,
 				CFD023552961A10E00AA5A1C /* CellGuardUITests */,
+				CF5756162B2F244700C7C60A /* Generated */,
 				CFD023342961A10D00AA5A1C /* Products */,
+				CF57560C2B2F22BE00C7C60A /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -544,6 +597,7 @@
 			children = (
 				CFD023652961AB6E00AA5A1C /* Apple Location Service */,
 				CF2002EE2A2F9957000922E6 /* Tweaks */,
+				CF57561B2B2F261F00C7C60A /* System Diagnoses */,
 				CFB8B28B2963560100503189 /* Core Data */,
 				CFD023702961AF1700AA5A1C /* Locations */,
 				CF2A1C19297566CE00E8B61C /* Notifications */,
@@ -650,6 +704,7 @@
 				CFD0232F2961A10D00AA5A1C /* Sources */,
 				CFD023302961A10D00AA5A1C /* Frameworks */,
 				CFD023312961A10D00AA5A1C /* Resources */,
+				CF57560B2B2F213A00C7C60A /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -663,6 +718,7 @@
 				CFA632542AB3501800D46025 /* CSV */,
 				CFA632572AB3503400D46025 /* ZIPFoundation */,
 				CF8D33202AC194A4009CA3F0 /* Atomics */,
+				CF57561F2B2F266700C7C60A /* SWCompression */,
 			);
 			productName = CellGuard;
 			productReference = CFD023332961A10D00AA5A1C /* CellGuard.app */;
@@ -743,6 +799,7 @@
 				CFA632532AB3501800D46025 /* XCRemoteSwiftPackageReference "CSV.swift" */,
 				CFA632562AB3503400D46025 /* XCRemoteSwiftPackageReference "ZIPFoundation" */,
 				CF8D331F2AC194A4009CA3F0 /* XCRemoteSwiftPackageReference "swift-atomics" */,
+				CF57561E2B2F266700C7C60A /* XCRemoteSwiftPackageReference "SWCompression" */,
 			);
 			productRefGroup = CFD023342961A10D00AA5A1C /* Products */;
 			projectDirPath = "";
@@ -786,6 +843,33 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		CF57560B2B2F213A00C7C60A /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(PROJECT_DIR)/../Cargo.lock",
+				"$(PROJECT_DIR)/../Cargo.toml",
+				"$(PROJECT_DIR)/../build.rs",
+				"$(PROJECT_DIR)/../src/lib.rs",
+				"$(PROJECT_DIR)/../src/csv_parser.rs",
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(PROJECT_DIR)/Generated",
+				"$(PROJECT_DIR)/../target/universal/debug",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "./build-rust.sh\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		CFD0232F2961A10D00AA5A1C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -811,6 +895,7 @@
 				CF54CCC72A33699A00961E4D /* PacketARIDetailsView.swift in Sources */,
 				CF2A1C182975562800E8B61C /* UserDefaultsKeys.swift in Sources */,
 				CF2A1C222975DB8100E8B61C /* CellInformationCard.swift in Sources */,
+				CF57561D2B2F263500C7C60A /* LogArchiveReader.swift in Sources */,
 				CFDF5D6F297EF05D000708A8 /* MultiCellMap.swift in Sources */,
 				CF4E53962A31CE3F00AE2059 /* QMIDefinitions.swift in Sources */,
 				CF5EF92829793F7500C4F50A /* TestDetection.swift in Sources */,
@@ -842,6 +927,7 @@
 				CF6EC8AD2A6C4C88004CF0AB /* PreviewInfo.swift in Sources */,
 				CF0FDCB529698E1500A6FFE2 /* SummaryTabView.swift in Sources */,
 				CF2A1C1D2975C71000E8B61C /* BackgroundState.swift in Sources */,
+				CF57561A2B2F25DB00C7C60A /* SwiftBridgeCore.swift in Sources */,
 				CF6EC8B12A6D9F99004CF0AB /* CellListFilterView.swift in Sources */,
 				CF0FDCC22969AC1100A6FFE2 /* SettingsView.swift in Sources */,
 				CFD023682961AB9900AA5A1C /* CCTClient.swift in Sources */,
@@ -883,6 +969,7 @@
 				CF0FDCBB29699E8A00A6FFE2 /* CompositeTabView.swift in Sources */,
 				CF2002E82A2F2BE2000922E6 /* QMIParser.swift in Sources */,
 				CF86C7972A6ACDAA002EC9B6 /* CellDetailsRow.swift in Sources */,
+				CF5756152B2F232A00C7C60A /* cellguard.swift in Sources */,
 				CF5EF9222977FCF800C4F50A /* CellTechnologyFormatter.swift in Sources */,
 				CF93B85629800451003F9FFE /* CellFileKeys.swift in Sources */,
 			);
@@ -1055,6 +1142,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"CellGuard/Preview Content\"";
 				DEVELOPMENT_TEAM = RJXNW62ZYN;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = CellGuard/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = CellGuard;
@@ -1073,10 +1161,12 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/../target/universal/debug";
 				MARKETING_VERSION = 1.3.4;
 				PRODUCT_BUNDLE_IDENTIFIER = de.tudarmstadt.seemoo.CellGuard;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "$(PROJECT_DIR)/BridgingHeader.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -1092,6 +1182,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"CellGuard/Preview Content\"";
 				DEVELOPMENT_TEAM = RJXNW62ZYN;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = CellGuard/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = CellGuard;
@@ -1110,10 +1201,12 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/../target/universal/release";
 				MARKETING_VERSION = 1.3.4;
 				PRODUCT_BUNDLE_IDENTIFIER = de.tudarmstadt.seemoo.CellGuard;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "$(PROJECT_DIR)/BridgingHeader.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -1245,6 +1338,14 @@
 				kind = branch;
 			};
 		};
+		CF57561E2B2F266700C7C60A /* XCRemoteSwiftPackageReference "SWCompression" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/tsolomko/SWCompression";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.8.5;
+			};
+		};
 		CF8D331F2AC194A4009CA3F0 /* XCRemoteSwiftPackageReference "swift-atomics" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/apple/swift-atomics.git";
@@ -1292,6 +1393,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = CF2002EB2A2F3244000922E6 /* XCRemoteSwiftPackageReference "BinarySwift" */;
 			productName = BinarySwift;
+		};
+		CF57561F2B2F266700C7C60A /* SWCompression */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CF57561E2B2F266700C7C60A /* XCRemoteSwiftPackageReference "SWCompression" */;
+			productName = SWCompression;
 		};
 		CF8D33202AC194A4009CA3F0 /* Atomics */ = {
 			isa = XCSwiftPackageProductDependency;

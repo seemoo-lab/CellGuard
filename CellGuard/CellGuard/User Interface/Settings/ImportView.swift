@@ -173,7 +173,7 @@ struct ImportView: View {
                             }
                         }
                     }
-                    .disabled(importInProgress || importFinished || fileType == .dataCompressed || fileType == .sysdiagnose)
+                    .disabled(importInProgress || importFinished || fileType == .dataCompressed)
                     // TODO: Add a text or popup about the dangers of importing
                     
                     if importFinished {
@@ -236,7 +236,12 @@ struct ImportView: View {
                 finishImport(result: $0)
             }
         case .sysdiagnose:
-            // TODO: Implement
+            LogArchiveReader.importInBackground(url: url) { currentProgress, totalProgress in
+                // TODO: Show progress
+            } completion: { result in
+                // TODO: Finish
+            }
+
             break
         case .unknown:
             break
