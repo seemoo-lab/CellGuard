@@ -230,11 +230,19 @@ def process_latex(
     def n(value: int):
         return f'\\num{{{value}}}'
 
+    def p(value: int, max: int):
+        percentage = float(value) / float(max)
+        one_decimal = "{:.1f}".format(percentage)
+        return f'\\SI{{{one_decimal}}}{{\\percent}}'
+
+    total_cells = untrusted_cells + suspicious_cells + trusted_cells
+
     print('LaTeX Table Row:')
     print(
         f'  '
         f'number & model & baseband & {n(days_active)} & {n(days_total)} & '
-        f'{n(untrusted_cells)} & {n(suspicious_cells)} & {n(trusted_cells)} & '
+        f'{p(untrusted_cells, total_cells)} & {p(suspicious_cells, total_cells)} & {p(trusted_cells, total_cells)} & '
+        f'{n(total_cells)} & '
         f'{n(cell_measurements)} & {n(packets)} & {n(locations)} \\\\'
     )
     print()
@@ -266,7 +274,7 @@ def main():
             print(f'  {file.name}')
     else:
         if path.suffix != '.cells2':
-            print(f'The file my have the .cells2 extensions')
+            print(f'The file must have the .cells2 extensions')
             return
         print(f'Processing the cells2 file {path}')
         cells2_files = [path]
