@@ -193,7 +193,7 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
                         continue
                     }
                     PersistenceController.shared.cleanPersistentHistoryChanges()
-                    try? await Task.sleep(nanoseconds: 5 * 60 * NSEC_PER_SEC)
+                    try? await Task.sleep(nanoseconds: 60 * NSEC_PER_SEC)
                 }
             }
             

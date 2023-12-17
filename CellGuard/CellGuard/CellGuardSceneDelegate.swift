@@ -37,6 +37,9 @@ class CellGuardSceneDelegate: NSObject, UIWindowSceneDelegate, ObservableObject 
         
         // Disable exact location measurement when the app moves in the background
         LocationDataManager.shared.enterBackground()
+        
+        // Clear the persistent history
+        cleanPersistentHistory()
     }
     
     func sceneDidDisconnect(_ scene: UIScene) {
@@ -47,6 +50,13 @@ class CellGuardSceneDelegate: NSObject, UIWindowSceneDelegate, ObservableObject 
         if UserDefaults.standard.appMode() != .analysis {
             CGNotificationManager.shared.queueKeepOpenNotification()
         }
+    }
+    
+    private func cleanPersistentHistory() {
+        guard !PortStatus.importActive.load(ordering: .relaxed) else {
+            return
+        }
+        PersistenceController.shared.cleanPersistentHistoryChanges()
     }
     
     private func scheduleAppRefresh() {
