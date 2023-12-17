@@ -102,18 +102,20 @@ class LocationDataManager : NSObject, CLLocationManagerDelegate, ObservableObjec
         
         Self.logger.log("New Locations: \(locations)")
         
-        let importLocations = locations.map { TrackedUserLocation(from: $0, background: background, preciseBackground: true) }
-        
-        do {
-            try PersistenceController.shared.importUserLocations(from: importLocations)
-        } catch {
-            Self.logger.warning("Can't save locations: \(error)\nLocations: \(locations)")
+        DispatchQueue.global(qos: .background).async {
+            let importLocations = locations.map { TrackedUserLocation(from: $0, background: self.background, preciseBackground: true) }
+            do {
+                try PersistenceController.shared.importUserLocations(from: importLocations)
+            } catch {
+                Self.logger.warning("Can't save locations: \(error)\nLocations: \(locations)")
+            }
         }
         
         if let localLastLocation = locations.max(by: { $0.timestamp < $1.timestamp }) {
             DispatchQueue.main.async {
                 self.lastLocation = localLastLocation
             }
+            
             updateAccuracy(location: localLastLocation)
         }
     }
