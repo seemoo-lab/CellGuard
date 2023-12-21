@@ -315,24 +315,31 @@ fn output(results: &Vec<LogData>, file: &str) -> Result<(), Box<dyn Error>> {
     let mut writer = csv::Writer::from_writer(csv_file);
 
     // Pre-scan the log entries written to the CSV file, so that the file is smaller and Swift can parse it faster
-    let processes = [
+    const PROCESSES: [&str; 1] = [
         "/System/Library/Frameworks/CoreTelephony.framework/Support/CommCenter",
-        "/usr/sbin/WirelessRadioManagerd"
+        // "/usr/sbin/WirelessRadioManagerd"
     ];
-    let contents = [
+    const SUBSYSTEMS: [&str; 2] = [
+        "com.apple.telephony.bb",
+        "com.apple.CommCenter"
+    ];
+    const CONTENTS: [&str; 2] = [
         "kCTCellMonitorCellRadioAccessTechnology",
-        "QMI:",
-        "ARI:"
+        "Bin="
     ];
 
 
     results.iter()
         .filter(|data| {
-            if !processes.contains(&data.process.as_str()) {
+            if !PROCESSES.contains(&data.process.as_str()) {
                 return false;
             }
 
-            for content_query in &contents {
+            if !SUBSYSTEMS.contains(&data.subsystem.as_str()) {
+                return false;
+            }
+
+            for content_query in &CONTENTS {
                 if data.message.contains(content_query) {
                     return true;
                 }

@@ -52,6 +52,9 @@ private enum ImportStatus: Equatable {
     case none
     case count(Int)
     case progress(Float)
+    case infinite
+    case error
+    case finished
     
     var progress: Float {
         get {
@@ -94,6 +97,11 @@ struct ImportView: View {
     @State private var importStatusALSCells: ImportStatus = .none
     @State private var importStatusLocations: ImportStatus = .none
     @State private var importStatusPackets: ImportStatus = .none
+    
+    @State private var importStatusUnarchive: ImportStatus = .none
+    @State private var importStatusExtract: ImportStatus = .none
+    @State private var importStatusParse: ImportStatus = .none
+    @State private var importStatusImport: ImportStatus = .none
     
     init() {
         self.fileUrlFixed = false
@@ -143,6 +151,15 @@ struct ImportView: View {
                     ImportStatusRow("Cell Cache", $importStatusALSCells)
                     ImportStatusRow("Locations", $importStatusLocations)
                     ImportStatusRow("Packets", $importStatusPackets)
+                }
+            }
+            
+            if importStatusUnarchive != .none || importStatusExtract != .none || importStatusParse != .none || importStatusImport != .none {
+                Section(header: Text("System Diagnose")) {
+                    ImportStatusRow("Unarchive", $importStatusUnarchive)
+                    ImportStatusRow("Extract Logs", $importStatusExtract)
+                    ImportStatusRow("Parse Logs", $importStatusParse)
+                    ImportStatusRow("Import Data", $importStatusImport)
                 }
             }
             
@@ -236,12 +253,25 @@ struct ImportView: View {
                 finishImport(result: $0)
             }
         case .sysdiagnose:
-            LogArchiveReader.importInBackground(url: url) { currentProgress, totalProgress in
-                // TODO: Show progress
-            } completion: { result in
-                // TODO: Finish
+            LogArchiveReader.importInBackground(url: url) { phase, currentProgress, totalProgress in
+                let progress = Float(currentProgress) / Float(totalProgress)
+                switch (phase) {
+                case .unarchiving:
+                    importStatusUnarchive = .infinite
+                case .extractingTar:
+                    importStatusUnarchive = .finished
+                    importStatusExtract = .infinite
+                case .parsingLogs:
+                    importStatusExtract = .finished
+                    importStatusParse = .progress(progress)
+                case .importingData:
+                    importStatusParse = .finished
+                    importStatusImport = .progress(progress)
+                }
+            } completion: {
+                finishImport(result: $0)
             }
-
+            
             break
         case .unknown:
             break
@@ -249,6 +279,11 @@ struct ImportView: View {
     }
     
     private func finishImport(result: Result<ImportResult, Error>) {
+        importStatusUnarchive = .none
+        importStatusExtract = .none
+        importStatusParse = .none
+        importStatusImport = .none
+        
         do {
             let counts = try result.get()
             importStatusUserCells = .count(counts.cells)
@@ -266,6 +301,7 @@ struct ImportView: View {
     }
     
     private func footerInfoText() -> String {
+        // TODO: The app might crash when importing sysdiagnoses due to low memory
         if importFinished {
             return "Increased the packet and location retention durations to infinite. Make sure to lower them after all imported cells have been verified."
         } else {
@@ -284,11 +320,16 @@ struct ImportView: View {
             
             // TODO: Extract device name, CG version and count from backup and show them in the UI before importing
             /* let fromName = ""
-            let fromCGVersion = "" */
+             let fromCGVersion = "" */
             
             DispatchQueue.main.async {
                 self.fileSize = fileSize
                 self.fileType = fileType
+                
+                self.importStatusUnarchive = .none
+                self.importStatusExtract = .none
+                self.importStatusParse = .none
+                self.importStatusImport = .none
                 
                 self.importStatusUserCells = .none
                 self.importStatusALSCells = .none
@@ -342,6 +383,12 @@ private struct ImportStatusRow: View {
         case .progress:
             return AnyView(CircularProgressView(progress: $status.progress)
                 .frame(width: 20, height: 20))
+        case .infinite:
+            return AnyView(ProgressView())
+        case .error:
+            return AnyView(Image(systemName: "xmark").foregroundColor(.gray))
+        case .finished:
+            return AnyView(Image(systemName: "checkmark").foregroundColor(.gray))
         }
     }
 }

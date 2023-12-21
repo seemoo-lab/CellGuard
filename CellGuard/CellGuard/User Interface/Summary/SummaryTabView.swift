@@ -111,6 +111,8 @@ private struct CombinedRiskCellView: View {
             if !tweakCells.isEmpty {
                 CellInformationCard(cell: tweakCells[0])
             }
+            
+            OpenSysdiagnoseSettings()
         }
     }
     

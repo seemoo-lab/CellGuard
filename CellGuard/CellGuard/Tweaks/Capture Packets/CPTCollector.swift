@@ -27,7 +27,7 @@ struct CPTCollector {
         client.queryPackets { result in
             do {
                 let packets = try result.get()
-                let (qmiPackets, ariPackets) = try store(packets)
+                let (qmiPackets, ariPackets) = try Self.store(packets)
                 completion(.success((qmiPackets, ariPackets)))
                 Self.logger.debug("Imported \(qmiPackets) QMI and \(ariPackets) ARI packets")
             } catch {
@@ -38,7 +38,7 @@ struct CPTCollector {
         }
     }
     
-    private func store(_ packets: [CPTPacket]) throws -> (Int, Int) {
+    public static func store(_ packets: [CPTPacket]) throws -> (Int, Int) {
         do {
             var qmiPackets: [(CPTPacket, ParsedQMIPacket)] = []
             var ariPackets: [(CPTPacket, ParsedARIPacket)] = []
