@@ -88,7 +88,7 @@ struct LogArchiveReader {
             throw LogArchiveError.createTmpDirFailed(error)
         }
         // Comment this out if you manually want to export the CSV file afterwards
-        // defer { Self.logger.debug("Remove temp dir"); try? fileManager.removeItem(at: tmpDir) }
+        defer { Self.logger.debug("Remove temp dir"); try? fileManager.removeItem(at: tmpDir) }
         
         let tmpTarFile: URL
         do {
