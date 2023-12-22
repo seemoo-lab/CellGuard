@@ -2,17 +2,29 @@
 
 Monitor and visualize cellular base stations collected by the accompanying tweak.
 
-iOS Versions: 14.0 - 16.3
+iOS Versions: 14.0 - 17.2
 
 ## Build
 
 The app can either be distributed as a .deb package for jailbroken devices with Cydia or as an .ipa file which can be installed using TrollStore.
 
+You'll need a Rust toolchain on your system to build the app's native libraries.
+The first time after cloning, you have to compile the libraries yourself by executing the following command:
+```sh
+PROJECT_DIR=. ./build-rust.sh
+```
+Upon changes, XCode will rebuild the libraries automatically. 
+
+### XCode
+
+You can connect your device to your Mac and install the app via XCode.
+If you don't have a paid developer account, the app will only be available for seven days.
+After which you have to reinstall it.
+On jailbroken devices, you can use [Unified AppSync](https://cydia.akemi.ai/?page/ai.akemi.appsyncunified) for an infinite validity period.
+
 ### .ipa
 
 A .ipa file can be installed using [TrollStore](https://github.com/opa334/TrollStore).
-
-No additional tools besides XCode are required to build the app.
 
 1. Open the project in XCode
 2. Select as build configuration *CellGuard > Any iOS Device (arm64)*
