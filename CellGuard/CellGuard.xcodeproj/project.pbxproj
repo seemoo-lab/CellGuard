@@ -1175,7 +1175,7 @@
 					"@executable_path/Frameworks",
 				);
 				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/../target/universal/debug";
-				MARKETING_VERSION = 1.3.4;
+				MARKETING_VERSION = 1.4.0;
 				PRODUCT_BUNDLE_IDENTIFIER = de.tudarmstadt.seemoo.CellGuard;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -1216,7 +1216,7 @@
 					"@executable_path/Frameworks",
 				);
 				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/../target/universal/release";
-				MARKETING_VERSION = 1.3.4;
+				MARKETING_VERSION = 1.4.0;
 				PRODUCT_BUNDLE_IDENTIFIER = de.tudarmstadt.seemoo.CellGuard;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
