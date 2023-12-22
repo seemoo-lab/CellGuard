@@ -129,6 +129,7 @@
 		CFDF5D85297F09D3000708A8 /* DatabaseAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFDF5D84297F09D3000708A8 /* DatabaseAnnotation.swift */; };
 		CFDF5D87297F190A000708A8 /* PersistenceJSONExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFDF5D86297F190A000708A8 /* PersistenceJSONExporter.swift */; };
 		CFDF5D89297F340E000708A8 /* ActivityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFDF5D88297F340E000708A8 /* ActivityViewController.swift */; };
+		CFE4A7A92B35991C00A37C7A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CFE4A7A82B35991C00A37C7A /* LaunchScreen.storyboard */; };
 		CFE988DF2AA88A2B0039EDF9 /* CircularProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFE988DE2AA88A2B0039EDF9 /* CircularProgressView.swift */; };
 		CFF05F6D2A39AA3900DE6FB2 /* DeleteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFF05F6C2A39AA3900DE6FB2 /* DeleteView.swift */; };
 		CFF05F6F2A39ABF500DE6FB2 /* PersistenceCategories.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFF05F6E2A39ABF500DE6FB2 /* PersistenceCategories.swift */; };
@@ -273,6 +274,7 @@
 		CFDF5D84297F09D3000708A8 /* DatabaseAnnotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseAnnotation.swift; sourceTree = "<group>"; };
 		CFDF5D86297F190A000708A8 /* PersistenceJSONExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceJSONExporter.swift; sourceTree = "<group>"; };
 		CFDF5D88297F340E000708A8 /* ActivityViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityViewController.swift; sourceTree = "<group>"; };
+		CFE4A7A82B35991C00A37C7A /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		CFE988DE2AA88A2B0039EDF9 /* CircularProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularProgressView.swift; sourceTree = "<group>"; };
 		CFF05F6C2A39AA3900DE6FB2 /* DeleteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteView.swift; sourceTree = "<group>"; };
 		CFF05F6E2A39ABF500DE6FB2 /* PersistenceCategories.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceCategories.swift; sourceTree = "<group>"; };
@@ -494,6 +496,7 @@
 				CF4EE5DF296C51A20069BA5A /* Settings */,
 				CF2A1C1E2975CDBB00E8B61C /* Summary */,
 				CF0FDCBA29699E8A00A6FFE2 /* CompositeTabView.swift */,
+				CFE4A7A82B35991C00A37C7A /* LaunchScreen.storyboard */,
 			);
 			path = "User Interface";
 			sourceTree = "<group>";
@@ -828,6 +831,7 @@
 				CF4E53942A31CE2500AE2059 /* qmi-definitions.json in Resources */,
 				CFD0233E2961A10D00AA5A1C /* Preview Assets.xcassets in Resources */,
 				CF4E53932A31CE2500AE2059 /* ari-definitions.json in Resources */,
+				CFE4A7A92B35991C00A37C7A /* LaunchScreen.storyboard in Resources */,
 				CF93B84E297FF5C3003F9FFE /* CellFileTypeIcon.png in Resources */,
 				CFD0233B2961A10D00AA5A1C /* Assets.xcassets in Resources */,
 			);
@@ -1202,8 +1206,9 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
