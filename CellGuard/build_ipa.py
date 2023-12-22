@@ -1,4 +1,5 @@
 import argparse
+import os.path
 import re
 import subprocess
 import zipfile
@@ -6,6 +7,29 @@ from distutils import spawn
 from pathlib import Path
 
 from yaspin import yaspin
+
+
+def build_rust_src():
+    with yaspin(text="Building Native Libraries...") as spinner:
+        env = os.environ.copy()
+        env['CONFIGURATION'] = 'Release'
+        env['PROJECT_DIR'] = os.path.dirname(__file__)
+
+        process = subprocess.run(
+            './build-rust.sh',
+            env=env,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            shell=True,
+        )
+        if process.returncode == 0:
+            spinner.ok("🟢")
+        else:
+            spinner.fail("🔴")
+            print(str(process.stderr).replace('\\n', '\n').replace('\\t', '\t'))
+            print("Hint: Make sure that the Rust toolchain is installed and run "
+                  "\"CONFIGURATION=Release PROJECT_DIR=. ./build-rust.sh\" to debug the error")
+            exit(1)
 
 
 @yaspin(text="Getting Build Settings...")
@@ -45,7 +69,7 @@ def build_archive() -> Path:
         else:
             spinner.fail("🔴")
             print(str(process.stderr).replace('\\n', '\n').replace('\\t', '\t'))
-            print("Hint: First try \"Product -> Archive\" in XCode, then run this command again")
+            print("Hint: Run \"Product -> Archive\" in XCode to debug the issue, then run this command again")
             exit(1)
 
     return Path('build', 'CellGuard.xcarchive')
@@ -93,6 +117,7 @@ def main():
     args = arg_parser.parse_args()
 
     version, build = get_build_settings()
+    build_rust_src()
     archive_path = build_archive()
     ipa_extension = '.tipa' if args.tipa else '.ipa'
     ipa_path = Path('build', f'CellGuard-{version}-{build}{ipa_extension}')
