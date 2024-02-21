@@ -18,3 +18,4 @@ swift-bridge = "0.1"
 macos-unifiedlogs = {git = "https://github.com/mandiant/macos-UnifiedLogs"}
 csv = "1.3.0"
 log = "0.4.19"
+plist = "1.6.0"
