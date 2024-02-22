@@ -13,6 +13,10 @@ The first time after cloning, you have to compile the libraries yourself by exec
 ```sh
 PROJECT_DIR=. ./build-rust.sh
 ```
+For release builds required for TestFlight uploads, also run the following command:
+```sh
+PROJECT_DIR=. CONFIGURATION=Release ./build-rust.sh
+```
 Upon changes, XCode will rebuild the libraries automatically. 
 
 ### XCode
