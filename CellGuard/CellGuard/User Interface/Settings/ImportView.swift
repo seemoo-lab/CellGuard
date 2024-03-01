@@ -120,7 +120,7 @@ struct ImportView: View {
                 } label: {
                     HStack {
                         Text(fileUrl?.lastPathComponent ?? "None")
-                            .foregroundColor(.black)
+                            .foregroundColor(.primary)
                         Spacer()
                         Image(systemName: "folder")
                     }
