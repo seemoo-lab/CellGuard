@@ -199,6 +199,28 @@ struct LogArchiveReader {
             throw LogArchiveError.logArchiveDirEmpty
         }
         
+        // After unarchiving, shared sysdiagnoes files are still in the app's folder .../Documents/Inbox/
+        // Delete as mentioned in https://stackoverflow.com/questions/16213226/do-you-need-to-delete-imported-files-from-documents-inbox
+        let fileMgr = FileManager()
+        var dirPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
+        dirPath.append("/Inbox");
+        if let directoryContents = try? fileMgr.contentsOfDirectory(atPath: dirPath)
+        {
+            for path in directoryContents
+            {
+                let fullPath = (dirPath as NSString).appendingPathComponent(path)
+                do
+                {
+                    try fileMgr.removeItem(atPath: fullPath)
+                    print("Inbox file deleted!")
+                }
+                catch let error as NSError
+                {
+                    print("Error deleting files from inbox: \(error.localizedDescription)")
+                }
+            }
+        }
+        
         return logArchiveDir
     }
         
