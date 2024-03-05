@@ -14,7 +14,7 @@ struct CellGuardApp: App {
     
     let persistenceController = PersistenceController.shared
     let locationManager = LocationDataManager.shared
-    let networkAuthorization = LocalNetworkAuthorization.shared
+    //let networkAuthorization = LocalNetworkAuthorization.shared
     let notificationManager = CGNotificationManager.shared
     let backgroundState = BackgroundState.shared
 
@@ -23,7 +23,7 @@ struct CellGuardApp: App {
             CompositeTabView()
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
                 .environmentObject(locationManager)
-                .environmentObject(networkAuthorization)
+                //.environmentObject(networkAuthorization)
                 .environmentObject(notificationManager)
                 .onChange(of: scenePhase) { backgroundState.update(from: $0) }
                 .onAppear { backgroundState.update(from: scenePhase) }

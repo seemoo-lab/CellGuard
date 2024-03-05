@@ -276,7 +276,7 @@ extension PersistenceController {
             // Permissions
             
             if (LocationDataManager.shared.authorizationStatus ?? .authorizedAlways) != .authorizedAlways ||
-                !(LocalNetworkAuthorization.shared.lastResult ?? true) ||
+                //!(LocalNetworkAuthorization.shared.lastResult ?? true) ||
                 (CGNotificationManager.shared.authorizationStatus ?? .authorized) != .authorized {
                 return .Medium(cause: .Permissions)
             }

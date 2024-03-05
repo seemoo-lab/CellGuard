@@ -113,7 +113,7 @@ struct CompositeTabView_Previews: PreviewProvider {
         CompositeTabView()
             .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
             .environmentObject(LocationDataManager.shared)
-            .environmentObject(LocalNetworkAuthorization(checkNow: true))
             .environmentObject(CGNotificationManager.shared)
+        //.environmentObject(LocalNetworkAuthorization(checkNow: true))
     }
 }
