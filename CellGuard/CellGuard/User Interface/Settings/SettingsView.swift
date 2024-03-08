@@ -23,7 +23,6 @@ struct SettingsView: View {
     @AppStorage(UserDefaultsKeys.appMode.rawValue) var appMode: AppModes = AppModes.jailbroken
     
     @EnvironmentObject var locationManager: LocationDataManager
-    //@EnvironmentObject var networkAuthorization: LocalNetworkAuthorization
     @EnvironmentObject var notificationManager: CGNotificationManager
     
     private var isPermissionNotifications: Binding<Bool> { Binding(
@@ -41,23 +40,6 @@ struct SettingsView: View {
             }
         }
     )}
-    
-    /*
-    private var isPermissionLocalNetwork: Binding<Bool> { Binding(
-        get: { networkAuthorization.lastResult ?? false },
-        set: { value in
-            if value {
-                networkAuthorization.requestAuthorization() { result in
-                    if !result {
-                        openAppSettings()
-                    }
-                }
-            } else {
-                openAppSettings()
-            }
-        }
-    )}
-    */
     
     private var isPermissionAlwaysLocation: Binding<Bool> { Binding(
         get: { locationManager.authorizationStatus == .authorizedAlways },
@@ -83,10 +65,6 @@ struct SettingsView: View {
             }
             
             Section(header: Text("Permissions")) {
-                // -- Local Network likely not needed, also not for jailbroken version
-                //Toggle("Local Network", isOn: isPermissionLocalNetwork)
-                // The permission can't be revoked once granted
-                //    .disabled(isPermissionLocalNetwork.wrappedValue)
                 Toggle("Location (Always)", isOn: isPermissionAlwaysLocation)
                 Toggle("Notifications", isOn: isPermissionNotifications)
             }
@@ -149,7 +127,6 @@ struct SettingsSheet_Previews: PreviewProvider {
             SettingsView()
         }
         .environmentObject(LocationDataManager.shared)
-        //.environmentObject(LocalNetworkAuthorization(checkNow: true))
         .environmentObject(CGNotificationManager.shared)
     }
 }

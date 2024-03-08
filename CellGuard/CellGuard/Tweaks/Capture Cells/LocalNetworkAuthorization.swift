@@ -8,6 +8,11 @@
 // Author: Tal Sahar
 // Source: https://stackoverflow.com/a/67758105
 
+//TODO: this might be dead code now, but needs rebuilding the tweak
+//packets are shown in jailbroken mode even when app does not have permission.
+
+/*
+
 import Foundation
 import Network
 import OSLog
@@ -93,3 +98,5 @@ extension LocalNetworkAuthorization : NetServiceDelegate {
         }
     }
 }
+
+*/

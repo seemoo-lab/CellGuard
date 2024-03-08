@@ -28,16 +28,23 @@ struct CPTPacket: CustomStringConvertible {
     let data: Data
     let timestamp: Date
     
-    init(direction: CPTDirection, data: Data, timestamp: Date) throws {
+    init(direction: CPTDirection, data: Data, timestamp: Date, knownProtocol: CPTProtocol? = nil) throws {
         self.direction = direction
         self.data = data
         self.timestamp = timestamp
-        if data.count >= 4 && data.subdata(in: 0..<4) == Data([0xDE, 0xC0, 0x7E, 0xAB]) {
-            self.proto = .ari
-        } else if data.count >= 1 && data.subdata(in: 0..<1) == Data([0x01]) {
-            self.proto = .qmi
+        
+        if let p = knownProtocol {
+            self.proto = p
         } else {
-            throw CPTPacketErrors.noProtoFound
+            // TODO: ARI typically starts with "de c0 7e ab", but can also start with
+            // "7e ab 68 68", "7e ab 08 6a", etc. but then length field is wrong
+            if data.count >= 4 && data.subdata(in: 0..<4) == Data([0xDE, 0xC0, 0x7E, 0xAB]) {
+                self.proto = .ari
+            } else if data.count >= 1 && data.subdata(in: 0..<1) == Data([0x01]) {
+                self.proto = .qmi
+            } else {
+                throw CPTPacketErrors.noProtoFound
+            }
         }
     }
     

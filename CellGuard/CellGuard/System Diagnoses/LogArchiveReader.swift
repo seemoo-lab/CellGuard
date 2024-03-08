@@ -372,7 +372,7 @@ struct LogArchiveReader {
         let direction: CPTDirection
         direction = message.contains("Req") ? .outgoing : .ingoing
         
-        return try CPTPacket(direction: direction, data: packetData, timestamp: timestamp)
+        return try CPTPacket(direction: direction, data: packetData, timestamp: timestamp, knownProtocol: .qmi)
     }
     
     
@@ -398,7 +398,7 @@ struct LogArchiveReader {
         let direction: CPTDirection
         direction = message.contains("req") ? .outgoing : .ingoing
         
-        return try CPTPacket(direction: direction, data: packetData, timestamp: timestamp)
+        return try CPTPacket(direction: direction, data: packetData, timestamp: timestamp, knownProtocol: .ari)
     }
     
     private let regexInt = Regex("kCTCellMonitor([\\w\\d]+) *= *(\\d+);")
