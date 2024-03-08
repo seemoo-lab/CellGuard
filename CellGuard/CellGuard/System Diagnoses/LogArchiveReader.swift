@@ -12,6 +12,7 @@ import OSLog
 import CSV
 import Regex
 
+
 enum LogArchiveReadPhase: Int {
     // Spinner
     case unarchiving = 0
@@ -115,6 +116,10 @@ struct LogArchiveReader {
                 currentFileCount += 1
             }
             
+            // TODO: Can we speed this up?
+            // Rust parses everything into the CSV file when we only need a few things from it.
+            // macOS `log` command natively implements filters that make it faster.
+            // Can we do the same?
             csvFile = try parseLogArchive(tmpDir: tmpDir, logArchiveDir: logArchive, rust: rust)
             
             Self.logParseProgress = nil
@@ -136,6 +141,8 @@ struct LogArchiveReader {
         } catch {
             throw LogArchiveError.readCsvFailed(error)
         }
+        
+        // TODO: in a final step, merge duplicates from coredata
     }
     
     private func createTmpDir() throws -> URL {
@@ -201,17 +208,16 @@ struct LogArchiveReader {
         
         // After unarchiving, shared sysdiagnoes files are still in the app's folder .../Documents/Inbox/
         // Delete as mentioned in https://stackoverflow.com/questions/16213226/do-you-need-to-delete-imported-files-from-documents-inbox
-        let fileMgr = FileManager()
         var dirPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
         dirPath.append("/Inbox");
-        if let directoryContents = try? fileMgr.contentsOfDirectory(atPath: dirPath)
+        if let directoryContents = try? fileManager.contentsOfDirectory(atPath: dirPath)
         {
             for path in directoryContents
             {
                 let fullPath = (dirPath as NSString).appendingPathComponent(path)
                 do
                 {
-                    try fileMgr.removeItem(atPath: fullPath)
+                    try fileManager.removeItem(atPath: fullPath)
                     print("Inbox file deleted!")
                 }
                 catch let error as NSError
@@ -295,6 +301,7 @@ struct LogArchiveReader {
             let timestamp = Int(row[0])
             let subsystem = row[3]
             let library = row[7]
+            let category = row[10]
             let message = row[13]
             
             do {
@@ -303,10 +310,15 @@ struct LogArchiveReader {
                 }
                 let timestampDate = Date(timeIntervalSince1970: Double(timestamp) / Double(NSEC_PER_SEC))
                 
-                if subsystem == "com.apple.telephony.bb" {
-                    packets.append(try readCSVPacket(library: library, timestamp: timestampDate, message: message))
-                } else if subsystem == "com.apple.CommCenter" {
+                if category == "qmux" && subsystem == "com.apple.telephony.bb"  {
+                    packets.append(try readCSVPacketQMI(library: library, timestamp: timestampDate, message: message))
+                } else if category == "ARI" && subsystem == "com.apple.telephony.bb" {
+                    packets.append(try readCSVPacketARI(library: library, timestamp: timestampDate, message: message))
+                } else if category == "ct.server" && subsystem == "com.apple.CommCenter" {
                     cells.append(try readCSVCellMeasurement(timestamp: timestampDate, message: message))
+                } else if subsystem == "com.apple.cache_delete" {
+                    readDeletedAction(timestamp: timestampDate, message: message)
+                    skippedCount += 1
                 } else {
                     skippedCount += 1
                 }
@@ -336,20 +348,11 @@ struct LogArchiveReader {
         return (cells.count, packets.count, skippedCount)
     }
     
-    private func readCSVPacket(library: String, timestamp: Date, message: String) throws -> CPTPacket {
-        let isQmi = library.contains("libATCommandStudioDynamic")
-        let isAri = library.contains("libARI")
-        let direction: CPTDirection
+    
+    private func readCSVPacketQMI(library: String, timestamp: Date, message: String) throws -> CPTPacket {
         
-        if isQmi {
-            direction = message.contains("Req") ? .outgoing : .ingoing
-        } else if isAri {
-            direction = message.contains("req") ? .outgoing : .ingoing
-        } else {
-            throw LogArchiveError.noPacketProtocol
-        }
-        
-        let binRegex = Regex(".*Bin=\\[(.*)]")
+        // speed up regex by being more precise about its start
+        let binRegex = Regex("^QMI: Svc=0x.*Bin=\\[(.*)]")
         guard let binMatch = binRegex.firstMatch(in: message) else {
             throw LogArchiveError.noBinaryPacketData
         }
@@ -365,6 +368,35 @@ struct LogArchiveReader {
         guard let packetData = Data(base64Encoded: binString) else {
             throw LogArchiveError.binaryPacketDataDecodingError
         }
+        
+        let direction: CPTDirection
+        direction = message.contains("Req") ? .outgoing : .ingoing
+        
+        return try CPTPacket(direction: direction, data: packetData, timestamp: timestamp)
+    }
+    
+    
+    private func readCSVPacketARI(library: String, timestamp: Date, message: String) throws -> CPTPacket {
+        
+        let binRegex = Regex("(ind|req|rsp): Bin=\\[(.*)]")
+        guard let binMatch = binRegex.firstMatch(in: message) else {
+            throw LogArchiveError.noBinaryPacketData
+        }
+        if binMatch.captures.isEmpty {
+            throw LogArchiveError.noBinaryPacketData
+        }
+        guard let binString = binMatch.captures[1] else {
+            throw LogArchiveError.noBinaryPacketData
+        }
+        if binString == "<private>" {
+            throw LogArchiveError.binaryPacketDataPrivate
+        }
+        guard let packetData = Data(base64Encoded: binString) else {
+            throw LogArchiveError.binaryPacketDataDecodingError
+        }
+        
+        let direction: CPTDirection
+        direction = message.contains("req") ? .outgoing : .ingoing
         
         return try CPTPacket(direction: direction, data: packetData, timestamp: timestamp)
     }
@@ -420,6 +452,31 @@ struct LogArchiveReader {
         }
     }
     
+    // TODO: check if this really detects deleted log entries
+    // TODO: show UI warning to the user that their disk might be too full
+    private func readDeletedAction(timestamp: Date, message: String) {
+        // We're looking for a logd flush like this:
+        // com.apple.logd.cachedelete : 666287008
+        
+        let deleteRegex = Regex("^com.apple.logd.cachedelete : ([0-9]*)")
+        
+        guard let deleteMatch = deleteRegex.firstMatch(in: message) else {
+            return
+        }
+        guard let deletedEntries = deleteMatch.captures[0] else {
+            return
+        }
+        LogArchiveReader.logger.debug("delted entries match \(deletedEntries)")
+        guard let deletedEntries = Int(deletedEntries) else {
+            return
+        }
+        
+        // TODO: throw error and show warning to user
+        if deletedEntries > 0 {
+            LogArchiveReader.logger.error("deleted purged \(deletedEntries) log entries at \(timestamp)!!")
+        }
+        
+    }
 }
 
 func swift_parse_trace_file(path: RustStr, count: UInt32) {
