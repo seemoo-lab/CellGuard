@@ -116,10 +116,11 @@ struct LogArchiveReader {
                 currentFileCount += 1
             }
             
-            // TODO: Can we speed this up?
             // Rust parses everything into the CSV file when we only need a few things from it.
             // macOS `log` command natively implements filters that make it faster.
-            // Can we do the same?
+            // Can we do the same? -> Yes, we already doing this in Rust.
+            // The function `output` in the file `src/csv_parser.rs` filters log entries based on their subsystem and content.
+            // Therefore, we have to modify the function if we want to analyze log entries of different subsystems.
             csvFile = try parseLogArchive(tmpDir: tmpDir, logArchiveDir: logArchive, rust: rust)
             
             Self.logParseProgress = nil
@@ -317,6 +318,7 @@ struct LogArchiveReader {
                 } else if category == "ct.server" && subsystem == "com.apple.CommCenter" {
                     cells.append(try readCSVCellMeasurement(timestamp: timestampDate, message: message))
                 } else if subsystem == "com.apple.cache_delete" {
+                    // TODO: Modify the function `output` in the file `src/csv_parser.rs` to include entries from this subsystem
                     readDeletedAction(timestamp: timestampDate, message: message)
                     skippedCount += 1
                 } else {
@@ -455,6 +457,8 @@ struct LogArchiveReader {
     // TODO: check if this really detects deleted log entries
     // TODO: show UI warning to the user that their disk might be too full
     private func readDeletedAction(timestamp: Date, message: String) {
+        // TODO: Modify the function `output` in the file `src/csv_parser.rs` to include entries from the subsystem
+        
         // We're looking for a logd flush like this:
         // com.apple.logd.cachedelete : 666287008
         
