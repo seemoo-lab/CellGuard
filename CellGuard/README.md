@@ -17,6 +17,8 @@ For release builds required for TestFlight uploads, also run the following comma
 ```sh
 PROJECT_DIR=. CONFIGURATION=Release ./build-rust.sh
 ```
+If you're using XCode to build an app archive for TestFlight distribution, you should switch the *Build Configuration* setting to *Release* in the *Archive* section. 
+
 Upon changes, XCode will rebuild the libraries automatically. 
 
 ### XCode
