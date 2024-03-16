@@ -41,6 +41,8 @@
 			</array>
 		</dict>
 	</array>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>MKDirectionsApplicationSupportedModes</key>
 	<array/>
 	<key>NSBonjourServices</key>
