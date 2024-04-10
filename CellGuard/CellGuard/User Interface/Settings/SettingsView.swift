@@ -94,6 +94,12 @@ struct SettingsView: View {
             Section(header: Text("About CellGuard")) {
                 KeyValueListRow(key: "Version", value: versionBuild)
                 
+                NavigationLink {
+                    AcknowledgementView()
+                } label: {
+                    Text("Acknowledgements")
+                }
+                
                 Link(destination: URL(string: "https://cellguard.seemoo.de")!) {
                     KeyValueListRow(key: "Website") {
                         Image(systemName: "link")
