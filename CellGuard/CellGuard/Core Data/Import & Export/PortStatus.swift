@@ -14,5 +14,3 @@ struct PortStatus {
     static var exportActive = ManagedAtomic<Bool>(false)
     
 }
-
-typealias ImportResult = (cells: Int, alsCells: Int, locations: Int, packets: Int)

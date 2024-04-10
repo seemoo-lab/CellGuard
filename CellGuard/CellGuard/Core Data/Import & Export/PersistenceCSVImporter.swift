@@ -14,7 +14,7 @@ import ZIPFoundation
 enum PersistenceCSVImporterError: Error {
     case noInputStream
     case notInInfo
-    case cantOpenArchive
+    case cantOpenArchive(Error)
     case infoMissing
     case infoWrongFormat
     case permissionDenied
@@ -104,15 +104,15 @@ struct PersistenceCSVImporter {
         Self.logger.debug("Got the available files from info.json: \(infoData)")
         
         let locations = try readLocations(directory: tmpDirectoryURL, infoData: infoData, progress: progress)
-        Self.logger.debug("Read \(locations) locations")
+        Self.logger.debug("Read \(locations?.count ?? 0) locations")
         let alsCells = try readAlsCells(directory: tmpDirectoryURL, infoData: infoData, progress: progress)
-        Self.logger.debug("Read \(alsCells) ALS cells")
+        Self.logger.debug("Read \(alsCells?.count ?? 0) ALS cells")
         let packets = try readPackets(directory: tmpDirectoryURL, infoData: infoData, progress: progress)
-        Self.logger.debug("Read \(packets) packets")
+        Self.logger.debug("Read \(packets?.count ?? 0) packets")
         let userCells = try readUserCells(directory: tmpDirectoryURL, infoData: infoData, progress: progress)
-        Self.logger.debug("Read \(userCells) user cells")
+        Self.logger.debug("Read \(userCells?.count ?? 0) user cells")
         
-        return (userCells, alsCells, locations, packets)
+        return ImportResult(cells: userCells, alsCells: alsCells, locations: locations, packets: packets, notices: [])
     }
     
     func fetchInfo(from url: URL) throws -> [String: Any] {
@@ -124,9 +124,13 @@ struct PersistenceCSVImporter {
         defer { if securityScoped { url.stopAccessingSecurityScopedResource() } }
         
         // Only extract the info.json from the archive
-        guard let archive = Archive(url: url, accessMode: .read) else  {
-            throw PersistenceCSVImporterError.cantOpenArchive
+        let archive: Archive
+        do {
+            archive = try Archive(url: url, accessMode: .read)
+        } catch {
+            throw PersistenceCSVImporterError.cantOpenArchive(error)
         }
+        
         // Get the file from the archive
         guard let entry = archive[infoFile] else {
             throw PersistenceCSVImporterError.infoMissing
@@ -150,8 +154,9 @@ struct PersistenceCSVImporter {
         infoData: [String: Int],
         progress: CSVProgressFunc,
         convert: (CSVReader) throws -> T?,
+        timestamp: (T) -> Date?,
         bulkImport: ([T]) throws -> Void
-    ) throws -> Int {
+    ) throws -> ImportCount? {
         // Append the category's prefix to the URL
         let url = directory.appendingPathComponent(category.fileName())
         Self.logger.debug("Importing data for \(String(describing: category)) from \(url)")
@@ -159,7 +164,7 @@ struct PersistenceCSVImporter {
         // Check if the file exists, otherwise we'll just skip this category it
         guard FileManager.default.fileExists(atPath: url.path) else {
             Self.logger.debug("File doesn't exist for \(String(describing: category))")
-            return -1
+            return nil
         }
         
         // Get the number of rows from the info file
@@ -181,6 +186,7 @@ struct PersistenceCSVImporter {
         // Read the CSV data and convert it into DB-ready objects which are then imported in bulk
         var dbReadyObjects: [T] = []
         var totalCounter = 0
+        let beginEndDates = FirstLastDates()
         
         // Determine the size of each imported bulk
         let bulkSize = 1000
@@ -194,6 +200,9 @@ struct PersistenceCSVImporter {
         while csv.next() != nil {
             do {
                 if let converted = try convert(csv) {
+                    if let timestamp = timestamp(converted) {
+                        beginEndDates.update(timestamp)
+                    }
                     dbReadyObjects.append(converted)
                 }
             } catch {
@@ -222,7 +231,7 @@ struct PersistenceCSVImporter {
         Self.logger.debug("Finished an read \(totalCounter) entries from \(url)")
         
         // Return the total number of rows read
-        return totalCounter
+        return ImportCount(count: totalCounter, first: beginEndDates.first, last: beginEndDates.last)
     }
     
     private func readInfo(url: URL) throws -> [String: Any] {
@@ -241,7 +250,7 @@ struct PersistenceCSVImporter {
         return jsonDict
     }
     
-    private func readUserCells(directory: URL, infoData: [String: Int], progress: CSVProgressFunc) throws -> Int {
+    private func readUserCells(directory: URL, infoData: [String: Int], progress: CSVProgressFunc) throws -> ImportCount? {
         let parser = CCTParser()
         
         // Think about also importing the cell's status and score
@@ -258,12 +267,14 @@ struct PersistenceCSVImporter {
             }
             
             return try parser.parse(cellSample)
+        } timestamp: { sample in
+            sample.timestamp
         } bulkImport: { samples in
             try PersistenceController.shared.importCollectedCells(from: samples)
         }
     }
     
-    private func readAlsCells(directory: URL, infoData: [String: Int], progress: CSVProgressFunc) throws -> Int {
+    private func readAlsCells(directory: URL, infoData: [String: Int], progress: CSVProgressFunc) throws -> ImportCount? {
         return try importData(directory: directory, category: .alsCells, infoData: infoData, progress: progress) { csv in
             // let imported = try csvDate(csv, "imported")
             
@@ -294,13 +305,15 @@ struct PersistenceCSVImporter {
             )
             
             return alsCell
+        } timestamp: { sample in
+            nil
         } bulkImport: { cells in
             try PersistenceController.shared.importALSCells(from: cells, source: nil)
         }
         
     }
     
-    private func readLocations(directory: URL, infoData: [String: Int], progress: CSVProgressFunc) throws -> Int {
+    private func readLocations(directory: URL, infoData: [String: Int], progress: CSVProgressFunc) throws -> ImportCount? {
         return try importData(directory: directory, category: .locations, infoData: infoData, progress: progress) { (csv: CSVReader) -> TrackedUserLocation? in
             let collected = try csvDate(csv, "collected")
             
@@ -317,12 +330,14 @@ struct PersistenceCSVImporter {
             let background = try csvBool(csv, "background")
             
             return TrackedUserLocation(timestamp: collected, latitude: latitude, longitude: longitude, horizontalAccuracy: horizontalAccuracy, altitude: altitude, verticalAccuracy: verticalAccuracy, speed: speed, speedAccuracy: speedAccuracy, background: background)
+        } timestamp: { location in
+            location.timestamp
         } bulkImport: { locations in
             try PersistenceController.shared.importUserLocations(from: locations)
         }
     }
     
-    private func readPackets(directory: URL, infoData: [String: Int], progress: CSVProgressFunc) throws -> Int {
+    private func readPackets(directory: URL, infoData: [String: Int], progress: CSVProgressFunc) throws -> ImportCount? {
         // Set the packet retention time frame to infinite, so that older packets to-be-imported don't get deleted
         UserDefaults.standard.setValue(DeleteView.packetRetentionInfinite, forKey: UserDefaultsKeys.packetRetention.rawValue)
         UserDefaults.standard.setValue(DeleteView.locationRetentionInfinite, forKey: UserDefaultsKeys.locationRetention.rawValue)
@@ -340,6 +355,8 @@ struct PersistenceCSVImporter {
             }
             
             return try CPTPacket(direction: direction, data: data, timestamp: collected)
+        } timestamp: { packet in
+            packet.timestamp
         } bulkImport: { packets in
             let qmiPackets = packets.compactMap { packet -> (CPTPacket, ParsedQMIPacket)? in
                 guard let qmiPacket = try? ParsedQMIPacket(nsData: packet.data) else {

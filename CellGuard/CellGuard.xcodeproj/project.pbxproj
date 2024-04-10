@@ -136,6 +136,8 @@
 		CFFF19DF2BC6CF47004E40CE /* Package.resolved in Resources */ = {isa = PBXBuildFile; fileRef = CFFF19DE2BC6CF47004E40CE /* Package.resolved */; };
 		CFFF19E12BC6D045004E40CE /* AcknowList in Frameworks */ = {isa = PBXBuildFile; productRef = CFFF19E02BC6D045004E40CE /* AcknowList */; };
 		CFFF19E32BC6D2D3004E40CE /* AcknowledgementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFFF19E22BC6D2D3004E40CE /* AcknowledgementView.swift */; };
+		CFFF19E52BC70E63004E40CE /* ImportResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFFF19E42BC70E63004E40CE /* ImportResult.swift */; };
+		CFFF19E72BC70E83004E40CE /* FirstLastDates.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFFF19E62BC70E83004E40CE /* FirstLastDates.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -283,6 +285,8 @@
 		CFF05F6E2A39ABF500DE6FB2 /* PersistenceCategories.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceCategories.swift; sourceTree = "<group>"; };
 		CFFF19DE2BC6CF47004E40CE /* Package.resolved */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Package.resolved; path = CellGuard.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved; sourceTree = "<group>"; };
 		CFFF19E22BC6D2D3004E40CE /* AcknowledgementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AcknowledgementView.swift; sourceTree = "<group>"; };
+		CFFF19E42BC70E63004E40CE /* ImportResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportResult.swift; sourceTree = "<group>"; };
+		CFFF19E62BC70E83004E40CE /* FirstLastDates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstLastDates.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -542,8 +546,10 @@
 			children = (
 				CF8D331D2AC192B6009CA3F0 /* PortStatus.swift */,
 				CFF05F6E2A39ABF500DE6FB2 /* PersistenceCategories.swift */,
+				CFFF19E42BC70E63004E40CE /* ImportResult.swift */,
 				CFA145892AB3457100239C49 /* CSV */,
 				CFA145872AB3455E00239C49 /* JSON */,
+				CFFF19E62BC70E83004E40CE /* FirstLastDates.swift */,
 			);
 			path = "Import & Export";
 			sourceTree = "<group>";
@@ -900,6 +906,7 @@
 				CFDF5D73297EF0E4000708A8 /* CellAnnotationView.swift in Sources */,
 				CF5EA78B29892F420061E9F1 /* CGTabBarAppearance.swift in Sources */,
 				CFDF5D7B297EF71F000708A8 /* CellClusterAnnotation.swift in Sources */,
+				CFFF19E52BC70E63004E40CE /* ImportResult.swift in Sources */,
 				CFD8DD282A7175AF00954A25 /* ARIContentParser.swift in Sources */,
 				CF9626C32AB7474500C46953 /* PersistenceCSVExporter.swift in Sources */,
 				CF93B852297FFEF9003F9FFE /* URLIdentifiable.swift in Sources */,
@@ -953,6 +960,7 @@
 				CF6EC8B12A6D9F99004CF0AB /* CellListFilterView.swift in Sources */,
 				CF9EEEE82B34B6A500F9B6D8 /* OpenSysdiagnoseSettings.swift in Sources */,
 				CF0FDCC22969AC1100A6FFE2 /* SettingsView.swift in Sources */,
+				CFFF19E72BC70E83004E40CE /* FirstLastDates.swift in Sources */,
 				CFD023682961AB9900AA5A1C /* CCTClient.swift in Sources */,
 				CF73099A2A79122B00498BC3 /* DataSummaryView.swift in Sources */,
 				CF1FAFB32986B11200106930 /* CellReachOverlay.swift in Sources */,

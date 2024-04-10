@@ -46,7 +46,6 @@ enum LogArchiveError: Error {
 }
 
 typealias LogProgressFunc = (LogArchiveReadPhase, Int, Int) -> Void
-typealias ArchiveReadResult = (cells: Int, packets: Int, skipped: Int)
 
 struct LogArchiveReader {
     
@@ -138,7 +137,7 @@ struct LogArchiveReader {
                 progress(.importingData, currentCsvLine, totalCsvLines)
             }
             Self.logger.debug("done :)")
-            return (cells: out.cells, alsCells: 0, locations: 0, packets: out.packets)
+            return out
         } catch {
             throw LogArchiveError.readCsvFailed(error)
         }
@@ -275,21 +274,25 @@ struct LogArchiveReader {
         return count
     }
     
-    private func readCSV(csvFile: URL, progress: () -> Void) throws -> ArchiveReadResult {
+    private func readCSV(csvFile: URL, progress: () -> Void) throws -> ImportResult {
         if let fileAttributes = try? fileManager.attributesOfItem(atPath: csvFile.path) {
             Self.logger.debug("\(fileAttributes))")
         }
         
         guard let inputStream = InputStream(url: csvFile) else {
             Self.logger.warning("No CSV input stream for \(csvFile)")
-            return (0, 0, 0)
+            return ImportResult(cells: nil, alsCells: nil, locations: nil, packets: nil, notices: [])
         }
         
         let csvReader = try CSVReader(stream: inputStream, hasHeaderRow: true)
         
         // TODO: Import data during import (e.g. there are >1000 entries)
         var cells: [CCTCellProperties] = []
+        let cellDates = FirstLastDates()
         var packets: [CPTPacket] = []
+        let packetDates = FirstLastDates()
+        var packetsPrivate: [Date] = []
+        let packetPrivateDates = FirstLastDates()
         var skippedCount = 0
         
         while let row = csvReader.next() {
@@ -305,18 +308,23 @@ struct LogArchiveReader {
             let category = row[10]
             let message = row[13]
             
+            guard let timestamp = timestamp else {
+                Self.logger.warning("Skipped CSV row because of missing timestamp: \(row)")
+                skippedCount += 1
+                continue
+            }
+            let timestampDate = Date(timeIntervalSince1970: Double(timestamp) / Double(NSEC_PER_SEC))
+            
             do {
-                guard let timestamp = timestamp else {
-                    throw LogArchiveError.timestampNoInt
-                }
-                let timestampDate = Date(timeIntervalSince1970: Double(timestamp) / Double(NSEC_PER_SEC))
-                
                 if category == "qmux" && subsystem == "com.apple.telephony.bb"  {
                     packets.append(try readCSVPacketQMI(library: library, timestamp: timestampDate, message: message))
+                    packetDates.update(timestampDate)
                 } else if category == "ARI" && subsystem == "com.apple.telephony.bb" {
                     packets.append(try readCSVPacketARI(library: library, timestamp: timestampDate, message: message))
+                    packetDates.update(timestampDate)
                 } else if category == "ct.server" && subsystem == "com.apple.CommCenter" {
                     cells.append(try readCSVCellMeasurement(timestamp: timestampDate, message: message))
+                    cellDates.update(timestampDate)
                 } else if subsystem == "com.apple.cache_delete" {
                     // TODO: Modify the function `output` in the file `src/csv_parser.rs` to include entries from this subsystem
                     readDeletedAction(timestamp: timestampDate, message: message)
@@ -325,8 +333,8 @@ struct LogArchiveReader {
                     skippedCount += 1
                 }
             } catch LogArchiveError.binaryPacketDataPrivate {
-                skippedCount += 1
-                // Maybe warn the user if all packets are private, so they reinstall the profile
+                packetsPrivate.append(timestampDate)
+                packetPrivateDates.update(timestampDate)
             } catch {
                 skippedCount += 1
                 Self.logger.warning("Skipped CSV row because of error (\(error)): \(row)")
@@ -345,9 +353,42 @@ struct LogArchiveReader {
         } catch {
             throw LogArchiveError.importError(error)
         }
+                
+        var notices: [ImportNotice] = []
         
+        // We haven't found any usable packet, so no profile is installed at all or maybe it expired some time ago
+        if packets.count == 0 {
+            notices.append(.profileNotInstalled)
+        } else if packetsPrivate.count > 0 {
+            // We have found some usable packets but also some private packets, so in the duration of the sysdiagnose, the profile status has changed
+            if let packetPrivateDatesLast = packetPrivateDates.last, 
+                let packetDatesLast = packetDates.last,
+                packetPrivateDatesLast > packetDatesLast {
+                // The profile expired
+                notices.append(.profileExpired)
+            } else if let packetPrivateDateLast = packetPrivateDates.last,
+                      let packetDateLast = packetDates.last,
+                        packetPrivateDateLast < packetDateLast {
+                // The profile was freshly installed as there are no private packets at end.
+                // We can't check for packetPrivateDates.last < packetDates.first as the private and non-private packets are mixed for a short moment when the profile is installed.
+                // We can increase the accuracy of this check if we also check for the log message "Profile “com.apple.basebandlogging” installed".
+                notices.append(.profileNewlyInstalled)
+            } else {
+                // There some private packets in between, just tell the user to check the profile.
+                notices.append(.profileUnknownStatus)
+            }
+        }
         
-        return (cells.count, packets.count, skippedCount)
+        // TODO: Check for log truncation
+        // TODO: Check for profile install or uninstall events
+        
+        return ImportResult(
+            cells: ImportCount(count: cells.count, first: cellDates.first, last: cellDates.last),
+            alsCells: nil,
+            locations: nil,
+            packets: ImportCount(count: packets.count, first: packetDates.first, last: packetDates.last),
+            notices: notices
+        )
     }
     
     
@@ -467,6 +508,7 @@ struct LogArchiveReader {
         guard let deleteMatch = deleteRegex.firstMatch(in: message) else {
             return
         }
+        // this might also be the maximum log size in bytes not the number of entries purged
         guard let deletedEntries = deleteMatch.captures[0] else {
             return
         }
