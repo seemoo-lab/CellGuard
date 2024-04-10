@@ -93,12 +93,35 @@ struct SettingsView: View {
             
             Section(header: Text("About CellGuard")) {
                 KeyValueListRow(key: "Version", value: versionBuild)
-                // TODO: Open mail with the correct address on click
-                KeyValueListRow(key: "Developer", value: "Lukas Arnold")
-                KeyValueListRow(key: "Supervisor", value: "Jiska Classen")
-                Link(destination: URL(string: "https://www.seemoo.tu-darmstadt.de")!) {
-                    KeyValueListRow(key: "Institution", value: "SEEMOO @ TU Darmstadt")
+                
+                Link(destination: URL(string: "https://cellguard.seemoo.de")!) {
+                    KeyValueListRow(key: "Website") {
+                        Image(systemName: "link")
+                    }
                 }
+                
+                Link(destination: URL(string: "https://cellguard.seemoo.de/docs/privacy-policy/")!) {
+                    KeyValueListRow(key: "Privacy Policy") {
+                        Image(systemName: "link")
+                    }
+                }
+                
+                // TODO: Create GitHub project
+                Link(destination: URL(string: "http://github.com/seemoo-lab/CellGuard")!) {
+                    KeyValueListRow(key: "Report Issues") {
+                        Image(systemName: "link")
+                    }
+                }
+            }
+            
+            Section(header: Text("Developers"), footer: Text("CellGuard is a research project by the Secure Mobile Networking Lab at TU Darmstadt (SEEMOO) and the Cybersecurity - Mobile & Wireless group at the Hasso Plattner Institute (HPI).")) {
+                Link(destination: URL(string: "https://lukasarnold.de")!) {
+                    KeyValueListRow(key: "Lukas Arnold", value: "SEEMOO")
+                }
+                Link(destination: URL(string: "https://hpi.de/classen/home.html")!) {
+                    KeyValueListRow(key: "Jiska Classen", value: "HPI")
+                }
+                KeyValueListRow(key: "Linus Laurenz", value: "HPI")
             }
         }
         .listStyle(.insetGrouped)
