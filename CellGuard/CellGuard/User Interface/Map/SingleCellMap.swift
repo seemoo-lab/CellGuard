@@ -25,6 +25,9 @@ struct SingleCellMap: UIViewRepresentable {
         mapView.isPitchEnabled = false
         mapView.isRotateEnabled = false
         
+        // Limit the maximum zoom range of the camera to 50km as all locations should be within this range
+        mapView.cameraZoomRange = MKMapView.CameraZoomRange(maxCenterCoordinateDistance: 50_000)
+        
         mapView.setRegion(middleRegion(), animated: false)
         
         CommonCellMap.registerAnnotations(mapView)
