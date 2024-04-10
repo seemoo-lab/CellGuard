@@ -15,12 +15,18 @@ class CellClusterAnnotationView: MKAnnotationView {
     
     override init(annotation: MKAnnotation?, reuseIdentifier: String?) {
         super.init(annotation: annotation, reuseIdentifier: reuseIdentifier)
-        collisionMode = .circle
-        
+        prepareForReuse()
     }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(code:) has not been implemented")
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        
+        collisionMode = .circle
+        displayPriority = .defaultHigh
     }
     
     override func prepareForDisplay() {
@@ -30,7 +36,6 @@ class CellClusterAnnotationView: MKAnnotationView {
             let totalCells = cluster.memberAnnotations.count
             
             image = drawCellCount(count: totalCells)
-            displayPriority = .defaultHigh
         }
     }
     
@@ -53,8 +58,9 @@ class CellClusterAnnotationView: MKAnnotationView {
         }
         
         // TODO: Consider using not the color white when in dark mode
+        // let startTime = Date()
         let renderer = UIGraphicsImageRenderer(size: CGSize(width: drawSize, height: drawSize))
-        return renderer.image { context in
+        let image = renderer.image { context in
             
             // Draw a shadow behind the circle
             // https://www.hackingwithswift.com/example-code/uikit/how-to-render-shadows-using-nsshadow-and-setshadow
@@ -85,6 +91,8 @@ class CellClusterAnnotationView: MKAnnotationView {
             // Draw the text in the rectangle
             text.draw(in: rect, withAttributes: attributes)
         }
+        // print("Draw time: \(startTime.distance(to: Date()))")
+        return image
     }
     
 }

@@ -26,11 +26,15 @@ class CellMapDelegate: NSObject, MKMapViewDelegate {
     
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
         if annotation is CellAnnotation {
-            return CellAnnotationView(annotation: annotation, reuseIdentifier: CellAnnotationView.ReuseID, calloutAccessory: onTap != nil)
+            let view = mapView.dequeueReusableAnnotationView(withIdentifier: CellAnnotationView.ReuseID, for: annotation)
+            if let view = view as? CellAnnotationView {
+                view.calloutAccessory = onTap != nil
+            }
+            return view
         } else if annotation is LocationAnnotation || annotation is LocationClusterAnnotation {
-            return LocationAnnotationView(annotation: annotation, reuseIdentifier: LocationAnnotationView.ReuseID)
+            return mapView.dequeueReusableAnnotationView(withIdentifier: LocationAnnotationView.ReuseID, for: annotation)
         } else if annotation is CellClusterAnnotation {
-            return CellClusterAnnotationView(annotation: annotation, reuseIdentifier: CellClusterAnnotationView.ReuseID)
+            return mapView.dequeueReusableAnnotationView(withIdentifier: CellClusterAnnotationView.ReuseID, for: annotation)
         }
         
         // TODO: Sometimes simple red pins are shown but when they're are tapped they show a callout and turn into correct annotations.

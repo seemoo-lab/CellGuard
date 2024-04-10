@@ -25,7 +25,7 @@ struct CommonCellMap {
             CellAnnotationView.self,
             forAnnotationViewWithReuseIdentifier: CellAnnotationView.ReuseID)
         mapView.register(
-            LocationAnnotation.self,
+            LocationAnnotationView.self,
             forAnnotationViewWithReuseIdentifier: LocationAnnotationView.ReuseID)
         
         // Cluster annotations

@@ -14,17 +14,24 @@ class LocationAnnotationView: MKAnnotationView {
 
     override init(annotation: MKAnnotation?, reuseIdentifier: String?) {
         super.init(annotation: annotation, reuseIdentifier: reuseIdentifier)
-        clusteringIdentifier = "location"
-        collisionMode = .circle
+        prepareForReuse()
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(code:) has not been implemented")
     }
     
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        
+        clusteringIdentifier = "location"
+        collisionMode = .circle
+        displayPriority = .defaultLow
+    }
+    
     override func prepareForDisplay() {
         super.prepareForDisplay()
-        displayPriority = .defaultLow
+        
         image = drawLocationDot()
     }
     
