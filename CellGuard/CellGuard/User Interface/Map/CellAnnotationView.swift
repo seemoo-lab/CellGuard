@@ -37,14 +37,14 @@ class CellAnnotationView: MKMarkerAnnotationView {
         clusteringIdentifier = "cell"
         animatesWhenAdded = false
         canShowCallout = true
-        // displayPriority = .required
+        displayPriority = .required
+        glyphImage = UIImage(systemName: "antenna.radiowaves.left.and.right")
     }
     
     override func prepareForDisplay() {
         super.prepareForDisplay()
         
         markerTintColor = colorFromTechnology()
-        glyphImage = UIImage(systemName: "antenna.radiowaves.left.and.right")
     }
     
     private func colorFromTechnology() -> UIColor {
