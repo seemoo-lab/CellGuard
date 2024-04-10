@@ -15,8 +15,13 @@ struct OpenSysdiagnoseSettings: View {
         if appMode == .nonJailbroken {
             Button {
                 // See: https://github.com/FifiTheBulldog/ios-settings-urls/blob/master/settings-urls.md
-                // TODO: Remove before App Store submission (https://stackoverflow.com/a/70838268)
-                let url = "App-prefs:Privacy&path=PROBLEM_REPORTING"
+                
+                // Removed before App Store submission (https://stackoverflow.com/a/70838268)
+                // let url = "App-prefs:Privacy&path=PROBLEM_REPORTING"
+                
+                // The App-Store-Safe-URL
+                let url = UIApplication.openSettingsURLString
+                
                 if let appSettings = URL(string: url), UIApplication.shared.canOpenURL(appSettings) {
                     UIApplication.shared.open(appSettings)
                 }
