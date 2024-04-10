@@ -133,6 +133,9 @@
 		CFE988DF2AA88A2B0039EDF9 /* CircularProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFE988DE2AA88A2B0039EDF9 /* CircularProgressView.swift */; };
 		CFF05F6D2A39AA3900DE6FB2 /* DeleteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFF05F6C2A39AA3900DE6FB2 /* DeleteView.swift */; };
 		CFF05F6F2A39ABF500DE6FB2 /* PersistenceCategories.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFF05F6E2A39ABF500DE6FB2 /* PersistenceCategories.swift */; };
+		CFFF19DF2BC6CF47004E40CE /* Package.resolved in Resources */ = {isa = PBXBuildFile; fileRef = CFFF19DE2BC6CF47004E40CE /* Package.resolved */; };
+		CFFF19E12BC6D045004E40CE /* AcknowList in Frameworks */ = {isa = PBXBuildFile; productRef = CFFF19E02BC6D045004E40CE /* AcknowList */; };
+		CFFF19E32BC6D2D3004E40CE /* AcknowledgementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFFF19E22BC6D2D3004E40CE /* AcknowledgementView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -278,6 +281,8 @@
 		CFE988DE2AA88A2B0039EDF9 /* CircularProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularProgressView.swift; sourceTree = "<group>"; };
 		CFF05F6C2A39AA3900DE6FB2 /* DeleteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteView.swift; sourceTree = "<group>"; };
 		CFF05F6E2A39ABF500DE6FB2 /* PersistenceCategories.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceCategories.swift; sourceTree = "<group>"; };
+		CFFF19DE2BC6CF47004E40CE /* Package.resolved */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Package.resolved; path = CellGuard.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved; sourceTree = "<group>"; };
+		CFFF19E22BC6D2D3004E40CE /* AcknowledgementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AcknowledgementView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -290,6 +295,7 @@
 				CFD0236D2961AD1500AA5A1C /* SwiftProtobuf in Frameworks */,
 				CF2002ED2A2F3244000922E6 /* BinarySwift in Frameworks */,
 				CF9237112A3E069D00FC7D21 /* Gzip in Frameworks */,
+				CFFF19E12BC6D045004E40CE /* AcknowList in Frameworks */,
 				CF8D33212AC194A4009CA3F0 /* Atomics in Frameworks */,
 				CF9EEEE62B347A7000F9B6D8 /* Regex in Frameworks */,
 				CFA632552AB3501800D46025 /* CSV in Frameworks */,
@@ -400,6 +406,7 @@
 				CF4E53A52A32225300AE2059 /* ExportView.swift */,
 				CFF05F6C2A39AA3900DE6FB2 /* DeleteView.swift */,
 				CFDF5D88297F340E000708A8 /* ActivityViewController.swift */,
+				CFFF19E22BC6D2D3004E40CE /* AcknowledgementView.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -580,6 +587,7 @@
 		CFD0232A2961A10D00AA5A1C = {
 			isa = PBXGroup;
 			children = (
+				CFFF19DE2BC6CF47004E40CE /* Package.resolved */,
 				CF5756172B2F259100C7C60A /* BridgingHeader.h */,
 				CFD023352961A10D00AA5A1C /* CellGuard */,
 				CFD0234B2961A10E00AA5A1C /* CellGuardTests */,
@@ -728,6 +736,7 @@
 				CF8D33202AC194A4009CA3F0 /* Atomics */,
 				CF57561F2B2F266700C7C60A /* SWCompression */,
 				CF9EEEE52B347A7000F9B6D8 /* Regex */,
+				CFFF19E02BC6D045004E40CE /* AcknowList */,
 			);
 			productName = CellGuard;
 			productReference = CFD023332961A10D00AA5A1C /* CellGuard.app */;
@@ -810,6 +819,7 @@
 				CF8D331F2AC194A4009CA3F0 /* XCRemoteSwiftPackageReference "swift-atomics" */,
 				CF57561E2B2F266700C7C60A /* XCRemoteSwiftPackageReference "SWCompression" */,
 				CF9EEEE42B347A7000F9B6D8 /* XCRemoteSwiftPackageReference "Regex" */,
+				CFFF19DD2BC6CF0A004E40CE /* XCRemoteSwiftPackageReference "AcknowList" */,
 			);
 			productRefGroup = CFD023342961A10D00AA5A1C /* Products */;
 			projectDirPath = "";
@@ -833,6 +843,7 @@
 				CF4E53932A31CE2500AE2059 /* ari-definitions.json in Resources */,
 				CFE4A7A92B35991C00A37C7A /* LaunchScreen.storyboard in Resources */,
 				CF93B84E297FF5C3003F9FFE /* CellFileTypeIcon.png in Resources */,
+				CFFF19DF2BC6CF47004E40CE /* Package.resolved in Resources */,
 				CFD0233B2961A10D00AA5A1C /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -964,6 +975,7 @@
 				CFDF5D81297F05F1000708A8 /* CellMapDelegate.swift in Sources */,
 				CFF05F6F2A39ABF500DE6FB2 /* PersistenceCategories.swift in Sources */,
 				CF0FDCC9296B310400A6FFE2 /* PersistencePreview.swift in Sources */,
+				CFFF19E32BC6D2D3004E40CE /* AcknowledgementView.swift in Sources */,
 				CF07EFA52A3B4B56005B53ED /* OperatorDefinitions.swift in Sources */,
 				CF8D331C2AC19293009CA3F0 /* PersistenceCSVImporter.swift in Sources */,
 				CFD0236A2961ABA100AA5A1C /* ALSClient.swift in Sources */,
@@ -1410,6 +1422,14 @@
 				minimumVersion = 1.0.0;
 			};
 		};
+		CFFF19DD2BC6CF0A004E40CE /* XCRemoteSwiftPackageReference "AcknowList" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/vtourraine/AcknowList";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.1.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1452,6 +1472,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = CFD0236B2961AD1500AA5A1C /* XCRemoteSwiftPackageReference "swift-protobuf" */;
 			productName = SwiftProtobuf;
+		};
+		CFFF19E02BC6D045004E40CE /* AcknowList */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CFFF19DD2BC6CF0A004E40CE /* XCRemoteSwiftPackageReference "AcknowList" */;
+			productName = AcknowList;
 		};
 /* End XCSwiftPackageProductDependency section */
 
