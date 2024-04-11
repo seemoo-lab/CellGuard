@@ -5,10 +5,18 @@ Monitor and visualize cellular base stations collected by the accompanying tweak
 iOS Versions: 14.0 - 17.2
 
 ## Build
-
 The app can either be distributed as a .deb package for jailbroken devices with Cydia or as an .ipa file which can be installed using TrollStore.
 
 You'll need a Rust toolchain on your system to build the app's native libraries.
+```sh
+# Install Rust using rustup (https://www.rust-lang.org/tools/install)
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+# Install additional iOS targets (64 bit for real device & simulator):
+rustup target add aarch64-apple-ios x86_64-apple-ios
+# Install cargo-lipo
+cargo install cargo-lipo
+```
+
 The first time after cloning, you have to compile the libraries yourself by executing the following command:
 ```sh
 PROJECT_DIR=. ./build-rust.sh
