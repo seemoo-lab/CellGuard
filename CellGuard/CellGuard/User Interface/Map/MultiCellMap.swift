@@ -31,7 +31,8 @@ struct MultiCellMap: UIViewRepresentable {
         mapView.showsUserLocation = true
         mapView.showsCompass = true
         // Limit the maximum zoom range of the camera to 200km, otherwise there are performance issues with too many annotations displayed
-        mapView.cameraZoomRange = MKMapView.CameraZoomRange(maxCenterCoordinateDistance: 500_000)
+        // mapView.cameraZoomRange = MKMapView.CameraZoomRange(maxCenterCoordinateDistance: 500_000)
+        // We don't require this limit if we only show cells the iPhone connected to (which also makes more sense for users).
         
         // TODO: Extract lastLocation into sub struct of the LocationDataManger
         let location = locationManager.lastLocation ?? CLLocation(latitude: 49.8726737, longitude: 8.6516291)
