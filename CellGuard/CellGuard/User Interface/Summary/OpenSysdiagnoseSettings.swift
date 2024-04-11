@@ -33,6 +33,10 @@ struct OpenSysdiagnoseSettings: View {
         }
     }
     
+    static func openSysdiagnoses() {
+        
+    }
+    
 }
 
 private struct OpenCard: View {
@@ -50,7 +54,7 @@ private struct OpenCard: View {
                     .imageScale(.large)
             }
             HStack {
-                Text("Open the settings app to import a new sysdiagnose into CellGuard.")
+                Text("Open Settings to share data with CellGuard")
                     .multilineTextAlignment(.leading)
                     .padding()
                 Spacer()

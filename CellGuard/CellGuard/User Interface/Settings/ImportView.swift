@@ -211,6 +211,12 @@ struct ImportView: View {
                         }
                     }
                 }
+            } else {
+                Section(header: Text("Sysdiagnoses"), footer: Text("You can view recorded sysdiagnoses by navigating to Settings > Privacy > Analytics & Improvements > Analytics Data. Select a 'sysdiagnose' file and share it with CellGuard to start the import.")) {
+                    Link(destination: URL(string: UIApplication.openSettingsURLString)!) {
+                        Text("Open Settings")
+                    }
+                }
             }
         }
         .listStyle(.insetGrouped)
