@@ -155,7 +155,7 @@ extension PersistenceController {
             
             // Consider all cells if the analysis mode is active, otherwise only those of the last 14 days
             let ftDayPredicate: NSPredicate
-            if UserDefaults.standard.appMode() == .analysis {
+            if UserDefaults.standard.dataCollectionMode() == .none {
                 // This predicate always evaluates to true
                 ftDayPredicate = NSPredicate(value: true)
             } else {
@@ -163,7 +163,7 @@ extension PersistenceController {
             }
             
             let tweakCelSortDescriptor = [NSSortDescriptor(keyPath: \TweakCell.collected, ascending: false)]
-            let appMode = UserDefaults.standard.appMode()
+            let dataCollectionMode = UserDefaults.standard.dataCollectionMode()
             
             // Unverified Measurements
             
@@ -177,7 +177,7 @@ extension PersistenceController {
             let unknowns = try taskContext.fetch(unknownFetchRequest)
             
             // We show the unknown status if there's work left and were in the analysis mode
-            if unknowns.count > 0 && appMode == .analysis {
+            if unknowns.count > 0 && dataCollectionMode == .none {
                 return .Unknown
             }
             
@@ -212,7 +212,7 @@ extension PersistenceController {
             }
             
             // Only check data received from tweaks if the device is jailbroken
-            if appMode == .jailbroken {
+            if dataCollectionMode == .automatic {
                 
                 // Latest Measurement
                 
@@ -254,7 +254,7 @@ extension PersistenceController {
             }
             
             // Only check locations if the analysis mode is not active
-            if appMode != .analysis {
+            if dataCollectionMode != .none {
                 
                 // Latest Location
                 

@@ -9,10 +9,10 @@ import SwiftUI
 
 struct OpenSysdiagnoseSettings: View {
     
-    @AppStorage(UserDefaultsKeys.appMode.rawValue) var appMode: AppModes = AppModes.jailbroken
+    @AppStorage(UserDefaultsKeys.appMode.rawValue) var appMode: DataCollectionMode = .none
     
     var body: some View {
-        if appMode == .nonJailbroken {
+        if appMode == .manual {
             Button {
                 // See: https://github.com/FifiTheBulldog/ios-settings-urls/blob/master/settings-urls.md
                 

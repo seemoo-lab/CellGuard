@@ -20,7 +20,7 @@ enum SettingsCloseReason {
 struct SettingsView: View {
     
     @AppStorage(UserDefaultsKeys.showTrackingMarker.rawValue) var showTrackingMarker: Bool = false
-    @AppStorage(UserDefaultsKeys.appMode.rawValue) var appMode: AppModes = AppModes.jailbroken
+    @AppStorage(UserDefaultsKeys.appMode.rawValue) var appMode: DataCollectionMode = .none
     
     @EnvironmentObject var locationManager: LocationDataManager
     @EnvironmentObject var notificationManager: CGNotificationManager
@@ -58,10 +58,18 @@ struct SettingsView: View {
 
     var body: some View {
         List {
-            // TODO: Rename to Data Collection & add description when to select which mode
-            Section(header: Text("App Features"), footer: Text("The selected mode determines the actions of the app executed in the background.")) {
+            // TODO: Should we completely remove the automatic mode from the TestFlight / App Store version?
+            Section(
+                header: Text("Data Collection"),
+                footer: Text(
+                    "The data collection mode determines if and how CellGuard collects data. " +
+                    "The automatic mode is not available on most devices. " +
+                    "The manual mode allows you to share system diagnoses with the app to import data. " +
+                    "If disabled, CellGuard does not collect locations and only allows you to import previously exported datasets."
+                )
+            ) {
                 Picker("Mode", selection: $appMode) {
-                    ForEach(AppModes.allCases) { Text($0.description) }
+                    ForEach(DataCollectionMode.allCases) { Text($0.description) }
                 }
             }
             

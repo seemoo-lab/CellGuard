@@ -47,7 +47,7 @@ class CellGuardSceneDelegate: NSObject, UIWindowSceneDelegate, ObservableObject 
         // See: https://developer.apple.com/forums/thread/668595
         
         // ... and notify that this prevents our app from collecting locations in the background.
-        if UserDefaults.standard.appMode() != .analysis {
+        if UserDefaults.standard.dataCollectionMode() != .none {
             CGNotificationManager.shared.queueKeepOpenNotification()
         }
     }
@@ -66,7 +66,7 @@ class CellGuardSceneDelegate: NSObject, UIWindowSceneDelegate, ObservableObject 
         // (Or at least I hope that)
         
         // Only schedule refresh tasks to fetch cells & packets if the jailbroken mode is active
-        if UserDefaults.standard.appMode() == .jailbroken {
+        if UserDefaults.standard.dataCollectionMode() == .automatic {
             do {
                 let refreshTask = BGAppRefreshTaskRequest(identifier: CellGuardAppDelegate.cellRefreshTaskIdentifier)
                 refreshTask.earliestBeginDate = Date(timeIntervalSinceNow: 60 * 60)

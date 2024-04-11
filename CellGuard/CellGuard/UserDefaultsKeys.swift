@@ -16,34 +16,35 @@ enum UserDefaultsKeys: String {
     case appMode
 }
 
-enum AppModes: String, CaseIterable, Identifiable {
-    // TODO: Change to automatic
-    case jailbroken
-    // TODO: Change to manual
-    case nonJailbroken
-    case analysis
+enum DataCollectionMode: String, CaseIterable, Identifiable {
+    case automatic
+    case manual
+    case none
     
     var id: Self { self }
     
     var description: String {
         switch self {
-        case .analysis: return "Analysis"
-        case .nonJailbroken: return "Non-Jailbroken"
-        case .jailbroken: return "Jailbroken"
+            // Jailbroken, i.e., import data via querying tweaks
+        case .automatic: return "Automatic"
+            // Non-jailbroken, i.e., import data by reading sysdiagnosees
+        case .manual: return "Manual"
+            // Don't import / collect any data, including location, but allow to import CSV files
+        case .none: return "None"
         }
     }
 }
 
 extension UserDefaults {
     
-    func appMode() -> AppModes {
+    func dataCollectionMode() -> DataCollectionMode {
         let appModeString = UserDefaults.standard.string(forKey: UserDefaultsKeys.appMode.rawValue)
         guard let appModeString = appModeString else {
-            return .jailbroken
+            return .none
         }
         
-        guard let appMode = AppModes(rawValue: appModeString) else {
-            return .jailbroken
+        guard let appMode = DataCollectionMode(rawValue: appModeString) else {
+            return .none
         }
         
         return appMode
