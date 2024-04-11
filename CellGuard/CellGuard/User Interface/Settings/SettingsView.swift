@@ -58,10 +58,21 @@ struct SettingsView: View {
 
     var body: some View {
         List {
+            // TODO: Rename to Data Collection & add description when to select which mode
             Section(header: Text("App Features"), footer: Text("The selected mode determines the actions of the app executed in the background.")) {
                 Picker("Mode", selection: $appMode) {
                     ForEach(AppModes.allCases) { Text($0.description) }
                 }
+            }
+            
+            Section(header: Text("Baseband Profile"), footer: Text("CellGuard only can extract data from sysdiagnoses which are created with an active baseband debug profile. The profile expires after 21 days.")) {
+                Link(destination: URL(string: "https://developer.apple.com/bug-reporting/profiles-and-logs/?platform=ios&name=baseband")!, label: {
+                    KeyValueListRow(key: "Download Profile") {
+                        Image(systemName: "link")
+                    }
+                })
+                // TODO: Add expected date of expiry & allow the user to manually set the date
+                // TODO: Add toggle to notify user notifications before the profile's expiry
             }
             
             Section(header: Text("Permissions")) {
@@ -69,6 +80,7 @@ struct SettingsView: View {
                 Toggle("Notifications", isOn: isPermissionNotifications)
             }
             
+            // TODO: Should we remove this?
             Section(header: Text("Location")) {
                 Toggle("Show Tracking Indicator", isOn: $showTrackingMarker)
             }
@@ -92,14 +104,14 @@ struct SettingsView: View {
             }
             
             Section(header: Text("About CellGuard")) {
-                KeyValueListRow(key: "Version", value: versionBuild)
-                
                 NavigationLink {
                     AcknowledgementView()
                 } label: {
                     Text("Acknowledgements")
                 }
                 
+                KeyValueListRow(key: "Version", value: versionBuild)
+
                 Link(destination: URL(string: "https://cellguard.seemoo.de")!) {
                     KeyValueListRow(key: "Website") {
                         Image(systemName: "link")

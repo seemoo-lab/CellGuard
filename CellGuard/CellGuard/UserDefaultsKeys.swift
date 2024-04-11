@@ -17,7 +17,9 @@ enum UserDefaultsKeys: String {
 }
 
 enum AppModes: String, CaseIterable, Identifiable {
+    // TODO: Change to automatic
     case jailbroken
+    // TODO: Change to manual
     case nonJailbroken
     case analysis
     
