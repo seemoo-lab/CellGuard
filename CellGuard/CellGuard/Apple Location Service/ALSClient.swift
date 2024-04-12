@@ -44,7 +44,7 @@ struct ALSQueryLocation: Equatable, Hashable {
         return self.accuracy > 0
     }
     
-    func applyTo(location: ALSLocation) {
+    func applyTo(location: LocationALS) {
         location.latitude = latitude
         location.longitude = longitude
         location.horizontalAccuracy = Double(accuracy)
@@ -201,7 +201,7 @@ struct ALSQueryCell: CustomStringConvertible, Equatable, Hashable {
         }
     }
     
-    func applyTo(alsCell: ALSCell) {
+    func applyTo(alsCell: CellALS) {
         alsCell.technology = self.technology.rawValue
         alsCell.country = self.country
         alsCell.network = self.network

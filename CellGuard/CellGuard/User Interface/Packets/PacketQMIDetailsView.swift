@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct PacketQMIDetailsView: View {
-    let packet: QMIPacket
+    let packet: PacketQMI
     
     var body: some View {
         List {
@@ -30,7 +30,7 @@ struct PacketQMIDetailsView: View {
 
 private struct PacketQMIDetailsList: View {
     
-    let packet: QMIPacket
+    let packet: PacketQMI
     let data: Data
     let parsed: ParsedQMIPacket
     
@@ -92,7 +92,7 @@ struct PacketQMIDetailsView_Previews: PreviewProvider {
         let packets = PersistencePreview.packets(context: context)
         
         NavigationView {
-            PacketQMIDetailsView(packet: packets[0] as! QMIPacket)
+            PacketQMIDetailsView(packet: packets[0] as! PacketQMI)
         }
         .environment(\.managedObjectContext, context)
     }

@@ -18,7 +18,7 @@ class CellAnnotation: NSObject, MKAnnotation, DatabaseAnnotation {
     @objc dynamic let title: String?
     @objc dynamic let subtitle: String?
     
-    init(cell: ALSCell) {
+    init(cell: CellALS) {
         coreDataID = cell.objectID
         technology = ALSTechnology(rawValue: cell.technology ?? "") ?? .LTE
         coordinate = CLLocationCoordinate2D(

@@ -112,10 +112,10 @@ private struct FilteredPacketView: View {
     
     // We have to use separate fetch request as the preview crashes for a unified request
     @FetchRequest
-    private var qmiPackets: FetchedResults<QMIPacket>
+    private var qmiPackets: FetchedResults<PacketQMI>
     
     @FetchRequest
-    private var ariPackets: FetchedResults<ARIPacket>
+    private var ariPackets: FetchedResults<PacketARI>
     
     private let filter: PacketFilterSettings
     
@@ -123,14 +123,14 @@ private struct FilteredPacketView: View {
         self.filter = filter
         
         // https://www.hackingwithswift.com/quick-start/swiftui/how-to-limit-the-number-of-items-in-a-fetch-request
-        let qmiRequest: NSFetchRequest<QMIPacket> = QMIPacket.fetchRequest()
+        let qmiRequest: NSFetchRequest<PacketQMI> = PacketQMI.fetchRequest()
         qmiRequest.fetchBatchSize = 25
-        qmiRequest.sortDescriptors = [NSSortDescriptor(keyPath: \QMIPacket.collected, ascending: false)]
+        qmiRequest.sortDescriptors = [NSSortDescriptor(keyPath: \PacketQMI.collected, ascending: false)]
         filter.applyTo(qmi: qmiRequest)
         
-        let ariRequest: NSFetchRequest<ARIPacket> = ARIPacket.fetchRequest()
+        let ariRequest: NSFetchRequest<PacketARI> = PacketARI.fetchRequest()
         ariRequest.fetchBatchSize = 25
-        ariRequest.sortDescriptors = [NSSortDescriptor(keyPath: \ARIPacket.collected, ascending: false)]
+        ariRequest.sortDescriptors = [NSSortDescriptor(keyPath: \PacketARI.collected, ascending: false)]
         filter.applyTo(ari: ariRequest)
         
         self._qmiPackets = FetchRequest(fetchRequest: qmiRequest, animation: .easeOut)
@@ -155,7 +155,7 @@ private struct FilteredPacketView: View {
 }
 
 private struct QMIPacketList: View {
-    let qmiPackets: FetchedResults<QMIPacket>
+    let qmiPackets: FetchedResults<PacketQMI>
     
     var body: some View {
         List(qmiPackets) { packet in
@@ -170,7 +170,7 @@ private struct QMIPacketList: View {
 }
 
 private struct ARIPacketList: View {
-    let ariPackets: FetchedResults<ARIPacket>
+    let ariPackets: FetchedResults<PacketARI>
     
     var body: some View {
         List(ariPackets) { packet in

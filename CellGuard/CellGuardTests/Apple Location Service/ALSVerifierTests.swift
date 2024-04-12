@@ -16,10 +16,10 @@ final class ALSVerifierTests: XCTestCase {
         let context = PersistenceController.shared.newTaskContext()
         context.performAndWait {
             do {
-                let tweakDeleteRequest = NSBatchDeleteRequest(fetchRequest: NSFetchRequest(entityName: "TweakCell"))
+                let tweakDeleteRequest = NSBatchDeleteRequest(fetchRequest: CellTweak.fetchRequest())
                 try context.execute(tweakDeleteRequest)
                 
-                let alsDeleteRequest = NSBatchDeleteRequest(fetchRequest: NSFetchRequest(entityName: "ALSCell"))
+                let alsDeleteRequest = NSBatchDeleteRequest(fetchRequest: CellALS.fetchRequest())
                 try context.execute(alsDeleteRequest)
             } catch {
                 print(error)
@@ -32,10 +32,10 @@ final class ALSVerifierTests: XCTestCase {
         let context = PersistenceController.shared.newTaskContext()
         context.performAndWait {
             do {
-                let tweakDeleteRequest = NSBatchDeleteRequest(fetchRequest: NSFetchRequest(entityName: "TweakCell"))
+                let tweakDeleteRequest = NSBatchDeleteRequest(fetchRequest: CellTweak.fetchRequest())
                 try context.execute(tweakDeleteRequest)
                 
-                let alsDeleteRequest = NSBatchDeleteRequest(fetchRequest: NSFetchRequest(entityName: "ALSCell"))
+                let alsDeleteRequest = NSBatchDeleteRequest(fetchRequest: CellALS.fetchRequest())
                 try context.execute(alsDeleteRequest)
             } catch {
                 print(error)
@@ -45,7 +45,7 @@ final class ALSVerifierTests: XCTestCase {
     
     private func createTweakCell(context: NSManagedObjectContext, area: Int32, cell cellId: Int64) {
         context.performAndWait {
-            let cell = TweakCell(context: context)
+            let cell = CellTweak(context: context)
             
             cell.technology = ALSTechnology.LTE.rawValue
             cell.country = 262
@@ -67,9 +67,9 @@ final class ALSVerifierTests: XCTestCase {
         }
     }
     
-    private func assertALSCellCount(assert: @escaping ([ALSCell]) -> ()) {
-        let alsFetchRequest = NSFetchRequest<ALSCell>()
-        alsFetchRequest.entity = ALSCell.entity()
+    private func assertALSCellCount(assert: @escaping ([CellALS]) -> ()) {
+        let alsFetchRequest = NSFetchRequest<CellALS>()
+        alsFetchRequest.entity = CellALS.entity()
         do {
             let alsCells = try alsFetchRequest.execute()
             assert(alsCells)
@@ -99,8 +99,8 @@ final class ALSVerifierTests: XCTestCase {
                 }
             })
             
-            let tweakFetchRequest = NSFetchRequest<TweakCell>()
-            tweakFetchRequest.entity = TweakCell.entity()
+            let tweakFetchRequest = NSFetchRequest<CellTweak>()
+            tweakFetchRequest.entity = CellTweak.entity()
             do {
                 let tweakCells = try tweakFetchRequest.execute()
                 XCTAssertEqual(tweakCells.count, 1)
@@ -128,8 +128,8 @@ final class ALSVerifierTests: XCTestCase {
                 XCTAssertEqual(cells.count, 0)
             })
             
-            let tweakFetchRequest = NSFetchRequest<TweakCell>()
-            tweakFetchRequest.entity = TweakCell.entity()
+            let tweakFetchRequest = NSFetchRequest<CellTweak>()
+            tweakFetchRequest.entity = CellTweak.entity()
             do {
                 let tweakCells = try tweakFetchRequest.execute()
                 XCTAssertEqual(tweakCells.count, 1)
@@ -165,16 +165,16 @@ final class ALSVerifierTests: XCTestCase {
             })
             
             do {
-                let allCells = NSFetchRequest<TweakCell>()
-                allCells.entity = TweakCell.entity()
+                let allCells = NSFetchRequest<CellTweak>()
+                allCells.entity = CellTweak.entity()
                 for cell in try allCells.execute() {
                     print("\(cell.cell): status=\(cell.status ?? "empty") score=\(cell.score)")
                 }
                 print(try allCells.execute())
                 
                 // Test failed tweak cell
-                let failedFetchRequest = NSFetchRequest<TweakCell>()
-                failedFetchRequest.entity = TweakCell.entity()
+                let failedFetchRequest = NSFetchRequest<CellTweak>()
+                failedFetchRequest.entity = CellTweak.entity()
                 failedFetchRequest.predicate = NSPredicate(format: "status = %@ and score = 0", CellStatus.processedLocation.rawValue)
 
                 let failedTweakCells = try failedFetchRequest.execute()
@@ -187,8 +187,8 @@ final class ALSVerifierTests: XCTestCase {
                 XCTAssertEqual(failedTweakCell.score, 0)
                 
                 // Test verified tweak cell
-                let verifiedFetchRequest = NSFetchRequest<TweakCell>()
-                verifiedFetchRequest.entity = TweakCell.entity()
+                let verifiedFetchRequest = NSFetchRequest<CellTweak>()
+                verifiedFetchRequest.entity = CellTweak.entity()
                 verifiedFetchRequest.predicate = NSPredicate(format: "status = %@ and score > 0", CellStatus.processedLocation.rawValue)
                 
                 let verifiedTweakCells = try verifiedFetchRequest.execute()
@@ -223,8 +223,8 @@ final class ALSVerifierTests: XCTestCase {
                 }
             })
             
-            let tweakFetchRequest = NSFetchRequest<TweakCell>()
-            tweakFetchRequest.entity = TweakCell.entity()
+            let tweakFetchRequest = NSFetchRequest<CellTweak>()
+            tweakFetchRequest.entity = CellTweak.entity()
             do {
                 let tweakCells = try tweakFetchRequest.execute()
                 XCTAssertEqual(tweakCells.count, 1)
@@ -247,8 +247,8 @@ final class ALSVerifierTests: XCTestCase {
                 XCTAssertEqual(cells.count, firstALSCount)
             })
             
-            let tweakFetchRequest = NSFetchRequest<TweakCell>()
-            tweakFetchRequest.entity = TweakCell.entity()
+            let tweakFetchRequest = NSFetchRequest<CellTweak>()
+            tweakFetchRequest.entity = CellTweak.entity()
             do {
                 let tweakCells = try tweakFetchRequest.execute()
                 XCTAssertEqual(tweakCells.count, 2)

@@ -10,7 +10,7 @@ import CoreData
 
 struct TweakCellMeasurementView: View {
     
-    let measurement: TweakCell
+    let measurement: CellTweak
     
     var body: some View {
         List {
@@ -29,7 +29,7 @@ struct TweakCellMeasurementView: View {
 
 private struct TweakCellMeasurementStatusView: View {
     
-    let measurement: TweakCell
+    let measurement: CellTweak
     let status: CellStatus
     private let numberFormatter: NumberFormatter = {
         let numberFormatter = NumberFormatter()
@@ -149,7 +149,8 @@ private struct TweakCellMeasurementStatusView: View {
             
             if status >= .processedRejectPacket {
                 Section(header: Text("Packet Verification")) {
-                    if let packet = measurement.rejectPacket {
+                    Text("TODO")
+                    /* if let packet = measurement.rejectPacket {
                         CellDetailsRow("Network Reject Packet", "Present")
                         if let packetProto = packet.proto {
                             CellDetailsRow("Protocol", packetProto)
@@ -160,7 +161,7 @@ private struct TweakCellMeasurementStatusView: View {
                         if let packetCollected = packet.collected {
                             CellDetailsRow("Timestamp", fullMediumDateTimeFormatter.string(from: packetCollected))
                         }
-                        if let qmiPacket = packet as? QMIPacket {
+                        if let qmiPacket = packet as? PacketQMI {
                             let (serviceName, messageName) = annotateQMIPacket(packet: qmiPacket)
                             if let serviceName = serviceName {
                                 CellDetailsRow("QMI Service", serviceName)
@@ -177,7 +178,7 @@ private struct TweakCellMeasurementStatusView: View {
                                 }
                                 PacketDetailsRow("QMI Message ID", hex: UInt16(qmiPacket.message))
                             }
-                        } else if let ariPacket = packet as? ARIPacket {
+                        } else if let ariPacket = packet as? PacketARI {
                             let (groupName, typeName) = annotateARIPacket(packet: ariPacket)
                             if let groupName = groupName {
                                 CellDetailsRow("ARI Group", groupName)
@@ -192,7 +193,7 @@ private struct TweakCellMeasurementStatusView: View {
                     } else {
                         CellDetailsRow("Network Reject Packet", "Absent")
                         CellDetailsRow("Score", "\(CellVerifier.pointsRejectPacket) / \(CellVerifier.pointsRejectPacket)")
-                    }
+                    } */
                 }
                 
                 if status >= .verified {
@@ -293,7 +294,7 @@ private struct TweakCellMeasurementStatusView: View {
                 String(format:"%d° %d' %.4f\" %@", lonDegrees, lonMinutes, lonSeconds, longitude >= 0 ? "E" : "W"))
     }
     
-    private func annotateQMIPacket(packet: QMIPacket) -> (String?, String?) {
+    private func annotateQMIPacket(packet: PacketQMI) -> (String?, String?) {
         let serviceId = UInt8(packet.service)
         let messageId = UInt16(packet.message)
         
@@ -304,7 +305,7 @@ private struct TweakCellMeasurementStatusView: View {
         return (serviceDef?.longName, messageDef?.name)
     }
     
-    private func annotateARIPacket(packet: ARIPacket) -> (String?, String?) {
+    private func annotateARIPacket(packet: PacketARI) -> (String?, String?) {
         let groupId = UInt8(packet.group)
         let typeId = UInt16(packet.type)
         
@@ -317,14 +318,14 @@ private struct TweakCellMeasurementStatusView: View {
     
     // TODO: Somehow use the methods defined in the CellVerifier struct for the calculations
     
-    private func bandwidthPoints(measurement: TweakCell) -> Int {
+    private func bandwidthPoints(measurement: CellTweak) -> Int {
         if measurement.bandwidth <= 0 {
             return CellVerifier.pointsBandwidth
         }
         return Int(floor((Double(measurement.bandwidth) / 100.0).clamped(to: 0.0...1.0) * Double(CellVerifier.pointsBandwidth)))
     }
     
-    private func frequencyPoints(measurement: TweakCell, als: ALSCell) -> Int {
+    private func frequencyPoints(measurement: CellTweak, als: CellALS) -> Int {
         var localPoints = CellVerifier.pointsFrequency
         
         if measurement.frequency > 0 && als.frequency > 0 && measurement.frequency != als.frequency {

@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct PacketARIDetailsView: View {
-    let packet: ARIPacket
+    let packet: PacketARI
     
     var body: some View {
         List {
@@ -31,7 +31,7 @@ struct PacketARIDetailsView: View {
 
 private struct PacketARIDetailsList: View {
     
-    let packet: ARIPacket
+    let packet: PacketARI
     let data: Data
     let parsed: ParsedARIPacket
     
@@ -101,7 +101,7 @@ struct PacketARIDetailsView_Previews: PreviewProvider {
         let packets = PersistencePreview.packets(context: context)
         
         NavigationView {
-            PacketARIDetailsView(packet: packets[3] as! ARIPacket)
+            PacketARIDetailsView(packet: packets[3] as! PacketARI)
         }
         .environment(\.managedObjectContext, context)
     }

@@ -48,7 +48,7 @@ struct CCTCellProperties {
     
     var json: String?
     
-    func applyTo(tweakCell: TweakCell) {
+    func applyTo(tweakCell: CellTweak) {
         tweakCell.country = self.mcc ?? 0
         tweakCell.network = self.network ?? 0
         tweakCell.area = self.area ?? 0

@@ -94,8 +94,8 @@ struct DataSummaryView: View {
             let collectedPredicate = NSPredicate(format: "collected >= %@ and collected <= %@", start as NSDate, end as NSDate)
             
             let measurementCellsResults = try persistence.performAndWait { context in
-                let fetchMeasurements: NSFetchRequest<TweakCell> = TweakCell.fetchRequest()
-                fetchMeasurements.sortDescriptors = [NSSortDescriptor(keyPath: \TweakCell.collected, ascending: true)]
+                let fetchMeasurements: NSFetchRequest<CellTweak> = CellTweak.fetchRequest()
+                fetchMeasurements.sortDescriptors = [NSSortDescriptor(keyPath: \CellTweak.collected, ascending: true)]
                 fetchMeasurements.propertiesToFetch = ["score", "status"]
                 fetchMeasurements.predicate = collectedPredicate
                 let measurements = try context.fetch(fetchMeasurements)
@@ -158,8 +158,8 @@ struct DataSummaryView: View {
             }
             
             let locations = try persistence.performAndWait { context in
-                let locationRequest: NSFetchRequest<UserLocation> = UserLocation.fetchRequest()
-                locationRequest.sortDescriptors = [NSSortDescriptor(keyPath: \UserLocation.collected, ascending: true)]
+                let locationRequest: NSFetchRequest<LocationUser> = LocationUser.fetchRequest()
+                locationRequest.sortDescriptors = [NSSortDescriptor(keyPath: \LocationUser.collected, ascending: true)]
                 locationRequest.predicate = collectedPredicate
                 
                 let locations = try context.fetch(locationRequest)
@@ -172,7 +172,7 @@ struct DataSummaryView: View {
                 return
             }
             
-            let alsCellCount = persistence.countEntitiesOf(ALSCell.fetchRequest() as NSFetchRequest<ALSCell>)
+            let alsCellCount = persistence.countEntitiesOf(CellALS.fetchRequest() as NSFetchRequest<CellALS>)
             
             guard let alsCellCount = alsCellCount else {
                 print("No ALS cells ):")
@@ -180,23 +180,23 @@ struct DataSummaryView: View {
             }
             
             let packets: (first: Date?, last: Date?, qmi: Int?, ari: Int?)? = try persistence.performAndWait { context in
-                let qmiRequest: NSFetchRequest<QMIPacket> = QMIPacket.fetchRequest()
+                let qmiRequest: NSFetchRequest<PacketQMI> = PacketQMI.fetchRequest()
                 qmiRequest.predicate = collectedPredicate
                 qmiRequest.includesSubentities = false
                 let qmiPacketCount = try context.count(for: qmiRequest)
                 
-                let ariRequest: NSFetchRequest<ARIPacket> = ARIPacket.fetchRequest()
+                let ariRequest: NSFetchRequest<PacketARI> = PacketARI.fetchRequest()
                 ariRequest.predicate = collectedPredicate
                 ariRequest.includesSubentities = false
                 let ariPacketCount = try context.count(for: ariRequest)
                 
                 if qmiPacketCount > 0 {
-                    let firstQMIRequest: NSFetchRequest<QMIPacket> = QMIPacket.fetchRequest()
-                    firstQMIRequest.sortDescriptors = [NSSortDescriptor(keyPath: \QMIPacket.collected, ascending: true)]
+                    let firstQMIRequest: NSFetchRequest<PacketQMI> = PacketQMI.fetchRequest()
+                    firstQMIRequest.sortDescriptors = [NSSortDescriptor(keyPath: \PacketQMI.collected, ascending: true)]
                     firstQMIRequest.fetchLimit = 1
                     
-                    let lastQMIRequest: NSFetchRequest<QMIPacket> = QMIPacket.fetchRequest()
-                    lastQMIRequest.sortDescriptors = [NSSortDescriptor(keyPath: \QMIPacket.collected, ascending: false)]
+                    let lastQMIRequest: NSFetchRequest<PacketQMI> = PacketQMI.fetchRequest()
+                    lastQMIRequest.sortDescriptors = [NSSortDescriptor(keyPath: \PacketQMI.collected, ascending: false)]
                     lastQMIRequest.fetchLimit = 1
                     
                     return (
@@ -206,12 +206,12 @@ struct DataSummaryView: View {
                         ariPacketCount
                     )
                 } else {
-                    let firstARIRequest: NSFetchRequest<ARIPacket> = ARIPacket.fetchRequest()
-                    firstARIRequest.sortDescriptors = [NSSortDescriptor(keyPath: \ARIPacket.collected, ascending: true)]
+                    let firstARIRequest: NSFetchRequest<PacketARI> = PacketARI.fetchRequest()
+                    firstARIRequest.sortDescriptors = [NSSortDescriptor(keyPath: \PacketARI.collected, ascending: true)]
                     firstARIRequest.fetchLimit = 1
                     
-                    let lastARIRequest: NSFetchRequest<ARIPacket> = ARIPacket.fetchRequest()
-                    lastARIRequest.sortDescriptors = [NSSortDescriptor(keyPath: \ARIPacket.collected, ascending: false)]
+                    let lastARIRequest: NSFetchRequest<PacketARI> = PacketARI.fetchRequest()
+                    lastARIRequest.sortDescriptors = [NSSortDescriptor(keyPath: \PacketARI.collected, ascending: false)]
                     lastARIRequest.fetchLimit = 1
                     
                     return (

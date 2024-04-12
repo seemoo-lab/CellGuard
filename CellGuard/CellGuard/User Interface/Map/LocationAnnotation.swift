@@ -15,7 +15,7 @@ class LocationAnnotation: NSObject, MKAnnotation, DatabaseAnnotation {
     
     @objc dynamic let coordinate: CLLocationCoordinate2D
     
-    init(location: UserLocation) {
+    init(location: LocationUser) {
         coreDataID = location.objectID
         coordinate = CLLocationCoordinate2D(
             latitude: location.latitude,

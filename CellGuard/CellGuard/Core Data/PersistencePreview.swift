@@ -10,7 +10,7 @@ import CoreData
 
 struct PersistencePreview {
     
-    static func location<T: Location>(location: T, error: Double) -> T {
+    static func userLocation(location: LocationUser, error: Double) -> LocationUser {
         location.latitude = 49.8726737 + Double.random(in: -error..<error)
         location.longitude = 8.6516291 + Double.random(in: -error..<error)
         location.horizontalAccuracy = 2 + Double.random(in: -0.5..<0.5)
@@ -18,8 +18,16 @@ struct PersistencePreview {
         return location
     }
     
-    static func tweakCell(context: NSManagedObjectContext, imported: Date) -> TweakCell {
-        let cell = TweakCell(context: context)
+    static func alsLocation(location: LocationALS, error: Double) -> LocationALS {
+        location.latitude = 49.8726737 + Double.random(in: -error..<error)
+        location.longitude = 8.6516291 + Double.random(in: -error..<error)
+        location.horizontalAccuracy = 2 + Double.random(in: -0.5..<0.5)
+
+        return location
+    }
+    
+    static func tweakCell(context: NSManagedObjectContext, imported: Date) -> CellTweak {
+        let cell = CellTweak(context: context)
         cell.technology = "LTE"
         cell.country = 262
         cell.network = 2
@@ -27,7 +35,7 @@ struct PersistencePreview {
         cell.cell = Int64.random(in: 1..<50000)
         cell.collected = Calendar.current.date(byAdding: .day, value: -Int.random(in: 0..<3), to: Date())
         cell.imported = imported
-        cell.location = location(location: UserLocation(context: context), error: 0.005)
+        cell.location = userLocation(location: LocationUser(context: context), error: 0.005)
         cell.location?.imported = cell.imported
         cell.status = CellStatus.verified.rawValue
         cell.score = Int16(CellVerifier.pointsMax)
@@ -36,8 +44,8 @@ struct PersistencePreview {
         return cell
     }
     
-    static func tweakCell(context: NSManagedObjectContext, from alsCell: ALSCell) -> TweakCell {
-        let cell = TweakCell(context: context)
+    static func tweakCell(context: NSManagedObjectContext, from alsCell: CellALS) -> CellTweak {
+        let cell = CellTweak(context: context)
         cell.technology = alsCell.technology
         cell.country = alsCell.country
         cell.network = alsCell.network
@@ -45,7 +53,7 @@ struct PersistencePreview {
         cell.cell = alsCell.cell
         cell.collected = Calendar.current.date(byAdding: .day, value: -Int.random(in: 0..<3), to: Date())
         cell.imported = Calendar.current.date(byAdding: .hour, value: -Int.random(in: 0..<24), to: alsCell.imported!)
-        cell.location = location(location: UserLocation(context: context), error: 0.01)
+        cell.location = userLocation(location: LocationUser(context: context), error: 0.01)
         cell.location?.imported = cell.imported
         cell.status = CellStatus.imported.rawValue
         cell.score = 0
@@ -55,15 +63,15 @@ struct PersistencePreview {
 
     }
     
-    static func alsCell(context: NSManagedObjectContext) -> ALSCell {
-        let cell = ALSCell(context: context)
+    static func alsCell(context: NSManagedObjectContext) -> CellALS {
+        let cell = CellALS(context: context)
         cell.technology = "LTE"
         cell.country = 262
         cell.network = Int32.random(in: 0..<5)
         cell.area = Int32.random(in: 1..<5000)
         cell.cell = Int64.random(in: 1..<50000)
         cell.imported = Calendar.current.date(byAdding: .day, value: -Int.random(in: 0..<3), to: Date())
-        cell.location = location(location: ALSLocation(context: context), error: 0.005)
+        cell.location = alsLocation(location: LocationALS(context: context), error: 0.005)
         cell.location?.imported = cell.imported
         
         for _ in 0...Int.random(in: 2..<7) {
@@ -73,25 +81,24 @@ struct PersistencePreview {
         return cell
     }
     
-    static func packet(proto: CPTProtocol, direction: CPTDirection, data: String, major: UInt8, minor: UInt16, indication: Bool, collected: Date, context: NSManagedObjectContext) -> Packet {
-        let packet: Packet
+    static func packet(proto: CPTProtocol, direction: CPTDirection, data: String, major: UInt8, minor: UInt16, indication: Bool, collected: Date, context: NSManagedObjectContext) -> any Packet {
+        var packet: any Packet
         
         switch (proto) {
         case .qmi:
-            let qmiPacket = QMIPacket(context: context)
+            let qmiPacket = PacketQMI(context: context)
             qmiPacket.service = Int16(major)
             qmiPacket.message = Int32(minor)
             qmiPacket.indication = indication
             packet = qmiPacket
         case .ari:
-            let ariPacket = ARIPacket(context: context)
+            let ariPacket = PacketARI(context: context)
             ariPacket.group = Int16(major)
             ariPacket.type = Int32(minor)
             packet = ariPacket
         }
         
         packet.collected = collected
-        packet.proto = proto.rawValue
         packet.direction = direction.rawValue
         packet.data = Data(base64Encoded: data)
         packet.imported = Date()
@@ -99,8 +106,8 @@ struct PersistencePreview {
         return packet
     }
     
-    static func packets(context: NSManagedObjectContext) -> [Packet] {
-        var packets: [Packet] = []
+    static func packets(context: NSManagedObjectContext) -> [any Packet] {
+        var packets: [any Packet] = []
         
         // 4th packet from the test trace
         packets.append(packet(proto: .qmi, direction: .outgoing, data: "ARcAACIBAE8FUQALAAEBAAAQBAAHAAAA", major: 0x22, minor: 0x0051, indication: false, collected: Date().addingTimeInterval(-60*2), context: context))

@@ -19,7 +19,7 @@ import MapKit
 
 struct MultiCellMap: UIViewRepresentable {
     
-    let alsCells: FetchedResults<ALSCell>
+    let alsCells: FetchedResults<CellALS>
     let onTap: (NSManagedObjectID) -> Void
     
     @EnvironmentObject
