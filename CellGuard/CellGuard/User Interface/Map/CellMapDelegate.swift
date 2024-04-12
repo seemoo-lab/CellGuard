@@ -25,10 +25,14 @@ class CellMapDelegate: NSObject, MKMapViewDelegate {
     }
     
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
-        if annotation is CellAnnotation {
+        if let annotation = annotation as? CellAnnotation {
             let view = mapView.dequeueReusableAnnotationView(withIdentifier: CellAnnotationView.ReuseID, for: annotation)
             if let view = view as? CellAnnotationView {
+                // We have to update the annotation view here to display it with the correct properties,
+                // because in its prepareForReuse() method, there's no annotation data available and
+                // updating its properties in the prepareForDisplay() method is too late.
                 view.calloutAccessory = onTap != nil
+                view.updateColor(technology: annotation.technology)
             }
             return view
         } else if annotation is LocationAnnotation || annotation is LocationClusterAnnotation {

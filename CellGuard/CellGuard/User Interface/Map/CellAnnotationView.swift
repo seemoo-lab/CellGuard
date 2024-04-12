@@ -43,15 +43,9 @@ class CellAnnotationView: MKMarkerAnnotationView {
     
     override func prepareForDisplay() {
         super.prepareForDisplay()
-        
-        markerTintColor = colorFromTechnology()
     }
     
-    private func colorFromTechnology() -> UIColor {
-        guard let annotation = annotation as? CellAnnotation else {
-            return .systemGray
-        }
-        
-        return CellTechnologyFormatter.mapColor(technology: annotation.technology)
+    func updateColor(technology: ALSTechnology) {
+        markerTintColor = CellTechnologyFormatter.mapColor(technology: technology)
     }
 }
