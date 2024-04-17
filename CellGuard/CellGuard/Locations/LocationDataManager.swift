@@ -98,7 +98,7 @@ class LocationDataManager : NSObject, CLLocationManagerDelegate, ObservableObjec
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         // Don't import locations if the analysis mode is active
-        guard UserDefaults.standard.appMode() != .analysis else { return }
+        guard UserDefaults.standard.dataCollectionMode() != .none else { return }
         
         Self.logger.log("New Locations: \(locations)")
         
@@ -122,7 +122,7 @@ class LocationDataManager : NSObject, CLLocationManagerDelegate, ObservableObjec
     
     func locationManager(_ manager: CLLocationManager, didVisit visit: CLVisit) {
         // Don't import visits if the analysis mode is active
-        guard UserDefaults.standard.appMode() != .analysis else { return }
+        guard UserDefaults.standard.dataCollectionMode() != .none else { return }
         
         Self.logger.log("New Visit: \(visit)")
         

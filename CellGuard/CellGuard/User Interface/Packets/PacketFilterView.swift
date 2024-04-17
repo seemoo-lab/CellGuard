@@ -25,7 +25,7 @@ struct PacketFilterSettings {
     
     var pauseDate: Date? = nil
     
-    func applyTo(qmi request: NSFetchRequest<QMIPacket>) {
+    func applyTo(qmi request: NSFetchRequest<PacketQMI>) {
         if proto != .qmi {
             request.fetchLimit = 0
             return
@@ -60,7 +60,7 @@ struct PacketFilterSettings {
         request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicateList)
     }
     
-    func applyTo(ari request: NSFetchRequest<ARIPacket>) {
+    func applyTo(ari request: NSFetchRequest<PacketARI>) {
         if proto != .ari {
             request.fetchLimit = 0
             return

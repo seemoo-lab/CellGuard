@@ -62,7 +62,7 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
         // https://developer.apple.com/documentation/uikit/app_and_environment/scenes/preparing_your_ui_to_run_in_the_background/using_background_tasks_to_update_your_app
         BGTaskScheduler.shared.register(forTaskWithIdentifier: Self.cellRefreshTaskIdentifier, using: nil) { task in
             // Only collect cells in the background if the app runs on a jailbroken device
-            if UserDefaults.standard.appMode() != AppModes.jailbroken {
+            if UserDefaults.standard.dataCollectionMode() != DataCollectionMode.automatic {
                 task.setTaskCompleted(success: true)
                 return
             }
@@ -85,7 +85,7 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
         
         BGTaskScheduler.shared.register(forTaskWithIdentifier: Self.packetRefreshTaskIdentifier, using: nil) { task in
             // Only collect cells in the background if the app runs on a jailbroken device
-            if UserDefaults.standard.appMode() != AppModes.jailbroken {
+            if UserDefaults.standard.dataCollectionMode() != DataCollectionMode.automatic {
                 task.setTaskCompleted(success: true)
                 return
             }
@@ -115,7 +115,7 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
             let cellCollector = CCTCollector(client: CCTClient(queue: .global(qos: .background)))
             let collectCellsTask: () -> () = {
                 // Only run the task if the jailbreak mode is active
-                guard UserDefaults.standard.appMode() == .jailbroken else { return }
+                guard UserDefaults.standard.dataCollectionMode() == .automatic else { return }
                 
                 // Only run task when we currently don't manually import any new data
                 guard !PortStatus.importActive.load(ordering: .relaxed) else { return }
@@ -145,7 +145,7 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
             let packetCollector = CPTCollector(client: CPTClient(queue: .global(qos: .background)))
             let collectPacketsTask: () -> () = {
                 // Only run the task if the jailbreak mode is active
-                guard UserDefaults.standard.appMode() == .jailbroken else { return }
+                guard UserDefaults.standard.dataCollectionMode() == .automatic else { return }
                 
                 // Only run the task when we currently don't manually import any new data
                 guard !PortStatus.importActive.load(ordering: .relaxed) else { return }
@@ -202,7 +202,7 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
                 try? await Task.sleep(nanoseconds: 90 * NSEC_PER_SEC)
                 while (true) {
                     // Only run the task if the analysis mode is not active
-                    guard UserDefaults.standard.appMode() != .analysis else { return }
+                    guard UserDefaults.standard.dataCollectionMode() != .none else { return }
                     
                     guard !PortStatus.importActive.load(ordering: .relaxed) else {
                         try? await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
@@ -225,7 +225,7 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
                 try? await Task.sleep(nanoseconds: 60 * NSEC_PER_SEC)
                 while (true) {
                     // Only run the task if the analysis mode is not active
-                    guard UserDefaults.standard.appMode() != .analysis else { return }
+                    guard UserDefaults.standard.dataCollectionMode() != .none else { return }
                     
                     guard !PortStatus.importActive.load(ordering: .relaxed) else {
                         try? await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)

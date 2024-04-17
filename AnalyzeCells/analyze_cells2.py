@@ -232,7 +232,7 @@ def process_latex(
 
     def p(value: int, max: int):
         percentage = float(value) / float(max)
-        one_decimal = "{:.1f}".format(percentage)
+        one_decimal = "{:.1f}".format(percentage * 100.0)
         return f'\\SI{{{one_decimal}}}{{\\percent}}'
 
     total_cells = untrusted_cells + suspicious_cells + trusted_cells

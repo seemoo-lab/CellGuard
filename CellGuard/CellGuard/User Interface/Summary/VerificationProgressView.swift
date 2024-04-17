@@ -9,10 +9,10 @@ import SwiftUI
 
 struct VerificationProgressView: View {
     @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \TweakCell.collected, ascending: false)],
+        sortDescriptors: [NSSortDescriptor(keyPath: \CellTweak.collected, ascending: false)],
         predicate: NSPredicate(format: "status != %@", CellStatus.verified.rawValue)
     )
-    private var unverifiedCells: FetchedResults<TweakCell>
+    private var unverifiedCells: FetchedResults<CellTweak>
     
     var body: some View {
         ProgressView {

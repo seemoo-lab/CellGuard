@@ -12,8 +12,8 @@ import UIKit
 
 struct SingleCellMap: UIViewRepresentable {
     
-    let alsCells: any BidirectionalCollection<ALSCell>
-    let tweakCells: any BidirectionalCollection<TweakCell>
+    let alsCells: any BidirectionalCollection<CellALS>
+    let tweakCells: any BidirectionalCollection<CellTweak>
     
     func makeUIView(context: Context) -> MKMapView {
         let mapView = MKMapView(frame: .zero)
@@ -24,6 +24,9 @@ struct SingleCellMap: UIViewRepresentable {
         mapView.isScrollEnabled = true
         mapView.isPitchEnabled = false
         mapView.isRotateEnabled = false
+        
+        // Limit the maximum zoom range of the camera to 50km as all locations should be within this range
+        mapView.cameraZoomRange = MKMapView.CameraZoomRange(maxCenterCoordinateDistance: 50_000)
         
         mapView.setRegion(middleRegion(), animated: false)
         
@@ -75,7 +78,7 @@ struct SingleCellMap: UIViewRepresentable {
         return CellMapDelegate()
     }
     
-    static func hasAnyLocation(_ alsCells: any BidirectionalCollection<ALSCell>, _ tweakCells: any BidirectionalCollection<TweakCell>) -> Bool {
+    static func hasAnyLocation(_ alsCells: any BidirectionalCollection<CellALS>, _ tweakCells: any BidirectionalCollection<CellTweak>) -> Bool {
         if alsCells.first(where: { $0.location != nil}) != nil {
             return true
         }

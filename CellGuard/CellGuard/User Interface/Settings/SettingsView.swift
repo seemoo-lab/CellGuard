@@ -20,7 +20,8 @@ enum SettingsCloseReason {
 struct SettingsView: View {
     
     @AppStorage(UserDefaultsKeys.showTrackingMarker.rawValue) var showTrackingMarker: Bool = false
-    @AppStorage(UserDefaultsKeys.appMode.rawValue) var appMode: AppModes = AppModes.jailbroken
+    @AppStorage(UserDefaultsKeys.appMode.rawValue) var appMode: DataCollectionMode = .none
+    @AppStorage(UserDefaultsKeys.highVolumeSpeedup.rawValue) var highVolumeSpeedup: Bool = true
     
     @EnvironmentObject var locationManager: LocationDataManager
     @EnvironmentObject var notificationManager: CGNotificationManager
@@ -58,10 +59,33 @@ struct SettingsView: View {
 
     var body: some View {
         List {
-            Section(header: Text("App Features"), footer: Text("The selected mode determines the actions of the app executed in the background.")) {
+            // TODO: Should we completely remove the automatic mode from the TestFlight / App Store version?
+            Section(
+                header: Text("Data Collection"),
+                footer: Text(
+                    "The data collection mode determines if and how CellGuard collects data. " +
+                    "The automatic mode is not available on most devices. " +
+                    "The manual mode allows you to share system diagnoses with the app to import data. " +
+                    "If disabled, CellGuard does not collect locations and only allows you to import previously exported datasets."
+                )
+            ) {
                 Picker("Mode", selection: $appMode) {
-                    ForEach(AppModes.allCases) { Text($0.description) }
+                    ForEach(DataCollectionMode.allCases) { Text($0.description) }
                 }
+            }
+            
+            Section(header: Text("Baseband Profile"), footer: Text("CellGuard only can extract data from sysdiagnoses which are created with an active baseband debug profile. The profile expires after 21 days.")) {
+                Link(destination: URL(string: "https://developer.apple.com/bug-reporting/profiles-and-logs/?platform=ios&name=baseband")!, label: {
+                    KeyValueListRow(key: "Download Profile") {
+                        Image(systemName: "link")
+                    }
+                })
+                // TODO: Add expected date of expiry & allow the user to manually set the date
+                // TODO: Add toggle to notify user notifications before the profile's expiry
+            }
+            
+            Section(header: Text("HighVolume Log Speedup"), footer: Text("Only scan certain log files from sysdiagnoses to speed up their import. Will be automatically disabled if not applicable for your system.")) {
+                Toggle("Enable Speedup", isOn: $highVolumeSpeedup)
             }
             
             Section(header: Text("Permissions")) {
@@ -69,6 +93,7 @@ struct SettingsView: View {
                 Toggle("Notifications", isOn: isPermissionNotifications)
             }
             
+            // TODO: Should we remove this?
             Section(header: Text("Location")) {
                 Toggle("Show Tracking Indicator", isOn: $showTrackingMarker)
             }
@@ -92,13 +117,42 @@ struct SettingsView: View {
             }
             
             Section(header: Text("About CellGuard")) {
-                KeyValueListRow(key: "Version", value: versionBuild)
-                // TODO: Open mail with the correct address on click
-                KeyValueListRow(key: "Developer", value: "Lukas Arnold")
-                KeyValueListRow(key: "Supervisor", value: "Jiska Classen")
-                Link(destination: URL(string: "https://www.seemoo.tu-darmstadt.de")!) {
-                    KeyValueListRow(key: "Institution", value: "SEEMOO @ TU Darmstadt")
+                NavigationLink {
+                    AcknowledgementView()
+                } label: {
+                    Text("Acknowledgements")
                 }
+                
+                KeyValueListRow(key: "Version", value: versionBuild)
+
+                Link(destination: URL(string: "https://cellguard.seemoo.de")!) {
+                    KeyValueListRow(key: "Website") {
+                        Image(systemName: "link")
+                    }
+                }
+                
+                Link(destination: URL(string: "https://cellguard.seemoo.de/docs/privacy-policy/")!) {
+                    KeyValueListRow(key: "Privacy Policy") {
+                        Image(systemName: "link")
+                    }
+                }
+                
+                // TODO: Create GitHub project
+                Link(destination: URL(string: "http://github.com/seemoo-lab/CellGuard")!) {
+                    KeyValueListRow(key: "Report Issues") {
+                        Image(systemName: "link")
+                    }
+                }
+            }
+            
+            Section(header: Text("Developers"), footer: Text("CellGuard is a research project by the Secure Mobile Networking Lab at TU Darmstadt (SEEMOO) and the Cybersecurity - Mobile & Wireless group at the Hasso Plattner Institute (HPI).")) {
+                Link(destination: URL(string: "https://lukasarnold.de")!) {
+                    KeyValueListRow(key: "Lukas Arnold", value: "SEEMOO")
+                }
+                Link(destination: URL(string: "https://hpi.de/classen/home.html")!) {
+                    KeyValueListRow(key: "Jiska Classen", value: "HPI")
+                }
+                KeyValueListRow(key: "Linus Laurenz", value: "HPI")
             }
         }
         .listStyle(.insetGrouped)

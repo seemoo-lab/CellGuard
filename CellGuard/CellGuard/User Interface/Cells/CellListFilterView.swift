@@ -21,7 +21,7 @@ struct CellListFilterSettings {
     var area: Int?
     var cell: Int?
     
-    func applyTo(request: NSFetchRequest<TweakCell>) {
+    func applyTo(request: NSFetchRequest<CellTweak>) {
         var predicateList: [NSPredicate] = []
         
         if let technology = technology {

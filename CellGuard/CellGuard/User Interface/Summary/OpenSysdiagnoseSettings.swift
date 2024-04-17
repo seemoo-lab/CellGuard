@@ -9,14 +9,19 @@ import SwiftUI
 
 struct OpenSysdiagnoseSettings: View {
     
-    @AppStorage(UserDefaultsKeys.appMode.rawValue) var appMode: AppModes = AppModes.jailbroken
+    @AppStorage(UserDefaultsKeys.appMode.rawValue) var appMode: DataCollectionMode = .none
     
     var body: some View {
-        if appMode == .nonJailbroken {
+        if appMode == .manual {
             Button {
                 // See: https://github.com/FifiTheBulldog/ios-settings-urls/blob/master/settings-urls.md
-                // TODO: Remove before App Store submission (https://stackoverflow.com/a/70838268)
-                let url = "App-prefs:Privacy&path=PROBLEM_REPORTING"
+                
+                // Removed before App Store submission (https://stackoverflow.com/a/70838268)
+                // let url = "App-prefs:Privacy&path=PROBLEM_REPORTING"
+                
+                // The App-Store-Safe-URL
+                let url = UIApplication.openSettingsURLString
+                
                 if let appSettings = URL(string: url), UIApplication.shared.canOpenURL(appSettings) {
                     UIApplication.shared.open(appSettings)
                 }
@@ -26,6 +31,10 @@ struct OpenSysdiagnoseSettings: View {
         } else {
             EmptyView()
         }
+    }
+    
+    static func openSysdiagnoses() {
+        
     }
     
 }
@@ -45,7 +54,7 @@ private struct OpenCard: View {
                     .imageScale(.large)
             }
             HStack {
-                Text("Open the settings app to import a new sysdiagnose into CellGuard.")
+                Text("Open Settings to share data with CellGuard")
                     .multilineTextAlignment(.leading)
                     .padding()
                 Spacer()

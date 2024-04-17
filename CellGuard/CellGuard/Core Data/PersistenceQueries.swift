@@ -14,7 +14,8 @@ extension PersistenceController {
         let taskContext = newTaskContext()
         
         taskContext.name = "importContext"
-        taskContext.transactionAuthor = "importTweakCells"
+        taskContext.transactionAuthor = "importCellsTweak"
+        taskContext.mergePolicy = NSMergePolicy.rollback
         
         var success = false
         
@@ -24,11 +25,11 @@ extension PersistenceController {
             
             let importedDate = Date()
             
-            let batchInsertRequest = NSBatchInsertRequest(entity: TweakCell.entity(), managedObjectHandler: { cell in
+            let batchInsertRequest = NSBatchInsertRequest(entity: CellTweak.entity(), managedObjectHandler: { cell in
                 guard index < total else { return true }
                 
                 
-                if let cell = cell as? TweakCell {
+                if let cell = cell as? CellTweak {
                     cells[index].applyTo(tweakCell: cell)
                     cell.imported = importedDate
                     cell.status = CellStatus.imported.rawValue
@@ -57,14 +58,11 @@ extension PersistenceController {
     
     /// Uses `NSBatchInsertRequest` (BIR) to import ALS cell properties into the Core Data store on a private queue.
     func importALSCells(from cells: [ALSQueryCell], source: NSManagedObjectID?) throws {
-        // Idea: Add a constraint for technology,country,network,area,cell
-        // Apparently this is not possible with parent entities. ):
-        // See: https://developer.apple.com/forums/thread/36775
-        
         let taskContext = newTaskContext()
         
         taskContext.name = "importContext"
         taskContext.transactionAuthor = "importALSCells"
+        taskContext.mergePolicy = NSMergePolicy.rollback
         
         var success = false
         
@@ -75,9 +73,9 @@ extension PersistenceController {
             // See: https://developer.apple.com/forums/thread/676651
             cells.forEach { queryCell in
                 // Don't add the check if it already exists
-                let existFetchRequest = NSFetchRequest<ALSCell>()
+                let existFetchRequest = NSFetchRequest<CellALS>()
                 existFetchRequest.fetchLimit = 1
-                existFetchRequest.entity = ALSCell.entity()
+                existFetchRequest.entity = CellALS.entity()
                 existFetchRequest.predicate = sameCellPredicate(queryCell: queryCell, mergeUMTS: true)
                 do {
                     // If the cell exists, we update its attributes but not its location.
@@ -93,12 +91,12 @@ extension PersistenceController {
                 }
                 
                 // The cell does not exists in our app's database, so we can add it
-                let cell = ALSCell(context: taskContext)
+                let cell = CellALS(context: taskContext)
                 cell.imported = importedDate
                 queryCell.applyTo(alsCell: cell)
                 
                 if let queryLocation = queryCell.location {
-                    let location = ALSLocation(context: taskContext)
+                    let location = LocationALS(context: taskContext)
                     queryLocation.applyTo(location: location)
                     cell.location = location
                 } else {
@@ -108,7 +106,7 @@ extension PersistenceController {
             
             if let source = source {
                 // Get the tweak cell managed object from its ID
-                guard let tweakCell = try? taskContext.existingObject(with: source) as? TweakCell else {
+                guard let tweakCell = try? taskContext.existingObject(with: source) as? CellTweak else {
                     self.logger.warning("Can't get tweak cell (\(source)) from its object ID")
                     return
                 }
@@ -146,51 +144,49 @@ extension PersistenceController {
     }
     
     func determineDataRiskStatus() -> RiskLevel {
-        let taskContext = newTaskContext()
-        
-        let determine: () throws -> RiskLevel =  {
+        return (try? performAndWait(name: "fetchContext", author: "determineDataRiskStatus") { context in
             let calendar = Calendar.current
             let thirtyMinutesAgo = Date() - 30 * 60
             let ftDaysAgo = calendar.date(byAdding: .day, value: -14, to: calendar.startOfDay(for: Date()))!
             
             // Consider all cells if the analysis mode is active, otherwise only those of the last 14 days
             let ftDayPredicate: NSPredicate
-            if UserDefaults.standard.appMode() == .analysis {
+            if UserDefaults.standard.dataCollectionMode() == .none {
                 // This predicate always evaluates to true
                 ftDayPredicate = NSPredicate(value: true)
             } else {
                 ftDayPredicate = NSPredicate(format: "collected >= %@", ftDaysAgo as NSDate)
             }
             
-            let tweakCelSortDescriptor = [NSSortDescriptor(keyPath: \TweakCell.collected, ascending: false)]
-            let appMode = UserDefaults.standard.appMode()
+            let tweakCelSortDescriptor = [NSSortDescriptor(keyPath: \CellTweak.collected, ascending: false)]
+            let dataCollectionMode = UserDefaults.standard.dataCollectionMode()
             
             // Unverified Measurements
             
-            let unknownFetchRequest: NSFetchRequest<TweakCell> = TweakCell.fetchRequest()
+            let unknownFetchRequest: NSFetchRequest<CellTweak> = CellTweak.fetchRequest()
             unknownFetchRequest.sortDescriptors = tweakCelSortDescriptor
             unknownFetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
                 ftDayPredicate,
                 NSPredicate(format: "status != %@", CellStatus.verified.rawValue),
             ])
             unknownFetchRequest.fetchLimit = 1
-            let unknowns = try taskContext.fetch(unknownFetchRequest)
+            let unknowns = try context.fetch(unknownFetchRequest)
             
             // We show the unknown status if there's work left and were in the analysis mode
-            if unknowns.count > 0 && appMode == .analysis {
+            if unknowns.count > 0 && dataCollectionMode == .none {
                 return .Unknown
             }
             
             // Failed Measurements
             
-            let failedFetchRequest: NSFetchRequest<TweakCell> = TweakCell.fetchRequest()
+            let failedFetchRequest: NSFetchRequest<CellTweak> = CellTweak.fetchRequest()
             failedFetchRequest.sortDescriptors = tweakCelSortDescriptor
             failedFetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
                 ftDayPredicate,
                 NSPredicate(format: "status == %@", CellStatus.verified.rawValue),
                 NSPredicate(format: "score < %@", CellVerifier.pointsUntrustedThreshold as NSNumber)
             ])
-            let failed = try taskContext.fetch(failedFetchRequest)
+            let failed = try context.fetch(failedFetchRequest)
             if failed.count > 0 {
                 let cellCount = Dictionary(grouping: failed) { Self.queryCell(from: $0) }.count
                 return .High(cellCount: cellCount)
@@ -198,28 +194,28 @@ extension PersistenceController {
             
             // Suspicious Measurements
             
-            let suspiciousFetchRequest: NSFetchRequest<TweakCell> = TweakCell.fetchRequest()
+            let suspiciousFetchRequest: NSFetchRequest<CellTweak> = CellTweak.fetchRequest()
             suspiciousFetchRequest.sortDescriptors = tweakCelSortDescriptor
             suspiciousFetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
                 ftDayPredicate,
                 NSPredicate(format: "status == %@", CellStatus.verified.rawValue),
                 NSPredicate(format: "score < %@", CellVerifier.pointsSuspiciousThreshold as NSNumber)
             ])
-            let suspicious = try taskContext.fetch(suspiciousFetchRequest)
+            let suspicious = try context.fetch(suspiciousFetchRequest)
             if suspicious.count > 0 {
                 let cellCount = Dictionary(grouping: suspicious) { Self.queryCell(from: $0) }.count
                 return .Medium(cause: .Cells(cellCount: cellCount))
             }
             
             // Only check data received from tweaks if the device is jailbroken
-            if appMode == .jailbroken {
+            if dataCollectionMode == .automatic {
                 
                 // Latest Measurement
                 
-                let allFetchRequest: NSFetchRequest<TweakCell> = TweakCell.fetchRequest()
+                let allFetchRequest: NSFetchRequest<CellTweak> = CellTweak.fetchRequest()
                 allFetchRequest.fetchLimit = 1
                 allFetchRequest.sortDescriptors = tweakCelSortDescriptor
-                let all = try taskContext.fetch(allFetchRequest)
+                let all = try context.fetch(allFetchRequest)
                 
                 // We've received no cells for 30 minutes from the tweak, so we warn the user
                 guard let latestTweakCell = all.first else {
@@ -231,17 +227,17 @@ extension PersistenceController {
                 
                 // Latest Packet
                 
-                let allQMIPacketsFetchRequest: NSFetchRequest<QMIPacket> = QMIPacket.fetchRequest()
+                let allQMIPacketsFetchRequest: NSFetchRequest<PacketQMI> = PacketQMI.fetchRequest()
                 allQMIPacketsFetchRequest.fetchLimit = 1
-                allQMIPacketsFetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \QMIPacket.collected, ascending: false)]
-                let qmiPackets = try taskContext.fetch(allQMIPacketsFetchRequest)
+                allQMIPacketsFetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \PacketQMI.collected, ascending: false)]
+                let qmiPackets = try context.fetch(allQMIPacketsFetchRequest)
                 
-                let allARIPacketsFetchRequest: NSFetchRequest<ARIPacket> = ARIPacket.fetchRequest()
+                let allARIPacketsFetchRequest: NSFetchRequest<PacketARI> = PacketARI.fetchRequest()
                 allARIPacketsFetchRequest.fetchLimit = 1
-                allARIPacketsFetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \ARIPacket.collected, ascending: false)]
-                let ariPackets = try taskContext.fetch(allARIPacketsFetchRequest)
+                allARIPacketsFetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \PacketARI.collected, ascending: false)]
+                let ariPackets = try context.fetch(allARIPacketsFetchRequest)
                 
-                let latestPacket = [qmiPackets.first as Packet?, ariPackets.first as Packet?]
+                let latestPacket = [qmiPackets.first as (any Packet)?, ariPackets.first as (any Packet)?]
                     .compactMap { $0 }
                     .sorted { return $0.collected ?? Date.distantPast < $1.collected ?? Date.distantPast }
                     .last
@@ -254,14 +250,14 @@ extension PersistenceController {
             }
             
             // Only check locations if the analysis mode is not active
-            if appMode != .analysis {
+            if dataCollectionMode != .none {
                 
                 // Latest Location
                 
-                let locationFetchRequest: NSFetchRequest<UserLocation> = UserLocation.fetchRequest()
+                let locationFetchRequest: NSFetchRequest<LocationUser> = LocationUser.fetchRequest()
                 locationFetchRequest.fetchLimit = 1
-                locationFetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \UserLocation.collected, ascending: false)]
-                let location = try taskContext.fetch(locationFetchRequest)
+                locationFetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \LocationUser.collected, ascending: false)]
+                let location = try context.fetch(locationFetchRequest)
                 
                 // We've received no location for 30 minutes from iOS, so we warn the user
                 guard let latestLocation = location.first else {
@@ -290,75 +286,52 @@ extension PersistenceController {
             
             return .Low
             
-        }
-        
-        var risk: RiskLevel = .Medium(cause: .CantCompute)
-        taskContext.performAndWait {
-            do {
-                risk = try determine()
-            } catch {
-                logger.warning("Can't determine risk level: \(error)")
-            }
-        }
-        
-        return risk
+        }) ?? RiskLevel.Medium(cause: .CantCompute)
     }
     
     /// Calculates the distance between the location for the tweak cell and its verified counter part from Apple's database.
     /// If no verification or locations references cell exist, nil is returned.
     func calculateDistance(tweakCell tweakCellID: NSManagedObjectID) -> CellLocationDistance? {
-        let taskContext = newTaskContext()
-        
-        var distance: CellLocationDistance? = nil
-        taskContext.performAndWait {
-            guard let tweakCell = taskContext.object(with: tweakCellID) as? TweakCell else {
+        return try? performAndWait(name: "fetchContext", author: "calculateDistance") { (context) -> CellLocationDistance? in
+            guard let tweakCell = context.object(with: tweakCellID) as? CellTweak else {
                 logger.warning("Can't calculate distance for cell \(tweakCellID): Cell missing from task context")
-                return
+                return nil
             }
             
             guard let alsCell = tweakCell.verification else {
                 logger.warning("Can't calculate distance for cell \(tweakCellID): No verification ALS cell")
-                return
+                return nil
             }
             
             guard let userLocation = tweakCell.location else {
                 logger.warning("Can't calculate distance for cell \(tweakCellID): Missing user location from cell")
-                return
+                return nil
             }
             
             guard let alsLocation = alsCell.location else {
                 // TODO: Sometimes this does not work ): -> imported = nil, other properties are there
                 logger.warning("Can't calculate distance for cell \(tweakCellID): Missing location from ALS cell")
-                return
+                return nil
             }
             
-            distance = CellLocationDistance.distance(userLocation: userLocation, alsLocation: alsLocation)
+            return CellLocationDistance.distance(userLocation: userLocation, alsLocation: alsLocation)
         }
-        
-        return distance
     }
     
     /// Uses `NSBatchInsertRequest` (BIR) to import locations into the Core Data store on a private queue.
     func importUserLocations(from locations: [TrackedUserLocation]) throws {
-        let taskContext = newTaskContext()
-        
-        taskContext.name = "importContext"
-        taskContext.transactionAuthor = "importLocations"
-        
-        var success = false
-        
         // TODO: Only import if the location is different by a margin with the last location
         
-        taskContext.performAndWait {
+        try performAndWait(name: "importContext", author: "importLocations") { context in
             var index = 0
             let total = locations.count
             
             let importedDate = Date()
             
-            let batchInsertRequest = NSBatchInsertRequest(entity: UserLocation.entity(), managedObjectHandler: { location in
+            let batchInsertRequest = NSBatchInsertRequest(entity: LocationUser.entity(), managedObjectHandler: { location in
                 guard index < total else { return true }
                 
-                if let location = location as? UserLocation {
+                if let location = location as? LocationUser {
                     locations[index].applyTo(location: location)
                     location.imported = importedDate
                 }
@@ -366,19 +339,17 @@ extension PersistenceController {
                 index += 1
                 return false
             })
-            if let fetchResult = try? taskContext.execute(batchInsertRequest),
-               let batchInsertResult = fetchResult as? NSBatchInsertResult {
-                success = batchInsertResult.result as? Bool ?? false
+            
+            let fetchResult = try context.execute(batchInsertRequest)
+            
+            if let batchInsertResult = fetchResult as? NSBatchInsertResult,
+                !((batchInsertResult.result as? Bool) ?? false) {
+                logger.debug("Failed to execute batch import request for user locations.")
+                throw PersistenceError.batchInsertError
             }
         }
         
-        if !success {
-            logger.debug("Failed to execute batch import request for cells.")
-            throw PersistenceError.batchInsertError
-        }
-        
-        logger.debug("Successfully inserted \(locations.count) locations.")
-    }
+        logger.debug("Successfully inserted \(locations.count) locations.")    }
     
     /// Uses `NSBatchInsertRequest` (BIR) to import QMI packets into the Core Data store on a private queue.
     func importQMIPackets(from packets: [(CPTPacket, ParsedQMIPacket)]) throws {
@@ -392,15 +363,15 @@ extension PersistenceController {
             
             let importedDate = Date()
             
-            let batchInsertRequest = NSBatchInsertRequest(entity: QMIPacket.entity(), managedObjectHandler: { dbPacket in
+            let batchInsertRequest = NSBatchInsertRequest(entity: PacketQMI.entity(), managedObjectHandler: { dbPacket in
                 guard index < total else { return true }
                 
-                if let dbPacket = dbPacket as? QMIPacket {
+                if let dbPacket = dbPacket as? PacketQMI {
                     let (tweakPacket, parsedPacket) = packets[index]
                     dbPacket.data = tweakPacket.data
                     dbPacket.collected = tweakPacket.timestamp
                     dbPacket.direction = tweakPacket.direction.rawValue
-                    dbPacket.proto = tweakPacket.proto.rawValue
+                    // dbPacket.proto = tweakPacket.proto.rawValue
                     
                     dbPacket.service = Int16(parsedPacket.qmuxHeader.serviceId)
                     dbPacket.message = Int32(parsedPacket.messageHeader.messageId)
@@ -423,11 +394,11 @@ extension PersistenceController {
             return batchInsertResult.result as? [NSManagedObjectID]
         } ?? []
         
-        try performAndWait { context in
+        try performAndWait(name: "importContext", author: "importQMIPackets") { context in
             var added = false
             
             for id in objectIds {
-                guard let qmiPacket = context.object(with: id) as? QMIPacket else {
+                guard let qmiPacket = context.object(with: id) as? PacketQMI else {
                     continue
                 }
                 
@@ -456,10 +427,11 @@ extension PersistenceController {
             }
         }
         
-        if objectIds.isEmpty {
+        // It can be the case the newly imported data is already in the database
+        /* if objectIds.isEmpty {
             logger.debug("Failed to execute batch import request for QMI packets.")
             throw PersistenceError.batchInsertError
-        }
+        } */
         
         logger.debug("Successfully inserted \(packets.count) tweak QMI packets.")
     }
@@ -476,15 +448,15 @@ extension PersistenceController {
             
             let importedDate = Date()
             
-            let batchInsertRequest = NSBatchInsertRequest(entity: ARIPacket.entity(), managedObjectHandler: { dbPacket in
+            let batchInsertRequest = NSBatchInsertRequest(entity: PacketARI.entity(), managedObjectHandler: { dbPacket in
                 guard index < total else { return true }
                 
-                if let dbPacket = dbPacket as? ARIPacket {
+                if let dbPacket = dbPacket as? PacketARI {
                     let (tweakPacket, parsedPacket) = packets[index]
                     dbPacket.data = tweakPacket.data
                     dbPacket.collected = tweakPacket.timestamp
                     dbPacket.direction = tweakPacket.direction.rawValue
-                    dbPacket.proto = tweakPacket.proto.rawValue
+                    // dbPacket.proto = tweakPacket.proto.rawValue
                     
                     dbPacket.group = Int16(parsedPacket.header.group)
                     dbPacket.type = Int32(parsedPacket.header.type)
@@ -506,11 +478,11 @@ extension PersistenceController {
             return batchInsertResult.result as? [NSManagedObjectID]
         } ?? []
         
-        try performAndWait { context in
+        try performAndWait(name: "importContext", author: "importARIPackets") { context in
             var added = false
             
             for id in objectIds {
-                guard let ariPacket = context.object(with: id) as? ARIPacket else {
+                guard let ariPacket = context.object(with: id) as? PacketARI else {
                     continue
                 }
                 
@@ -536,10 +508,10 @@ extension PersistenceController {
             }
         }
         
-        if objectIds.isEmpty {
+        /* if objectIds.isEmpty {
             logger.debug("Failed to execute batch import request for ARI packets.")
             throw PersistenceError.batchInsertError
-        }
+        } */
         
         logger.debug("Successfully inserted \(packets.count) tweak ARI packets.")
     }
@@ -548,11 +520,11 @@ extension PersistenceController {
         var cell: (NSManagedObjectID, ALSQueryCell, CellStatus?, Int16)? = nil
         var fetchError: Error? = nil
         newTaskContext().performAndWait {
-            let request = NSFetchRequest<TweakCell>()
-            request.entity = TweakCell.entity()
+            let request = NSFetchRequest<CellTweak>()
+            request.entity = CellTweak.entity()
             request.fetchLimit = count
             request.predicate = NSPredicate(format: "status != %@ and nextVerification <= %@", CellStatus.verified.rawValue, Date() as NSDate)
-            request.sortDescriptors = [NSSortDescriptor(keyPath: \TweakCell.collected, ascending: false)]
+            request.sortDescriptors = [NSSortDescriptor(keyPath: \CellTweak.collected, ascending: false)]
             request.returnsObjectsAsFaults = false
             do {
                 let tweakCells = try request.execute()
@@ -578,21 +550,21 @@ extension PersistenceController {
         var cellTuple: (start: Date, end: Date, after: NSManagedObjectID)? = nil
         var fetchError: Error? = nil
         taskContext.performAndWait {
-            guard let tweakCell = taskContext.object(with: tweakCellID) as? TweakCell else {
-                logger.warning("Can't convert NSManagedObjectID \(tweakCellID) to TweakCell")
+            guard let tweakCell = taskContext.object(with: tweakCellID) as? CellTweak else {
+                logger.warning("Can't convert NSManagedObjectID \(tweakCellID) to CellTweak")
                 return
             }
             
             guard let startTimestamp = tweakCell.collected else {
-                logger.warning("TweakCell \(tweakCell) has not collected timestamp")
+                logger.warning("CellTweak \(tweakCell) has not collected timestamp")
                 return
             }
             
-            let request = NSFetchRequest<TweakCell>()
-            request.entity = TweakCell.entity()
+            let request = NSFetchRequest<CellTweak>()
+            request.entity = CellTweak.entity()
             request.fetchLimit = 1
             request.predicate = NSPredicate(format: "collected > %@", startTimestamp as NSDate)
-            request.sortDescriptors = [NSSortDescriptor(keyPath: \TweakCell.collected, ascending: true)]
+            request.sortDescriptors = [NSSortDescriptor(keyPath: \CellTweak.collected, ascending: true)]
             request.returnsObjectsAsFaults = false
             do {
                 let tweakCells = try request.execute()
@@ -600,7 +572,7 @@ extension PersistenceController {
                     if let endTimestamp = tweakCell.collected {
                         cellTuple = (start: startTimestamp, end: endTimestamp, after: tweakCell.objectID)
                     } else {
-                        logger.warning("TweakCell \(tweakCell) has not collected timestamp")
+                        logger.warning("CellTweak \(tweakCell) has not collected timestamp")
                     }
                 }
             } catch {
@@ -623,13 +595,13 @@ extension PersistenceController {
         
         var fetchError: Error? = nil
         newTaskContext().performAndWait {
-            let request = NSFetchRequest<QMIPacket>()
-            request.entity = QMIPacket.entity()
+            let request = NSFetchRequest<PacketQMI>()
+            request.entity = PacketQMI.entity()
             request.predicate = NSPredicate(
                 format: "indication = %@ and service = %@ and message = %@ and %@ <= collected and collected <= %@ and direction = %@",
                 NSNumber(booleanLiteral: indication), service as NSNumber, message as NSNumber, start as NSDate, end as NSDate, direction.rawValue as NSString
             )
-            request.sortDescriptors = [NSSortDescriptor(keyPath: \QMIPacket.collected, ascending: false)]
+            request.sortDescriptors = [NSSortDescriptor(keyPath: \PacketQMI.collected, ascending: false)]
             // See: https://stackoverflow.com/a/11165883
             request.propertiesToFetch = ["data"]
             do {
@@ -655,7 +627,7 @@ extension PersistenceController {
     }
     
     func fetchIndexedQMIPackets(start: Date, end: Date, reject: Bool = false, signal: Bool = false) throws -> [NSManagedObjectID: ParsedQMIPacket] {
-        return try performAndWait { context in
+        return try performAndWait(name: "fetch") { context in
             let request = PacketIndexQMI.fetchRequest()
             
             request.predicate = NSPredicate(
@@ -718,13 +690,13 @@ extension PersistenceController {
         
         var fetchError: Error? = nil
         newTaskContext().performAndWait {
-            let request = NSFetchRequest<ARIPacket>()
-            request.entity = ARIPacket.entity()
+            let request = NSFetchRequest<PacketARI>()
+            request.entity = PacketARI.entity()
             request.predicate = NSPredicate(
                 format: "group = %@ and type = %@ and %@ <= collected and collected <= %@ and direction = %@",
                 group as NSNumber, type as NSNumber, start as NSDate, end as NSDate, direction.rawValue as NSString
             )
-            request.sortDescriptors = [NSSortDescriptor(keyPath: \ARIPacket.collected, ascending: false)]
+            request.sortDescriptors = [NSSortDescriptor(keyPath: \PacketARI.collected, ascending: false)]
             request.returnsObjectsAsFaults = false
             do {
                 let ariPackets = try request.execute()
@@ -748,14 +720,14 @@ extension PersistenceController {
         return packets
     }
     
-    func fetchCellAttribute<T>(cell: NSManagedObjectID, extract: (TweakCell) throws -> T?) -> T? {
+    func fetchCellAttribute<T>(cell: NSManagedObjectID, extract: (CellTweak) throws -> T?) -> T? {
         let context = newTaskContext()
         
         var fetchError: Error? = nil
         var attribute: T? = nil
         context.performAndWait {
             do {
-                if let tweakCell = context.object(with: cell) as? TweakCell {
+                if let tweakCell = context.object(with: cell) as? CellTweak {
                     attribute = try extract(tweakCell)
                 }
             } catch {
@@ -764,7 +736,7 @@ extension PersistenceController {
         }
         
         if fetchError != nil {
-            logger.warning("Can't fetch attribute from TweakCell: \(fetchError)")
+            logger.warning("Can't fetch attribute from CellTweak: \(fetchError)")
             return nil
         }
         
@@ -782,7 +754,7 @@ extension PersistenceController {
         
         taskContext.performAndWait {
             do {
-                guard let tweakCell = taskContext.object(with: tweakCellID) as? TweakCell else {
+                guard let tweakCell = taskContext.object(with: tweakCellID) as? CellTweak else {
                     return
                 }
                 
@@ -809,9 +781,9 @@ extension PersistenceController {
         return found
     }
     
-    private func fetchALSCell(from tweakCell: TweakCell, context: NSManagedObjectContext) throws -> ALSCell? {
-        let fetchRequest = NSFetchRequest<ALSCell>()
-        fetchRequest.entity = ALSCell.entity()
+    private func fetchALSCell(from tweakCell: CellTweak, context: NSManagedObjectContext) throws -> CellALS? {
+        let fetchRequest = NSFetchRequest<CellALS>()
+        fetchRequest.entity = CellALS.entity()
         fetchRequest.fetchLimit = 1
         fetchRequest.predicate = sameCellPredicate(cell: tweakCell, mergeUMTS: true)
         
@@ -824,7 +796,7 @@ extension PersistenceController {
         }
     }
     
-    static func queryCell(from cell: TweakCell) -> ALSQueryCell {
+    static func queryCell(from cell: CellTweak) -> ALSQueryCell {
         return ALSQueryCell(
             technology: ALSTechnology(rawValue: cell.technology ?? "") ?? .LTE,
             country: cell.country,
@@ -862,7 +834,7 @@ extension PersistenceController {
         
         var saveError: Error? = nil
         taskContext.performAndWait {
-            if let tweakCell = taskContext.object(with: cellId) as? TweakCell {
+            if let tweakCell = taskContext.object(with: cellId) as? CellTweak {
                 tweakCell.status = status.rawValue
                 tweakCell.score = score
                 do {
@@ -887,7 +859,7 @@ extension PersistenceController {
         
         var saveError: Error? = nil
         taskContext.performAndWait {
-            if let tweakCell = taskContext.object(with: cellId) as? TweakCell {
+            if let tweakCell = taskContext.object(with: cellId) as? CellTweak {
                 tweakCell.nextVerification = Date().addingTimeInterval(Double(seconds))
                 do {
                     try taskContext.save()
@@ -908,9 +880,13 @@ extension PersistenceController {
     func storeRejectPacket(cellId: NSManagedObjectID, packetId: NSManagedObjectID) throws {
         let taskContext = newTaskContext()
         
-        var saveError: Error? = nil
+        // Currently we are not storing the reject packet.
+        // This will be part of the score overhaul.
+        // TODO: Re-implement
+        
+        /* var saveError: Error? = nil
         taskContext.performAndWait {
-            if let tweakCell = taskContext.object(with: cellId) as? TweakCell, let packet = taskContext.object(with: packetId) as? Packet {
+            if let tweakCell = taskContext.object(with: cellId) as? CellTweak, let packet = taskContext.object(with: packetId) as? (any Packet) {
                 tweakCell.rejectPacket = packet
                 do {
                     try taskContext.save()
@@ -925,7 +901,7 @@ extension PersistenceController {
         }
         if let saveError = saveError {
             throw saveError
-        }
+        } */
     }
     
     func assignLocation(to tweakCellID: NSManagedObjectID) throws -> (Bool, Date?) {
@@ -936,7 +912,7 @@ extension PersistenceController {
         var cellCollected: Date? = nil
         
         taskContext.performAndWait {
-            guard let tweakCell = taskContext.object(with: tweakCellID) as? TweakCell else {
+            guard let tweakCell = taskContext.object(with: tweakCellID) as? CellTweak else {
                 self.logger.warning("Can't assign location to the tweak cell with object ID: \(tweakCellID)")
                 saveError = PersistenceError.objectIdNotFoundError
                 return
@@ -945,8 +921,8 @@ extension PersistenceController {
             cellCollected = tweakCell.collected
             
             // Find the most precise user location within a four minute window
-            let fetchLocationRequest = NSFetchRequest<UserLocation>()
-            fetchLocationRequest.entity = UserLocation.entity()
+            let fetchLocationRequest = NSFetchRequest<LocationUser>()
+            fetchLocationRequest.entity = LocationUser.entity()
             // We don't set a fetch limit as it interferes the following predicate
             if let cellCollected = cellCollected {
                 let before = cellCollected.addingTimeInterval(-120)
@@ -962,11 +938,11 @@ extension PersistenceController {
                 return
             }
             fetchLocationRequest.sortDescriptors = [
-                NSSortDescriptor(keyPath: \UserLocation.horizontalAccuracy, ascending: true)
+                NSSortDescriptor(keyPath: \LocationUser.horizontalAccuracy, ascending: true)
             ]
             
             // Execute the fetch request
-            let locations: [UserLocation]
+            let locations: [LocationUser]
             do {
                 locations = try fetchLocationRequest.execute()
             } catch {
@@ -1002,11 +978,11 @@ extension PersistenceController {
     func countPacketsByType(completion: @escaping (Result<(Int, Int), Error>) -> Void) {
         let backgroundContext = newTaskContext()
         backgroundContext.perform {
-            let qmiRequest = NSFetchRequest<QMIPacket>()
-            qmiRequest.entity = QMIPacket.entity()
+            let qmiRequest = NSFetchRequest<PacketQMI>()
+            qmiRequest.entity = PacketQMI.entity()
             
-            let ariRequest = NSFetchRequest<ARIPacket>()
-            ariRequest.entity = ARIPacket.entity()
+            let ariRequest = NSFetchRequest<PacketARI>()
+            ariRequest.entity = PacketARI.entity()
             
             let result = Result {
                 let qmiCount = try backgroundContext.count(for: qmiRequest)
@@ -1046,7 +1022,7 @@ extension PersistenceController {
         
         var count: (Int, Int)? = nil
         taskContext.performAndWait {
-            let request: NSFetchRequest<TweakCell> = TweakCell.fetchRequest()
+            let request: NSFetchRequest<CellTweak> = CellTweak.fetchRequest()
             request.predicate = NSPredicate(
                 format: "notificationSent == NO and status == %@ and score < %@",
                 CellStatus.verified.rawValue as NSString, CellVerifier.pointsSuspiciousThreshold as NSNumber
@@ -1078,7 +1054,7 @@ extension PersistenceController {
     
     func clearVerificationData(tweakCellID: NSManagedObjectID) throws {
         try performAndWait { taskContext in
-            guard let tweakCell = taskContext.object(with: tweakCellID) as? TweakCell else {
+            guard let tweakCell = taskContext.object(with: tweakCellID) as? CellTweak else {
                 self.logger.warning("Can't clear verification data of the tweak cell with object ID: \(tweakCellID)")
                 throw PersistenceError.objectIdNotFoundError
             }
@@ -1088,8 +1064,7 @@ extension PersistenceController {
             tweakCell.notificationSent = false
             
             tweakCell.verification = nil
-            tweakCell.signalStrengths = []
-            tweakCell.rejectPacket = nil
+            // tweakCell.rejectPacket = nil
             tweakCell.location = nil
             
             do {
@@ -1116,10 +1091,10 @@ extension PersistenceController {
                 }
                 logger.debug("Deleting packets older than \(startOfDay)")
                 // Only delete packets not referenced by cells
-                let predicate = NSPredicate(format: "collected < %@ and rejectedCell = nil and index = nil", daysAgo as NSDate)
+                let predicate = NSPredicate(format: "collected < %@ and index = nil", daysAgo as NSDate)
                 
-                let qmiCount = try deleteData(entity: QMIPacket.entity(), predicate: predicate, context: taskContext)
-                let ariCount = try deleteData(entity: ARIPacket.entity(), predicate: predicate, context: taskContext)
+                let qmiCount = try deleteData(entity: PacketQMI.entity(), predicate: predicate, context: taskContext)
+                let ariCount = try deleteData(entity: PacketARI.entity(), predicate: predicate, context: taskContext)
                 logger.debug("Successfully deleted \(qmiCount + ariCount) old packets")
             } catch {
                 self.logger.warning("Failed to delete old packets: \(error)")
@@ -1143,7 +1118,7 @@ extension PersistenceController {
                 // Only delete old locations not referenced by any cells
                 let predicate = NSPredicate(format: "collected < %@ and cells.@count == 0", daysAgo as NSDate)
                 
-                let count = try deleteData(entity: UserLocation.entity(), predicate: predicate, context: taskContext)
+                let count = try deleteData(entity: LocationUser.entity(), predicate: predicate, context: taskContext)
                 logger.debug("Successfully deleted \(count) old locations")
             } catch {
                 self.logger.warning("Failed to delete old locations: \(error)")
@@ -1172,10 +1147,10 @@ extension PersistenceController {
         
         // If the ALS cell cache or older locations are deleted but no connected cells, we do not reset their verification status to trigger a re-verification.
         let categoryEntityMapping: [PersistenceCategory: [NSEntityDescription]] = [
-            .connectedCells: [TweakCell.entity()],
-            .alsCells: [ALSCell.entity(), ALSLocation.entity()],
-            .locations: [UserLocation.entity()],
-            .packets: [ARIPacket.entity(), QMIPacket.entity()]
+            .connectedCells: [CellTweak.entity()],
+            .alsCells: [CellALS.entity(), LocationALS.entity()],
+            .locations: [LocationUser.entity()],
+            .packets: [PacketARI.entity(), PacketQMI.entity()]
         ]
         
         var deleteError: Error? = nil

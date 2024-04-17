@@ -239,10 +239,10 @@ struct DeleteView: View {
             let persistence = PersistenceController.basedOnEnvironment()
             
             // Count entities of each database model
-            let cellMeasurements = persistence.countEntitiesOf(TweakCell.fetchRequest()) ?? self.cellMeasurements
-            let alsCells = persistence.countEntitiesOf(ALSCell.fetchRequest()) ?? self.alsCells
-            let locations = persistence.countEntitiesOf(UserLocation.fetchRequest()) ?? self.locations
-            let packets = (persistence.countEntitiesOf(QMIPacket.fetchRequest()) ?? 0) + (persistence.countEntitiesOf(ARIPacket.fetchRequest()) ?? 0)
+            let cellMeasurements = persistence.countEntitiesOf(CellTweak.fetchRequest()) ?? self.cellMeasurements
+            let alsCells = persistence.countEntitiesOf(CellALS.fetchRequest()) ?? self.alsCells
+            let locations = persistence.countEntitiesOf(LocationUser.fetchRequest()) ?? self.locations
+            let packets = (persistence.countEntitiesOf(PacketQMI.fetchRequest()) ?? 0) + (persistence.countEntitiesOf(PacketARI.fetchRequest()) ?? 0)
             
             // Calculate the size
             let size = PersistenceController.shared.size()

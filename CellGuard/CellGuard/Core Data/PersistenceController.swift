@@ -195,6 +195,7 @@ class PersistenceController {
         if let author = author {
             context.transactionAuthor = author
         }
+        context.mergePolicy = NSMergePolicy.rollback
         
         var collectedError: Error? = nil
         var result: T? = nil
@@ -208,6 +209,7 @@ class PersistenceController {
         }
         
         if let collectedError = collectedError {
+            logger.debug("Failed to execute database operation (\(name ?? ""), \(author ?? "")): \(collectedError)")
             throw collectedError
         }
         

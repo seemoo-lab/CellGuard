@@ -17,7 +17,7 @@ enum RiskMediumCause: Equatable {
     case CantCompute
     
     func text() -> String {
-        let ftDaysSuffix = UserDefaults.standard.appMode() != .analysis ? " in the last 14 days" : ""
+        let ftDaysSuffix = UserDefaults.standard.dataCollectionMode() != .none ? " in the last 14 days" : ""
         
         switch (self) {
         case .Permissions:
@@ -54,7 +54,7 @@ enum RiskLevel: Equatable {
     }
     
     func description() -> String {
-        let ftDaysSuffix = UserDefaults.standard.appMode() != .analysis ? " of the last 14 days" : ""
+        let ftDaysSuffix = UserDefaults.standard.dataCollectionMode() != .none ? " of the last 14 days" : ""
         
         switch (self) {
         case .Unknown:

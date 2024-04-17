@@ -25,7 +25,7 @@ class CellReachOverlay: NSObject, MKOverlay {
         }
     }
         
-    init(location: ALSLocation) {
+    init(location: LocationALS) {
         // TODO: Measure & Improve performance
         coreDataID = location.objectID
         circle = MKCircle(

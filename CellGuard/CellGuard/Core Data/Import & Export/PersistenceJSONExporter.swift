@@ -16,6 +16,8 @@ enum PersistenceExportError: Error {
     case fetchOrSerializationFailed(Error)
 }
 
+// TODO: Delete
+
 struct PersistenceJSONExporter {
     
     private static let logger = Logger(
@@ -80,38 +82,38 @@ struct PersistenceJSONExporter {
         
         context.performAndWait {
             do {
-                var connectedCells: [TweakCell] = []
-                var alsCells: [ALSCell] = []
-                var locations: [UserLocation] = []
-                var packets: [Packet] = []
+                var connectedCells: [CellTweak] = []
+                var alsCells: [CellALS] = []
+                var locations: [LocationUser] = []
+                var packets: [any Packet] = []
                 
                 if (categories.contains(.connectedCells)) {
-                    let fetchConnectedCells = NSFetchRequest<TweakCell>()
-                    fetchConnectedCells.entity = TweakCell.entity()
+                    let fetchConnectedCells = NSFetchRequest<CellTweak>()
+                    fetchConnectedCells.entity = CellTweak.entity()
                     
                     connectedCells.append(contentsOf: try fetchConnectedCells.execute())
                     Self.logger.debug("Exporting \(connectedCells.count) cells the iPhone connected to")
                 }
                 if (categories.contains(.alsCells)) {
-                    let fetchALSCells = NSFetchRequest<ALSCell>()
-                    fetchALSCells.entity = ALSCell.entity()
+                    let fetchALSCells = NSFetchRequest<CellALS>()
+                    fetchALSCells.entity = CellALS.entity()
                     fetchALSCells.relationshipKeyPathsForPrefetching = ["location"]
                     
                     alsCells.append(contentsOf: try fetchALSCells.execute())
                     Self.logger.debug("Exporting \(alsCells.count) ALS cells")
                 }
                 if (categories.contains(.locations)) {
-                    let fetchLocations = NSFetchRequest<UserLocation>()
-                    fetchLocations.entity = UserLocation.entity()
+                    let fetchLocations = NSFetchRequest<LocationUser>()
+                    fetchLocations.entity = LocationUser.entity()
                     
                     locations.append(contentsOf: try fetchLocations.execute())
                     Self.logger.debug("Exporting \(locations.count) user locations")
                 }
                 if (categories.contains(.packets)) {
-                    let fetchQMIPackets = NSFetchRequest<QMIPacket>()
-                    fetchQMIPackets.entity = QMIPacket.entity()
-                    let fetchARIPackets = NSFetchRequest<ARIPacket>()
-                    fetchARIPackets.entity = ARIPacket.entity()
+                    let fetchQMIPackets = NSFetchRequest<PacketQMI>()
+                    fetchQMIPackets.entity = PacketQMI.entity()
+                    let fetchARIPackets = NSFetchRequest<PacketARI>()
+                    fetchARIPackets.entity = PacketARI.entity()
                     
                     packets.append(contentsOf: try fetchQMIPackets.execute())
                     packets.append(contentsOf: try fetchARIPackets.execute())
@@ -144,7 +146,7 @@ struct PersistenceJSONExporter {
         return result
     }
     
-    private func toJSON(connectedCells: [TweakCell], alsCells: [ALSCell], userLocations: [UserLocation], packets: [Packet]) throws -> Data {
+    private func toJSON(connectedCells: [CellTweak], alsCells: [CellALS], userLocations: [LocationUser], packets: [any Packet]) throws -> Data {
         var dict: [String: Any] = [:]
         
         if categories.contains(.connectedCells) {
@@ -188,7 +190,7 @@ struct PersistenceJSONExporter {
         return try JSONSerialization.data(withJSONObject: dict)
     }
     
-    private func exportALSCell(alsCell cell: ALSCell) -> [String: Any] {
+    private func exportALSCell(alsCell cell: CellALS) -> [String: Any] {
         var cellDict: [String: Any] = [
             ALSCellDictKeys.technology: cell.technology ?? "",
             ALSCellDictKeys.country: cell.country,
@@ -212,10 +214,10 @@ struct PersistenceJSONExporter {
         return cellDict
     }
     
-    private func exportPacket(packet: Packet) -> [String: Any] {
+    private func exportPacket(packet: any Packet) -> [String: Any] {
         return [
             PacketDictKeys.direction: packet.direction ?? "",
-            PacketDictKeys.proto: packet.proto ?? "",
+            PacketDictKeys.proto: packet.proto,
             PacketDictKeys.collected: packet.collected?.timeIntervalSince1970 ?? 0,
             PacketDictKeys.data: packet.data?.base64EncodedString() ?? ""
         ]

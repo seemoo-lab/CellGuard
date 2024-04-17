@@ -58,7 +58,7 @@ struct TrackedUserLocation {
         self.preciseBackground = preciseBackground
     }
     
-    init(from location: UserLocation) {
+    init(from location: LocationUser) {
         self.latitude = location.latitude
         self.longitude = location.longitude
         self.horizontalAccuracy = location.horizontalAccuracy
@@ -113,7 +113,7 @@ struct TrackedUserLocation {
         self.preciseBackground = true
     }
     
-    func applyTo(location: UserLocation) {
+    func applyTo(location: LocationUser) {
         location.latitude = self.latitude ?? 0
         location.longitude = self.longitude ?? 0
         location.horizontalAccuracy = self.horizontalAccuracy ?? 0

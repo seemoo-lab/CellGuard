@@ -70,25 +70,25 @@ private struct SelectCellDateView: View {
     @Binding var isShowingDateSheet: Bool
     
     @FetchRequest
-    private var firstMeasurement: FetchedResults<TweakCell>
+    private var firstMeasurement: FetchedResults<CellTweak>
     
     @FetchRequest
-    private var lastMeasurement: FetchedResults<TweakCell>
+    private var lastMeasurement: FetchedResults<CellTweak>
     
     init(settings: Binding<CellListFilterSettings>, sheetDate: Binding<Date>, isShowingDateSheet: Binding<Bool>) {
         self._settings = settings
         self._sheetDate = sheetDate
         self._isShowingDateSheet = isShowingDateSheet
         
-        let firstMeasurementRequest: NSFetchRequest<TweakCell> = TweakCell.fetchRequest()
+        let firstMeasurementRequest: NSFetchRequest<CellTweak> = CellTweak.fetchRequest()
         firstMeasurementRequest.fetchLimit = 1
-        firstMeasurementRequest.sortDescriptors = [NSSortDescriptor(keyPath: \TweakCell.collected, ascending: true)]
+        firstMeasurementRequest.sortDescriptors = [NSSortDescriptor(keyPath: \CellTweak.collected, ascending: true)]
         firstMeasurementRequest.propertiesToFetch = ["collected"]
         self._firstMeasurement = FetchRequest(fetchRequest: firstMeasurementRequest)
         
-        let lastMeasurementRequest: NSFetchRequest<TweakCell> = TweakCell.fetchRequest()
+        let lastMeasurementRequest: NSFetchRequest<CellTweak> = CellTweak.fetchRequest()
         lastMeasurementRequest.fetchLimit = 1
-        lastMeasurementRequest.sortDescriptors = [NSSortDescriptor(keyPath: \TweakCell.collected, ascending: false)]
+        lastMeasurementRequest.sortDescriptors = [NSSortDescriptor(keyPath: \CellTweak.collected, ascending: false)]
         lastMeasurementRequest.propertiesToFetch = ["collected"]
         self._lastMeasurement = FetchRequest(fetchRequest: lastMeasurementRequest)
     }
@@ -143,12 +143,12 @@ private struct FilteredCellView: View {
     )
     
     @FetchRequest
-    private var measurements: FetchedResults<TweakCell>
+    private var measurements: FetchedResults<CellTweak>
     
     init(settings: CellListFilterSettings) {
-        let cellsRequest: NSFetchRequest<TweakCell> = TweakCell.fetchRequest()
+        let cellsRequest: NSFetchRequest<CellTweak> = CellTweak.fetchRequest()
         // cellsRequest.fetchBatchSize = 25
-        cellsRequest.sortDescriptors = [NSSortDescriptor(keyPath: \TweakCell.collected, ascending: false)]
+        cellsRequest.sortDescriptors = [NSSortDescriptor(keyPath: \CellTweak.collected, ascending: false)]
         settings.applyTo(request: cellsRequest)
         
         self._measurements = FetchRequest(fetchRequest: cellsRequest, animation: .easeOut)
@@ -160,7 +160,7 @@ private struct FilteredCellView: View {
         var groups: [GroupedMeasurements] = []
         
         // Iterate through all measurements and start a new group upon encountering a new cell
-        var groupMeasurements: [TweakCell] = []
+        var groupMeasurements: [CellTweak] = []
         var first = true
         for measurement in measurements {
             // If we've encountered a new cell, we start a new group

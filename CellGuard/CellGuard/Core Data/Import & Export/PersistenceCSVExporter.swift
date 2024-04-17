@@ -19,6 +19,66 @@ enum PersistenceCSVExporterError: Error {
 
 typealias CSVProgressFunc = (PersistenceCategory, Int, Int) -> Void
 
+// We had to encapsulate all functions to this protocol, otherwise the compiler doesn't allow array of different generic types.
+protocol FileElementWriter {
+    func count(context: NSManagedObjectContext) throws -> Int
+    func write(fileHandle: FileHandle, csv: inout CSVWriter, counter: inout Int, count: Int, progress: CSVProgressFunc, category: PersistenceCategory) throws -> Void
+}
+
+struct DatabaseFileElementWriter<T: NSFetchRequestResult>: FileElementWriter {
+    private let fetchRequest: NSFetchRequest<T>
+    private let writeElement: (CSVWriter, T) throws -> Void
+    
+    init(_ fetchRequest: () -> NSFetchRequest<T>, _ writeElement: @escaping (CSVWriter, T) throws -> Void) {
+        self.fetchRequest = fetchRequest()
+        self.writeElement = writeElement
+    }
+    
+    func count(context: NSManagedObjectContext) throws -> Int {
+        return try context.count(for: fetchRequest)
+    }
+    
+    func write(fileHandle: FileHandle, csv: inout CSVWriter, counter: inout Int, count: Int, progress: CSVProgressFunc, category: PersistenceCategory) throws {
+        // Init the fetch request object
+        // Limit the number of entries concurrently loaded into memory
+        // See: https://stackoverflow.com/a/52118107
+        // See: https://developer.apple.com/documentation/coredata/nsfetchrequest/1506558-fetchbatchsize?language=objc
+        fetchRequest.fetchBatchSize = 1000
+        
+        // Execute the request and process its entries
+        for result in try fetchRequest.execute() {
+            // Use an autorelease pool to reduce the memory impact when exporting (very important)
+            // See: https://swiftrocks.com/autoreleasepool-in-swift
+            // See: https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/MemoryMgmt/Articles/mmAutoreleasePools.html
+            try autoreleasepool {
+                // Write the data point to the CSV file
+                try writeElement(csv, result)
+                
+                // Send counter updates only once every 1000 data points
+                counter += 1
+                if counter % 1000 == 0 {
+                    // Get the CSV data from memory
+                    csv.stream.close()
+                    guard let data = csv.stream.property(forKey: .dataWrittenToMemoryStreamKey) as? Data else {
+                        throw PersistenceCSVExporterError.noCSVDataInMemory
+                    }
+                    
+                    // Write data to the file
+                    try fileHandle.write(contentsOf: data)
+                    
+                    // Append a new line as the string produced by the library doesn't end with one
+                    try fileHandle.write(contentsOf: "\n".data(using: .utf8)!)
+
+                    // Create a new CSV writer
+                    csv = try CSVWriter(stream: .toMemory())
+                    
+                    progress(category, counter, count)
+                }
+            }
+        }
+    }
+}
+
 struct PersistenceCSVExporter {
     
     private static let logger = Logger(
@@ -154,13 +214,12 @@ struct PersistenceCSVExporter {
         try json.write(to: url)
     }
     
-    private func writeData<T>(
+    private func writeData(
         url: URL,
         category: PersistenceCategory,
         progress: CSVProgressFunc,
         header: [String],
-        fetchRequest: () -> NSFetchRequest<T>,
-        write: (CSVWriter, T) throws -> Void
+        writers: [FileElementWriter]
     ) throws -> Int {
         // Create the CSV file and its file handle
         FileManager.default.createFile(atPath: url.path, contents: nil)
@@ -177,15 +236,8 @@ struct PersistenceCSVExporter {
             // See: https://developer.apple.com/documentation/coredata/nsmanagedobjectcontext/1506290-retainsregisteredobjects
             context.retainsRegisteredObjects = false
             
-            // Init the fetch request object
-            let request: NSFetchRequest<T> = fetchRequest()
-            // Limit the number of entries concurrently loaded into memory
-            // See: https://stackoverflow.com/a/52118107
-            // See: https://developer.apple.com/documentation/coredata/nsfetchrequest/1506558-fetchbatchsize?language=objc
-            request.fetchBatchSize = 1000
-            
             // Count the number of data points in the table & update the process
-            let count = try context.count(for: request)
+            let count = try writers.map { try $0.count(context: context) }.reduce(0, +)
             var counter = 0
             progress(category, counter, count)
             
@@ -196,36 +248,8 @@ struct PersistenceCSVExporter {
             // Write the header row
             try csv.write(row: header)
             
-            // Execute the request and process its entries
-            for result in try request.execute() {
-                // Use an autorelease pool to reduce the memory impact when exporting (very important)
-                // See: https://swiftrocks.com/autoreleasepool-in-swift
-                // See: https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/MemoryMgmt/Articles/mmAutoreleasePools.html
-                try autoreleasepool {
-                    // Write the data point to the CSV file
-                    try write(csv, result)
-                    
-                    // Send counter updates only once every 1000 data points
-                    counter += 1
-                    if counter % 1000 == 0 {
-                        // Get the CSV data from memory
-                        csv.stream.close()
-                        guard let data = csv.stream.property(forKey: .dataWrittenToMemoryStreamKey) as? Data else {
-                            throw PersistenceCSVExporterError.noCSVDataInMemory
-                        }
-                        
-                        // Write data to the file
-                        try fileHandle.write(contentsOf: data)
-                        
-                        // Append a new line as the string produced by the library doesn't end with one
-                        try fileHandle.write(contentsOf: "\n".data(using: .utf8)!)
-
-                        // Create a new CSV writer
-                        csv = try CSVWriter(stream: .toMemory())
-                        
-                        progress(category, counter, count)
-                    }
-                }
+            for writer in writers {
+                try writer.write(fileHandle: fileHandle, csv: &csv, counter: &counter, count: count, progress: progress, category: category)
             }
             
             // Get the final CSV data from memory
@@ -252,20 +276,20 @@ struct PersistenceCSVExporter {
             category: .connectedCells,
             progress: progress,
             header: ["collected", "json", "status", "technology", "country", "network", "area", "cell", "score"],
-            fetchRequest: TweakCell.fetchRequest
-        ) { csv, result in
-            try csv.write(row: [
-                csvDate(result.collected),
-                csvString(result.json),
-                csvString(result.status),
-                csvString(result.technology),
-                csvInt(result.country),
-                csvInt(result.network),
-                csvInt(result.area),
-                csvInt(result.cell),
-                csvInt(result.score)
-            ])
-        }
+            writers: [DatabaseFileElementWriter(CellTweak.fetchRequest) { csv, result in
+                try csv.write(row: [
+                    csvDate(result.collected),
+                    csvString(result.json),
+                    csvString(result.status),
+                    csvString(result.technology),
+                    csvInt(result.country),
+                    csvInt(result.network),
+                    csvInt(result.area),
+                    csvInt(result.cell),
+                    csvInt(result.score)
+                ])
+            }]
+        )
     }
     
     private func writeAlsCells(url: URL, progress: CSVProgressFunc) throws -> Int {
@@ -274,30 +298,30 @@ struct PersistenceCSVExporter {
             category: .alsCells,
             progress: progress,
             header: ["imported", "technology", "country", "network", "area", "cell", "frequency", "physicalCell", "latitude", "longitude", "horizontalAccuracy", "reach", "score"],
-            fetchRequest: {
-                let request: NSFetchRequest<ALSCell> = ALSCell.fetchRequest()
+            writers: [DatabaseFileElementWriter({
+                let request: NSFetchRequest<CellALS> = CellALS.fetchRequest()
                 request.relationshipKeyPathsForPrefetching = ["location"]
                 return request
-            }
-        ) { csv, result in
-            let location = result.location
-            
-            try csv.write(row: [
-                csvDate(result.imported),
-                csvString(result.technology),
-                csvInt(result.country),
-                csvInt(result.network),
-                csvInt(result.area),
-                csvInt(result.cell),
-                csvInt(result.frequency),
-                csvInt(result.physicalCell),
-                csvDouble(location?.latitude),
-                csvDouble(location?.longitude),
-                csvDouble(location?.horizontalAccuracy),
-                csvInt(location?.reach),
-                csvInt(location?.score),
-            ])
-        }
+            }) { csv, result in
+                let location = result.location
+                
+                try csv.write(row: [
+                    csvDate(result.imported),
+                    csvString(result.technology),
+                    csvInt(result.country),
+                    csvInt(result.network),
+                    csvInt(result.area),
+                    csvInt(result.cell),
+                    csvInt(result.frequency),
+                    csvInt(result.physicalCell),
+                    csvDouble(location?.latitude),
+                    csvDouble(location?.longitude),
+                    csvDouble(location?.horizontalAccuracy),
+                    csvInt(location?.reach),
+                    csvInt(location?.score),
+                ])
+            }]
+        )
     }
     
     private func writeLocations(url: URL, progress: CSVProgressFunc) throws -> Int {
@@ -306,20 +330,20 @@ struct PersistenceCSVExporter {
             category: .locations,
             progress: progress,
             header: ["collected", "latitude", "longitude", "horizontalAccuracy", "altitude", "verticalAccuracy", "speed", "speedAccuracy", "background"],
-            fetchRequest: UserLocation.fetchRequest
-        ) { csv, result in
-            try csv.write(row: [
-                csvDate(result.collected),
-                csvDouble(result.latitude),
-                csvDouble(result.longitude),
-                csvDouble(result.horizontalAccuracy),
-                csvDouble(result.altitude),
-                csvDouble(result.verticalAccuracy),
-                csvDouble(result.speed),
-                csvDouble(result.speedAccuracy),
-                csvBool(result.background)
-            ])
-        }
+            writers: [DatabaseFileElementWriter(LocationUser.fetchRequest) { csv, result in
+                try csv.write(row: [
+                    csvDate(result.collected),
+                    csvDouble(result.latitude),
+                    csvDouble(result.longitude),
+                    csvDouble(result.horizontalAccuracy),
+                    csvDouble(result.altitude),
+                    csvDouble(result.verticalAccuracy),
+                    csvDouble(result.speed),
+                    csvDouble(result.speedAccuracy),
+                    csvBool(result.background)
+                ])
+            }]
+        )
     }
     
     private func writePackets(url: URL, progress: CSVProgressFunc) throws -> Int {
@@ -328,15 +352,25 @@ struct PersistenceCSVExporter {
             category: .packets,
             progress: progress,
             header: ["collected", "direction", "proto", "data"],
-            fetchRequest: Packet.fetchRequest
-        ) { csv, result in
-            try csv.write(row: [
-                csvDate(result.collected),
-                csvString(result.direction),
-                csvString(result.proto),
-                csvString(result.data?.base64EncodedString())
-            ])
-        }
+            writers: [
+                DatabaseFileElementWriter(PacketQMI.fetchRequest) { csv, result in
+                    try csv.write(row: [
+                        csvDate(result.collected),
+                        csvString(result.direction),
+                        csvString(result.proto),
+                        csvString(result.data?.base64EncodedString())
+                    ])
+                },
+                DatabaseFileElementWriter(PacketARI.fetchRequest) { csv, result in
+                    try csv.write(row: [
+                        csvDate(result.collected),
+                        csvString(result.direction),
+                        csvString(result.proto),
+                        csvString(result.data?.base64EncodedString())
+                    ])
+                }
+            ]
+        )
     }
     
     private func csvString(_ string: String?) -> String {

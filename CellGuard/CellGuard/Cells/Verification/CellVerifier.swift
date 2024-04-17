@@ -320,12 +320,12 @@ struct CellVerifier {
     }
 
     private func verifyRejectPacket(queryCell: ALSQueryCell, queryCellID: NSManagedObjectID) async throws -> VerificationStageResult {
-        let appMode = UserDefaults.standard.appMode()
+        let appMode = UserDefaults.standard.dataCollectionMode()
         
         // Delay the verification 20s if no newer cell exists, i.e., we are still connected to this cell
         guard let (start, end, _) = try persistence.fetchCellLifespan(of: queryCellID) else {
             // We won't receive new packets in the analysis mode
-            if appMode == AppModes.analysis {
+            if appMode == DataCollectionMode.none {
                 return .next(status: .processedRejectPacket, points: Self.pointsRejectPacket)
             } else {
                 return .delay(seconds: 20)
@@ -333,7 +333,7 @@ struct CellVerifier {
         }
         
         // ... or if the latest batch of packets has not been received from the tweak
-        if appMode == .jailbroken && CPTCollector.mostRecentPacket < end {
+        if appMode == .automatic && CPTCollector.mostRecentPacket < end {
             return .delay(seconds: 20)
         }
         
@@ -397,12 +397,12 @@ struct CellVerifier {
     }
     
     func verifySignalStrength(queryCell: ALSQueryCell, queryCellID: NSManagedObjectID) async throws -> VerificationStageResult {
-        let appMode = UserDefaults.standard.appMode()
+        let dataCollectionMode = UserDefaults.standard.dataCollectionMode()
         
         // Delay the verification 20s if no newer cell exists, i.e., we are still connected to this cell
         guard let (start, end, _) = try persistence.fetchCellLifespan(of: queryCellID) else {
             // We won't receive new packets in the analysis mode
-            if appMode == AppModes.analysis {
+            if dataCollectionMode == DataCollectionMode.none {
                 return .next(status: .verified, points: Self.pointsSignalStrength)
             } else {
                 return .delay(seconds: 20)
@@ -410,7 +410,7 @@ struct CellVerifier {
         }
         
         // ... or if the latest batch of packets has not been received from the tweak
-        if appMode == .jailbroken && CPTCollector.mostRecentPacket < end {
+        if dataCollectionMode == .automatic && CPTCollector.mostRecentPacket < end {
             return .delay(seconds: 20)
         }
         

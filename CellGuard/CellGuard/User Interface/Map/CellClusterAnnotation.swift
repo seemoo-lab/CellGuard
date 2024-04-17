@@ -10,9 +10,15 @@ import MapKit
 
 class CellClusterAnnotation: MKClusterAnnotation {
     
+    let glyphText: String
+    
     override init(memberAnnotations: [MKAnnotation]) {
+        let count = memberAnnotations.count
+        glyphText = count <= 99 ? "\(count)" : "99+"
+        
         super.init(memberAnnotations: memberAnnotations)
-        title = "\(memberAnnotations.count) cells"
+        title = "\(memberAnnotations.count) Cells"
+        subtitle = nil
     }
     
 }

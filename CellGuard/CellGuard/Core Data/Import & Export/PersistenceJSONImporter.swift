@@ -134,7 +134,13 @@ struct PersistenceJSONImporter {
         
         Self.logger.debug("Imported \(locations) locations, \(cells) cells, \(packets.qmi) QMI packets, and \(packets.ari) ARI packets")
         
-        return (cells, 0, locations, packets.qmi + packets.ari)
+        return ImportResult(
+            cells: ImportCount(count: cells, first: nil, last: nil),
+            alsCells: nil,
+            locations: ImportCount(count: locations, first: nil, last: nil),
+            packets: ImportCount(count: packets.qmi + packets.ari, first: nil, last: nil),
+            notices: []
+        )
     }
     
     private func storeLocations(json: [String : Any]) throws -> Int {

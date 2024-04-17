@@ -12,26 +12,26 @@ import SwiftUI
 struct CellInformationCard: View {
     
     let dateFormatter = RelativeDateTimeFormatter()
-    let cell: TweakCell
+    let cell: CellTweak
     
-    @FetchRequest private var alsCells: FetchedResults<ALSCell>
-    @FetchRequest private var tweakCells: FetchedResults<TweakCell>
+    @FetchRequest private var alsCells: FetchedResults<CellALS>
+    @FetchRequest private var tweakCells: FetchedResults<CellTweak>
     @Environment(\.colorScheme) private var colorScheme
     
     private let techFormatter: CellTechnologyFormatter
     
-    init(cell: TweakCell) {
+    init(cell: CellTweak) {
         self.cell = cell
         // TODO: Ensure that
         self.techFormatter = CellTechnologyFormatter.from(technology: cell.technology)
         
         self._alsCells = FetchRequest(
-            sortDescriptors: [NSSortDescriptor(keyPath: \ALSCell.imported, ascending: false)],
+            sortDescriptors: [NSSortDescriptor(keyPath: \CellALS.imported, ascending: false)],
             predicate: PersistenceController.shared.sameCellPredicate(cell: cell, mergeUMTS: true),
             animation: .default
         )
         self._tweakCells = FetchRequest(
-            sortDescriptors: [NSSortDescriptor(keyPath: \TweakCell.collected, ascending: false)],
+            sortDescriptors: [NSSortDescriptor(keyPath: \CellTweak.collected, ascending: false)],
             predicate: PersistenceController.shared.sameCellPredicate(cell: cell, mergeUMTS: false),
             animation: .default
         )
@@ -139,17 +139,17 @@ struct CellInformation_Previews: PreviewProvider {
             .previewDisplayName("iPhone SE") */
     }
     
-    private static func exampleCell() -> TweakCell {
+    private static func exampleCell() -> CellTweak {
         let context = PersistenceController.preview.container.viewContext
         
-        let location = UserLocation(context: context)
+        let location = LocationUser(context: context)
         location.latitude = 49.8726737
         location.longitude = 8.6516291
         location.horizontalAccuracy = 2
         location.collected = Date()
         location.imported = Date()
         
-        let cell = TweakCell(context: PersistenceController.preview.container.viewContext)
+        let cell = CellTweak(context: PersistenceController.preview.container.viewContext)
         cell.status = CellStatus.imported.rawValue
         cell.technology = "LTE"
         cell.frequency = 1600

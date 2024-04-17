@@ -25,7 +25,7 @@ struct CommonCellMap {
             CellAnnotationView.self,
             forAnnotationViewWithReuseIdentifier: CellAnnotationView.ReuseID)
         mapView.register(
-            LocationAnnotation.self,
+            LocationAnnotationView.self,
             forAnnotationViewWithReuseIdentifier: LocationAnnotationView.ReuseID)
         
         // Cluster annotations
@@ -68,13 +68,13 @@ struct CommonCellMap {
         return (addAnnotations.count, removeAnnotations.count)
     }
     
-    static func updateCellAnnotations(data: any BidirectionalCollection<ALSCell>, uiView: MKMapView) -> (Int, Int) {
+    static func updateCellAnnotations(data: any BidirectionalCollection<CellALS>, uiView: MKMapView) -> (Int, Int) {
         updateAnnotations(data: data, uiView: uiView) { cell in
             CellAnnotation(cell: cell)
         }
     }
     
-    static func updateLocationAnnotations(data: any BidirectionalCollection<TweakCell>, uiView: MKMapView) -> (Int, Int) {
+    static func updateLocationAnnotations(data: any BidirectionalCollection<CellTweak>, uiView: MKMapView) -> (Int, Int) {
         let locations = Array(Set(data.compactMap { $0.location }))
         
         return updateAnnotations(data: locations, uiView: uiView) { location in
@@ -111,7 +111,7 @@ struct CommonCellMap {
         uiView.addOverlays(addOverlays)
     }
     
-    static func updateCellReachOverlay(data: FetchedResults<ALSCell>, uiView: MKMapView) {
+    static func updateCellReachOverlay(data: FetchedResults<CellALS>, uiView: MKMapView) {
         let locations = Array(Set(data.compactMap { $0.location }))
         
         updateOverlay(data: locations, uiView: uiView) { location in

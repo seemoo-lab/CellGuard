@@ -1,26 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22225" systemVersion="23B81" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
-    <entity name="ALSCell" representedClassName="ALSCell" parentEntity="Cell" syncable="YES" codeGenerationType="class">
-        <relationship name="location" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ALSLocation" inverseName="cells" inverseEntity="ALSLocation"/>
-        <relationship name="verified" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="TweakCell" inverseName="verification" inverseEntity="TweakCell"/>
-    </entity>
-    <entity name="ALSLocation" representedClassName="ALSLocation" parentEntity="Location" syncable="YES" codeGenerationType="class">
-        <attribute name="reach" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="score" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
-        <relationship name="cells" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ALSCell" inverseName="location" inverseEntity="ALSCell"/>
-    </entity>
-    <entity name="ARIPacket" representedClassName="ARIPacket" parentEntity="Packet" syncable="YES" codeGenerationType="class">
-        <attribute name="group" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="type" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
-        <relationship name="index" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="PacketIndexARI" inverseName="packet" inverseEntity="PacketIndexARI"/>
-    </entity>
-    <entity name="ARISignalStrength" representedClassName="ARISignalStrength" parentEntity="SignalStrength" syncable="YES" codeGenerationType="class">
-        <attribute name="signalQuality" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="signalQualityMax" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="signalStrength" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="signalStrengthMax" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
-    </entity>
-    <entity name="Cell" representedClassName="Cell" isAbstract="YES" syncable="YES" codeGenerationType="class">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22757" systemVersion="23E224" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="CellALS" representedClassName="CellALS" syncable="YES" codeGenerationType="category">
         <attribute name="area" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="cell" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="country" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
@@ -29,27 +9,110 @@
         <attribute name="network" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="physicalCell" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="technology" optional="YES" attributeType="String"/>
+        <relationship name="location" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="LocationALS" inverseName="cells" inverseEntity="LocationALS"/>
+        <relationship name="verified" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CellTweak" inverseName="verification" inverseEntity="CellTweak"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="technology"/>
+                <constraint value="country"/>
+                <constraint value="network"/>
+                <constraint value="area"/>
+                <constraint value="cell"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
     </entity>
-    <entity name="Location" representedClassName="Location" isAbstract="YES" syncable="YES" codeGenerationType="class">
+    <entity name="CellTweak" representedClassName="CellTweak" syncable="YES" codeGenerationType="category">
+        <attribute name="area" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="band" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="bandwidth" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="cell" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="collected" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="country" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="frequency" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="imported" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="json" optional="YES" attributeType="String"/>
+        <attribute name="neighborTechnology" optional="YES" attributeType="String"/>
+        <attribute name="network" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="nextVerification" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="notificationSent" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="physicalCell" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="preciseTechnology" optional="YES" attributeType="String"/>
+        <attribute name="score" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="status" optional="YES" attributeType="String"/>
+        <attribute name="technology" optional="YES" attributeType="String"/>
+        <relationship name="location" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="LocationUser" inverseName="cells" inverseEntity="LocationUser"/>
+        <relationship name="verification" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CellALS" inverseName="verified" inverseEntity="CellALS"/>
+        <fetchIndex name="byTweakCellCollected">
+            <fetchIndexElement property="collected" type="Binary" order="descending"/>
+        </fetchIndex>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="technology"/>
+                <constraint value="network"/>
+                <constraint value="country"/>
+                <constraint value="area"/>
+                <constraint value="cell"/>
+                <constraint value="collected"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+    </entity>
+    <entity name="LocationALS" representedClassName="LocationALS" syncable="YES" codeGenerationType="class">
         <attribute name="horizontalAccuracy" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="imported" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="latitude" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="longitude" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="reach" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="score" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="cells" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CellALS" inverseName="location" inverseEntity="CellALS"/>
     </entity>
-    <entity name="Packet" representedClassName="Packet" syncable="YES" codeGenerationType="class">
+    <entity name="LocationUser" representedClassName="LocationUser" syncable="YES" codeGenerationType="class">
+        <attribute name="altitude" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="background" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="collected" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="horizontalAccuracy" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="imported" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="latitude" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="longitude" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="preciseBackground" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="speed" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="speedAccuracy" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="verticalAccuracy" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <relationship name="cells" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CellTweak" inverseName="location" inverseEntity="CellTweak"/>
+        <fetchIndex name="byUserLocationTimestamp">
+            <fetchIndexElement property="collected" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="latitude"/>
+                <constraint value="longitude"/>
+                <constraint value="speed"/>
+                <constraint value="altitude"/>
+                <constraint value="collected"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+    </entity>
+    <entity name="PacketARI" representedClassName="PacketARI" syncable="YES" codeGenerationType="category">
         <attribute name="collected" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="data" optional="YES" attributeType="Binary"/>
         <attribute name="direction" optional="YES" attributeType="String"/>
+        <attribute name="group" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="imported" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="proto" optional="YES" attributeType="String"/>
-        <relationship name="rejectedCell" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TweakCell" inverseName="rejectPacket" inverseEntity="TweakCell"/>
-        <relationship name="signalStrength" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SignalStrength" inverseName="fromPacket" inverseEntity="SignalStrength"/>
+        <attribute name="type" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="index" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="PacketIndexARI" inverseName="packet" inverseEntity="PacketIndexARI"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="collected"/>
+                <constraint value="direction"/>
+                <constraint value="group"/>
+                <constraint value="type"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
     </entity>
     <entity name="PacketIndexARI" representedClassName="PacketIndexARI" syncable="YES" codeGenerationType="class">
         <attribute name="collected" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="reject" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="signal" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
-        <relationship name="packet" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ARIPacket" inverseName="index" inverseEntity="ARIPacket"/>
+        <relationship name="packet" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PacketARI" inverseName="index" inverseEntity="PacketARI"/>
         <fetchIndex name="byRejectedPackets" partialIndexPredicate="reject == 1 AND signal == 0">
             <fetchIndexElement property="reject" type="Binary" order="ascending"/>
             <fetchIndexElement property="collected" type="Binary" order="descending"/>
@@ -63,7 +126,7 @@
         <attribute name="collected" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="reject" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="signal" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
-        <relationship name="packet" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="QMIPacket" inverseName="index" inverseEntity="QMIPacket"/>
+        <relationship name="packet" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PacketQMI" inverseName="index" inverseEntity="PacketQMI"/>
         <fetchIndex name="byRejectedPackets" partialIndexPredicate="reject == 1 AND signal == 0">
             <fetchIndexElement property="reject" type="Binary" order="ascending"/>
             <fetchIndexElement property="collected" type="Binary" order="descending"/>
@@ -73,52 +136,23 @@
             <fetchIndexElement property="signal" type="Binary" order="ascending"/>
         </fetchIndex>
     </entity>
-    <entity name="QMIPacket" representedClassName="QMIPacket" parentEntity="Packet" syncable="YES" codeGenerationType="class">
+    <entity name="PacketQMI" representedClassName="PacketQMI" syncable="YES" codeGenerationType="category">
+        <attribute name="collected" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="data" optional="YES" attributeType="Binary"/>
+        <attribute name="direction" optional="YES" attributeType="String"/>
+        <attribute name="imported" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="indication" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="message" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="service" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <relationship name="index" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="PacketIndexQMI" inverseName="packet" inverseEntity="PacketIndexQMI"/>
-    </entity>
-    <entity name="QMISignalStrength" representedClassName="QMISignalStrength" parentEntity="SignalStrength" syncable="YES" codeGenerationType="class">
-        <attribute name="rsrp" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="rsrq" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="rssi" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="snr" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
-    </entity>
-    <entity name="SignalStrength" representedClassName="SignalStrength" syncable="YES" codeGenerationType="class">
-        <relationship name="forCell" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TweakCell" inverseName="signalStrengths" inverseEntity="TweakCell"/>
-        <relationship name="fromPacket" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Packet" inverseName="signalStrength" inverseEntity="Packet"/>
-    </entity>
-    <entity name="TweakCell" representedClassName="TweakCell" parentEntity="Cell" syncable="YES" codeGenerationType="class">
-        <attribute name="band" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="bandwidth" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="collected" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="json" optional="YES" attributeType="String"/>
-        <attribute name="neighborTechnology" optional="YES" attributeType="String"/>
-        <attribute name="nextVerification" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="notificationSent" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
-        <attribute name="preciseTechnology" optional="YES" attributeType="String"/>
-        <attribute name="score" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="status" optional="YES" attributeType="String"/>
-        <relationship name="location" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UserLocation" inverseName="cells" inverseEntity="UserLocation"/>
-        <relationship name="rejectPacket" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Packet" inverseName="rejectedCell" inverseEntity="Packet"/>
-        <relationship name="signalStrengths" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="SignalStrength" inverseName="forCell" inverseEntity="SignalStrength"/>
-        <relationship name="verification" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ALSCell" inverseName="verified" inverseEntity="ALSCell"/>
-        <fetchIndex name="byTweakCellCollected">
-            <fetchIndexElement property="collected" type="Binary" order="descending"/>
-        </fetchIndex>
-    </entity>
-    <entity name="UserLocation" representedClassName="UserLocation" parentEntity="Location" syncable="YES" codeGenerationType="class">
-        <attribute name="altitude" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
-        <attribute name="background" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
-        <attribute name="collected" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="preciseBackground" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
-        <attribute name="speed" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
-        <attribute name="speedAccuracy" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
-        <attribute name="verticalAccuracy" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
-        <relationship name="cells" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="TweakCell" inverseName="location" inverseEntity="TweakCell"/>
-        <fetchIndex name="byUserLocationTimestamp">
-            <fetchIndexElement property="collected" type="Binary" order="ascending"/>
-        </fetchIndex>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="collected"/>
+                <constraint value="direction"/>
+                <constraint value="indication"/>
+                <constraint value="message"/>
+                <constraint value="service"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
     </entity>
 </model>

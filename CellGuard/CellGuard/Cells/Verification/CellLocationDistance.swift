@@ -55,7 +55,7 @@ struct CellLocationDistance {
         return score.clamped(to: 0.0...1.0)
     }
     
-    static func distance(userLocation: UserLocation, alsLocation: ALSLocation) -> CellLocationDistance {
+    static func distance(userLocation: LocationUser, alsLocation: LocationALS) -> CellLocationDistance {
         let clUserLocation = CLLocation(latitude: userLocation.latitude, longitude: userLocation.longitude)
         let clAlsLocation = CLLocation(latitude: alsLocation.latitude, longitude: alsLocation.longitude)
         

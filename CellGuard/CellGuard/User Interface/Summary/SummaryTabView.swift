@@ -94,13 +94,13 @@ struct SummaryTabView: View {
 
 private struct CombinedRiskCellView: View {
     
-    @FetchRequest private var tweakCells: FetchedResults<TweakCell>
+    @FetchRequest private var tweakCells: FetchedResults<CellTweak>
     
     init() {
-        let latestTweakCellRequest = NSFetchRequest<TweakCell>()
-        latestTweakCellRequest.entity = TweakCell.entity()
+        let latestTweakCellRequest = NSFetchRequest<CellTweak>()
+        latestTweakCellRequest.entity = CellTweak.entity()
         latestTweakCellRequest.fetchLimit = 1
-        latestTweakCellRequest.sortDescriptors = [NSSortDescriptor(keyPath: \TweakCell.collected, ascending: false)]
+        latestTweakCellRequest.sortDescriptors = [NSSortDescriptor(keyPath: \CellTweak.collected, ascending: false)]
         _tweakCells = FetchRequest(fetchRequest: latestTweakCellRequest)
     }
     

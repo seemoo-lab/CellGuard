@@ -16,13 +16,13 @@ enum GroupedMeasurementsError: Error {
 
 struct GroupedMeasurements: Identifiable {
     
-    let measurements: [TweakCell]
+    let measurements: [CellTweak]
     let openEnd: Bool
     let start: Date
     let end: Date
     let id: Int
     
-    init(measurements: [TweakCell], openEnd: Bool) throws {
+    init(measurements: [CellTweak], openEnd: Bool) throws {
         // We require that the list contains at least one element
         if measurements.isEmpty {
             throw GroupedMeasurementsError.emptyList
@@ -59,7 +59,7 @@ struct GroupedMeasurements: Identifiable {
         self.id = hash
     }
     
-    static func countByStatus(measurements: any RandomAccessCollection<TweakCell>) -> (pending: Int, trusted: Int, suspicious: Int, untrusted: Int) {
+    static func countByStatus(measurements: any RandomAccessCollection<CellTweak>) -> (pending: Int, trusted: Int, suspicious: Int, untrusted: Int) {
         let pendingCount = measurements.filter { $0.status != CellStatus.verified.rawValue }.count
         
         let verified = measurements.filter { $0.status == CellStatus.verified.rawValue }

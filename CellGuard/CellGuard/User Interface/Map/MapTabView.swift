@@ -19,10 +19,10 @@ struct MapTabView: View {
     private var locationManager: LocationDataManager
     
     @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \ALSCell.imported, ascending: false)],
-        predicate: NSPredicate(format: "location != nil")
+        sortDescriptors: [NSSortDescriptor(keyPath: \CellALS.imported, ascending: false)],
+        predicate: NSPredicate(format: "location != nil AND (ANY verified != nil)")
     )
-    private var alsCells: FetchedResults<ALSCell>
+    private var alsCells: FetchedResults<CellALS>
     
     @State private var navigationActive = false
     @State private var navigationTarget: NSManagedObjectID? = nil
@@ -34,7 +34,7 @@ struct MapTabView: View {
                 // TODO: I guess this isn't liked? Better use ZStack?
                 NavigationLink(isActive: $navigationActive) {
                     if let target = navigationTarget,
-                       let cell = managedContext.object(with: target) as? ALSCell {
+                       let cell = managedContext.object(with: target) as? CellALS {
                         CellDetailsView(cell: cell)
                     } else {
                         Text("Cell not found")

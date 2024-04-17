@@ -9,13 +9,13 @@ import SwiftUI
 
 struct PacketCell: View {
     
-    let packet: Packet
+    let packet: any Packet
     
     var body: some View {
         VStack {
-            if let qmiPacket = packet as? QMIPacket {
+            if let qmiPacket = packet as? PacketQMI {
                 PacketCellQMIBody(packet: qmiPacket)
-            } else if let ariPacket = packet as? ARIPacket {
+            } else if let ariPacket = packet as? PacketARI {
                 PacketCellARIBody(packet: ariPacket)
             }
             PacketCellFooter(packet: packet)
@@ -25,7 +25,7 @@ struct PacketCell: View {
 
 private struct PacketCellQMIBody: View {
     
-    let packet: QMIPacket
+    let packet: PacketQMI
     
     var body: some View {
         let definitions = QMIDefinitions.shared
@@ -42,7 +42,7 @@ private struct PacketCellQMIBody: View {
                 
                 // We can combine text views using the + operator
                 // See: https://www.hackingwithswift.com/quick-start/swiftui/how-to-combine-text-views-together
-                Text("\(packet.proto ?? "???") \(packet.indication ? "Indication" : "Message")")
+                Text("\(packet.proto) \(packet.indication ? "Indication" : "Message")")
                     .bold()
                 + Text(" (\(service?.shortName ?? hexString(packet.service))) ")
                 + GrayText(bytes: packet.data?.count ?? 0)
@@ -60,7 +60,7 @@ private struct PacketCellQMIBody: View {
 
 private struct PacketCellARIBody: View {
     
-    let packet: ARIPacket
+    let packet: PacketARI
     
     var body: some View {
         let definitions = ARIDefinitions.shared
@@ -93,7 +93,7 @@ private struct PacketCellARIBody: View {
 
 private struct PacketCellFooter: View {
     
-    let packet: Packet
+    let packet: any Packet
     
     var body: some View {
         HStack {
@@ -128,7 +128,7 @@ private func GrayText(hex: any BinaryInteger) -> Text {
 struct PacketCell_Previews: PreviewProvider {
     static var previews: some View {
         let context = PersistenceController.preview.container.viewContext
-        let packets = PersistencePreview.packets(context: context)
+        let packets = PersistencePreview.packets(context: context).map { PacketContainer(packet: $0) }
         
         NavigationView {
             List {
@@ -136,7 +136,7 @@ struct PacketCell_Previews: PreviewProvider {
                     NavigationLink {
                         Text("Hello")
                     } label: {
-                        PacketCell(packet: packet)
+                        PacketCell(packet: packet.packet)
                             .environment(\.managedObjectContext, context)
                     }
                 }

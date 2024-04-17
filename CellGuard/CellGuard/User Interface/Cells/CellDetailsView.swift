@@ -48,9 +48,9 @@ struct CellDetailsView: View {
         .navigationTitle("\(cell.technology ?? "Unknown") Cell")
     }
     
-    private func fetchRequests() -> (FetchRequest<ALSCell>, FetchRequest<TweakCell>) {
-        let alsCellsRequest = FetchRequest<ALSCell>(
-            sortDescriptors: [NSSortDescriptor(keyPath: \ALSCell.imported, ascending: false)],
+    private func fetchRequests() -> (FetchRequest<CellALS>, FetchRequest<CellTweak>) {
+        let alsCellsRequest = FetchRequest<CellALS>(
+            sortDescriptors: [NSSortDescriptor(keyPath: \CellALS.imported, ascending: false)],
             predicate: PersistenceController.shared.sameCellPredicate(cell: cell, mergeUMTS: true),
             animation: .default
         )
@@ -64,8 +64,8 @@ struct CellDetailsView: View {
                 measurementPredicates.append(NSPredicate(format: "collected <= %@", end as NSDate))
             }
         }
-        let measurementsRequest = FetchRequest<TweakCell>(
-            sortDescriptors: [NSSortDescriptor(keyPath: \TweakCell.collected, ascending: false)],
+        let measurementsRequest = FetchRequest<CellTweak>(
+            sortDescriptors: [NSSortDescriptor(keyPath: \CellTweak.collected, ascending: false)],
             predicate: NSCompoundPredicate(andPredicateWithSubpredicates: measurementPredicates),
             animation: .default
         )
@@ -77,10 +77,10 @@ struct CellDetailsView: View {
 
 private struct TweakCellDetailsMap: View {
     
-    @FetchRequest private var alsCells: FetchedResults<ALSCell>
-    @FetchRequest private var measurements: FetchedResults<TweakCell>
+    @FetchRequest private var alsCells: FetchedResults<CellALS>
+    @FetchRequest private var measurements: FetchedResults<CellTweak>
     
-    init(alsCells: FetchRequest<ALSCell>, measurements: FetchRequest<TweakCell>) {
+    init(alsCells: FetchRequest<CellALS>, measurements: FetchRequest<CellTweak>) {
         self._alsCells = alsCells
         self._measurements = measurements
     }
@@ -123,9 +123,9 @@ private struct CellDetailsCell: View {
                 CellDetailsRow(techFormatter.cell(), cell.cell)
             }
             
-            if let measurement = cell as? TweakCell, let alsCell = measurement.verification {
+            if let measurement = cell as? CellTweak, let alsCell = measurement.verification {
                 CellDetailsALSInfo(alsCell: alsCell, techFormatter: techFormatter)
-            } else if let alsCell = cell as? ALSCell {
+            } else if let alsCell = cell as? CellALS {
                 CellDetailsALSInfo(alsCell: alsCell, techFormatter: techFormatter)
             }
         }
@@ -135,7 +135,7 @@ private struct CellDetailsCell: View {
 
 private struct CellDetailsALSInfo: View {
     
-    let alsCell: ALSCell
+    let alsCell: CellALS
     let techFormatter: CellTechnologyFormatter
     
     var body: some View {
@@ -155,10 +155,10 @@ private struct CellDetailsALSInfo: View {
 
 private struct TweakCellDetailsMeasurementCount: View {
     
-    @FetchRequest private var alsCells: FetchedResults<ALSCell>
-    @FetchRequest private var measurements: FetchedResults<TweakCell>
+    @FetchRequest private var alsCells: FetchedResults<CellALS>
+    @FetchRequest private var measurements: FetchedResults<CellTweak>
     
-    init(alsCells: FetchRequest<ALSCell>, measurements: FetchRequest<TweakCell>) {
+    init(alsCells: FetchRequest<CellALS>, measurements: FetchRequest<CellTweak>) {
         self._alsCells = alsCells
         self._measurements = measurements
     }
@@ -191,13 +191,13 @@ private struct TweakCellDetailsMeasurementCount: View {
 
 private struct TweakCellMeasurementList: View {
     
-    let measurements: FetchedResults<TweakCell>
+    let measurements: FetchedResults<CellTweak>
     
     var body: some View {
         List {
             ForEach(groupByDay(), id: \.key) { (day, dayMeasurements) in
                 Section(header: Text(mediumDateFormatter.string(from: day))) {
-                    ForEach(dayMeasurements, id: \TweakCell.id) { measurement in
+                    ForEach(dayMeasurements, id: \CellTweak.id) { measurement in
                         TweakCellMeasurementNavLink(measurement: measurement)
                     }
                 }
@@ -208,7 +208,7 @@ private struct TweakCellMeasurementList: View {
         .listStyle(.insetGrouped)
     }
     
-    private func groupByDay() -> [(key: Date, value: [TweakCell])] {
+    private func groupByDay() -> [(key: Date, value: [CellTweak])] {
         return Dictionary(grouping: measurements) { Calendar.current.startOfDay(for: $0.collected ?? Date()) }
             .sorted(by: {$0.key > $1.key})
     }
@@ -217,7 +217,7 @@ private struct TweakCellMeasurementList: View {
 
 private struct TweakCellMeasurementNavLink: View {
     
-    let measurement: TweakCell
+    let measurement: CellTweak
     
     var body: some View {
         NavigationLink {
@@ -263,7 +263,7 @@ struct CellDetailsView_Previews: PreviewProvider {
         
     }
     
-    private static func prepareDB() -> (ALSCell, [TweakCell]) {
+    private static func prepareDB() -> (CellALS, [CellTweak]) {
         let context = PersistenceController.preview.container.viewContext
         let alsCell = PersistencePreview.alsCell(context: context)
         let tweakCells = [

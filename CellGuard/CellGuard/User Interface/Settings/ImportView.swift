@@ -50,7 +50,7 @@ enum ImportFileType {
 private enum ImportStatus: Equatable {
     
     case none
-    case count(Int)
+    case count(ImportCount?)
     case progress(Float)
     case infinite
     case error
@@ -84,6 +84,7 @@ struct ImportView: View {
     @State var fileImporterPresented: Bool = false
     @State var fileUrl: URL? = nil
     let fileUrlFixed: Bool
+    @State var initialFilePropertiesUpdate = true
     @State var fileSize: String? = nil
     @State var fileType: ImportFileType? = nil
     
@@ -103,6 +104,10 @@ struct ImportView: View {
     @State private var importStatusParse: ImportStatus = .none
     @State private var importStatusImport: ImportStatus = .none
     
+    @State private var importNotices: [ImportNotice] = []
+    
+    @AppStorage(UserDefaultsKeys.highVolumeSpeedup.rawValue) private var highVolumeSpeedup = true
+    
     init() {
         self.fileUrlFixed = false
     }
@@ -121,6 +126,7 @@ struct ImportView: View {
                     HStack {
                         Text(fileUrl?.lastPathComponent ?? "None")
                             .foregroundColor(.primary)
+                            .font(fileUrl != nil ? .system(size: 14) : .body)
                         Spacer()
                         Image(systemName: "folder")
                     }
@@ -163,6 +169,14 @@ struct ImportView: View {
                 }
             }
             
+            if !importNotices.isEmpty {
+                Section(header: Text("Notices")) {
+                    ForEach(importNotices) { notice in
+                        Text(notice.text)
+                    }
+                }
+            }
+            
             if let fileUrl = fileUrl {
                 Section(header: Text("Actions"), footer: Text(footerInfoText())) {
                     Button {
@@ -199,6 +213,12 @@ struct ImportView: View {
                         }
                     }
                 }
+            } else {
+                Section(header: Text("Sysdiagnoses"), footer: Text("You can view recorded sysdiagnoses by navigating to Settings > Privacy > Analytics & Improvements > Analytics Data. Select a 'sysdiagnose' file and share it with CellGuard to start the import.")) {
+                    Link(destination: URL(string: UIApplication.openSettingsURLString)!) {
+                        Text("Open Settings")
+                    }
+                }
             }
         }
         .listStyle(.insetGrouped)
@@ -216,7 +236,10 @@ struct ImportView: View {
             }
         }
         .onAppear() {
-            updateFileProperties()
+            if (initialFilePropertiesUpdate) {
+                initialFilePropertiesUpdate = false
+                updateFileProperties()
+            }
         }
     }
     
@@ -253,7 +276,7 @@ struct ImportView: View {
                 finishImport(result: $0)
             }
         case .sysdiagnose:
-            LogArchiveReader.importInBackground(url: url) { phase, currentProgress, totalProgress in
+            LogArchiveReader.importInBackground(url: url, highVolumeSpeedup: highVolumeSpeedup) { phase, currentProgress, totalProgress in
                 let progress = Float(currentProgress) / Float(totalProgress)
                 switch (phase) {
                 case .unarchiving:
@@ -290,7 +313,8 @@ struct ImportView: View {
             importStatusALSCells = .count(counts.alsCells)
             importStatusLocations = .count(counts.locations)
             importStatusPackets = .count(counts.packets)
-            Self.logger.info("Successfully imported \(counts.cells) cells, \(counts.locations) locations, and \(counts.packets) packets.")
+            importNotices = counts.notices
+            Self.logger.info("Successfully imported \(counts.cells?.count ?? 0) cells, \(counts.alsCells?.count ?? 0) ALS cells, \(counts.locations?.count ?? 0) locations, and \(counts.packets?.count ?? 0) packets.")
         } catch {
             importError = error.localizedDescription
             Self.logger.info("Import failed due to \(error)")
@@ -367,7 +391,20 @@ private struct ImportStatusRow: View {
     }
     
     var body: some View {
-        return HStack {
+        if detailContentLink {
+            NavigationLink {
+                detailContent
+                    .navigationTitle(text)
+            } label: {
+                row
+            }
+        } else {
+            row
+        }
+    }
+    
+    var row: some View {
+        HStack {
             Text(text)
             Spacer()
             content
@@ -379,7 +416,7 @@ private struct ImportStatusRow: View {
         case .none:
             return AnyView(EmptyView())
         case let .count(count):
-            return AnyView(Text("\(count)"))
+            return AnyView(Text("\(count?.count ?? 0)"))
         case .progress:
             return AnyView(CircularProgressView(progress: $status.progress)
                 .frame(width: 20, height: 20))
@@ -389,6 +426,37 @@ private struct ImportStatusRow: View {
             return AnyView(Image(systemName: "xmark").foregroundColor(.gray))
         case .finished:
             return AnyView(Image(systemName: "checkmark").foregroundColor(.gray))
+        }
+    }
+    
+    var detailContentLink: Bool {
+        switch (status) {
+        case let .count(count):
+            if count?.first != nil && count?.last != nil {
+                return true
+            } else {
+                return false
+            }
+        default:
+            return false
+        }
+    }
+    
+    var detailContent: AnyView {
+        switch (status) {
+        case let .count(count):
+            if let firstDate = count?.first, let lastDate = count?.last {
+                return AnyView(List {
+                    KeyValueListRow(key: "Imported Entries", value: "\(count?.count ?? 0)")
+                    KeyValueListRow(key: "First", value: mediumDateTimeFormatter.string(from: firstDate))
+                    KeyValueListRow(key: "Last", value: mediumDateTimeFormatter.string(from: lastDate))
+                })
+            } else {
+                // We can't offer any additional information
+                return AnyView(EmptyView())
+            }
+        default:
+            return AnyView(EmptyView())
         }
     }
 }
