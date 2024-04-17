@@ -21,6 +21,7 @@ struct SettingsView: View {
     
     @AppStorage(UserDefaultsKeys.showTrackingMarker.rawValue) var showTrackingMarker: Bool = false
     @AppStorage(UserDefaultsKeys.appMode.rawValue) var appMode: DataCollectionMode = .none
+    @AppStorage(UserDefaultsKeys.highVolumeSpeedup.rawValue) var highVolumeSpeedup: Bool = true
     
     @EnvironmentObject var locationManager: LocationDataManager
     @EnvironmentObject var notificationManager: CGNotificationManager
@@ -81,6 +82,10 @@ struct SettingsView: View {
                 })
                 // TODO: Add expected date of expiry & allow the user to manually set the date
                 // TODO: Add toggle to notify user notifications before the profile's expiry
+            }
+            
+            Section(header: Text("HighVolume Log Speedup"), footer: Text("Only scan certain log files from sysdiagnoses to speed up their import. Will be automatically disabled if not applicable for your system.")) {
+                Toggle("Enable Speedup", isOn: $highVolumeSpeedup)
             }
             
             Section(header: Text("Permissions")) {

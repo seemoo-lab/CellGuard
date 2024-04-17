@@ -57,7 +57,7 @@ struct LogArchiveReader {
     private static let rustApp = RustApp.init()
     public static var logParseProgress: (() -> Void)?
     
-    static func importInBackground(url: URL, progress: @escaping LogProgressFunc, completion: @escaping (Result<ImportResult, Error>) -> ()) {
+    static func importInBackground(url: URL, highVolumeSpeedup: Bool, progress: @escaping LogProgressFunc, completion: @escaping (Result<ImportResult, Error>) -> ()) {
         // It's crucial that the task has not the lowest priority, otherwise the process is very slloooowww
         Task(priority: TaskPriority.high) {
             PortStatus.importActive.store(true, ordering: .relaxed)
@@ -67,7 +67,7 @@ struct LogArchiveReader {
                     progress(phase, cur, total)
                 }
             }
-            let result = try LogArchiveReader().read(url: url, rust: rustApp, progress: localProgress)
+            let result = try LogArchiveReader().read(url: url, highVolumeSpeedup: highVolumeSpeedup, rust: rustApp, progress: localProgress)
             
             DispatchQueue.main.async {
                 completion(Result.success(result))
@@ -79,7 +79,8 @@ struct LogArchiveReader {
     
     private let fileManager = FileManager.default
     
-    func read(url: URL, rust: RustApp, progress: @escaping LogProgressFunc) throws -> ImportResult {
+    func read(url: URL, highVolumeSpeedup: Bool, rust: RustApp, progress: @escaping LogProgressFunc) throws -> ImportResult {
+        Self.logger.debug("Reading log archive at \(url) with HighVolume speedup = \(highVolumeSpeedup)")
         progress(.unarchiving, 0, 0)
         let tmpDir: URL
         do {
@@ -98,9 +99,26 @@ struct LogArchiveReader {
         }
         
         progress(.extractingTar, 0, 0)
-        let logArchive: URL
+        var logArchive: URL
+        var highVolumeSpeedup = highVolumeSpeedup
+        var fileCountTraceV3 = 0
         do {
-            logArchive = try extractLogArchive(tmpDir: tmpDir, tmpTarFile: tmpTarFile)
+            logArchive = try extractLogArchive(tmpDir: tmpDir, tmpTarFile: tmpTarFile, highVolumeSpeedup: highVolumeSpeedup)
+            fileCountTraceV3 = try countLogArchiveFiles(logArchiveDir: logArchive, highVolumeSpeedup: highVolumeSpeedup)
+            
+            // If the speed-up is enabled, check if the log archive yields HighVolume tracev3 files.
+            // If not, we can't apply the speed-up and have to scan all tracev3 files.
+            if highVolumeSpeedup && fileCountTraceV3 == 0 {
+                Self.logger.debug("Disables HighVolume speed-up as there is no HighVolume directory")
+                highVolumeSpeedup = false
+                // Redo the extraction as we need all tracev3 files for parsing
+                logArchive = try extractLogArchive(tmpDir: tmpDir, tmpTarFile: tmpTarFile, highVolumeSpeedup: highVolumeSpeedup)
+                fileCountTraceV3 = try countLogArchiveFiles(logArchiveDir: logArchive, highVolumeSpeedup: highVolumeSpeedup)
+                // Disable the speed-up for future invocations as future sysdiagnoses recorded with the device will also not support the speed-up.
+                // The user can always re-enable the speed-up in the settings.
+                UserDefaults.standard.setValue(false, forKey: UserDefaultsKeys.highVolumeSpeedup.rawValue)
+            }
+            
             try fileManager.removeItem(at: tmpTarFile)
         } catch {
             throw LogArchiveError.extractLogArchiveFailed(error)
@@ -108,10 +126,9 @@ struct LogArchiveReader {
         
         let csvFile: URL
         do {
-            let totalFileCount = try countLogArchiveFiles(logArchiveDir: logArchive)
             var currentFileCount = 0
             Self.logParseProgress = {
-                progress(.parsingLogs, currentFileCount, totalFileCount)
+                progress(.parsingLogs, currentFileCount, fileCountTraceV3)
                 currentFileCount += 1
             }
             
@@ -120,7 +137,7 @@ struct LogArchiveReader {
             // Can we do the same? -> Yes, we already doing this in Rust.
             // The function `output` in the file `src/csv_parser.rs` filters log entries based on their subsystem and content.
             // Therefore, we have to modify the function if we want to analyze log entries of different subsystems.
-            csvFile = try parseLogArchive(tmpDir: tmpDir, logArchiveDir: logArchive, rust: rust)
+            csvFile = try parseLogArchive(tmpDir: tmpDir, logArchiveDir: logArchive, highVolumeSpeedup: highVolumeSpeedup, rust: rust)
             
             Self.logParseProgress = nil
             try fileManager.removeItem(at: logArchive)
@@ -141,8 +158,6 @@ struct LogArchiveReader {
         } catch {
             throw LogArchiveError.readCsvFailed(error)
         }
-        
-        // TODO: in a final step, merge duplicates from coredata
     }
     
     private func createTmpDir() throws -> URL {
@@ -160,7 +175,7 @@ struct LogArchiveReader {
     private func unarchive(url: URL, tmpDir: URL) throws -> URL {
         let unarchivedData = try Data(contentsOf: url).gunzipped()
         
-        Self.logger.debug("Writing tar to FS")
+        Self.logger.debug("Writing gunzipped tar to FS")
         let tmpTarFile = tmpDir.appendingPathComponent("sysdiagnose.tar")
         try unarchivedData.write(to: tmpTarFile)
         Self.logger.debug("Wrote tar to \(tmpDir.absoluteString)")
@@ -168,8 +183,8 @@ struct LogArchiveReader {
         return tmpTarFile
     }
     
-    private func extractLogArchive(tmpDir: URL, tmpTarFile: URL) throws -> URL {
-        Self.logger.debug("Reading tar stuff")
+    private func extractLogArchive(tmpDir: URL, tmpTarFile: URL, highVolumeSpeedup: Bool) throws -> URL {
+        Self.logger.debug("Extracting tar contents")
         let fileHandle = try FileHandle(forReadingFrom: tmpTarFile)
         defer { try? fileHandle.close() }
         
@@ -191,6 +206,12 @@ struct LogArchiveReader {
                 
                 let path = nameComponents[logArchiveIndex...nameComponents.count-1]
                     .reduce(tmpDir) { $0.appendingPathComponent(String($1)) }
+                
+                // Only extract HighVolume/*.travev3 files if the speedup is enabled as other tracev3 files are not read.
+                if highVolumeSpeedup && path.lastPathComponent.hasSuffix(".tracev3") && !path.pathComponents.contains("HighVolume") {
+                    Self.logger.debug("Skipping extraction from TAR due to HighVolume speed up: \(path)")
+                    return
+                }
                 
                 try fileManager.createDirectory(at: path.deletingLastPathComponent(), withIntermediateDirectories: true)
                 try entry.data?.write(to: path)
@@ -230,7 +251,7 @@ struct LogArchiveReader {
         return logArchiveDir
     }
         
-    private func countLogArchiveFiles(logArchiveDir: URL) throws -> Int {
+    private func countLogArchiveFiles(logArchiveDir: URL, highVolumeSpeedup: Bool) throws -> Int {
         // See: https://stackoverflow.com/a/41979314
         let resourceKeys : [URLResourceKey] = [.isDirectoryKey]
         guard let enumerator = fileManager.enumerator(at: logArchiveDir, includingPropertiesForKeys: resourceKeys) else {
@@ -246,22 +267,26 @@ struct LogArchiveReader {
             }
             // We search for files which will be parsed by the library
             if fileUrl.lastPathComponent.hasSuffix(".tracev3") {
-                count += 1
+                if highVolumeSpeedup && fileUrl.pathComponents.contains("HighVolume") {
+                    count += 1
+                } else if !highVolumeSpeedup {
+                    count += 1
+                }
             }
         }
         
         return count
     }
     
-    private func parseLogArchive(tmpDir: URL, logArchiveDir: URL, rust: RustApp) throws -> URL {
-        Self.logger.debug("Extracting stuff")
+    private func parseLogArchive(tmpDir: URL, logArchiveDir: URL, highVolumeSpeedup: Bool, rust: RustApp) throws -> URL {
+        Self.logger.debug("Parsing extracted log archive using macos-unifiedlogs")
         
         // Define the path of the output file
         let outFile = tmpDir.appendingPathComponent("system_logs", conformingTo: .commaSeparatedText)
         
         // Call the native macos-unifiedlogs via swift-bridge
         // It the returns the total number of parsed log lines
-        _ = rust.parse_system_log(logArchiveDir.path, outFile.path)
+        _ = rust.parse_system_log(logArchiveDir.path, outFile.path, highVolumeSpeedup)
 
         return outFile
     }

@@ -9,17 +9,17 @@ use std::error::Error;
 use std::fs;
 use std::fs::OpenOptions;
 use std::path::PathBuf;
+
 use macos_unifiedlogs::dsc::SharedCacheStrings;
-use macos_unifiedlogs::parser::{
-    build_log, collect_shared_strings, collect_strings, collect_timesync, parse_log,
-};
+use macos_unifiedlogs::parser::{build_log_with_filter, collect_shared_strings, collect_strings, collect_timesync, parse_log};
 use macos_unifiedlogs::timesync::TimesyncBoot;
 use macos_unifiedlogs::unified_log::{LogData, UnifiedLogData};
 use macos_unifiedlogs::uuidtext::UUIDText;
+
 use crate::ffi;
 
-// Parse a provided directory path. Currently expect the path to follow macOS log collect structure
-pub fn parse_log_archive(path: &str, output_path: &str) -> u32 {
+// Parse a provided directory path. Currently, expect the path to follow macOS log collect structure.
+pub fn parse_log_archive(path: &str, output_path: &str, high_volume_speedup: bool) -> u32 {
     let mut archive_path = PathBuf::from(path);
 
     // Parse all UUID files which contain strings and other metadata
@@ -38,26 +38,29 @@ pub fn parse_log_archive(path: &str, output_path: &str) -> u32 {
 
     // Keep UUID, UUID cache, timesync files in memory while we parse all tracev3 files
     // Allows for faster lookups
-    let log_count = parse_trace_file(
+    let log_count = parse_trace_files(
         &string_results,
         &shared_strings_results,
         &timesync_data,
         path,
         output_path,
+        high_volume_speedup,
     );
 
     println!("\nFinished parsing Unified Log data. Saved results to: output.csv");
-    return log_count
+    return log_count;
 }
 
 // Use the provided strings, shared strings, timesync data to parse the Unified Log data at provided path.
-// Currently expect the path to follow macOS log collect structure
-fn parse_trace_file(
+// Currently, expect the path to follow macOS log collect structure.
+// If high_volume = true, only scan tracev3 files in the HighVolume folder as they are the only ones containing interesting cellular logs.
+fn parse_trace_files(
     string_results: &[UUIDText],
     shared_strings_results: &[SharedCacheStrings],
     timesync_data: &[TimesyncBoot],
     path: &str,
     output_path: &str,
+    high_volume_speedup: bool,
 ) -> u32 {
     // We need to persist the Oversize log entries (they contain large strings that don't fit in normal log entries)
     // Some log entries have Oversize strings located in different tracev3 files.
@@ -77,7 +80,7 @@ fn parse_trace_file(
     archive_path.push("Persist");
 
     let mut log_count: usize = 0;
-    if archive_path.exists() {
+    if archive_path.exists() && !high_volume_speedup {
         let paths = fs::read_dir(&archive_path).unwrap();
 
         // Loop through all tracev3 files in Persist directory
@@ -95,12 +98,13 @@ fn parse_trace_file(
             };
 
             // Get all constructed logs and any log data that failed to get constrcuted (exclude_missing = true)
-            let (results, missing_logs) = build_log(
+            let (results, missing_logs) = build_log_with_filter(
                 &log_data,
                 string_results,
                 shared_strings_results,
                 timesync_data,
                 exclude_missing,
+                &filter_cellular,
             );
             // Track Oversize entries
             oversize_strings
@@ -117,7 +121,7 @@ fn parse_trace_file(
     archive_path.pop();
     archive_path.push("Special");
 
-    if archive_path.exists() {
+    if archive_path.exists() && !high_volume_speedup {
         let paths = fs::read_dir(&archive_path).unwrap();
 
         // Loop through all tracev3 files in Special directory
@@ -136,12 +140,13 @@ fn parse_trace_file(
 
             // Append our old Oversize entries in case these logs point to other Oversize entries the previous tracev3 files
             log_data.oversize.append(&mut oversize_strings.oversize);
-            let (results, missing_logs) = build_log(
+            let (results, missing_logs) = build_log_with_filter(
                 &log_data,
                 string_results,
                 shared_strings_results,
                 timesync_data,
                 exclude_missing,
+                &filter_cellular,
             );
             // Track Oversize entries
             oversize_strings.oversize = log_data.oversize;
@@ -156,7 +161,7 @@ fn parse_trace_file(
     archive_path.pop();
     archive_path.push("Signpost");
 
-    if archive_path.exists() {
+    if archive_path.exists() && !high_volume_speedup {
         let paths = fs::read_dir(&archive_path).unwrap();
 
         // Loop through all tracev3 files in Signpost directory
@@ -173,12 +178,13 @@ fn parse_trace_file(
                 continue;
             };
 
-            let (results, missing_logs) = build_log(
+            let (results, missing_logs) = build_log_with_filter(
                 &log_data,
                 string_results,
                 shared_strings_results,
                 timesync_data,
                 exclude_missing,
+                &filter_cellular,
             );
 
             // Signposts have not been seen with Oversize entries
@@ -210,12 +216,13 @@ fn parse_trace_file(
 
             // Append our old Oversize entries in case these logs point to other Oversize entries the previous tracev3 files
             log_data.oversize.append(&mut oversize_strings.oversize);
-            let (results, missing_logs) = build_log(
+            let (results, missing_logs) = build_log_with_filter(
                 &log_data,
                 string_results,
                 shared_strings_results,
                 timesync_data,
                 exclude_missing,
+                &filter_cellular,
             );
 
             // Track Oversize entries
@@ -231,16 +238,17 @@ fn parse_trace_file(
     archive_path.push("logdata.LiveData.tracev3");
 
     // Check if livedata exists. We only have it if 'log collect' was used
-    if archive_path.exists() {
+    if archive_path.exists() && !high_volume_speedup {
         println!("Parsing: logdata.LiveData.tracev3");
         let mut log_data = parse_log(&archive_path.display().to_string()).unwrap();
         log_data.oversize.append(&mut oversize_strings.oversize);
-        let (results, missing_logs) = build_log(
+        let (results, missing_logs) = build_log_with_filter(
             &log_data,
             string_results,
             shared_strings_results,
             timesync_data,
             exclude_missing,
+            &filter_cellular,
         );
         // Track missing data
         missing_data.push(missing_logs);
@@ -264,12 +272,13 @@ fn parse_trace_file(
         // Exclude_missing = false
         // If we fail to find any missing data its probably due to the logs rolling
         // Ex: tracev3A rolls, tracev3B references Oversize entry in tracev3A will trigger missing data since tracev3A is gone
-        let (results, _) = build_log(
+        let (results, _) = build_log_with_filter(
             &leftover_data,
             string_results,
             shared_strings_results,
             timesync_data,
             exclude_missing,
+            &filter_cellular,
         );
         log_count += results.len();
 
@@ -278,6 +287,38 @@ fn parse_trace_file(
     println!("Parsed {} log entries", log_count);
 
     return u32::try_from(log_count).unwrap_or(0);
+}
+
+fn filter_cellular(log_data: &LogData) -> bool {
+    // Pre-scan the log entries written to the CSV file, so that the file is smaller and Swift can parse it faster
+    const PROCESSES: [&str; 1] = [
+        "/System/Library/Frameworks/CoreTelephony.framework/Support/CommCenter",
+        // "/usr/sbin/WirelessRadioManagerd"
+    ];
+    const SUBSYSTEMS: [&str; 2] = [
+        "com.apple.telephony.bb",
+        "com.apple.CommCenter"
+    ];
+    const CONTENTS: [&str; 2] = [
+        "kCTCellMonitorCellRadioAccessTechnology",
+        "Bin="
+    ];
+
+    if !PROCESSES.contains(&log_data.process.as_str()) {
+        return false;
+    }
+
+    if !SUBSYSTEMS.contains(&log_data.subsystem.as_str()) {
+        return false;
+    }
+
+    for content_query in &CONTENTS {
+        if log_data.message.contains(content_query) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 // Create csv file and create headers
@@ -318,39 +359,8 @@ fn output(results: &Vec<LogData>, file: &str) -> Result<(), Box<dyn Error>> {
         .open(file)?;
     let mut writer = csv::Writer::from_writer(csv_file);
 
-    // Pre-scan the log entries written to the CSV file, so that the file is smaller and Swift can parse it faster
-    const PROCESSES: [&str; 1] = [
-        "/System/Library/Frameworks/CoreTelephony.framework/Support/CommCenter",
-        // "/usr/sbin/WirelessRadioManagerd"
-    ];
-    const SUBSYSTEMS: [&str; 2] = [
-        "com.apple.telephony.bb",
-        "com.apple.CommCenter"
-    ];
-    const CONTENTS: [&str; 2] = [
-        "kCTCellMonitorCellRadioAccessTechnology",
-        "Bin="
-    ];
-
 
     results.iter()
-        .filter(|data| {
-            if !PROCESSES.contains(&data.process.as_str()) {
-                return false;
-            }
-
-            if !SUBSYSTEMS.contains(&data.subsystem.as_str()) {
-                return false;
-            }
-
-            for content_query in &CONTENTS {
-                if data.message.contains(content_query) {
-                    return true;
-                }
-            }
-
-            return false;
-        })
         .for_each(|data| {
             writer.write_record(&[
                 data.time.to_string(),

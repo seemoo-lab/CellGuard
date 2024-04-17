@@ -14,6 +14,7 @@ enum UserDefaultsKeys: String {
     case showTrackingMarker
     case lastExportDate
     case appMode
+    case highVolumeSpeedup
 }
 
 enum DataCollectionMode: String, CaseIterable, Identifiable {
