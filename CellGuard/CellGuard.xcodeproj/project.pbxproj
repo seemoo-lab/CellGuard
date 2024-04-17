@@ -97,6 +97,7 @@
 		CFA09CF92A73D4B000D16832 /* SwiftExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFA09CF82A73D4B000D16832 /* SwiftExtensions.swift */; };
 		CFA632552AB3501800D46025 /* CSV in Frameworks */ = {isa = PBXBuildFile; productRef = CFA632542AB3501800D46025 /* CSV */; };
 		CFA632582AB3503400D46025 /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = CFA632572AB3503400D46025 /* ZIPFoundation */; };
+		CFB323A92BD03AE1007A6807 /* cargo-licenses.json in Resources */ = {isa = PBXBuildFile; fileRef = CFB323A82BD03AE1007A6807 /* cargo-licenses.json */; };
 		CFB51834297AEFA80006C690 /* CellStatusIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB51833297AEFA80006C690 /* CellStatusIcon.swift */; };
 		CFB8B2882963417B00503189 /* LocationDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB8B2872963417B00503189 /* LocationDataManager.swift */; };
 		CFB8B28A2963498200503189 /* CellGuardAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB8B2892963498200503189 /* CellGuardAppDelegate.swift */; };
@@ -252,6 +253,7 @@
 		CF9626C22AB7474500C46953 /* PersistenceCSVExporter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PersistenceCSVExporter.swift; sourceTree = "<group>"; };
 		CF9EEEE72B34B6A500F9B6D8 /* OpenSysdiagnoseSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenSysdiagnoseSettings.swift; sourceTree = "<group>"; };
 		CFA09CF82A73D4B000D16832 /* SwiftExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftExtensions.swift; sourceTree = "<group>"; };
+		CFB323A82BD03AE1007A6807 /* cargo-licenses.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "cargo-licenses.json"; sourceTree = "<group>"; };
 		CFB51833297AEFA80006C690 /* CellStatusIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellStatusIcon.swift; sourceTree = "<group>"; };
 		CFB8B2872963417B00503189 /* LocationDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationDataManager.swift; sourceTree = "<group>"; };
 		CFB8B2892963498200503189 /* CellGuardAppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellGuardAppDelegate.swift; sourceTree = "<group>"; };
@@ -624,6 +626,7 @@
 			children = (
 				CFFF19DE2BC6CF47004E40CE /* Package.resolved */,
 				CF5756172B2F259100C7C60A /* BridgingHeader.h */,
+				CFB323A82BD03AE1007A6807 /* cargo-licenses.json */,
 				CFD023352961A10D00AA5A1C /* CellGuard */,
 				CFD0234B2961A10E00AA5A1C /* CellGuardTests */,
 				CFD023552961A10E00AA5A1C /* CellGuardUITests */,
@@ -872,6 +875,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CFB323A92BD03AE1007A6807 /* cargo-licenses.json in Resources */,
 				CF07EFA72A3B4C10005B53ED /* operator-definitions.json in Resources */,
 				CF4E53942A31CE2500AE2059 /* qmi-definitions.json in Resources */,
 				CFD0233E2961A10D00AA5A1C /* Preview Assets.xcassets in Resources */,

@@ -14,7 +14,7 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 # Install additional iOS targets (64 bit for real device & simulator):
 rustup target add aarch64-apple-ios x86_64-apple-ios
 # Install cargo-lipo
-cargo install cargo-lipo
+cargo install cargo-lipo cargo-bundle-licenses
 ```
 
 The first time after cloning, you have to compile the libraries yourself by executing the following command:
@@ -27,7 +27,7 @@ PROJECT_DIR=. CONFIGURATION=Release ./build-rust.sh
 ```
 If you're using XCode to build an app archive for TestFlight distribution, you should switch the *Build Configuration* setting to *Release* in the *Archive* section. 
 
-Upon changes, XCode will rebuild the libraries automatically. 
+Upon changes, XCode will rebuild the libraries automatically.
 
 ### XCode
 
@@ -84,3 +84,17 @@ To read more on how to build jailbroken apps, see
 ⛔️ Currently, a bug assumed to be caused by Swift concurrency prevents the app from starting if it is installed using a .deb file. Read more on [GitHub](https://github.com/utmapp/UTM/issues/3628#issuecomment-1144471721).
 
 Thus, we recommend the other way of installing the app.
+
+## Update Dependencies
+
+### Rust
+
+To update the Rust dependencies run the following commands in the top-level directory.
+```sh
+# Update Rust dependencies with cargo package manager
+cargo update
+
+# Update generated license file, might require some manual edits
+# See: https://github.com/sstadick/cargo-bundle-licenses?tab=readme-ov-file#usage
+cargo bundle-licenses --format json --output CellGuard/cargo-licenses.json --previous CellGuard/cargo-licenses.json
+```
