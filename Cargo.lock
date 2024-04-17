@@ -248,7 +248,7 @@ dependencies = [
 [[package]]
 name = "macos-unifiedlogs"
 version = "0.1.0"
-source = "git+https://github.com/mandiant/macos-UnifiedLogs#315da6f59b4995bbcc053fcf100ebae9869a186b"
+source = "git+https://github.com/LukBukkit/macos-UnifiedLogs?branch=build-log-with-filter#930be7518efea27dbd017836c571596c9911e3e1"
 dependencies = [
  "base64 0.22.0",
  "byteorder",

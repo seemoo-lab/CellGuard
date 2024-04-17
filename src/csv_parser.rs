@@ -201,12 +201,15 @@ fn parse_trace_file(
             println!("Parsing: {}", full_path);
             ffi::swift_parse_trace_file(full_path.as_str(), u32::try_from(log_count).unwrap_or(0));
 
-            let log_data = if data.path().exists() {
+            let mut log_data = if data.path().exists() {
                 parse_log(&full_path).unwrap()
             } else {
                 println!("File {} no longer on disk", full_path);
                 continue;
             };
+
+            // Append our old Oversize entries in case these logs point to other Oversize entries the previous tracev3 files
+            log_data.oversize.append(&mut oversize_strings.oversize);
             let (results, missing_logs) = build_log(
                 &log_data,
                 string_results,
@@ -215,7 +218,8 @@ fn parse_trace_file(
                 exclude_missing,
             );
 
-            // Oversize entries have not been seen in logs in HighVolume
+            // Track Oversize entries
+            oversize_strings.oversize = log_data.oversize;
             missing_data.push(missing_logs);
             log_count += results.len();
 
