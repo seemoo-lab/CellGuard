@@ -54,6 +54,8 @@
 		<string>location</string>
 		<string>processing</string>
 	</array>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>&quot;Required to access logs&quot;</string>
 	<key>UTExportedTypeDeclarations</key>
 	<array>
 		<dict>
