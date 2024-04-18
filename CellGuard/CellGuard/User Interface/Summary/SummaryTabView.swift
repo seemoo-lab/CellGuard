@@ -68,7 +68,7 @@ struct SummaryTabView: View {
                         Button {
                             showingCellList = true
                         } label: {
-                            Label("Connected Cells", systemImage: "list.bullet")
+                            Label("Cells", systemImage: "antenna.radiowaves.left.and.right")
                         }
                         #if STATS_VIEW
                         // Disable stats for the beta test as it is not finished.
@@ -81,7 +81,7 @@ struct SummaryTabView: View {
                         Button {
                             showingHelp = true
                         } label: {
-                            Label("Help", systemImage: "questionmark.circle")
+                            Label("Help", systemImage: "book")
                         }
                         Button {
                             showingSettings = true
