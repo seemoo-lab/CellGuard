@@ -207,6 +207,7 @@ extension PersistenceController {
                 return .Medium(cause: .Cells(cellCount: cellCount))
             }
             
+            #if JAILBREAK
             // Only check data received from tweaks if the device is jailbroken
             if dataCollectionMode == .automatic {
                 
@@ -248,6 +249,7 @@ extension PersistenceController {
                     return CPTClient.lastConnectionReady > thirtyMinutesAgo ? .Unknown : .Medium(cause: .TweakPackets)
                 }
             }
+            #endif
             
             // Only check locations if the analysis mode is not active
             if dataCollectionMode != .none {

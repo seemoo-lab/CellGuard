@@ -18,7 +18,9 @@ enum UserDefaultsKeys: String {
 }
 
 enum DataCollectionMode: String, CaseIterable, Identifiable {
+    #if JAILBREAK
     case automatic
+    #endif
     case manual
     case none
     
@@ -26,8 +28,10 @@ enum DataCollectionMode: String, CaseIterable, Identifiable {
     
     var description: String {
         switch self {
+        #if JAILBREAK
             // Jailbroken, i.e., import data via querying tweaks
         case .automatic: return "Automatic"
+        #endif
             // Non-jailbroken, i.e., import data by reading sysdiagnosees
         case .manual: return "Manual"
             // Don't import / collect any data, including location, but allow to import CSV files

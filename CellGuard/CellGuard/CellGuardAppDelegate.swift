@@ -60,6 +60,8 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
     private func registerSchedulers() {
         // Register a background refresh task to poll the tweak continuously in the background
         // https://developer.apple.com/documentation/uikit/app_and_environment/scenes/preparing_your_ui_to_run_in_the_background/using_background_tasks_to_update_your_app
+        
+        #if JAILBREAK
         BGTaskScheduler.shared.register(forTaskWithIdentifier: Self.cellRefreshTaskIdentifier, using: nil) { task in
             // Only collect cells in the background if the app runs on a jailbroken device
             if UserDefaults.standard.dataCollectionMode() != DataCollectionMode.automatic {
@@ -102,6 +104,7 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
                 task.setTaskCompleted(success: count != nil)
             }
         }
+        #endif
         
         BGTaskScheduler.shared.register(forTaskWithIdentifier: Self.verifyTaskIdentifier, using: nil) { task in
             // Simply start our collection & verification tasks
@@ -112,6 +115,7 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
     
     private func startTasks() {
         Task.detached(priority: .background) {
+            #if JAILBREAK
             let cellCollector = CCTCollector(client: CCTClient(queue: .global(qos: .background)))
             let collectCellsTask: () -> () = {
                 // Only run the task if the jailbreak mode is active
@@ -170,6 +174,7 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
                     }
                 }
              }
+            #endif
             
             // This task sends a summary notification all two minutes if any untrusted or suspicious cells have been found
             Task {
@@ -184,7 +189,7 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
                 }
             }
             
-            // Clear the persistent history cache all five minutes after a start delay of one minute
+            // Clear the persistent history cache every minute after a start delay of one minute
             Task {
                 try? await Task.sleep(nanoseconds: 60 * NSEC_PER_SEC)
                 while (true) {

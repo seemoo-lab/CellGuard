@@ -56,18 +56,25 @@ struct SettingsView: View {
             }
         }
     )}
+    
+    private var dataCollectionFooter: String {
+        var text = "The data collection mode determines if and how CellGuard collects data. "
+        
+        #if JAILBREAK
+        text += "The automatic mode retrieves data from tweaks installed with a jailbreak on your device. "
+        #endif
+        
+        text += "The manual mode allows you to share system diagnoses with the app to import data. "
+        text += "If disabled, CellGuard does not collect locations and only allows you to import previously exported datasets."
+        
+        return text
+    }
 
     var body: some View {
         List {
-            // TODO: Should we completely remove the automatic mode from the TestFlight / App Store version?
             Section(
                 header: Text("Data Collection"),
-                footer: Text(
-                    "The data collection mode determines if and how CellGuard collects data. " +
-                    "The automatic mode is not available on most devices. " +
-                    "The manual mode allows you to share system diagnoses with the app to import data. " +
-                    "If disabled, CellGuard does not collect locations and only allows you to import previously exported datasets."
-                )
+                footer: Text(dataCollectionFooter)
             ) {
                 Picker("Mode", selection: $appMode) {
                     ForEach(DataCollectionMode.allCases) { Text($0.description) }

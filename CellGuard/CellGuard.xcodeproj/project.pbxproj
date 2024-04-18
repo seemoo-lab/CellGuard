@@ -99,6 +99,133 @@
 		CFA632582AB3503400D46025 /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = CFA632572AB3503400D46025 /* ZIPFoundation */; };
 		CFB323A92BD03AE1007A6807 /* cargo-licenses.json in Resources */ = {isa = PBXBuildFile; fileRef = CFB323A82BD03AE1007A6807 /* cargo-licenses.json */; };
 		CFB51834297AEFA80006C690 /* CellStatusIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB51833297AEFA80006C690 /* CellStatusIcon.swift */; };
+		CFB6CF1F2BD122FA00EAB7B4 /* CellAnnotationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFDF5D72297EF0E4000708A8 /* CellAnnotationView.swift */; };
+		CFB6CF202BD122FA00EAB7B4 /* CGTabBarAppearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5EA78A29892F420061E9F1 /* CGTabBarAppearance.swift */; };
+		CFB6CF212BD122FA00EAB7B4 /* CellClusterAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFDF5D7A297EF71F000708A8 /* CellClusterAnnotation.swift */; };
+		CFB6CF222BD122FA00EAB7B4 /* ImportResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFFF19E42BC70E63004E40CE /* ImportResult.swift */; };
+		CFB6CF232BD122FA00EAB7B4 /* ARIContentParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD8DD272A7175AF00954A25 /* ARIContentParser.swift */; };
+		CFB6CF242BD122FA00EAB7B4 /* PersistenceCSVExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF9626C22AB7474500C46953 /* PersistenceCSVExporter.swift */; };
+		CFB6CF252BD122FA00EAB7B4 /* URLIdentifiable.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF93B851297FFEF9003F9FFE /* URLIdentifiable.swift */; };
+		CFB6CF262BD122FA00EAB7B4 /* VerificationProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0A5677298A7A910012B2A8 /* VerificationProgressView.swift */; };
+		CFB6CF272BD122FA00EAB7B4 /* CellLocationDistance.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF446753298D2A040083EE63 /* CellLocationDistance.swift */; };
+		CFB6CF282BD122FA00EAB7B4 /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD0233F2961A10D00AA5A1C /* PersistenceController.swift */; };
+		CFB6CF292BD122FA00EAB7B4 /* ALSTechnology.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFCE7A8B29817E2500E28787 /* ALSTechnology.swift */; };
+		CFB6CF2A2BD122FA00EAB7B4 /* DatabaseAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFDF5D84297F09D3000708A8 /* DatabaseAnnotation.swift */; };
+		CFB6CF2B2BD122FA00EAB7B4 /* GroupedMeasurements.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF86C7982A6AD51D002EC9B6 /* GroupedMeasurements.swift */; };
+		CFB6CF2C2BD122FA00EAB7B4 /* LocalNetworkAuthorization.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2A1C1429754AA400E8B61C /* LocalNetworkAuthorization.swift */; };
+		CFB6CF2D2BD122FA00EAB7B4 /* ImportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF15E1F92AA33EA200D440AD /* ImportView.swift */; };
+		CFB6CF2E2BD122FA00EAB7B4 /* KeyValueListRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF9237122A3E1BD300FC7D21 /* KeyValueListRow.swift */; };
+		CFB6CF2F2BD122FA00EAB7B4 /* PacketCommonDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF54CCC42A33680200961E4D /* PacketCommonDetails.swift */; };
+		CFB6CF302BD122FA00EAB7B4 /* LocationAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFDF5D76297EF1E8000708A8 /* LocationAnnotation.swift */; };
+		CFB6CF312BD122FA00EAB7B4 /* PacketARIDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF54CCC62A33699A00961E4D /* PacketARIDetailsView.swift */; };
+		CFB6CF322BD122FA00EAB7B4 /* UserDefaultsKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2A1C172975562800E8B61C /* UserDefaultsKeys.swift */; };
+		CFB6CF332BD122FA00EAB7B4 /* CellInformationCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2A1C212975DB8100E8B61C /* CellInformationCard.swift */; };
+		CFB6CF342BD122FA00EAB7B4 /* LogArchiveReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF57561C2B2F263500C7C60A /* LogArchiveReader.swift */; };
+		CFB6CF352BD122FA00EAB7B4 /* MultiCellMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFDF5D6E297EF05D000708A8 /* MultiCellMap.swift */; };
+		CFB6CF362BD122FA00EAB7B4 /* QMIDefinitions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF4E53952A31CE3F00AE2059 /* QMIDefinitions.swift */; };
+		CFB6CF372BD122FA00EAB7B4 /* TestDetection.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5EF92729793F7500C4F50A /* TestDetection.swift */; };
+		CFB6CF382BD122FA00EAB7B4 /* PersistenceQueries.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF446755298D78F80083EE63 /* PersistenceQueries.swift */; };
+		CFB6CF392BD122FA00EAB7B4 /* CellDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF86C7922A6AC25D002EC9B6 /* CellDetailsView.swift */; };
+		CFB6CF3A2BD122FA00EAB7B4 /* LocationAnnotationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFDF5D78297EF1EF000708A8 /* LocationAnnotationView.swift */; };
+		CFB6CF3B2BD122FA00EAB7B4 /* PortStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF8D331D2AC192B6009CA3F0 /* PortStatus.swift */; };
+		CFB6CF3C2BD122FA00EAB7B4 /* CCTParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF320F5429620B16009BAD18 /* CCTParser.swift */; };
+		CFB6CF3D2BD122FA00EAB7B4 /* TweakClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2002EF2A2F996A000922E6 /* TweakClient.swift */; };
+		CFB6CF3E2BD122FA00EAB7B4 /* CommonCellMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFDF5D82297F0736000708A8 /* CommonCellMap.swift */; };
+		CFB6CF3F2BD122FA00EAB7B4 /* CircularProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFE988DE2AA88A2B0039EDF9 /* CircularProgressView.swift */; };
+		CFB6CF402BD122FA00EAB7B4 /* CellClusterAnnotationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFDF5D74297EF127000708A8 /* CellClusterAnnotationView.swift */; };
+		CFB6CF412BD122FA00EAB7B4 /* CellStatusIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB51833297AEFA80006C690 /* CellStatusIcon.swift */; };
+		CFB6CF422BD122FA00EAB7B4 /* Cell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFBEC8532BC7F7D70021C0B9 /* Cell.swift */; };
+		CFB6CF432BD122FA00EAB7B4 /* SwiftExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFA09CF82A73D4B000D16832 /* SwiftExtensions.swift */; };
+		CFB6CF442BD122FA00EAB7B4 /* CCTCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB8B290296359CC00503189 /* CCTCollector.swift */; };
+		CFB6CF452BD122FA00EAB7B4 /* PacketCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF54CCC22A331ED300961E4D /* PacketCell.swift */; };
+		CFB6CF462BD122FA00EAB7B4 /* TweakInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5672952A29E59000B6EA7C /* TweakInfoView.swift */; };
+		CFB6CF472BD122FA00EAB7B4 /* PacketQMIDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF54CCC02A331E7100961E4D /* PacketQMIDetailsView.swift */; };
+		CFB6CF482BD122FA00EAB7B4 /* CoreLocationALS.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF53DB41297473E8005DCD10 /* CoreLocationALS.pb.swift */; };
+		CFB6CF492BD122FA00EAB7B4 /* CellVerifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5EF9232978538E00C4F50A /* CellVerifier.swift */; };
+		CFB6CF4A2BD122FA00EAB7B4 /* CellGuard.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = CFD023412961A10D00AA5A1C /* CellGuard.xcdatamodeld */; };
+		CFB6CF4B2BD122FA00EAB7B4 /* SingleCellMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFDF5D7E297F05A0000708A8 /* SingleCellMap.swift */; };
+		CFB6CF4C2BD122FA00EAB7B4 /* LocationSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5EF9292979B8D800C4F50A /* LocationSource.swift */; };
+		CFB6CF4D2BD122FA00EAB7B4 /* PacketTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF4E53A12A321B3000AE2059 /* PacketTabView.swift */; };
+		CFB6CF4E2BD122FA00EAB7B4 /* CGNotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2A1C1A2975670000E8B61C /* CGNotificationManager.swift */; };
+		CFB6CF4F2BD122FA00EAB7B4 /* PacketConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2B94B22B0B676F00F24ED1 /* PacketConstants.swift */; };
+		CFB6CF502BD122FA00EAB7B4 /* ExportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF4E53A52A32225300AE2059 /* ExportView.swift */; };
+		CFB6CF512BD122FA00EAB7B4 /* PersistenceJSONExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFDF5D86297F190A000708A8 /* PersistenceJSONExporter.swift */; };
+		CFB6CF522BD122FA00EAB7B4 /* PreviewInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF6EC8AC2A6C4C88004CF0AB /* PreviewInfo.swift */; };
+		CFB6CF532BD122FA00EAB7B4 /* SummaryTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0FDCB429698E1500A6FFE2 /* SummaryTabView.swift */; };
+		CFB6CF542BD122FA00EAB7B4 /* BackgroundState.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2A1C1C2975C71000E8B61C /* BackgroundState.swift */; };
+		CFB6CF552BD122FA00EAB7B4 /* SwiftBridgeCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5756182B2F25DB00C7C60A /* SwiftBridgeCore.swift */; };
+		CFB6CF562BD122FA00EAB7B4 /* CellListFilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF6EC8B02A6D9F99004CF0AB /* CellListFilterView.swift */; };
+		CFB6CF572BD122FA00EAB7B4 /* OpenSysdiagnoseSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF9EEEE72B34B6A500F9B6D8 /* OpenSysdiagnoseSettings.swift */; };
+		CFB6CF582BD122FA00EAB7B4 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0FDCC12969AC1100A6FFE2 /* SettingsView.swift */; };
+		CFB6CF592BD122FA00EAB7B4 /* FirstLastDates.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFFF19E62BC70E83004E40CE /* FirstLastDates.swift */; };
+		CFB6CF5A2BD122FA00EAB7B4 /* CCTClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD023672961AB9900AA5A1C /* CCTClient.swift */; };
+		CFB6CF5B2BD122FA00EAB7B4 /* DataSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF7309992A79122B00498BC3 /* DataSummaryView.swift */; };
+		CFB6CF5C2BD122FA00EAB7B4 /* CellReachOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1FAFB22986B11200106930 /* CellReachOverlay.swift */; };
+		CFB6CF5D2BD122FA00EAB7B4 /* CellGuardAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB8B2892963498200503189 /* CellGuardAppDelegate.swift */; };
+		CFB6CF5E2BD122FA00EAB7B4 /* MapTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0FDCB629699E5100A6FFE2 /* MapTabView.swift */; };
+		CFB6CF5F2BD122FA00EAB7B4 /* CellListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF86C7902A6A9086002EC9B6 /* CellListView.swift */; };
+		CFB6CF602BD122FA00EAB7B4 /* TweakCellMeasurementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF86C79C2A6AE0E3002EC9B6 /* TweakCellMeasurementView.swift */; };
+		CFB6CF612BD122FA00EAB7B4 /* LargeButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0FDCBF2969A3E500A6FFE2 /* LargeButton.swift */; };
+		CFB6CF622BD122FA00EAB7B4 /* CellALS+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFBEC84B2BC7F7CF0021C0B9 /* CellALS+CoreDataClass.swift */; };
+		CFB6CF632BD122FA00EAB7B4 /* CellTweak+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFBEC84D2BC7F7CF0021C0B9 /* CellTweak+CoreDataClass.swift */; };
+		CFB6CF642BD122FA00EAB7B4 /* LocationClusterAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFDF5D7C297EF76C000708A8 /* LocationClusterAnnotation.swift */; };
+		CFB6CF652BD122FA00EAB7B4 /* CommonDefinitions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF4E539B2A31E73F00AE2059 /* CommonDefinitions.swift */; };
+		CFB6CF662BD122FA00EAB7B4 /* ActivityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFDF5D88297F340E000708A8 /* ActivityViewController.swift */; };
+		CFB6CF672BD122FA00EAB7B4 /* PersistenceJSONImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF93B85329800278003F9FFE /* PersistenceJSONImporter.swift */; };
+		CFB6CF682BD122FA00EAB7B4 /* CellAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFDF5D70297EF0C6000708A8 /* CellAnnotation.swift */; };
+		CFB6CF692BD122FA00EAB7B4 /* PacketFilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF208D9E2A387261003A73A7 /* PacketFilterView.swift */; };
+		CFB6CF6A2BD122FA00EAB7B4 /* RiskIndicatorCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2A1C1F2975CDD200E8B61C /* RiskIndicatorCard.swift */; };
+		CFB6CF6B2BD122FA00EAB7B4 /* ARIParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2002E92A2F2BEA000922E6 /* ARIParser.swift */; };
+		CFB6CF6C2BD122FA00EAB7B4 /* Formatters.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5EF91F2977FACA00C4F50A /* Formatters.swift */; };
+		CFB6CF6D2BD122FA00EAB7B4 /* CommonParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF54CCBD2A330E6D00961E4D /* CommonParser.swift */; };
+		CFB6CF6E2BD122FA00EAB7B4 /* CPTClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2002F12A2F9FB5000922E6 /* CPTClient.swift */; };
+		CFB6CF6F2BD122FA00EAB7B4 /* CellMapDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFDF5D80297F05F1000708A8 /* CellMapDelegate.swift */; };
+		CFB6CF702BD122FA00EAB7B4 /* PersistenceCategories.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFF05F6E2A39ABF500DE6FB2 /* PersistenceCategories.swift */; };
+		CFB6CF712BD122FA00EAB7B4 /* PersistencePreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0FDCC8296B310400A6FFE2 /* PersistencePreview.swift */; };
+		CFB6CF722BD122FA00EAB7B4 /* PacketQMI+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFBEC83C2BC7F6E80021C0B9 /* PacketQMI+CoreDataClass.swift */; };
+		CFB6CF732BD122FA00EAB7B4 /* PacketARI+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFBEC83E2BC7F6E80021C0B9 /* PacketARI+CoreDataClass.swift */; };
+		CFB6CF742BD122FA00EAB7B4 /* AcknowledgementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFFF19E22BC6D2D3004E40CE /* AcknowledgementView.swift */; };
+		CFB6CF752BD122FA00EAB7B4 /* OperatorDefinitions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF07EFA42A3B4B56005B53ED /* OperatorDefinitions.swift */; };
+		CFB6CF762BD122FA00EAB7B4 /* PersistenceCSVImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF8D331B2AC19293009CA3F0 /* PersistenceCSVImporter.swift */; };
+		CFB6CF772BD122FA00EAB7B4 /* ALSClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD023692961ABA100AA5A1C /* ALSClient.swift */; };
+		CFB6CF782BD122FA00EAB7B4 /* DeleteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFF05F6C2A39AA3900DE6FB2 /* DeleteView.swift */; };
+		CFB6CF792BD122FA00EAB7B4 /* PersistenceError.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0FDCCA296B466100A6FFE2 /* PersistenceError.swift */; };
+		CFB6CF7A2BD122FA00EAB7B4 /* ARIDefinitions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF4E53972A31CE4600AE2059 /* ARIDefinitions.swift */; };
+		CFB6CF7B2BD122FA00EAB7B4 /* CPTCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF54CCBB2A33093800961E4D /* CPTCollector.swift */; };
+		CFB6CF7C2BD122FA00EAB7B4 /* CellStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5AB2BF2975458D00896ADC /* CellStatus.swift */; };
+		CFB6CF7D2BD122FA00EAB7B4 /* TrackedUserLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0FDCCC296B480B00A6FFE2 /* TrackedUserLocation.swift */; };
+		CFB6CF7E2BD122FA00EAB7B4 /* LocationDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB8B2872963417B00503189 /* LocationDataManager.swift */; };
+		CFB6CF7F2BD122FA00EAB7B4 /* QMIContentParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD8DD252A715E8300954A25 /* QMIContentParser.swift */; };
+		CFB6CF802BD122FA00EAB7B4 /* CellGuardSceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5CBB9429689FFE001CE9BE /* CellGuardSceneDelegate.swift */; };
+		CFB6CF812BD122FA00EAB7B4 /* CellGuardApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD023362961A10D00AA5A1C /* CellGuardApp.swift */; };
+		CFB6CF822BD122FA00EAB7B4 /* WelcomeSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0FDCBC2969A21000A6FFE2 /* WelcomeSheet.swift */; };
+		CFB6CF832BD122FA00EAB7B4 /* CompositeTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0FDCBA29699E8A00A6FFE2 /* CompositeTabView.swift */; };
+		CFB6CF842BD122FA00EAB7B4 /* QMIParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2002E72A2F2BE2000922E6 /* QMIParser.swift */; };
+		CFB6CF852BD122FA00EAB7B4 /* CellDetailsRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF86C7962A6ACDAA002EC9B6 /* CellDetailsRow.swift */; };
+		CFB6CF862BD122FA00EAB7B4 /* cellguard.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5756122B2F232A00C7C60A /* cellguard.swift */; };
+		CFB6CF872BD122FA00EAB7B4 /* CellTechnologyFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5EF9212977FCF800C4F50A /* CellTechnologyFormatter.swift */; };
+		CFB6CF882BD122FA00EAB7B4 /* CellFileKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF93B85529800451003F9FFE /* CellFileKeys.swift */; };
+		CFB6CF892BD122FA00EAB7B4 /* Packet.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFBEC8452BC7F7100021C0B9 /* Packet.swift */; };
+		CFB6CF8B2BD122FA00EAB7B4 /* libcellguard.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF57560D2B2F22BE00C7C60A /* libcellguard.a */; };
+		CFB6CF8C2BD122FA00EAB7B4 /* SWCompression in Frameworks */ = {isa = PBXBuildFile; productRef = CFB6CF182BD122FA00EAB7B4 /* SWCompression */; };
+		CFB6CF8D2BD122FA00EAB7B4 /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = CFB6CF0C2BD122FA00EAB7B4 /* SwiftProtobuf */; };
+		CFB6CF8E2BD122FA00EAB7B4 /* BinarySwift in Frameworks */ = {isa = PBXBuildFile; productRef = CFB6CF0E2BD122FA00EAB7B4 /* BinarySwift */; };
+		CFB6CF8F2BD122FA00EAB7B4 /* Gzip in Frameworks */ = {isa = PBXBuildFile; productRef = CFB6CF102BD122FA00EAB7B4 /* Gzip */; };
+		CFB6CF902BD122FA00EAB7B4 /* AcknowList in Frameworks */ = {isa = PBXBuildFile; productRef = CFB6CF1C2BD122FA00EAB7B4 /* AcknowList */; };
+		CFB6CF912BD122FA00EAB7B4 /* Atomics in Frameworks */ = {isa = PBXBuildFile; productRef = CFB6CF162BD122FA00EAB7B4 /* Atomics */; };
+		CFB6CF922BD122FA00EAB7B4 /* Regex in Frameworks */ = {isa = PBXBuildFile; productRef = CFB6CF1A2BD122FA00EAB7B4 /* Regex */; };
+		CFB6CF932BD122FA00EAB7B4 /* CSV in Frameworks */ = {isa = PBXBuildFile; productRef = CFB6CF122BD122FA00EAB7B4 /* CSV */; };
+		CFB6CF942BD122FA00EAB7B4 /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = CFB6CF142BD122FA00EAB7B4 /* ZIPFoundation */; };
+		CFB6CF962BD122FA00EAB7B4 /* cargo-licenses.json in Resources */ = {isa = PBXBuildFile; fileRef = CFB323A82BD03AE1007A6807 /* cargo-licenses.json */; };
+		CFB6CF972BD122FA00EAB7B4 /* operator-definitions.json in Resources */ = {isa = PBXBuildFile; fileRef = CF07EFA62A3B4C10005B53ED /* operator-definitions.json */; };
+		CFB6CF982BD122FA00EAB7B4 /* qmi-definitions.json in Resources */ = {isa = PBXBuildFile; fileRef = CF4E53922A31CE2500AE2059 /* qmi-definitions.json */; };
+		CFB6CF992BD122FA00EAB7B4 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CFD0233D2961A10D00AA5A1C /* Preview Assets.xcassets */; };
+		CFB6CF9A2BD122FA00EAB7B4 /* ari-definitions.json in Resources */ = {isa = PBXBuildFile; fileRef = CF4E53912A31CE2500AE2059 /* ari-definitions.json */; };
+		CFB6CF9B2BD122FA00EAB7B4 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CFE4A7A82B35991C00A37C7A /* LaunchScreen.storyboard */; };
+		CFB6CF9C2BD122FA00EAB7B4 /* macos-unifiedlogs-license.txt in Resources */ = {isa = PBXBuildFile; fileRef = CF9156B82BC9300900E6F2F6 /* macos-unifiedlogs-license.txt */; };
+		CFB6CF9D2BD122FA00EAB7B4 /* CellFileTypeIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = CF93B84D297FF5C3003F9FFE /* CellFileTypeIcon.png */; };
+		CFB6CF9E2BD122FA00EAB7B4 /* Package.resolved in Resources */ = {isa = PBXBuildFile; fileRef = CFFF19DE2BC6CF47004E40CE /* Package.resolved */; };
+		CFB6CF9F2BD122FA00EAB7B4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CFD0233A2961A10D00AA5A1C /* Assets.xcassets */; };
 		CFB8B2882963417B00503189 /* LocationDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB8B2872963417B00503189 /* LocationDataManager.swift */; };
 		CFB8B28A2963498200503189 /* CellGuardAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB8B2892963498200503189 /* CellGuardAppDelegate.swift */; };
 		CFB8B291296359CC00503189 /* CCTCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB8B290296359CC00503189 /* CCTCollector.swift */; };
@@ -255,6 +382,7 @@
 		CFA09CF82A73D4B000D16832 /* SwiftExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftExtensions.swift; sourceTree = "<group>"; };
 		CFB323A82BD03AE1007A6807 /* cargo-licenses.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "cargo-licenses.json"; sourceTree = "<group>"; };
 		CFB51833297AEFA80006C690 /* CellStatusIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellStatusIcon.swift; sourceTree = "<group>"; };
+		CFB6CFA42BD122FA00EAB7B4 /* CellGuard (Jailbreak).app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "CellGuard (Jailbreak).app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFB8B2872963417B00503189 /* LocationDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationDataManager.swift; sourceTree = "<group>"; };
 		CFB8B2892963498200503189 /* CellGuardAppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellGuardAppDelegate.swift; sourceTree = "<group>"; };
 		CFB8B290296359CC00503189 /* CCTCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CCTCollector.swift; sourceTree = "<group>"; };
@@ -265,7 +393,7 @@
 		CFBEC84D2BC7F7CF0021C0B9 /* CellTweak+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CellTweak+CoreDataClass.swift"; sourceTree = "<group>"; };
 		CFBEC8532BC7F7D70021C0B9 /* Cell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cell.swift; sourceTree = "<group>"; };
 		CFCE7A8B29817E2500E28787 /* ALSTechnology.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ALSTechnology.swift; sourceTree = "<group>"; };
-		CFD023332961A10D00AA5A1C /* CellGuard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CellGuard.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		CFD023332961A10D00AA5A1C /* CellGuard (AppStore).app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "CellGuard (AppStore).app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFD023362961A10D00AA5A1C /* CellGuardApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellGuardApp.swift; sourceTree = "<group>"; };
 		CFD0233A2961A10D00AA5A1C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CFD0233D2961A10D00AA5A1C /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
@@ -306,6 +434,23 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		CFB6CF8A2BD122FA00EAB7B4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CFB6CF8B2BD122FA00EAB7B4 /* libcellguard.a in Frameworks */,
+				CFB6CF8C2BD122FA00EAB7B4 /* SWCompression in Frameworks */,
+				CFB6CF8D2BD122FA00EAB7B4 /* SwiftProtobuf in Frameworks */,
+				CFB6CF8E2BD122FA00EAB7B4 /* BinarySwift in Frameworks */,
+				CFB6CF8F2BD122FA00EAB7B4 /* Gzip in Frameworks */,
+				CFB6CF902BD122FA00EAB7B4 /* AcknowList in Frameworks */,
+				CFB6CF912BD122FA00EAB7B4 /* Atomics in Frameworks */,
+				CFB6CF922BD122FA00EAB7B4 /* Regex in Frameworks */,
+				CFB6CF932BD122FA00EAB7B4 /* CSV in Frameworks */,
+				CFB6CF942BD122FA00EAB7B4 /* ZIPFoundation in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		CFD023302961A10D00AA5A1C /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -639,9 +784,10 @@
 		CFD023342961A10D00AA5A1C /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				CFD023332961A10D00AA5A1C /* CellGuard.app */,
+				CFD023332961A10D00AA5A1C /* CellGuard (AppStore).app */,
 				CFD023482961A10E00AA5A1C /* CellGuardTests.xctest */,
 				CFD023522961A10E00AA5A1C /* CellGuardUITests.xctest */,
+				CFB6CFA42BD122FA00EAB7B4 /* CellGuard (Jailbreak).app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -751,9 +897,38 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		CFD023322961A10D00AA5A1C /* CellGuard */ = {
+		CFB6CF0B2BD122FA00EAB7B4 /* CellGuard (Jailbreak) */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = CFD0235C2961A10E00AA5A1C /* Build configuration list for PBXNativeTarget "CellGuard" */;
+			buildConfigurationList = CFB6CFA12BD122FA00EAB7B4 /* Build configuration list for PBXNativeTarget "CellGuard (Jailbreak)" */;
+			buildPhases = (
+				CFB6CF1E2BD122FA00EAB7B4 /* Sources */,
+				CFB6CF8A2BD122FA00EAB7B4 /* Frameworks */,
+				CFB6CF952BD122FA00EAB7B4 /* Resources */,
+				CFB6CFA02BD122FA00EAB7B4 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "CellGuard (Jailbreak)";
+			packageProductDependencies = (
+				CFB6CF0C2BD122FA00EAB7B4 /* SwiftProtobuf */,
+				CFB6CF0E2BD122FA00EAB7B4 /* BinarySwift */,
+				CFB6CF102BD122FA00EAB7B4 /* Gzip */,
+				CFB6CF122BD122FA00EAB7B4 /* CSV */,
+				CFB6CF142BD122FA00EAB7B4 /* ZIPFoundation */,
+				CFB6CF162BD122FA00EAB7B4 /* Atomics */,
+				CFB6CF182BD122FA00EAB7B4 /* SWCompression */,
+				CFB6CF1A2BD122FA00EAB7B4 /* Regex */,
+				CFB6CF1C2BD122FA00EAB7B4 /* AcknowList */,
+			);
+			productName = CellGuard;
+			productReference = CFB6CFA42BD122FA00EAB7B4 /* CellGuard (Jailbreak).app */;
+			productType = "com.apple.product-type.application";
+		};
+		CFD023322961A10D00AA5A1C /* CellGuard (AppStore) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CFD0235C2961A10E00AA5A1C /* Build configuration list for PBXNativeTarget "CellGuard (AppStore)" */;
 			buildPhases = (
 				CFD0232F2961A10D00AA5A1C /* Sources */,
 				CFD023302961A10D00AA5A1C /* Frameworks */,
@@ -764,7 +939,7 @@
 			);
 			dependencies = (
 			);
-			name = CellGuard;
+			name = "CellGuard (AppStore)";
 			packageProductDependencies = (
 				CFD0236C2961AD1500AA5A1C /* SwiftProtobuf */,
 				CF2002EC2A2F3244000922E6 /* BinarySwift */,
@@ -777,7 +952,7 @@
 				CFFF19E02BC6D045004E40CE /* AcknowList */,
 			);
 			productName = CellGuard;
-			productReference = CFD023332961A10D00AA5A1C /* CellGuard.app */;
+			productReference = CFD023332961A10D00AA5A1C /* CellGuard (AppStore).app */;
 			productType = "com.apple.product-type.application";
 		};
 		CFD023472961A10E00AA5A1C /* CellGuardTests */ = {
@@ -863,7 +1038,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				CFD023322961A10D00AA5A1C /* CellGuard */,
+				CFD023322961A10D00AA5A1C /* CellGuard (AppStore) */,
+				CFB6CF0B2BD122FA00EAB7B4 /* CellGuard (Jailbreak) */,
 				CFD023472961A10E00AA5A1C /* CellGuardTests */,
 				CFD023512961A10E00AA5A1C /* CellGuardUITests */,
 			);
@@ -871,6 +1047,23 @@
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		CFB6CF952BD122FA00EAB7B4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CFB6CF962BD122FA00EAB7B4 /* cargo-licenses.json in Resources */,
+				CFB6CF972BD122FA00EAB7B4 /* operator-definitions.json in Resources */,
+				CFB6CF982BD122FA00EAB7B4 /* qmi-definitions.json in Resources */,
+				CFB6CF992BD122FA00EAB7B4 /* Preview Assets.xcassets in Resources */,
+				CFB6CF9A2BD122FA00EAB7B4 /* ari-definitions.json in Resources */,
+				CFB6CF9B2BD122FA00EAB7B4 /* LaunchScreen.storyboard in Resources */,
+				CFB6CF9C2BD122FA00EAB7B4 /* macos-unifiedlogs-license.txt in Resources */,
+				CFB6CF9D2BD122FA00EAB7B4 /* CellFileTypeIcon.png in Resources */,
+				CFB6CF9E2BD122FA00EAB7B4 /* Package.resolved in Resources */,
+				CFB6CF9F2BD122FA00EAB7B4 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		CFD023312961A10D00AA5A1C /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -930,9 +1123,147 @@
 			shellPath = /bin/sh;
 			shellScript = "./build-rust.sh\n";
 		};
+		CFB6CFA02BD122FA00EAB7B4 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(PROJECT_DIR)/../Cargo.lock",
+				"$(PROJECT_DIR)/../Cargo.toml",
+				"$(PROJECT_DIR)/../build.rs",
+				"$(PROJECT_DIR)/../src/lib.rs",
+				"$(PROJECT_DIR)/../src/csv_parser.rs",
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(PROJECT_DIR)/Generated",
+				"$(PROJECT_DIR)/../target/universal/debug",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "./build-rust.sh\n";
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		CFB6CF1E2BD122FA00EAB7B4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CFB6CF1F2BD122FA00EAB7B4 /* CellAnnotationView.swift in Sources */,
+				CFB6CF202BD122FA00EAB7B4 /* CGTabBarAppearance.swift in Sources */,
+				CFB6CF212BD122FA00EAB7B4 /* CellClusterAnnotation.swift in Sources */,
+				CFB6CF222BD122FA00EAB7B4 /* ImportResult.swift in Sources */,
+				CFB6CF232BD122FA00EAB7B4 /* ARIContentParser.swift in Sources */,
+				CFB6CF242BD122FA00EAB7B4 /* PersistenceCSVExporter.swift in Sources */,
+				CFB6CF252BD122FA00EAB7B4 /* URLIdentifiable.swift in Sources */,
+				CFB6CF262BD122FA00EAB7B4 /* VerificationProgressView.swift in Sources */,
+				CFB6CF272BD122FA00EAB7B4 /* CellLocationDistance.swift in Sources */,
+				CFB6CF282BD122FA00EAB7B4 /* PersistenceController.swift in Sources */,
+				CFB6CF292BD122FA00EAB7B4 /* ALSTechnology.swift in Sources */,
+				CFB6CF2A2BD122FA00EAB7B4 /* DatabaseAnnotation.swift in Sources */,
+				CFB6CF2B2BD122FA00EAB7B4 /* GroupedMeasurements.swift in Sources */,
+				CFB6CF2C2BD122FA00EAB7B4 /* LocalNetworkAuthorization.swift in Sources */,
+				CFB6CF2D2BD122FA00EAB7B4 /* ImportView.swift in Sources */,
+				CFB6CF2E2BD122FA00EAB7B4 /* KeyValueListRow.swift in Sources */,
+				CFB6CF2F2BD122FA00EAB7B4 /* PacketCommonDetails.swift in Sources */,
+				CFB6CF302BD122FA00EAB7B4 /* LocationAnnotation.swift in Sources */,
+				CFB6CF312BD122FA00EAB7B4 /* PacketARIDetailsView.swift in Sources */,
+				CFB6CF322BD122FA00EAB7B4 /* UserDefaultsKeys.swift in Sources */,
+				CFB6CF332BD122FA00EAB7B4 /* CellInformationCard.swift in Sources */,
+				CFB6CF342BD122FA00EAB7B4 /* LogArchiveReader.swift in Sources */,
+				CFB6CF352BD122FA00EAB7B4 /* MultiCellMap.swift in Sources */,
+				CFB6CF362BD122FA00EAB7B4 /* QMIDefinitions.swift in Sources */,
+				CFB6CF372BD122FA00EAB7B4 /* TestDetection.swift in Sources */,
+				CFB6CF382BD122FA00EAB7B4 /* PersistenceQueries.swift in Sources */,
+				CFB6CF392BD122FA00EAB7B4 /* CellDetailsView.swift in Sources */,
+				CFB6CF3A2BD122FA00EAB7B4 /* LocationAnnotationView.swift in Sources */,
+				CFB6CF3B2BD122FA00EAB7B4 /* PortStatus.swift in Sources */,
+				CFB6CF3C2BD122FA00EAB7B4 /* CCTParser.swift in Sources */,
+				CFB6CF3D2BD122FA00EAB7B4 /* TweakClient.swift in Sources */,
+				CFB6CF3E2BD122FA00EAB7B4 /* CommonCellMap.swift in Sources */,
+				CFB6CF3F2BD122FA00EAB7B4 /* CircularProgressView.swift in Sources */,
+				CFB6CF402BD122FA00EAB7B4 /* CellClusterAnnotationView.swift in Sources */,
+				CFB6CF412BD122FA00EAB7B4 /* CellStatusIcon.swift in Sources */,
+				CFB6CF422BD122FA00EAB7B4 /* Cell.swift in Sources */,
+				CFB6CF432BD122FA00EAB7B4 /* SwiftExtensions.swift in Sources */,
+				CFB6CF442BD122FA00EAB7B4 /* CCTCollector.swift in Sources */,
+				CFB6CF452BD122FA00EAB7B4 /* PacketCell.swift in Sources */,
+				CFB6CF462BD122FA00EAB7B4 /* TweakInfoView.swift in Sources */,
+				CFB6CF472BD122FA00EAB7B4 /* PacketQMIDetailsView.swift in Sources */,
+				CFB6CF482BD122FA00EAB7B4 /* CoreLocationALS.pb.swift in Sources */,
+				CFB6CF492BD122FA00EAB7B4 /* CellVerifier.swift in Sources */,
+				CFB6CF4A2BD122FA00EAB7B4 /* CellGuard.xcdatamodeld in Sources */,
+				CFB6CF4B2BD122FA00EAB7B4 /* SingleCellMap.swift in Sources */,
+				CFB6CF4C2BD122FA00EAB7B4 /* LocationSource.swift in Sources */,
+				CFB6CF4D2BD122FA00EAB7B4 /* PacketTabView.swift in Sources */,
+				CFB6CF4E2BD122FA00EAB7B4 /* CGNotificationManager.swift in Sources */,
+				CFB6CF4F2BD122FA00EAB7B4 /* PacketConstants.swift in Sources */,
+				CFB6CF502BD122FA00EAB7B4 /* ExportView.swift in Sources */,
+				CFB6CF512BD122FA00EAB7B4 /* PersistenceJSONExporter.swift in Sources */,
+				CFB6CF522BD122FA00EAB7B4 /* PreviewInfo.swift in Sources */,
+				CFB6CF532BD122FA00EAB7B4 /* SummaryTabView.swift in Sources */,
+				CFB6CF542BD122FA00EAB7B4 /* BackgroundState.swift in Sources */,
+				CFB6CF552BD122FA00EAB7B4 /* SwiftBridgeCore.swift in Sources */,
+				CFB6CF562BD122FA00EAB7B4 /* CellListFilterView.swift in Sources */,
+				CFB6CF572BD122FA00EAB7B4 /* OpenSysdiagnoseSettings.swift in Sources */,
+				CFB6CF582BD122FA00EAB7B4 /* SettingsView.swift in Sources */,
+				CFB6CF592BD122FA00EAB7B4 /* FirstLastDates.swift in Sources */,
+				CFB6CF5A2BD122FA00EAB7B4 /* CCTClient.swift in Sources */,
+				CFB6CF5B2BD122FA00EAB7B4 /* DataSummaryView.swift in Sources */,
+				CFB6CF5C2BD122FA00EAB7B4 /* CellReachOverlay.swift in Sources */,
+				CFB6CF5D2BD122FA00EAB7B4 /* CellGuardAppDelegate.swift in Sources */,
+				CFB6CF5E2BD122FA00EAB7B4 /* MapTabView.swift in Sources */,
+				CFB6CF5F2BD122FA00EAB7B4 /* CellListView.swift in Sources */,
+				CFB6CF602BD122FA00EAB7B4 /* TweakCellMeasurementView.swift in Sources */,
+				CFB6CF612BD122FA00EAB7B4 /* LargeButton.swift in Sources */,
+				CFB6CF622BD122FA00EAB7B4 /* CellALS+CoreDataClass.swift in Sources */,
+				CFB6CF632BD122FA00EAB7B4 /* CellTweak+CoreDataClass.swift in Sources */,
+				CFB6CF642BD122FA00EAB7B4 /* LocationClusterAnnotation.swift in Sources */,
+				CFB6CF652BD122FA00EAB7B4 /* CommonDefinitions.swift in Sources */,
+				CFB6CF662BD122FA00EAB7B4 /* ActivityViewController.swift in Sources */,
+				CFB6CF672BD122FA00EAB7B4 /* PersistenceJSONImporter.swift in Sources */,
+				CFB6CF682BD122FA00EAB7B4 /* CellAnnotation.swift in Sources */,
+				CFB6CF692BD122FA00EAB7B4 /* PacketFilterView.swift in Sources */,
+				CFB6CF6A2BD122FA00EAB7B4 /* RiskIndicatorCard.swift in Sources */,
+				CFB6CF6B2BD122FA00EAB7B4 /* ARIParser.swift in Sources */,
+				CFB6CF6C2BD122FA00EAB7B4 /* Formatters.swift in Sources */,
+				CFB6CF6D2BD122FA00EAB7B4 /* CommonParser.swift in Sources */,
+				CFB6CF6E2BD122FA00EAB7B4 /* CPTClient.swift in Sources */,
+				CFB6CF6F2BD122FA00EAB7B4 /* CellMapDelegate.swift in Sources */,
+				CFB6CF702BD122FA00EAB7B4 /* PersistenceCategories.swift in Sources */,
+				CFB6CF712BD122FA00EAB7B4 /* PersistencePreview.swift in Sources */,
+				CFB6CF722BD122FA00EAB7B4 /* PacketQMI+CoreDataClass.swift in Sources */,
+				CFB6CF732BD122FA00EAB7B4 /* PacketARI+CoreDataClass.swift in Sources */,
+				CFB6CF742BD122FA00EAB7B4 /* AcknowledgementView.swift in Sources */,
+				CFB6CF752BD122FA00EAB7B4 /* OperatorDefinitions.swift in Sources */,
+				CFB6CF762BD122FA00EAB7B4 /* PersistenceCSVImporter.swift in Sources */,
+				CFB6CF772BD122FA00EAB7B4 /* ALSClient.swift in Sources */,
+				CFB6CF782BD122FA00EAB7B4 /* DeleteView.swift in Sources */,
+				CFB6CF792BD122FA00EAB7B4 /* PersistenceError.swift in Sources */,
+				CFB6CF7A2BD122FA00EAB7B4 /* ARIDefinitions.swift in Sources */,
+				CFB6CF7B2BD122FA00EAB7B4 /* CPTCollector.swift in Sources */,
+				CFB6CF7C2BD122FA00EAB7B4 /* CellStatus.swift in Sources */,
+				CFB6CF7D2BD122FA00EAB7B4 /* TrackedUserLocation.swift in Sources */,
+				CFB6CF7E2BD122FA00EAB7B4 /* LocationDataManager.swift in Sources */,
+				CFB6CF7F2BD122FA00EAB7B4 /* QMIContentParser.swift in Sources */,
+				CFB6CF802BD122FA00EAB7B4 /* CellGuardSceneDelegate.swift in Sources */,
+				CFB6CF812BD122FA00EAB7B4 /* CellGuardApp.swift in Sources */,
+				CFB6CF822BD122FA00EAB7B4 /* WelcomeSheet.swift in Sources */,
+				CFB6CF832BD122FA00EAB7B4 /* CompositeTabView.swift in Sources */,
+				CFB6CF842BD122FA00EAB7B4 /* QMIParser.swift in Sources */,
+				CFB6CF852BD122FA00EAB7B4 /* CellDetailsRow.swift in Sources */,
+				CFB6CF862BD122FA00EAB7B4 /* cellguard.swift in Sources */,
+				CFB6CF872BD122FA00EAB7B4 /* CellTechnologyFormatter.swift in Sources */,
+				CFB6CF882BD122FA00EAB7B4 /* CellFileKeys.swift in Sources */,
+				CFB6CF892BD122FA00EAB7B4 /* Packet.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		CFD0232F2961A10D00AA5A1C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1077,17 +1408,111 @@
 /* Begin PBXTargetDependency section */
 		CFD0234A2961A10E00AA5A1C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = CFD023322961A10D00AA5A1C /* CellGuard */;
+			target = CFD023322961A10D00AA5A1C /* CellGuard (AppStore) */;
 			targetProxy = CFD023492961A10E00AA5A1C /* PBXContainerItemProxy */;
 		};
 		CFD023542961A10E00AA5A1C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = CFD023322961A10D00AA5A1C /* CellGuard */;
+			target = CFD023322961A10D00AA5A1C /* CellGuard (AppStore) */;
 			targetProxy = CFD023532961A10E00AA5A1C /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		CFB6CFA22BD122FA00EAB7B4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"CellGuard/Preview Content\"";
+				DEVELOPMENT_TEAM = K2B79VWGA3;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "CellGuard/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = CellGuard;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
+				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "CellGuard accesses your location to check for malicious cells, please select 'Change to Always Allow'";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "CellGuard accesses your location to check for malicious cells, please select 'Allow While Using App'";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/../target/universal/debug";
+				MARKETING_VERSION = 1.4.1;
+				PRODUCT_BUNDLE_IDENTIFIER = "de.tu-darmstadt.www.cellguard.ios";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				"SWIFT_ACTIVE_COMPILATION_CONDITIONS[arch=*]" = JAILBREAK;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "$(PROJECT_DIR)/BridgingHeader.h";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		CFB6CFA32BD122FA00EAB7B4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"CellGuard/Preview Content\"";
+				DEVELOPMENT_TEAM = K2B79VWGA3;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "CellGuard/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = CellGuard;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
+				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "CellGuard accesses your location to check for malicious cells, please select 'Change to Always Allow'";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "CellGuard accesses your location to check for malicious cells, please select 'Allow While Using App'";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/../target/universal/release";
+				MARKETING_VERSION = 1.4.1;
+				PRODUCT_BUNDLE_IDENTIFIER = "de.tu-darmstadt.www.cellguard.ios";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				"SWIFT_ACTIVE_COMPILATION_CONDITIONS[arch=*]" = JAILBREAK;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "$(PROJECT_DIR)/BridgingHeader.h";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
 		CFD0235A2961A10E00AA5A1C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1239,10 +1664,14 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "de.tu-darmstadt.www.cellguard.ios";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "$(PROJECT_DIR)/BridgingHeader.h";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -1281,10 +1710,14 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "de.tu-darmstadt.www.cellguard.ios";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "$(PROJECT_DIR)/BridgingHeader.h";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
@@ -1367,6 +1800,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		CFB6CFA12BD122FA00EAB7B4 /* Build configuration list for PBXNativeTarget "CellGuard (Jailbreak)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CFB6CFA22BD122FA00EAB7B4 /* Debug */,
+				CFB6CFA32BD122FA00EAB7B4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		CFD0232E2961A10D00AA5A1C /* Build configuration list for PBXProject "CellGuard" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -1376,7 +1818,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		CFD0235C2961A10E00AA5A1C /* Build configuration list for PBXNativeTarget "CellGuard" */ = {
+		CFD0235C2961A10E00AA5A1C /* Build configuration list for PBXNativeTarget "CellGuard (AppStore)" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				CFD0235D2961A10E00AA5A1C /* Debug */,
@@ -1462,6 +1904,78 @@
 				minimumVersion = 0.9.16;
 			};
 		};
+		CFB6CF0D2BD122FA00EAB7B4 /* XCRemoteSwiftPackageReference "swift-protobuf" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-protobuf.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
+		CFB6CF0F2BD122FA00EAB7B4 /* XCRemoteSwiftPackageReference "BinarySwift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Szaq/BinarySwift";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+		CFB6CF112BD122FA00EAB7B4 /* XCRemoteSwiftPackageReference "GzipSwift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/1024jp/GzipSwift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.0.0;
+			};
+		};
+		CFB6CF132BD122FA00EAB7B4 /* XCRemoteSwiftPackageReference "CSV.swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/yaslab/CSV.swift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
+		CFB6CF152BD122FA00EAB7B4 /* XCRemoteSwiftPackageReference "ZIPFoundation" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/weichsel/ZIPFoundation";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.9.16;
+			};
+		};
+		CFB6CF172BD122FA00EAB7B4 /* XCRemoteSwiftPackageReference "swift-atomics" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-atomics.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.1.0;
+			};
+		};
+		CFB6CF192BD122FA00EAB7B4 /* XCRemoteSwiftPackageReference "SWCompression" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/tsolomko/SWCompression";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.8.5;
+			};
+		};
+		CFB6CF1B2BD122FA00EAB7B4 /* XCRemoteSwiftPackageReference "Regex" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sharplet/Regex";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.1.1;
+			};
+		};
+		CFB6CF1D2BD122FA00EAB7B4 /* XCRemoteSwiftPackageReference "AcknowList" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/vtourraine/AcknowList";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.1.0;
+			};
+		};
 		CFD0236B2961AD1500AA5A1C /* XCRemoteSwiftPackageReference "swift-protobuf" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/apple/swift-protobuf.git";
@@ -1515,6 +2029,51 @@
 			isa = XCSwiftPackageProductDependency;
 			package = CFA632562AB3503400D46025 /* XCRemoteSwiftPackageReference "ZIPFoundation" */;
 			productName = ZIPFoundation;
+		};
+		CFB6CF0C2BD122FA00EAB7B4 /* SwiftProtobuf */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CFB6CF0D2BD122FA00EAB7B4 /* XCRemoteSwiftPackageReference "swift-protobuf" */;
+			productName = SwiftProtobuf;
+		};
+		CFB6CF0E2BD122FA00EAB7B4 /* BinarySwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CFB6CF0F2BD122FA00EAB7B4 /* XCRemoteSwiftPackageReference "BinarySwift" */;
+			productName = BinarySwift;
+		};
+		CFB6CF102BD122FA00EAB7B4 /* Gzip */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CFB6CF112BD122FA00EAB7B4 /* XCRemoteSwiftPackageReference "GzipSwift" */;
+			productName = Gzip;
+		};
+		CFB6CF122BD122FA00EAB7B4 /* CSV */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CFB6CF132BD122FA00EAB7B4 /* XCRemoteSwiftPackageReference "CSV.swift" */;
+			productName = CSV;
+		};
+		CFB6CF142BD122FA00EAB7B4 /* ZIPFoundation */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CFB6CF152BD122FA00EAB7B4 /* XCRemoteSwiftPackageReference "ZIPFoundation" */;
+			productName = ZIPFoundation;
+		};
+		CFB6CF162BD122FA00EAB7B4 /* Atomics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CFB6CF172BD122FA00EAB7B4 /* XCRemoteSwiftPackageReference "swift-atomics" */;
+			productName = Atomics;
+		};
+		CFB6CF182BD122FA00EAB7B4 /* SWCompression */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CFB6CF192BD122FA00EAB7B4 /* XCRemoteSwiftPackageReference "SWCompression" */;
+			productName = SWCompression;
+		};
+		CFB6CF1A2BD122FA00EAB7B4 /* Regex */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CFB6CF1B2BD122FA00EAB7B4 /* XCRemoteSwiftPackageReference "Regex" */;
+			productName = Regex;
+		};
+		CFB6CF1C2BD122FA00EAB7B4 /* AcknowList */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CFB6CF1D2BD122FA00EAB7B4 /* XCRemoteSwiftPackageReference "AcknowList" */;
+			productName = AcknowList;
 		};
 		CFD0236C2961AD1500AA5A1C /* SwiftProtobuf */ = {
 			isa = XCSwiftPackageProductDependency;

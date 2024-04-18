@@ -332,10 +332,12 @@ struct CellVerifier {
             }
         }
         
+        #if JAILBREAK
         // ... or if the latest batch of packets has not been received from the tweak
         if appMode == .automatic && CPTCollector.mostRecentPacket < end {
             return .delay(seconds: 20)
         }
+        #endif
         
         // We wait until we get a new cell measurements, as the disconnect packet can be sent rather late
         let qmiPackets: [NSManagedObjectID: ParsedQMIPacket]
@@ -409,10 +411,12 @@ struct CellVerifier {
             }
         }
         
+        #if JAILBREAK
         // ... or if the latest batch of packets has not been received from the tweak
         if dataCollectionMode == .automatic && CPTCollector.mostRecentPacket < end {
             return .delay(seconds: 20)
         }
+        #endif
         
         // TODO: Store the signal strength in the database
         // We could also calculate the awarded points exponentially, but for now it's a binary decision
