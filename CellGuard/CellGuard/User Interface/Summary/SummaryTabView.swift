@@ -27,7 +27,9 @@ import SwiftUI
 struct SummaryTabView: View {
     
     @State private var showingCellList = false
+    #if STATS_VIEW
     @State private var showingStats = false
+    #endif
     @State private var showingHelp = false
     @State private var showingSettings = false
     
@@ -39,11 +41,13 @@ struct SummaryTabView: View {
                 } label: {
                     EmptyView()
                 }
+                #if STATS_VIEW
                 NavigationLink(isActive: $showingStats) {
                     DataSummaryView()
                 } label: {
                     EmptyView()
                 }
+                #endif
 
                 NavigationLink(isActive: $showingHelp) {
                     Text("TODO")
@@ -66,11 +70,14 @@ struct SummaryTabView: View {
                         } label: {
                             Label("Connected Cells", systemImage: "list.bullet")
                         }
+                        #if STATS_VIEW
+                        // Disable stats for the beta test as it is not finished.
                         Button {
                             showingStats = true
                         } label: {
                             Label("Stats", systemImage: "chart.bar.xaxis")
                         }
+                        #endif
                         Button {
                             showingHelp = true
                         } label: {
