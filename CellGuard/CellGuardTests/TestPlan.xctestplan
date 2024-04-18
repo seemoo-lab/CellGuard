@@ -1,0 +1,31 @@
+{
+  "configurations" : [
+    {
+      "id" : "F14BA1A8-B73F-4246-B6D3-A482DDBF1CF6",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "testTimeoutsEnabled" : true
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:CellGuard.xcodeproj",
+        "identifier" : "CFD023472961A10E00AA5A1C",
+        "name" : "CellGuardTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:CellGuard.xcodeproj",
+        "identifier" : "CFD023512961A10E00AA5A1C",
+        "name" : "CellGuardUITests"
+      }
+    }
+  ],
+  "version" : 1
+}
