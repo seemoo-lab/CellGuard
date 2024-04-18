@@ -29,7 +29,7 @@ enum RiskMediumCause: Equatable {
         case .Location:
             return "Ensure you've granted all location permissions"
         case let .Cells(cellCount):
-            return "Detected \(cellCount) suspicious \(cellCount == 1 ? "cell" : "cells")\(ftDaysSuffix)"
+            return "Detected a minor anomaly for \(cellCount) \(cellCount == 1 ? "cell" : "cells")\(ftDaysSuffix)"
         case .CantCompute:
             return "Unable to determine your risk"
         }
@@ -48,8 +48,8 @@ enum RiskLevel: Equatable {
         case .Unknown: return "Unknown"
         case .Low: return "Low"
         case .LowMonitor: return "Low"
-        case .Medium: return "Medium"
-        case .High: return "High"
+        case .Medium: return "Low"
+        case .High: return "Increased"
         }
     }
     
@@ -66,7 +66,7 @@ enum RiskLevel: Equatable {
         case let .Medium(cause):
             return cause.text()
         case let .High(cellCount):
-            return "Detected \(cellCount) potential malicious \(cellCount == 1 ? "cell" : "cells")\(ftDaysSuffix)"
+            return "Detected \(cellCount) suspicious \(cellCount == 1 ? "cell" : "cells")\(ftDaysSuffix)"
         }
     }
     
@@ -76,8 +76,8 @@ enum RiskLevel: Equatable {
         case .Unknown: return dark ? Color(UIColor.systemGray6) : .gray
         case .Low: return .green
         case .LowMonitor: return .green
-        case .Medium: return .orange
-        case .High: return .red
+        case .Medium: return .blue
+        case .High: return .orange
         }
     }
 }
