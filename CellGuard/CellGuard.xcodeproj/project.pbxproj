@@ -266,6 +266,8 @@
 		CFDF5D89297F340E000708A8 /* ActivityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFDF5D88297F340E000708A8 /* ActivityViewController.swift */; };
 		CFE4A7A92B35991C00A37C7A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CFE4A7A82B35991C00A37C7A /* LaunchScreen.storyboard */; };
 		CFE988DF2AA88A2B0039EDF9 /* CircularProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFE988DE2AA88A2B0039EDF9 /* CircularProgressView.swift */; };
+		CFEC5E762BD1808E004978FA /* CellGuardURLs.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFEC5E752BD1808E004978FA /* CellGuardURLs.swift */; };
+		CFEC5E772BD1816B004978FA /* CellGuardURLs.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFEC5E752BD1808E004978FA /* CellGuardURLs.swift */; };
 		CFF05F6D2A39AA3900DE6FB2 /* DeleteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFF05F6C2A39AA3900DE6FB2 /* DeleteView.swift */; };
 		CFF05F6F2A39ABF500DE6FB2 /* PersistenceCategories.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFF05F6E2A39ABF500DE6FB2 /* PersistenceCategories.swift */; };
 		CFFF19DF2BC6CF47004E40CE /* Package.resolved in Resources */ = {isa = PBXBuildFile; fileRef = CFFF19DE2BC6CF47004E40CE /* Package.resolved */; };
@@ -426,6 +428,7 @@
 		CFE4A7A82B35991C00A37C7A /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		CFE988DE2AA88A2B0039EDF9 /* CircularProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularProgressView.swift; sourceTree = "<group>"; };
 		CFEC5E732BD17782004978FA /* TestPlan.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = TestPlan.xctestplan; sourceTree = "<group>"; };
+		CFEC5E752BD1808E004978FA /* CellGuardURLs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellGuardURLs.swift; sourceTree = "<group>"; };
 		CFF05F6C2A39AA3900DE6FB2 /* DeleteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteView.swift; sourceTree = "<group>"; };
 		CFF05F6E2A39ABF500DE6FB2 /* PersistenceCategories.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceCategories.swift; sourceTree = "<group>"; };
 		CFFF19DE2BC6CF47004E40CE /* Package.resolved */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Package.resolved; path = CellGuard.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved; sourceTree = "<group>"; };
@@ -797,6 +800,7 @@
 			isa = PBXGroup;
 			children = (
 				CFD023652961AB6E00AA5A1C /* Apple Location Service */,
+				CFEC5E742BD1807D004978FA /* API */,
 				CF2002EE2A2F9957000922E6 /* Tweaks */,
 				CF57561B2B2F261F00C7C60A /* System Diagnoses */,
 				CFB8B28B2963560100503189 /* Core Data */,
@@ -894,6 +898,14 @@
 				CF1FAFB22986B11200106930 /* CellReachOverlay.swift */,
 			);
 			path = Map;
+			sourceTree = "<group>";
+		};
+		CFEC5E742BD1807D004978FA /* API */ = {
+			isa = PBXGroup;
+			children = (
+				CFEC5E752BD1808E004978FA /* CellGuardURLs.swift */,
+			);
+			path = API;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1167,6 +1179,7 @@
 				CFB6CF232BD122FA00EAB7B4 /* ARIContentParser.swift in Sources */,
 				CFB6CF242BD122FA00EAB7B4 /* PersistenceCSVExporter.swift in Sources */,
 				CFB6CF252BD122FA00EAB7B4 /* URLIdentifiable.swift in Sources */,
+				CFEC5E772BD1816B004978FA /* CellGuardURLs.swift in Sources */,
 				CFB6CF262BD122FA00EAB7B4 /* VerificationProgressView.swift in Sources */,
 				CFB6CF272BD122FA00EAB7B4 /* CellLocationDistance.swift in Sources */,
 				CFB6CF282BD122FA00EAB7B4 /* PersistenceController.swift in Sources */,
@@ -1281,6 +1294,7 @@
 				CFD8DD282A7175AF00954A25 /* ARIContentParser.swift in Sources */,
 				CF9626C32AB7474500C46953 /* PersistenceCSVExporter.swift in Sources */,
 				CF93B852297FFEF9003F9FFE /* URLIdentifiable.swift in Sources */,
+				CFEC5E762BD1808E004978FA /* CellGuardURLs.swift in Sources */,
 				CF0A5678298A7A910012B2A8 /* VerificationProgressView.swift in Sources */,
 				CF446754298D2A040083EE63 /* CellLocationDistance.swift in Sources */,
 				CFD023402961A10D00AA5A1C /* PersistenceController.swift in Sources */,

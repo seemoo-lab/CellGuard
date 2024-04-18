@@ -132,13 +132,13 @@ struct SettingsView: View {
                 
                 KeyValueListRow(key: "Version", value: versionBuild)
 
-                Link(destination: URL(string: "https://cellguard.seemoo.de")!) {
+                Link(destination: CellGuardURLs.baseUrl) {
                     KeyValueListRow(key: "Website") {
                         Image(systemName: "link")
                     }
                 }
                 
-                Link(destination: URL(string: "https://cellguard.seemoo.de/docs/privacy-policy/")!) {
+                Link(destination: CellGuardURLs.privacyPolicy) {
                     KeyValueListRow(key: "Privacy Policy") {
                         Image(systemName: "link")
                     }

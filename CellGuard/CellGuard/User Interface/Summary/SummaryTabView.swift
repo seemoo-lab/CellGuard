@@ -30,7 +30,6 @@ struct SummaryTabView: View {
     #if STATS_VIEW
     @State private var showingStats = false
     #endif
-    @State private var showingHelp = false
     @State private var showingSettings = false
     
     var body: some View {
@@ -49,11 +48,6 @@ struct SummaryTabView: View {
                 }
                 #endif
 
-                NavigationLink(isActive: $showingHelp) {
-                    Text("TODO")
-                } label: {
-                    EmptyView()
-                }
                 NavigationLink(isActive: $showingSettings) {
                     SettingsView()
                 } label: {
@@ -78,9 +72,7 @@ struct SummaryTabView: View {
                             Label("Stats", systemImage: "chart.bar.xaxis")
                         }
                         #endif
-                        Button {
-                            showingHelp = true
-                        } label: {
+                        Link(destination: CellGuardURLs.baseUrl) {
                             Label("Help", systemImage: "book")
                         }
                         Button {
