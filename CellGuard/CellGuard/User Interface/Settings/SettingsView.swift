@@ -159,7 +159,6 @@ struct SettingsView: View {
                 Link(destination: URL(string: "https://hpi.de/classen/home.html")!) {
                     KeyValueListRow(key: "Jiska Classen", value: "HPI")
                 }
-                KeyValueListRow(key: "Linus Laurenz", value: "HPI")
             }
         }
         .listStyle(.insetGrouped)
