@@ -12,16 +12,6 @@
 	<array>
 		<dict>
 			<key>CFBundleTypeName</key>
-			<string>CellGuard Database</string>
-			<key>LSHandlerRank</key>
-			<string>Owner</string>
-			<key>LSItemContentTypes</key>
-			<array>
-				<string>de.tudarmstadt.seemoo.CellGuard.export</string>
-			</array>
-		</dict>
-		<dict>
-			<key>CFBundleTypeName</key>
 			<string>System Diagnose Archive</string>
 			<key>LSHandlerRank</key>
 			<string>Alternate</string>
@@ -60,27 +50,6 @@
 	<string>&quot;Required to access logs&quot;</string>
 	<key>UTExportedTypeDeclarations</key>
 	<array>
-		<dict>
-			<key>UTTypeConformsTo</key>
-			<array>
-				<string>public.json</string>
-			</array>
-			<key>UTTypeDescription</key>
-			<string>CellGuard Database</string>
-			<key>UTTypeIconFiles</key>
-			<array>
-				<string>CellFileTypeIcon</string>
-			</array>
-			<key>UTTypeIdentifier</key>
-			<string>de.tudarmstadt.seemoo.CellGuard.export</string>
-			<key>UTTypeTagSpecification</key>
-			<dict>
-				<key>public.filename-extension</key>
-				<array>
-					<string>cells</string>
-				</array>
-			</dict>
-		</dict>
 		<dict>
 			<key>UTTypeConformsTo</key>
 			<array>

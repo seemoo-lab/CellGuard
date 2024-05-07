@@ -21,7 +21,6 @@ extension PersistenceController {
             let verificationStates = try context.fetch(request)
             
             // Choose the measurement with the lowest score for each cell
-            // TODO: Fix
             let cells = Dictionary(grouping: verificationStates) { verificationState in
                 if let cell = verificationState.cell {
                     return Self.queryCell(from: cell)

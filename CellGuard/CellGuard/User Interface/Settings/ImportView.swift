@@ -9,18 +9,12 @@ import SwiftUI
 import OSLog
 
 enum ImportFileType {
-    case dataUncompressed
-    case dataCompressed
     case archive
     case sysdiagnose
     case unknown
     
     func description() -> String {
         switch(self) {
-        case .dataUncompressed:
-            return "CellGuard Data (Compressed)"
-        case .dataCompressed:
-            return "CellGuard Data"
         case .archive:
             return "CellGuard Archive"
         case .sysdiagnose:
@@ -35,10 +29,6 @@ enum ImportFileType {
         
         if lastComponent.hasSuffix(".cells2") {
             return .archive
-        } else if lastComponent.hasSuffix(".cells.gz") {
-            return .dataCompressed
-        } else if lastComponent.hasSuffix(".cells") {
-            return .dataUncompressed
         } else if lastComponent.hasPrefix("sysdiagnose_") && lastComponent.hasSuffix(".gz") {
             return .sysdiagnose
         } else {
@@ -204,7 +194,7 @@ struct ImportView: View {
                             }
                         }
                     }
-                    .disabled(importInProgress || importFinished || fileType == .dataCompressed)
+                    .disabled(importInProgress || importFinished)
                     // TODO: Add a text or popup about the dangers of importing
                     
                     if importFinished {
@@ -266,15 +256,6 @@ struct ImportView: View {
                 finishImport(result: $0)
             }
             break
-        case .dataCompressed:
-            // TODO: Implement
-            break
-        case .dataUncompressed:
-            PersistenceJSONImporter.importInBackground(url: url) { currentProgress, totalProgress in
-                importProgress = Float(currentProgress) / Float(totalProgress)
-            } completion: {
-                finishImport(result: $0)
-            }
         case .sysdiagnose:
             LogArchiveReader.importInBackground(url: url, highVolumeSpeedup: highVolumeSpeedup) { phase, currentProgress, totalProgress in
                 let progress = Float(currentProgress) / Float(totalProgress)
