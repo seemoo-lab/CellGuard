@@ -42,6 +42,7 @@ struct MapTabView: View {
                 } label: {
                     EmptyView()
                 }
+                // TODO: Add button to an info page for the map explaining which cells are shown, how we get their position and what their color means.
                 MultiCellMap(alsCells: alsCells) { cellID in
                     navigationTarget = cellID
                     navigationActive = true
