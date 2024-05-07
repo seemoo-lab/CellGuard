@@ -123,7 +123,7 @@ private struct CellDetailsCell: View {
                 CellDetailsRow(techFormatter.cell(), cell.cell)
             }
             
-            if let measurement = cell as? CellTweak, let alsCell = measurement.verification {
+            if let measurement = cell as? CellTweak, let alsCell = measurement.appleDatabase {
                 CellDetailsALSInfo(alsCell: alsCell, techFormatter: techFormatter)
             } else if let alsCell = cell as? CellALS {
                 CellDetailsALSInfo(alsCell: alsCell, techFormatter: techFormatter)
@@ -175,8 +175,8 @@ private struct TweakCellDetailsMeasurementCount: View {
                 CellDetailsRow("Last", mediumDateTimeFormatter.string(from: lastCollected))
             }
             CellDetailsRow("Pending", count.pending)
-            CellDetailsRow("Untrusted", count.untrusted)
-            CellDetailsRow("Suspicious", count.suspicious)
+            CellDetailsRow("Suspicious", count.untrusted)
+            CellDetailsRow("Anomalous", count.suspicious)
             CellDetailsRow("Trusted", count.trusted)
             NavigationLink {
                 TweakCellMeasurementList(measurements: measurements)
@@ -221,7 +221,9 @@ private struct TweakCellMeasurementNavLink: View {
     
     var body: some View {
         NavigationLink {
-            TweakCellMeasurementView(measurement: measurement)
+            // TODO: Update view
+            // TweakCellMeasurementView(measurement: measurement)
+            Text("TODO")
         } label: {
             HStack {
                 if let collectedDate = measurement.collected {

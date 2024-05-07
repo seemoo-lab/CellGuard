@@ -66,6 +66,7 @@ enum RiskLevel: Equatable {
         case let .Medium(cause):
             return cause.text()
         case let .High(cellCount):
+            // TODO: of the last 14 days -> in the last 14 days
             return "Detected \(cellCount) suspicious \(cellCount == 1 ? "cell" : "cells")\(ftDaysSuffix)"
         }
     }
@@ -133,8 +134,10 @@ private struct RiskIndicatorLink: View {
     var body: some View {
         switch (risk) {
         case .Low:
+            // TODO: Show sheet with description of the current status
             return AnyView(CellListView())
         case .LowMonitor:
+            // TODO: Show sheet with description of the current status
             return AnyView(CellListView())
         case let .Medium(cause):
             if cause == .Permissions || cause == .Location {
@@ -143,11 +146,14 @@ private struct RiskIndicatorLink: View {
                 // TODO: Replace with help article
                 return AnyView(TweakInfoView())
             } else {
+                // TODO: Show sheet with description of the current status
                 return AnyView(CellListView())
             }
         case .High(_):
+            // TODO: Show sheet with description of the current status
             return AnyView(CellListView())
         case .Unknown:
+            // TODO: Expand on the verification progress view
             return AnyView(VerificationProgressView())
         }
     }

@@ -20,7 +20,7 @@ struct MapTabView: View {
     
     @FetchRequest(
         sortDescriptors: [NSSortDescriptor(keyPath: \CellALS.imported, ascending: false)],
-        predicate: NSPredicate(format: "location != nil AND (ANY verified != nil)")
+        predicate: NSPredicate(format: "location != nil AND observedCells != nil")
     )
     private var alsCells: FetchedResults<CellALS>
     

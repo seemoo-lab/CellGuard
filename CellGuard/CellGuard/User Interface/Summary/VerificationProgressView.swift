@@ -9,14 +9,14 @@ import SwiftUI
 
 struct VerificationProgressView: View {
     @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \CellTweak.collected, ascending: false)],
-        predicate: NSPredicate(format: "status != %@", CellStatus.verified.rawValue)
+        sortDescriptors: [],
+        predicate: NSPredicate(format: "finished == NO and pipeline == %@", Int(primaryVerificationPipeline.id) as NSNumber)
     )
-    private var unverifiedCells: FetchedResults<CellTweak>
+    private var unverifiedStates: FetchedResults<VerificationState>
     
     var body: some View {
         ProgressView {
-            Text("Verifying \(unverifiedCells.count) cellular \(unverifiedCells.count == 1 ? "measurement" : "measurements")")
+            Text("Verifying \(unverifiedStates.count) cellular \(unverifiedStates.count == 1 ? "measurement" : "measurements")")
         }
     }
 }

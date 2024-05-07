@@ -9,21 +9,17 @@ import SwiftUI
 
 struct CellStatusIcon: View {
     
-    let status: CellStatus?
-    let score: Int16
-    
-    init(status: String?, score: Int16) {
-        self.status = CellStatus(rawValue: status ?? "")
-        self.score = score
-    }
+    // It's important to mark this as an observable object, otherwise this status icon is not updated upon status updates
+    // See: https://stackoverflow.com/a/64527233
+    @ObservedObject var state: VerificationState
     
     var body: some View {
-        if status == .verified {
-            if score < CellVerifier.pointsUntrustedThreshold {
+        if state.finished {
+            if state.score < primaryVerificationPipeline.pointsUntrusted {
                 Image(systemName: "exclamationmark.shield")
                     .font(.title2)
                     .foregroundColor(.red)
-            } else if score < CellVerifier.pointsSuspiciousThreshold {
+            } else if state.score < primaryVerificationPipeline.pointsSuspicious {
                 Image(systemName: "shield")
                     .font(.title2)
                     .foregroundColor(.yellow)
@@ -32,15 +28,10 @@ struct CellStatusIcon: View {
                     .font(.title2)
                     .foregroundColor(.green)
             }
-        } else if let status = status, status >= .processedBandwidth {
-            // We still monitoring the cell, but so far everything looks okay
+        } else if state.stage >= primaryVerificationPipeline.stageNumberWaitingForPackets {
             Image(systemName: "lock.shield")
                 .font(.title2)
                 .foregroundColor(.green)
-        } else if status == nil {
-            Image(systemName: "questionmark.circle")
-                .font(.title2)
-                .foregroundColor(.gray)
         } else {
             ProgressView()
         }
@@ -49,10 +40,12 @@ struct CellStatusIcon: View {
 
 struct CellStatusIcon_Previews: PreviewProvider {
     static var previews: some View {
-        CellStatusIcon(status: CellStatus.verified.rawValue, score: Int16(CellVerifier.pointsSuspiciousThreshold))
+        // TODO: Rewrite
+        
+        /* CellStatusIcon(status: CellStatus.verified.rawValue, score: Int16(primaryVerificationPipeline.pointsSuspicious))
             .previewDisplayName("Verified")
         
-        CellStatusIcon(status: CellStatus.verified.rawValue, score: Int16(CellVerifier.pointsUntrustedThreshold))
+        CellStatusIcon(status: CellStatus.verified.rawValue, score: Int16(primaryVerificationPipeline.pointsUntrusted))
             .previewDisplayName("Suspicious")
         
         CellStatusIcon(status: CellStatus.verified.rawValue, score: 0)
@@ -60,8 +53,12 @@ struct CellStatusIcon_Previews: PreviewProvider {
         
         CellStatusIcon(status: CellStatus.imported.rawValue, score: 0)
             .previewDisplayName("Imported")
+         
+         // Imported Verifying
+         
+         */
         
-        CellStatusIcon(status: nil, score: 0)
-            .previewDisplayName("Nil")
+        // TODO: CHANGE
+        CellStatusIcon(state: VerificationState())
     }
 }

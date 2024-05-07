@@ -1,0 +1,359 @@
+//
+//  Packets.swift
+//  CellGuard
+//
+//  Created by Lukas Arnold on 04.05.24.
+//
+
+import CoreData
+import Foundation
+
+extension PersistenceController {
+    
+    /// Uses `NSBatchInsertRequest` (BIR) to import QMI packets into the Core Data store on a private queue.
+    func importQMIPackets(from packets: [(CPTPacket, ParsedQMIPacket)]) throws {
+        if packets.isEmpty {
+            return
+        }
+        
+        let objectIds: [NSManagedObjectID] = try performAndWait(name: "importContext", author: "importQMIPackets") { context in
+            var index = 0
+            let total = packets.count
+            
+            let importedDate = Date()
+            
+            let batchInsertRequest = NSBatchInsertRequest(entity: PacketQMI.entity(), managedObjectHandler: { dbPacket in
+                guard index < total else { return true }
+                
+                if let dbPacket = dbPacket as? PacketQMI {
+                    let (tweakPacket, parsedPacket) = packets[index]
+                    dbPacket.data = tweakPacket.data
+                    dbPacket.collected = tweakPacket.timestamp
+                    dbPacket.direction = tweakPacket.direction.rawValue
+                    // dbPacket.proto = tweakPacket.proto.rawValue
+                    
+                    dbPacket.service = Int16(parsedPacket.qmuxHeader.serviceId)
+                    dbPacket.message = Int32(parsedPacket.messageHeader.messageId)
+                    dbPacket.indication = parsedPacket.transactionHeader.indication
+                    
+                    dbPacket.imported = importedDate
+                }
+                
+                index += 1
+                return false
+            })
+            
+            batchInsertRequest.resultType = .objectIDs
+            
+            guard let fetchResult = try? context.execute(batchInsertRequest),
+                  let batchInsertResult = fetchResult as? NSBatchInsertResult else {
+                return []
+            }
+            
+            return batchInsertResult.result as? [NSManagedObjectID]
+        } ?? []
+        
+        try performAndWait(name: "importContext", author: "importQMIPackets") { context in
+            var added = false
+            
+            for id in objectIds {
+                guard let qmiPacket = context.object(with: id) as? PacketQMI else {
+                    continue
+                }
+                
+                if qmiPacket.indication == PacketConstants.qmiRejectIndication
+                    && qmiPacket.service == PacketConstants.qmiRejectService
+                    && qmiPacket.direction == PacketConstants.qmiRejectDirection.rawValue {
+                    
+                    if qmiPacket.message == PacketConstants.qmiRejectMessage {
+                        let index = PacketIndexQMI(context: context)
+                        index.collected = qmiPacket.collected
+                        index.reject = true
+                        qmiPacket.index = index
+                        added = true
+                    } else if qmiPacket.message == PacketConstants.qmiSignalMessage {
+                        let index = PacketIndexQMI(context: context)
+                        index.collected = qmiPacket.collected
+                        index.signal = true
+                        qmiPacket.index = index
+                        added = true
+                    }
+                }
+            }
+            
+            if added {
+                try context.save()
+            }
+        }
+        
+        // It can be the case the newly imported data is already in the database
+        /* if objectIds.isEmpty {
+            logger.debug("Failed to execute batch import request for QMI packets.")
+            throw PersistenceError.batchInsertError
+        } */
+        
+        logger.debug("Successfully inserted \(packets.count) tweak QMI packets.")
+    }
+    
+    /// Uses `NSBatchInsertRequest` (BIR) to import ARI packets into the Core Data store on a private queue.
+    func importARIPackets(from packets: [(CPTPacket, ParsedARIPacket)]) throws {
+        if packets.isEmpty {
+            return
+        }
+        
+        let objectIds: [NSManagedObjectID] = try performAndWait(name: "importContext", author: "importARIPackets") { context in
+            var index = 0
+            let total = packets.count
+            
+            let importedDate = Date()
+            
+            let batchInsertRequest = NSBatchInsertRequest(entity: PacketARI.entity(), managedObjectHandler: { dbPacket in
+                guard index < total else { return true }
+                
+                if let dbPacket = dbPacket as? PacketARI {
+                    let (tweakPacket, parsedPacket) = packets[index]
+                    dbPacket.data = tweakPacket.data
+                    dbPacket.collected = tweakPacket.timestamp
+                    dbPacket.direction = tweakPacket.direction.rawValue
+                    // dbPacket.proto = tweakPacket.proto.rawValue
+                    
+                    dbPacket.group = Int16(parsedPacket.header.group)
+                    dbPacket.type = Int32(parsedPacket.header.type)
+                    
+                    dbPacket.imported = importedDate
+                }
+                
+                index += 1
+                return false
+            })
+            
+            batchInsertRequest.resultType = .objectIDs
+            
+            guard let fetchResult = try? context.execute(batchInsertRequest),
+                  let batchInsertResult = fetchResult as? NSBatchInsertResult else {
+                return []
+            }
+            
+            return batchInsertResult.result as? [NSManagedObjectID]
+        } ?? []
+        
+        try performAndWait(name: "importContext", author: "importARIPackets") { context in
+            var added = false
+            
+            // TODO: Can we do that in parallel?
+            for id in objectIds {
+                guard let ariPacket = context.object(with: id) as? PacketARI else {
+                    continue
+                }
+                
+                if ariPacket.direction == PacketConstants.ariRejectDirection.rawValue {
+                    if ariPacket.group == PacketConstants.ariRejectGroup && ariPacket.type == PacketConstants.ariRejectType {
+                        let index = PacketIndexARI(context: context)
+                        index.reject = true
+                        index.collected = ariPacket.collected
+                        ariPacket.index = index
+                        added = true
+                    } else if ariPacket.group == PacketConstants.ariSignalGroup && ariPacket.type == PacketConstants.ariSignalType {
+                        let index = PacketIndexARI(context: context)
+                        index.signal = true
+                        index.collected = ariPacket.collected
+                        ariPacket.index = index
+                        added = true
+                    }
+                }
+            }
+            
+            if added {
+                try context.save()
+            }
+        }
+        
+        /* if objectIds.isEmpty {
+            logger.debug("Failed to execute batch import request for ARI packets.")
+            throw PersistenceError.batchInsertError
+        } */
+        
+        logger.debug("Successfully inserted \(packets.count) tweak ARI packets.")
+    }
+    
+    func fetchIndexedQMIPackets(start: Date, end: Date, reject: Bool = false, signal: Bool = false) throws -> [NSManagedObjectID: ParsedQMIPacket] {
+        return try performAndWait(name: "fetch") { context in
+            let request = PacketIndexQMI.fetchRequest()
+            
+            request.predicate = NSPredicate(
+                format: "reject = %@ and signal = %@ and %@ <= collected and collected <= %@",
+                NSNumber(booleanLiteral: reject), NSNumber(booleanLiteral: signal), start as NSDate, end as NSDate
+            )
+            request.sortDescriptors = [NSSortDescriptor(keyPath: \PacketIndexQMI.collected, ascending: false)]
+            request.includesSubentities = true
+        
+            var packets: [NSManagedObjectID: ParsedQMIPacket] = [:]
+            for indexedQMIPacket in try request.execute() {
+                guard let packet = indexedQMIPacket.packet else {
+                    logger.warning("No QMI packet for indexed packet \(indexedQMIPacket)")
+                    continue
+                }
+                guard let data = packet.data else {
+                    logger.warning("Skipping packet \(packet) as it provides no binary data")
+                    continue
+                }
+                
+                packets[packet.objectID] = try ParsedQMIPacket(nsData: data)
+            }
+
+            return packets
+        } ?? [:]
+    }
+    
+    func fetchIndexedARIPackets(start: Date, end: Date, reject: Bool = false, signal: Bool = false) throws -> [NSManagedObjectID: ParsedARIPacket] {
+        return try performAndWait { context in
+            let request = PacketIndexARI.fetchRequest()
+            
+            request.predicate = NSPredicate(
+                format: "reject = %@ and signal = %@ and %@ <= collected and collected <= %@",
+                NSNumber(booleanLiteral: reject), NSNumber(booleanLiteral: signal), start as NSDate, end as NSDate
+            )
+            request.sortDescriptors = [NSSortDescriptor(keyPath: \PacketIndexARI.collected, ascending: false)]
+            request.includesSubentities = true
+        
+            var packets: [NSManagedObjectID: ParsedARIPacket] = [:]
+            for indexedARIPacket in try request.execute() {
+                guard let packet = indexedARIPacket.packet else {
+                    logger.warning("No ARI packet for indexed packet \(indexedARIPacket)")
+                    continue
+                }
+                guard let data = packet.data else {
+                    logger.warning("Skipping packet \(packet) as it provides no binary data")
+                    continue
+                }
+                packets[packet.objectID] = try ParsedARIPacket(data: data)
+            }
+
+            return packets
+        } ?? [:]
+    }
+    
+    /// Fetches QMI packets with the specified properties from Core Data.
+    /// Remember to update the fetch index `byQMIPacketPropertiesIndex` when fetching new types of packets, otherwise the query slows down significantly.
+    func fetchQMIPackets(direction: CPTDirection, service: Int16, message: Int32, indication: Bool, start: Date, end: Date) throws -> [NSManagedObjectID: ParsedQMIPacket] {
+        var packets: [NSManagedObjectID: ParsedQMIPacket] = [:]
+        
+        var fetchError: Error? = nil
+        newTaskContext().performAndWait {
+            let request = NSFetchRequest<PacketQMI>()
+            request.entity = PacketQMI.entity()
+            request.predicate = NSPredicate(
+                format: "indication = %@ and service = %@ and message = %@ and %@ <= collected and collected <= %@ and direction = %@",
+                NSNumber(booleanLiteral: indication), service as NSNumber, message as NSNumber, start as NSDate, end as NSDate, direction.rawValue as NSString
+            )
+            request.sortDescriptors = [NSSortDescriptor(keyPath: \PacketQMI.collected, ascending: false)]
+            // See: https://stackoverflow.com/a/11165883
+            request.propertiesToFetch = ["data"]
+            do {
+                let qmiPackets = try request.execute()
+                for qmiPacket in qmiPackets {
+                    guard let data = qmiPacket.data else {
+                        logger.warning("Skipping packet \(qmiPacket) as it provides no binary data")
+                        continue
+                    }
+                    packets[qmiPacket.objectID] = try ParsedQMIPacket(nsData: data)
+                }
+            } catch {
+                fetchError = error
+            }
+        }
+        
+        if let fetchError = fetchError {
+            logger.warning("Can't fetch QMI packets (service=\(service), message=\(message), indication=\(indication)) from \(start) to \(end): \(fetchError)")
+            throw fetchError
+        }
+        
+        return packets
+    }
+    
+    /// Fetches ARI packets with the specified properties from Core Data.
+    /// Remember to update the fetch index `byARIPacketPropertiesIndex` when fetching new types of packets, otherwise the query slows down significantly.
+    func fetchARIPackets(direction: CPTDirection, group: Int16, type: Int32, start: Date, end: Date) throws -> [NSManagedObjectID: ParsedARIPacket] {
+        var packets: [NSManagedObjectID: ParsedARIPacket] = [:]
+        
+        var fetchError: Error? = nil
+        newTaskContext().performAndWait {
+            let request = NSFetchRequest<PacketARI>()
+            request.entity = PacketARI.entity()
+            request.predicate = NSPredicate(
+                format: "group = %@ and type = %@ and %@ <= collected and collected <= %@ and direction = %@",
+                group as NSNumber, type as NSNumber, start as NSDate, end as NSDate, direction.rawValue as NSString
+            )
+            request.sortDescriptors = [NSSortDescriptor(keyPath: \PacketARI.collected, ascending: false)]
+            request.returnsObjectsAsFaults = false
+            do {
+                let ariPackets = try request.execute()
+                for ariPacket in ariPackets {
+                    guard let data = ariPacket.data else {
+                        logger.warning("Skipping packet \(ariPacket) as it provides no binary data")
+                        continue
+                    }
+                    packets[ariPacket.objectID] = try ParsedARIPacket(data: data)
+                }
+            } catch {
+                fetchError = error
+            }
+        }
+        
+        if let fetchError = fetchError {
+            logger.warning("Can't fetch ARI packets (group=\(group), type=\(type)) from \(start) to \(end): \(fetchError)")
+            throw fetchError
+        }
+        
+        return packets
+    }
+    
+    func countPacketsByType(completion: @escaping (Result<(Int, Int), Error>) -> Void) {
+        let backgroundContext = newTaskContext()
+        backgroundContext.perform {
+            let qmiRequest = NSFetchRequest<PacketQMI>()
+            qmiRequest.entity = PacketQMI.entity()
+            
+            let ariRequest = NSFetchRequest<PacketARI>()
+            ariRequest.entity = PacketARI.entity()
+            
+            let result = Result {
+                let qmiCount = try backgroundContext.count(for: qmiRequest)
+                let ariCount = try backgroundContext.count(for: ariRequest)
+                
+                return (qmiCount, ariCount)
+            }
+            
+            // Call the callback on the main queue
+            DispatchQueue.main.async {
+                completion(result)
+            }
+        }
+    }
+    
+    func deletePacketsOlderThan(days: Int) {
+        let taskContext = newTaskContext()
+        logger.debug("Start deleting packets older than \(days) day(s) from the store...")
+        
+        taskContext.performAndWait {
+            do {
+                let startOfDay = Calendar.current.startOfDay(for: Date())
+                guard let daysAgo = Calendar.current.date(byAdding: .day, value: -days, to: startOfDay) else {
+                    logger.debug("Can't calculate the date for packet deletion")
+                    return
+                }
+                logger.debug("Deleting packets older than \(startOfDay)")
+                // Only delete packets not referenced by cells
+                let predicate = NSPredicate(format: "collected < %@ and index = nil", daysAgo as NSDate)
+                
+                let qmiCount = try deleteData(entity: PacketQMI.entity(), predicate: predicate, context: taskContext)
+                let ariCount = try deleteData(entity: PacketARI.entity(), predicate: predicate, context: taskContext)
+                logger.debug("Successfully deleted \(qmiCount + ariCount) old packets")
+            } catch {
+                logger.warning("Failed to delete old packets: \(error)")
+            }
+        }
+        
+    }
+    
+}

@@ -20,6 +20,7 @@
 		CF0FDCCB296B466100A6FFE2 /* PersistenceError.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0FDCCA296B466100A6FFE2 /* PersistenceError.swift */; };
 		CF0FDCCD296B480B00A6FFE2 /* TrackedUserLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0FDCCC296B480B00A6FFE2 /* TrackedUserLocation.swift */; };
 		CF15E1FA2AA33EA200D440AD /* ImportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF15E1F92AA33EA200D440AD /* ImportView.swift */; };
+		CF1CD4752BE16C1C009A3582 /* QVerification.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1CD4742BE16C1C009A3582 /* QVerification.swift */; };
 		CF1FAFB32986B11200106930 /* CellReachOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1FAFB22986B11200106930 /* CellReachOverlay.swift */; };
 		CF2002E82A2F2BE2000922E6 /* QMIParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2002E72A2F2BE2000922E6 /* QMIParser.swift */; };
 		CF2002EA2A2F2BEA000922E6 /* ARIParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2002E92A2F2BEA000922E6 /* ARIParser.swift */; };
@@ -38,7 +39,6 @@
 		CF320F5729621C42009BAD18 /* CCTClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF320F5629621C42009BAD18 /* CCTClientTests.swift */; };
 		CF320F59296225F9009BAD18 /* CCTResponse.txt in Resources */ = {isa = PBXBuildFile; fileRef = CF320F582962208B009BAD18 /* CCTResponse.txt */; };
 		CF446754298D2A040083EE63 /* CellLocationDistance.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF446753298D2A040083EE63 /* CellLocationDistance.swift */; };
-		CF446756298D78F80083EE63 /* PersistenceQueries.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF446755298D78F80083EE63 /* PersistenceQueries.swift */; };
 		CF4E53932A31CE2500AE2059 /* ari-definitions.json in Resources */ = {isa = PBXBuildFile; fileRef = CF4E53912A31CE2500AE2059 /* ari-definitions.json */; };
 		CF4E53942A31CE2500AE2059 /* qmi-definitions.json in Resources */ = {isa = PBXBuildFile; fileRef = CF4E53922A31CE2500AE2059 /* qmi-definitions.json */; };
 		CF4E53962A31CE3F00AE2059 /* QMIDefinitions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF4E53952A31CE3F00AE2059 /* QMIDefinitions.swift */; };
@@ -61,18 +61,33 @@
 		CF57561A2B2F25DB00C7C60A /* SwiftBridgeCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5756182B2F25DB00C7C60A /* SwiftBridgeCore.swift */; };
 		CF57561D2B2F263500C7C60A /* LogArchiveReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF57561C2B2F263500C7C60A /* LogArchiveReader.swift */; };
 		CF5756202B2F266700C7C60A /* SWCompression in Frameworks */ = {isa = PBXBuildFile; productRef = CF57561F2B2F266700C7C60A /* SWCompression */; };
-		CF5AB2C02975458D00896ADC /* CellStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5AB2BF2975458D00896ADC /* CellStatus.swift */; };
 		CF5CBB8D29687CBB001CE9BE /* CCTParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5CBB8C29687CBB001CE9BE /* CCTParserTests.swift */; };
 		CF5CBB9529689FFE001CE9BE /* CellGuardSceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5CBB9429689FFE001CE9BE /* CellGuardSceneDelegate.swift */; };
 		CF5EA78B29892F420061E9F1 /* CGTabBarAppearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5EA78A29892F420061E9F1 /* CGTabBarAppearance.swift */; };
 		CF5EF9202977FACA00C4F50A /* Formatters.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5EF91F2977FACA00C4F50A /* Formatters.swift */; };
 		CF5EF9222977FCF800C4F50A /* CellTechnologyFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5EF9212977FCF800C4F50A /* CellTechnologyFormatter.swift */; };
-		CF5EF9242978538E00C4F50A /* CellVerifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5EF9232978538E00C4F50A /* CellVerifier.swift */; };
 		CF5EF9262978689B00C4F50A /* ALSVerifierTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5EF9252978689B00C4F50A /* ALSVerifierTests.swift */; };
 		CF5EF92829793F7500C4F50A /* TestDetection.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5EF92729793F7500C4F50A /* TestDetection.swift */; };
 		CF5EF92A2979B8D800C4F50A /* LocationSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5EF9292979B8D800C4F50A /* LocationSource.swift */; };
 		CF6EC8AD2A6C4C88004CF0AB /* PreviewInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF6EC8AC2A6C4C88004CF0AB /* PreviewInfo.swift */; };
 		CF6EC8B12A6D9F99004CF0AB /* CellListFilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF6EC8B02A6D9F99004CF0AB /* CellListFilterView.swift */; };
+		CF70A97D2BE682F900989FB5 /* QVerification.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1CD4742BE16C1C009A3582 /* QVerification.swift */; };
+		CF70A97F2BE6AD8600989FB5 /* QCellALS.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF70A97E2BE6AD8600989FB5 /* QCellALS.swift */; };
+		CF70A9802BE6AD8600989FB5 /* QCellALS.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF70A97E2BE6AD8600989FB5 /* QCellALS.swift */; };
+		CF70A9822BE6AD8D00989FB5 /* QRiskStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF70A9812BE6AD8D00989FB5 /* QRiskStatus.swift */; };
+		CF70A9832BE6AD8D00989FB5 /* QRiskStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF70A9812BE6AD8D00989FB5 /* QRiskStatus.swift */; };
+		CF70A9852BE6AFB800989FB5 /* QPackets.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF70A9842BE6AFB800989FB5 /* QPackets.swift */; };
+		CF70A9862BE6AFB800989FB5 /* QPackets.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF70A9842BE6AFB800989FB5 /* QPackets.swift */; };
+		CF70A9882BE6B01400989FB5 /* QNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF70A9872BE6B01400989FB5 /* QNotifications.swift */; };
+		CF70A9892BE6B01400989FB5 /* QNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF70A9872BE6B01400989FB5 /* QNotifications.swift */; };
+		CF70A98B2BE6B51C00989FB5 /* QLocationUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF70A98A2BE6B51C00989FB5 /* QLocationUser.swift */; };
+		CF70A98C2BE6B51C00989FB5 /* QLocationUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF70A98A2BE6B51C00989FB5 /* QLocationUser.swift */; };
+		CF70A98E2BE6B57F00989FB5 /* QCellTweak.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF70A98D2BE6B57F00989FB5 /* QCellTweak.swift */; };
+		CF70A98F2BE6B57F00989FB5 /* QCellTweak.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF70A98D2BE6B57F00989FB5 /* QCellTweak.swift */; };
+		CF70A9912BE6B64600989FB5 /* QCommonDeletion.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF70A9902BE6B64600989FB5 /* QCommonDeletion.swift */; };
+		CF70A9922BE6B64600989FB5 /* QCommonDeletion.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF70A9902BE6B64600989FB5 /* QCommonDeletion.swift */; };
+		CF70A9942BE6B6D600989FB5 /* QCommonFetch.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF70A9932BE6B6D600989FB5 /* QCommonFetch.swift */; };
+		CF70A9952BE6B6D600989FB5 /* QCommonFetch.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF70A9932BE6B6D600989FB5 /* QCommonFetch.swift */; };
 		CF73099A2A79122B00498BC3 /* DataSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF7309992A79122B00498BC3 /* DataSummaryView.swift */; };
 		CF86C7912A6A9086002EC9B6 /* CellListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF86C7902A6A9086002EC9B6 /* CellListView.swift */; };
 		CF86C7932A6AC25D002EC9B6 /* CellDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF86C7922A6AC25D002EC9B6 /* CellDetailsView.swift */; };
@@ -124,7 +139,6 @@
 		CFB6CF352BD122FA00EAB7B4 /* MultiCellMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFDF5D6E297EF05D000708A8 /* MultiCellMap.swift */; };
 		CFB6CF362BD122FA00EAB7B4 /* QMIDefinitions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF4E53952A31CE3F00AE2059 /* QMIDefinitions.swift */; };
 		CFB6CF372BD122FA00EAB7B4 /* TestDetection.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5EF92729793F7500C4F50A /* TestDetection.swift */; };
-		CFB6CF382BD122FA00EAB7B4 /* PersistenceQueries.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF446755298D78F80083EE63 /* PersistenceQueries.swift */; };
 		CFB6CF392BD122FA00EAB7B4 /* CellDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF86C7922A6AC25D002EC9B6 /* CellDetailsView.swift */; };
 		CFB6CF3A2BD122FA00EAB7B4 /* LocationAnnotationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFDF5D78297EF1EF000708A8 /* LocationAnnotationView.swift */; };
 		CFB6CF3B2BD122FA00EAB7B4 /* PortStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF8D331D2AC192B6009CA3F0 /* PortStatus.swift */; };
@@ -141,7 +155,6 @@
 		CFB6CF462BD122FA00EAB7B4 /* TweakInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5672952A29E59000B6EA7C /* TweakInfoView.swift */; };
 		CFB6CF472BD122FA00EAB7B4 /* PacketQMIDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF54CCC02A331E7100961E4D /* PacketQMIDetailsView.swift */; };
 		CFB6CF482BD122FA00EAB7B4 /* CoreLocationALS.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF53DB41297473E8005DCD10 /* CoreLocationALS.pb.swift */; };
-		CFB6CF492BD122FA00EAB7B4 /* CellVerifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5EF9232978538E00C4F50A /* CellVerifier.swift */; };
 		CFB6CF4A2BD122FA00EAB7B4 /* CellGuard.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = CFD023412961A10D00AA5A1C /* CellGuard.xcdatamodeld */; };
 		CFB6CF4B2BD122FA00EAB7B4 /* SingleCellMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFDF5D7E297F05A0000708A8 /* SingleCellMap.swift */; };
 		CFB6CF4C2BD122FA00EAB7B4 /* LocationSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5EF9292979B8D800C4F50A /* LocationSource.swift */; };
@@ -192,7 +205,6 @@
 		CFB6CF792BD122FA00EAB7B4 /* PersistenceError.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0FDCCA296B466100A6FFE2 /* PersistenceError.swift */; };
 		CFB6CF7A2BD122FA00EAB7B4 /* ARIDefinitions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF4E53972A31CE4600AE2059 /* ARIDefinitions.swift */; };
 		CFB6CF7B2BD122FA00EAB7B4 /* CPTCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF54CCBB2A33093800961E4D /* CPTCollector.swift */; };
-		CFB6CF7C2BD122FA00EAB7B4 /* CellStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5AB2BF2975458D00896ADC /* CellStatus.swift */; };
 		CFB6CF7D2BD122FA00EAB7B4 /* TrackedUserLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0FDCCC296B480B00A6FFE2 /* TrackedUserLocation.swift */; };
 		CFB6CF7E2BD122FA00EAB7B4 /* LocationDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB8B2872963417B00503189 /* LocationDataManager.swift */; };
 		CFB6CF7F2BD122FA00EAB7B4 /* QMIContentParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD8DD252A715E8300954A25 /* QMIContentParser.swift */; };
@@ -248,6 +260,10 @@
 		CFD0236A2961ABA100AA5A1C /* ALSClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD023692961ABA100AA5A1C /* ALSClient.swift */; };
 		CFD0236D2961AD1500AA5A1C /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = CFD0236C2961AD1500AA5A1C /* SwiftProtobuf */; };
 		CFD023742961DF7400AA5A1C /* ALSClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD023732961DF7400AA5A1C /* ALSClientTests.swift */; };
+		CFD5657A2BDFA82C00925FAA /* VerificationPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD565792BDFA82C00925FAA /* VerificationPipeline.swift */; };
+		CFD5657B2BDFA82C00925FAA /* VerificationPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD565792BDFA82C00925FAA /* VerificationPipeline.swift */; };
+		CFD5657D2BDFA90A00925FAA /* CGVerificationPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD5657C2BDFA90A00925FAA /* CGVerificationPipeline.swift */; };
+		CFD5657E2BDFA90A00925FAA /* CGVerificationPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD5657C2BDFA90A00925FAA /* CGVerificationPipeline.swift */; };
 		CFD8DD262A715E8300954A25 /* QMIContentParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD8DD252A715E8300954A25 /* QMIContentParser.swift */; };
 		CFD8DD282A7175AF00954A25 /* ARIContentParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD8DD272A7175AF00954A25 /* ARIContentParser.swift */; };
 		CFDF5D6F297EF05D000708A8 /* MultiCellMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFDF5D6E297EF05D000708A8 /* MultiCellMap.swift */; };
@@ -264,6 +280,8 @@
 		CFDF5D85297F09D3000708A8 /* DatabaseAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFDF5D84297F09D3000708A8 /* DatabaseAnnotation.swift */; };
 		CFDF5D87297F190A000708A8 /* PersistenceJSONExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFDF5D86297F190A000708A8 /* PersistenceJSONExporter.swift */; };
 		CFDF5D89297F340E000708A8 /* ActivityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFDF5D88297F340E000708A8 /* ActivityViewController.swift */; };
+		CFE0B6A82BE96DEF004AB5E9 /* SNVerificationPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFE0B6A72BE96DEF004AB5E9 /* SNVerificationPipeline.swift */; };
+		CFE0B6A92BE96DEF004AB5E9 /* SNVerificationPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFE0B6A72BE96DEF004AB5E9 /* SNVerificationPipeline.swift */; };
 		CFE4A7A92B35991C00A37C7A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CFE4A7A82B35991C00A37C7A /* LaunchScreen.storyboard */; };
 		CFE988DF2AA88A2B0039EDF9 /* CircularProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFE988DE2AA88A2B0039EDF9 /* CircularProgressView.swift */; };
 		CFEC5E762BD1808E004978FA /* CellGuardURLs.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFEC5E752BD1808E004978FA /* CellGuardURLs.swift */; };
@@ -308,6 +326,7 @@
 		CF0FDCCA296B466100A6FFE2 /* PersistenceError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceError.swift; sourceTree = "<group>"; };
 		CF0FDCCC296B480B00A6FFE2 /* TrackedUserLocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackedUserLocation.swift; sourceTree = "<group>"; };
 		CF15E1F92AA33EA200D440AD /* ImportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportView.swift; sourceTree = "<group>"; };
+		CF1CD4742BE16C1C009A3582 /* QVerification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QVerification.swift; sourceTree = "<group>"; };
 		CF1FAFB22986B11200106930 /* CellReachOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellReachOverlay.swift; sourceTree = "<group>"; };
 		CF2002E72A2F2BE2000922E6 /* QMIParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QMIParser.swift; sourceTree = "<group>"; };
 		CF2002E92A2F2BEA000922E6 /* ARIParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARIParser.swift; sourceTree = "<group>"; };
@@ -326,7 +345,6 @@
 		CF320F582962208B009BAD18 /* CCTResponse.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CCTResponse.txt; sourceTree = "<group>"; };
 		CF320F5A29622B6D009BAD18 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		CF446753298D2A040083EE63 /* CellLocationDistance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellLocationDistance.swift; sourceTree = "<group>"; };
-		CF446755298D78F80083EE63 /* PersistenceQueries.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceQueries.swift; sourceTree = "<group>"; };
 		CF4E53912A31CE2500AE2059 /* ari-definitions.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "ari-definitions.json"; sourceTree = "<group>"; };
 		CF4E53922A31CE2500AE2059 /* qmi-definitions.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "qmi-definitions.json"; sourceTree = "<group>"; };
 		CF4E53952A31CE3F00AE2059 /* QMIDefinitions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QMIDefinitions.swift; sourceTree = "<group>"; };
@@ -351,18 +369,24 @@
 		CF5756182B2F25DB00C7C60A /* SwiftBridgeCore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SwiftBridgeCore.swift; path = Generated/SwiftBridgeCore.swift; sourceTree = "<group>"; };
 		CF5756192B2F25DB00C7C60A /* SwiftBridgeCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SwiftBridgeCore.h; path = Generated/SwiftBridgeCore.h; sourceTree = "<group>"; };
 		CF57561C2B2F263500C7C60A /* LogArchiveReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogArchiveReader.swift; sourceTree = "<group>"; };
-		CF5AB2BF2975458D00896ADC /* CellStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellStatus.swift; sourceTree = "<group>"; };
 		CF5CBB8C29687CBB001CE9BE /* CCTParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CCTParserTests.swift; sourceTree = "<group>"; };
 		CF5CBB9429689FFE001CE9BE /* CellGuardSceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellGuardSceneDelegate.swift; sourceTree = "<group>"; };
 		CF5EA78A29892F420061E9F1 /* CGTabBarAppearance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CGTabBarAppearance.swift; sourceTree = "<group>"; };
 		CF5EF91F2977FACA00C4F50A /* Formatters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Formatters.swift; sourceTree = "<group>"; };
 		CF5EF9212977FCF800C4F50A /* CellTechnologyFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellTechnologyFormatter.swift; sourceTree = "<group>"; };
-		CF5EF9232978538E00C4F50A /* CellVerifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellVerifier.swift; sourceTree = "<group>"; };
 		CF5EF9252978689B00C4F50A /* ALSVerifierTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ALSVerifierTests.swift; sourceTree = "<group>"; };
 		CF5EF92729793F7500C4F50A /* TestDetection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestDetection.swift; sourceTree = "<group>"; };
 		CF5EF9292979B8D800C4F50A /* LocationSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationSource.swift; sourceTree = "<group>"; };
 		CF6EC8AC2A6C4C88004CF0AB /* PreviewInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewInfo.swift; sourceTree = "<group>"; };
 		CF6EC8B02A6D9F99004CF0AB /* CellListFilterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellListFilterView.swift; sourceTree = "<group>"; };
+		CF70A97E2BE6AD8600989FB5 /* QCellALS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QCellALS.swift; sourceTree = "<group>"; };
+		CF70A9812BE6AD8D00989FB5 /* QRiskStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRiskStatus.swift; sourceTree = "<group>"; };
+		CF70A9842BE6AFB800989FB5 /* QPackets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QPackets.swift; sourceTree = "<group>"; };
+		CF70A9872BE6B01400989FB5 /* QNotifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QNotifications.swift; sourceTree = "<group>"; };
+		CF70A98A2BE6B51C00989FB5 /* QLocationUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QLocationUser.swift; sourceTree = "<group>"; };
+		CF70A98D2BE6B57F00989FB5 /* QCellTweak.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QCellTweak.swift; sourceTree = "<group>"; };
+		CF70A9902BE6B64600989FB5 /* QCommonDeletion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QCommonDeletion.swift; sourceTree = "<group>"; };
+		CF70A9932BE6B6D600989FB5 /* QCommonFetch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QCommonFetch.swift; sourceTree = "<group>"; };
 		CF7309992A79122B00498BC3 /* DataSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSummaryView.swift; sourceTree = "<group>"; };
 		CF86C7902A6A9086002EC9B6 /* CellListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellListView.swift; sourceTree = "<group>"; };
 		CF86C7922A6AC25D002EC9B6 /* CellDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellDetailsView.swift; sourceTree = "<group>"; };
@@ -409,6 +433,8 @@
 		CFD023672961AB9900AA5A1C /* CCTClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CCTClient.swift; sourceTree = "<group>"; };
 		CFD023692961ABA100AA5A1C /* ALSClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ALSClient.swift; sourceTree = "<group>"; };
 		CFD023732961DF7400AA5A1C /* ALSClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ALSClientTests.swift; sourceTree = "<group>"; };
+		CFD565792BDFA82C00925FAA /* VerificationPipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerificationPipeline.swift; sourceTree = "<group>"; };
+		CFD5657C2BDFA90A00925FAA /* CGVerificationPipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CGVerificationPipeline.swift; sourceTree = "<group>"; };
 		CFD8DD252A715E8300954A25 /* QMIContentParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QMIContentParser.swift; sourceTree = "<group>"; };
 		CFD8DD272A7175AF00954A25 /* ARIContentParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARIContentParser.swift; sourceTree = "<group>"; };
 		CFDF5D6E297EF05D000708A8 /* MultiCellMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiCellMap.swift; sourceTree = "<group>"; };
@@ -425,6 +451,7 @@
 		CFDF5D84297F09D3000708A8 /* DatabaseAnnotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseAnnotation.swift; sourceTree = "<group>"; };
 		CFDF5D86297F190A000708A8 /* PersistenceJSONExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceJSONExporter.swift; sourceTree = "<group>"; };
 		CFDF5D88297F340E000708A8 /* ActivityViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityViewController.swift; sourceTree = "<group>"; };
+		CFE0B6A72BE96DEF004AB5E9 /* SNVerificationPipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SNVerificationPipeline.swift; sourceTree = "<group>"; };
 		CFE4A7A82B35991C00A37C7A /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		CFE988DE2AA88A2B0039EDF9 /* CircularProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularProgressView.swift; sourceTree = "<group>"; };
 		CFEC5E732BD17782004978FA /* TestPlan.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = TestPlan.xctestplan; sourceTree = "<group>"; };
@@ -512,6 +539,22 @@
 				CFE988DE2AA88A2B0039EDF9 /* CircularProgressView.swift */,
 			);
 			path = Helpers;
+			sourceTree = "<group>";
+		};
+		CF1CD4732BE16C14009A3582 /* Queries */ = {
+			isa = PBXGroup;
+			children = (
+				CF70A97E2BE6AD8600989FB5 /* QCellALS.swift */,
+				CF70A98D2BE6B57F00989FB5 /* QCellTweak.swift */,
+				CF70A9902BE6B64600989FB5 /* QCommonDeletion.swift */,
+				CF70A9932BE6B6D600989FB5 /* QCommonFetch.swift */,
+				CF70A98A2BE6B51C00989FB5 /* QLocationUser.swift */,
+				CF70A9872BE6B01400989FB5 /* QNotifications.swift */,
+				CF70A9842BE6AFB800989FB5 /* QPackets.swift */,
+				CF70A9812BE6AD8D00989FB5 /* QRiskStatus.swift */,
+				CF1CD4742BE16C1C009A3582 /* QVerification.swift */,
+			);
+			path = Queries;
 			sourceTree = "<group>";
 		};
 		CF2002E62A2F2BB0000922E6 /* Capture Packets */ = {
@@ -682,7 +725,9 @@
 			isa = PBXGroup;
 			children = (
 				CF446753298D2A040083EE63 /* CellLocationDistance.swift */,
-				CF5EF9232978538E00C4F50A /* CellVerifier.swift */,
+				CFD565792BDFA82C00925FAA /* VerificationPipeline.swift */,
+				CFD5657C2BDFA90A00925FAA /* CGVerificationPipeline.swift */,
+				CFE0B6A72BE96DEF004AB5E9 /* SNVerificationPipeline.swift */,
 			);
 			path = Verification;
 			sourceTree = "<group>";
@@ -741,15 +786,14 @@
 		CFB8B28B2963560100503189 /* Core Data */ = {
 			isa = PBXGroup;
 			children = (
+				CF1CD4732BE16C14009A3582 /* Queries */,
 				CFBEC8442BC7F7060021C0B9 /* Objects */,
 				CFA145862AB3454800239C49 /* Import & Export */,
 				CF93B85529800451003F9FFE /* CellFileKeys.swift */,
 				CF93B84D297FF5C3003F9FFE /* CellFileTypeIcon.png */,
 				CFD023412961A10D00AA5A1C /* CellGuard.xcdatamodeld */,
-				CF5AB2BF2975458D00896ADC /* CellStatus.swift */,
 				CF5EF9292979B8D800C4F50A /* LocationSource.swift */,
 				CFD0233F2961A10D00AA5A1C /* PersistenceController.swift */,
-				CF446755298D78F80083EE63 /* PersistenceQueries.swift */,
 				CF0FDCCA296B466100A6FFE2 /* PersistenceError.swift */,
 				CF0FDCC8296B310400A6FFE2 /* PersistencePreview.swift */,
 				CF6EC8AC2A6C4C88004CF0AB /* PreviewInfo.swift */,
@@ -1178,6 +1222,7 @@
 				CFB6CF222BD122FA00EAB7B4 /* ImportResult.swift in Sources */,
 				CFB6CF232BD122FA00EAB7B4 /* ARIContentParser.swift in Sources */,
 				CFB6CF242BD122FA00EAB7B4 /* PersistenceCSVExporter.swift in Sources */,
+				CF70A97D2BE682F900989FB5 /* QVerification.swift in Sources */,
 				CFB6CF252BD122FA00EAB7B4 /* URLIdentifiable.swift in Sources */,
 				CFEC5E772BD1816B004978FA /* CellGuardURLs.swift in Sources */,
 				CFB6CF262BD122FA00EAB7B4 /* VerificationProgressView.swift in Sources */,
@@ -1188,6 +1233,7 @@
 				CFB6CF2B2BD122FA00EAB7B4 /* GroupedMeasurements.swift in Sources */,
 				CFB6CF2C2BD122FA00EAB7B4 /* LocalNetworkAuthorization.swift in Sources */,
 				CFB6CF2D2BD122FA00EAB7B4 /* ImportView.swift in Sources */,
+				CF70A9862BE6AFB800989FB5 /* QPackets.swift in Sources */,
 				CFB6CF2E2BD122FA00EAB7B4 /* KeyValueListRow.swift in Sources */,
 				CFB6CF2F2BD122FA00EAB7B4 /* PacketCommonDetails.swift in Sources */,
 				CFB6CF302BD122FA00EAB7B4 /* LocationAnnotation.swift in Sources */,
@@ -1195,10 +1241,10 @@
 				CFB6CF322BD122FA00EAB7B4 /* UserDefaultsKeys.swift in Sources */,
 				CFB6CF332BD122FA00EAB7B4 /* CellInformationCard.swift in Sources */,
 				CFB6CF342BD122FA00EAB7B4 /* LogArchiveReader.swift in Sources */,
+				CF70A9952BE6B6D600989FB5 /* QCommonFetch.swift in Sources */,
 				CFB6CF352BD122FA00EAB7B4 /* MultiCellMap.swift in Sources */,
 				CFB6CF362BD122FA00EAB7B4 /* QMIDefinitions.swift in Sources */,
 				CFB6CF372BD122FA00EAB7B4 /* TestDetection.swift in Sources */,
-				CFB6CF382BD122FA00EAB7B4 /* PersistenceQueries.swift in Sources */,
 				CFB6CF392BD122FA00EAB7B4 /* CellDetailsView.swift in Sources */,
 				CFB6CF3A2BD122FA00EAB7B4 /* LocationAnnotationView.swift in Sources */,
 				CFB6CF3B2BD122FA00EAB7B4 /* PortStatus.swift in Sources */,
@@ -1215,7 +1261,6 @@
 				CFB6CF462BD122FA00EAB7B4 /* TweakInfoView.swift in Sources */,
 				CFB6CF472BD122FA00EAB7B4 /* PacketQMIDetailsView.swift in Sources */,
 				CFB6CF482BD122FA00EAB7B4 /* CoreLocationALS.pb.swift in Sources */,
-				CFB6CF492BD122FA00EAB7B4 /* CellVerifier.swift in Sources */,
 				CFB6CF4A2BD122FA00EAB7B4 /* CellGuard.xcdatamodeld in Sources */,
 				CFB6CF4B2BD122FA00EAB7B4 /* SingleCellMap.swift in Sources */,
 				CFB6CF4C2BD122FA00EAB7B4 /* LocationSource.swift in Sources */,
@@ -1235,19 +1280,26 @@
 				CFB6CF5A2BD122FA00EAB7B4 /* CCTClient.swift in Sources */,
 				CFB6CF5B2BD122FA00EAB7B4 /* DataSummaryView.swift in Sources */,
 				CFB6CF5C2BD122FA00EAB7B4 /* CellReachOverlay.swift in Sources */,
+				CF70A98C2BE6B51C00989FB5 /* QLocationUser.swift in Sources */,
+				CF70A9892BE6B01400989FB5 /* QNotifications.swift in Sources */,
 				CFB6CF5D2BD122FA00EAB7B4 /* CellGuardAppDelegate.swift in Sources */,
 				CFB6CF5E2BD122FA00EAB7B4 /* MapTabView.swift in Sources */,
 				CFB6CF5F2BD122FA00EAB7B4 /* CellListView.swift in Sources */,
 				CFB6CF602BD122FA00EAB7B4 /* TweakCellMeasurementView.swift in Sources */,
+				CF70A98F2BE6B57F00989FB5 /* QCellTweak.swift in Sources */,
+				CF70A9802BE6AD8600989FB5 /* QCellALS.swift in Sources */,
 				CFB6CF612BD122FA00EAB7B4 /* LargeButton.swift in Sources */,
 				CFB6CF622BD122FA00EAB7B4 /* CellALS+CoreDataClass.swift in Sources */,
 				CFB6CF632BD122FA00EAB7B4 /* CellTweak+CoreDataClass.swift in Sources */,
 				CFB6CF642BD122FA00EAB7B4 /* LocationClusterAnnotation.swift in Sources */,
 				CFB6CF652BD122FA00EAB7B4 /* CommonDefinitions.swift in Sources */,
 				CFB6CF662BD122FA00EAB7B4 /* ActivityViewController.swift in Sources */,
+				CF70A9922BE6B64600989FB5 /* QCommonDeletion.swift in Sources */,
 				CFB6CF672BD122FA00EAB7B4 /* PersistenceJSONImporter.swift in Sources */,
+				CFE0B6A92BE96DEF004AB5E9 /* SNVerificationPipeline.swift in Sources */,
 				CFB6CF682BD122FA00EAB7B4 /* CellAnnotation.swift in Sources */,
 				CFB6CF692BD122FA00EAB7B4 /* PacketFilterView.swift in Sources */,
+				CF70A9832BE6AD8D00989FB5 /* QRiskStatus.swift in Sources */,
 				CFB6CF6A2BD122FA00EAB7B4 /* RiskIndicatorCard.swift in Sources */,
 				CFB6CF6B2BD122FA00EAB7B4 /* ARIParser.swift in Sources */,
 				CFB6CF6C2BD122FA00EAB7B4 /* Formatters.swift in Sources */,
@@ -1260,17 +1312,18 @@
 				CFB6CF732BD122FA00EAB7B4 /* PacketARI+CoreDataClass.swift in Sources */,
 				CFB6CF742BD122FA00EAB7B4 /* AcknowledgementView.swift in Sources */,
 				CFB6CF752BD122FA00EAB7B4 /* OperatorDefinitions.swift in Sources */,
+				CFD5657E2BDFA90A00925FAA /* CGVerificationPipeline.swift in Sources */,
 				CFB6CF762BD122FA00EAB7B4 /* PersistenceCSVImporter.swift in Sources */,
 				CFB6CF772BD122FA00EAB7B4 /* ALSClient.swift in Sources */,
 				CFB6CF782BD122FA00EAB7B4 /* DeleteView.swift in Sources */,
 				CFB6CF792BD122FA00EAB7B4 /* PersistenceError.swift in Sources */,
 				CFB6CF7A2BD122FA00EAB7B4 /* ARIDefinitions.swift in Sources */,
 				CFB6CF7B2BD122FA00EAB7B4 /* CPTCollector.swift in Sources */,
-				CFB6CF7C2BD122FA00EAB7B4 /* CellStatus.swift in Sources */,
 				CFB6CF7D2BD122FA00EAB7B4 /* TrackedUserLocation.swift in Sources */,
 				CFB6CF7E2BD122FA00EAB7B4 /* LocationDataManager.swift in Sources */,
 				CFB6CF7F2BD122FA00EAB7B4 /* QMIContentParser.swift in Sources */,
 				CFB6CF802BD122FA00EAB7B4 /* CellGuardSceneDelegate.swift in Sources */,
+				CFD5657B2BDFA82C00925FAA /* VerificationPipeline.swift in Sources */,
 				CFB6CF812BD122FA00EAB7B4 /* CellGuardApp.swift in Sources */,
 				CFB6CF822BD122FA00EAB7B4 /* WelcomeSheet.swift in Sources */,
 				CFB6CF832BD122FA00EAB7B4 /* CompositeTabView.swift in Sources */,
@@ -1293,6 +1346,7 @@
 				CFFF19E52BC70E63004E40CE /* ImportResult.swift in Sources */,
 				CFD8DD282A7175AF00954A25 /* ARIContentParser.swift in Sources */,
 				CF9626C32AB7474500C46953 /* PersistenceCSVExporter.swift in Sources */,
+				CF1CD4752BE16C1C009A3582 /* QVerification.swift in Sources */,
 				CF93B852297FFEF9003F9FFE /* URLIdentifiable.swift in Sources */,
 				CFEC5E762BD1808E004978FA /* CellGuardURLs.swift in Sources */,
 				CF0A5678298A7A910012B2A8 /* VerificationProgressView.swift in Sources */,
@@ -1303,6 +1357,7 @@
 				CF86C7992A6AD51D002EC9B6 /* GroupedMeasurements.swift in Sources */,
 				CF2A1C1529754AA400E8B61C /* LocalNetworkAuthorization.swift in Sources */,
 				CF15E1FA2AA33EA200D440AD /* ImportView.swift in Sources */,
+				CF70A9852BE6AFB800989FB5 /* QPackets.swift in Sources */,
 				CF9237132A3E1BD300FC7D21 /* KeyValueListRow.swift in Sources */,
 				CF54CCC52A33680200961E4D /* PacketCommonDetails.swift in Sources */,
 				CFDF5D77297EF1E8000708A8 /* LocationAnnotation.swift in Sources */,
@@ -1310,10 +1365,10 @@
 				CF2A1C182975562800E8B61C /* UserDefaultsKeys.swift in Sources */,
 				CF2A1C222975DB8100E8B61C /* CellInformationCard.swift in Sources */,
 				CF57561D2B2F263500C7C60A /* LogArchiveReader.swift in Sources */,
+				CF70A9942BE6B6D600989FB5 /* QCommonFetch.swift in Sources */,
 				CFDF5D6F297EF05D000708A8 /* MultiCellMap.swift in Sources */,
 				CF4E53962A31CE3F00AE2059 /* QMIDefinitions.swift in Sources */,
 				CF5EF92829793F7500C4F50A /* TestDetection.swift in Sources */,
-				CF446756298D78F80083EE63 /* PersistenceQueries.swift in Sources */,
 				CF86C7932A6AC25D002EC9B6 /* CellDetailsView.swift in Sources */,
 				CFDF5D79297EF1EF000708A8 /* LocationAnnotationView.swift in Sources */,
 				CF8D331E2AC192B6009CA3F0 /* PortStatus.swift in Sources */,
@@ -1330,7 +1385,6 @@
 				CF5672962A29E59000B6EA7C /* TweakInfoView.swift in Sources */,
 				CF54CCC12A331E7100961E4D /* PacketQMIDetailsView.swift in Sources */,
 				CF53DB42297473E8005DCD10 /* CoreLocationALS.pb.swift in Sources */,
-				CF5EF9242978538E00C4F50A /* CellVerifier.swift in Sources */,
 				CFD023432961A10D00AA5A1C /* CellGuard.xcdatamodeld in Sources */,
 				CFDF5D7F297F05A0000708A8 /* SingleCellMap.swift in Sources */,
 				CF5EF92A2979B8D800C4F50A /* LocationSource.swift in Sources */,
@@ -1350,19 +1404,26 @@
 				CFD023682961AB9900AA5A1C /* CCTClient.swift in Sources */,
 				CF73099A2A79122B00498BC3 /* DataSummaryView.swift in Sources */,
 				CF1FAFB32986B11200106930 /* CellReachOverlay.swift in Sources */,
+				CF70A98B2BE6B51C00989FB5 /* QLocationUser.swift in Sources */,
+				CF70A9882BE6B01400989FB5 /* QNotifications.swift in Sources */,
 				CFB8B28A2963498200503189 /* CellGuardAppDelegate.swift in Sources */,
 				CF0FDCB729699E5100A6FFE2 /* MapTabView.swift in Sources */,
 				CF86C7912A6A9086002EC9B6 /* CellListView.swift in Sources */,
 				CF86C79D2A6AE0E3002EC9B6 /* TweakCellMeasurementView.swift in Sources */,
+				CF70A98E2BE6B57F00989FB5 /* QCellTweak.swift in Sources */,
+				CF70A97F2BE6AD8600989FB5 /* QCellALS.swift in Sources */,
 				CF0FDCC02969A3E500A6FFE2 /* LargeButton.swift in Sources */,
 				CFBEC84F2BC7F7CF0021C0B9 /* CellALS+CoreDataClass.swift in Sources */,
 				CFBEC8512BC7F7CF0021C0B9 /* CellTweak+CoreDataClass.swift in Sources */,
 				CFDF5D7D297EF76C000708A8 /* LocationClusterAnnotation.swift in Sources */,
 				CF4E539C2A31E73F00AE2059 /* CommonDefinitions.swift in Sources */,
 				CFDF5D89297F340E000708A8 /* ActivityViewController.swift in Sources */,
+				CF70A9912BE6B64600989FB5 /* QCommonDeletion.swift in Sources */,
 				CF93B85429800278003F9FFE /* PersistenceJSONImporter.swift in Sources */,
+				CFE0B6A82BE96DEF004AB5E9 /* SNVerificationPipeline.swift in Sources */,
 				CFDF5D71297EF0C6000708A8 /* CellAnnotation.swift in Sources */,
 				CF208D9F2A387261003A73A7 /* PacketFilterView.swift in Sources */,
+				CF70A9822BE6AD8D00989FB5 /* QRiskStatus.swift in Sources */,
 				CF2A1C202975CDD200E8B61C /* RiskIndicatorCard.swift in Sources */,
 				CF2002EA2A2F2BEA000922E6 /* ARIParser.swift in Sources */,
 				CF5EF9202977FACA00C4F50A /* Formatters.swift in Sources */,
@@ -1375,17 +1436,18 @@
 				CFBEC8422BC7F6E80021C0B9 /* PacketARI+CoreDataClass.swift in Sources */,
 				CFFF19E32BC6D2D3004E40CE /* AcknowledgementView.swift in Sources */,
 				CF07EFA52A3B4B56005B53ED /* OperatorDefinitions.swift in Sources */,
+				CFD5657D2BDFA90A00925FAA /* CGVerificationPipeline.swift in Sources */,
 				CF8D331C2AC19293009CA3F0 /* PersistenceCSVImporter.swift in Sources */,
 				CFD0236A2961ABA100AA5A1C /* ALSClient.swift in Sources */,
 				CFF05F6D2A39AA3900DE6FB2 /* DeleteView.swift in Sources */,
 				CF0FDCCB296B466100A6FFE2 /* PersistenceError.swift in Sources */,
 				CF4E53982A31CE4600AE2059 /* ARIDefinitions.swift in Sources */,
 				CF54CCBC2A33093800961E4D /* CPTCollector.swift in Sources */,
-				CF5AB2C02975458D00896ADC /* CellStatus.swift in Sources */,
 				CF0FDCCD296B480B00A6FFE2 /* TrackedUserLocation.swift in Sources */,
 				CFB8B2882963417B00503189 /* LocationDataManager.swift in Sources */,
 				CFD8DD262A715E8300954A25 /* QMIContentParser.swift in Sources */,
 				CF5CBB9529689FFE001CE9BE /* CellGuardSceneDelegate.swift in Sources */,
+				CFD5657A2BDFA82C00925FAA /* VerificationPipeline.swift in Sources */,
 				CFD023372961A10D00AA5A1C /* CellGuardApp.swift in Sources */,
 				CF0FDCBD2969A21000A6FFE2 /* WelcomeSheet.swift in Sources */,
 				CF0FDCBB29699E8A00A6FFE2 /* CompositeTabView.swift in Sources */,

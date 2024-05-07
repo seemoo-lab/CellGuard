@@ -5,6 +5,7 @@
 //  Created by Lukas Arnold on 21.07.23.
 //
 
+/*
 import SwiftUI
 import CoreData
 
@@ -49,9 +50,9 @@ private struct TweakCellMeasurementStatusView: View {
             
             // TODO: Show all cell details (MNC, MCC, ...) which were also shown before
             
-            if status >= .processedCell {
+            /* if status >= .processedCell {
                 Section(header: Text("ALS Verification")) {
-                    if let alsCell = measurement.verification {
+                    if let alsCell = measurement.appleDatabase {
                         CellDetailsRow("ALS Counterpart", "Present")
                         if let importedDate = alsCell.imported {
                             CellDetailsRow("Fetched at", mediumDateTimeFormatter.string(from: importedDate))
@@ -111,7 +112,7 @@ private struct TweakCellMeasurementStatusView: View {
                             CellDetailsRow("Corrected Distance", "\(string(distance.correctedDistance() / 1000.0)) km")
                             CellDetailsRow("Genuine Percentage", "\(string((1 - distance.score()) * 100.0)) %")
                             CellDetailsRow("Score", "\(Int((1.0 - distance.score()) * 20.0)) / 20")
-                        } else if measurement.verification == nil {
+                        } else if measurement.appleDatabase == nil {
                             CellDetailsRow("Score", "0 / \(CellVerifier.pointsLocation)")
                             CellDetailsRow("Reason", "ALS Location Missing")
                         } else {
@@ -130,7 +131,7 @@ private struct TweakCellMeasurementStatusView: View {
                 Section(header: Text("Frequency Verification")) {
                     CellDetailsRow(techFormatter.frequency(), measurement.frequency)
                     CellDetailsRow("Physical Cell ID", measurement.physicalCell)
-                    if let alsCell = measurement.verification {
+                    if let alsCell = measurement.appleDatabase {
                         CellDetailsRow("\(techFormatter.frequency()) (ALS)", alsCell.frequency)
                         CellDetailsRow("Physical Cell ID (ALS)", alsCell.physicalCell)
                         CellDetailsRow("Score", "\(frequencyPoints(measurement: measurement, als: alsCell)) / \(CellVerifier.pointsFrequency)")
@@ -230,7 +231,7 @@ private struct TweakCellMeasurementStatusView: View {
                         Text("Recalculate Score")
                     }
                 }
-            }
+            } */
             
             Section(header: Text("Timestamps")) {
                 if let collectedDate = measurement.collected {
@@ -345,9 +346,7 @@ struct TweakCellMeasurementView_Previews: PreviewProvider {
         let viewContext = PersistenceController.preview.container.viewContext
         let cell = PersistencePreview.alsCell(context: viewContext)
         let tweakCell = PersistencePreview.tweakCell(context: viewContext, from: cell)
-        tweakCell.score = 0
-        tweakCell.status = CellStatus.verified.rawValue
-        tweakCell.verification = cell
+        tweakCell.appleDatabase = cell
         // TODO: JSON for tests
         tweakCell.json = """
 [{"RSRP":0,"CellId":12941845,"BandInfo":1,"TAC":45711,"CellType":"CellTypeServing","SectorLat":0,"CellRadioAccessTechnology":"RadioAccessTechnologyLTE","SectorLong":0,"MCC":262,"PID":461,"MNC":2,"DeploymentType":1,"RSRQ":0,"Bandwidth":100,"UARFCN":100},{"timestamp":1672513186.351948}]
@@ -365,3 +364,5 @@ struct TweakCellMeasurementView_Previews: PreviewProvider {
             .environment(\.managedObjectContext, viewContext)
     }
 }
+
+*/

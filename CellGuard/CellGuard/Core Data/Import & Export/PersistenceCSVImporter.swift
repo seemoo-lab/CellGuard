@@ -308,7 +308,7 @@ struct PersistenceCSVImporter {
         } timestamp: { sample in
             nil
         } bulkImport: { cells in
-            try PersistenceController.shared.importALSCells(from: cells, source: nil)
+            try PersistenceController.shared.importALSCells(from: cells)
         }
         
     }

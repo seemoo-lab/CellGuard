@@ -248,7 +248,11 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
                 }
             }
             
-            Self.logger.debug("Started all background tasks")
+            // TODO: Add maintenance task for verifications (delete verification without cells, create verifications for cells without one)
+            
+            // TODO: Add maintenance task for the study
+            
+            Self.logger.debug("Started all maintenance background tasks")
             
             // TODO: Add task to regularly delete old ALS cells (>= 90 days) to force a refresh
             // -> Then, also reset the status of the associated tweak cells
@@ -258,8 +262,15 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
         // It's important that we specify a priority, otherwise this task ends up blocking the UI
         // See: https://docs.swift.org/swift-book/documentation/the-swift-programming-language/concurrency/#Unstructured-Concurrency
         Task.detached(priority: .background) {
-            // When does the loop finishes? The neat thing is, it doesn't :)
-            await CellVerifier.verificationLoop()
+            
+            for pipeline in activeVerificationPipelines {
+                Task {
+                    // When does the loop finishes? The neat thing is, it doesn't :)
+                    await pipeline.run()
+                }
+            }
+            
+            Self.logger.debug("Started all verification background tasks")
         }
     }
     

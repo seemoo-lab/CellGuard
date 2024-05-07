@@ -106,7 +106,7 @@ final class ALSVerifierTests: XCTestCase {
                 XCTAssertEqual(tweakCells.count, 1)
                 
                 let tweakCell = tweakCells.first!
-                XCTAssertNotNil(tweakCell.verification)
+                XCTAssertNotNil(tweakCell.appleDatabase)
                 XCTAssertEqual(tweakCell.status, CellStatus.processedLocation.rawValue)
                 XCTAssertEqual(tweakCell.score, 60)
             } catch {
@@ -135,7 +135,7 @@ final class ALSVerifierTests: XCTestCase {
                 XCTAssertEqual(tweakCells.count, 1)
                 
                 let tweakCell = tweakCells.first!
-                XCTAssertNil(tweakCell.verification)
+                XCTAssertNil(tweakCell.appleDatabase)
                 XCTAssertEqual(tweakCell.status, CellStatus.processedLocation.rawValue)
                 XCTAssertEqual(tweakCell.score, 0)
             } catch {
@@ -182,7 +182,7 @@ final class ALSVerifierTests: XCTestCase {
                 
                 // TODO: Understand how this fails
                 let failedTweakCell = failedTweakCells.first!
-                XCTAssertNil(failedTweakCell.verification)
+                XCTAssertNil(failedTweakCell.appleDatabase)
                 XCTAssertEqual(failedTweakCell.status, CellStatus.processedLocation.rawValue)
                 XCTAssertEqual(failedTweakCell.score, 0)
                 
@@ -195,7 +195,7 @@ final class ALSVerifierTests: XCTestCase {
                 XCTAssertEqual(verifiedTweakCells.count, 2)
                 
                 verifiedTweakCells.forEach { verifiedTweakCell in
-                    XCTAssertNotNil(verifiedTweakCell.verification)
+                    XCTAssertNotNil(verifiedTweakCell.appleDatabase)
                     XCTAssertEqual(verifiedTweakCell.status, CellStatus.processedLocation.rawValue)
 
                 }
@@ -230,7 +230,7 @@ final class ALSVerifierTests: XCTestCase {
                 XCTAssertEqual(tweakCells.count, 1)
                 
                 let tweakCell = tweakCells.first!
-                XCTAssertNotNil(tweakCell.verification)
+                XCTAssertNotNil(tweakCell.appleDatabase)
                 XCTAssertEqual(tweakCell.status, CellStatus.processedLocation.rawValue)
                 XCTAssertEqual(tweakCell.score, 60)
             } catch {
@@ -254,7 +254,7 @@ final class ALSVerifierTests: XCTestCase {
                 XCTAssertEqual(tweakCells.count, 2)
                 
                 tweakCells.forEach { tweakCell in
-                    XCTAssertNotNil(tweakCell.verification)
+                    XCTAssertNotNil(tweakCell.appleDatabase)
                     XCTAssertEqual(tweakCell.status, CellStatus.processedLocation.rawValue)
                     XCTAssertEqual(tweakCell.score, 40)
                 }

@@ -60,14 +60,29 @@ struct GroupedMeasurements: Identifiable {
     }
     
     static func countByStatus(measurements: any RandomAccessCollection<CellTweak>) -> (pending: Int, trusted: Int, suspicious: Int, untrusted: Int) {
-        let pendingCount = measurements.filter { $0.status != CellStatus.verified.rawValue }.count
+        let verificationStates = measurements.compactMap { $0.primaryVerification }
         
-        let verified = measurements.filter { $0.status == CellStatus.verified.rawValue }
-        let trustedCount = verified.filter { $0.score >= CellVerifier.pointsSuspiciousThreshold }.count
-        let suspiciousCount = verified.filter { CellVerifier.pointsUntrustedThreshold <= $0.score && $0.score < CellVerifier.pointsSuspiciousThreshold }.count
-        let untrustedCount = verified.filter { $0.score < CellVerifier.pointsUntrustedThreshold }.count
+        var pending = 0
         
-        return (pendingCount, trustedCount, suspiciousCount, untrustedCount)
+        var untrusted = 0
+        var suspicious = 0
+        var trusted = 0
+        
+        for state in verificationStates {
+            if state.finished {
+                if state.score < primaryVerificationPipeline.pointsUntrusted {
+                    untrusted += 1
+                } else if state.score < primaryVerificationPipeline.pointsSuspicious {
+                    suspicious += 1
+                } else {
+                    trusted += 1
+                }
+            } else {
+                pending += 1
+            }
+        }
+        
+        return (pending, trusted, suspicious, untrusted)
     }
     
 }

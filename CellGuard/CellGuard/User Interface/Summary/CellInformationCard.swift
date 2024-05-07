@@ -22,7 +22,6 @@ struct CellInformationCard: View {
     
     init(cell: CellTweak) {
         self.cell = cell
-        // TODO: Ensure that
         self.techFormatter = CellTechnologyFormatter.from(technology: cell.technology)
         
         self._alsCells = FetchRequest(
@@ -35,7 +34,6 @@ struct CellInformationCard: View {
             predicate: PersistenceController.shared.sameCellPredicate(cell: cell, mergeUMTS: false),
             animation: .default
         )
-
     }
     
     var body: some View {
@@ -45,7 +43,11 @@ struct CellInformationCard: View {
                     .font(.title2)
                     .bold()
                 Spacer()
-                CellStatusIcon(status: cell.status, score: cell.score)
+                if let state = tweakCells.first?.primaryVerification {
+                    CellStatusIcon(state: state)
+                } else {
+                    ProgressView()
+                }
             }
             .padding(EdgeInsets(top: 20, leading: 20, bottom: 10, trailing: 20))
             
@@ -150,7 +152,7 @@ struct CellInformation_Previews: PreviewProvider {
         location.imported = Date()
         
         let cell = CellTweak(context: PersistenceController.preview.container.viewContext)
-        cell.status = CellStatus.imported.rawValue
+        // cell.status = CellStatus.imported.rawValue
         cell.technology = "LTE"
         cell.frequency = 1600
         
