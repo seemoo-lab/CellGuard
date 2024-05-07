@@ -63,10 +63,10 @@ struct CellListFilterSettings {
         case .trusted:
             predicateList.append(NSPredicate(format: "finished == YES"))
             predicateList.append(NSPredicate(format: "score >= %@", thresholdSuspicious))
-        case .suspicious:
+        case .anomalous:
             predicateList.append(NSPredicate(format: "finished == YES"))
             predicateList.append(NSPredicate(format: "score >= %@ and score < %@", thresholdUntrusted, thresholdSuspicious))
-        case .untrusted:
+        case .suspicious:
             predicateList.append(NSPredicate(format: "finished == YES"))
             predicateList.append(NSPredicate(format: "score < %@", thresholdUntrusted))
         }
@@ -78,7 +78,7 @@ struct CellListFilterSettings {
 }
 
 enum CellListFilterStatus: String, CaseIterable, Identifiable {
-    case all, processing, trusted, suspicious, untrusted
+    case all, processing, trusted, anomalous, suspicious
     
     var id: Self { self }
 }
