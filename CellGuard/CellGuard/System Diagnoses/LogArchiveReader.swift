@@ -320,20 +320,18 @@ struct LogArchiveReader {
         let packetPrivateDates = FirstLastDates()
         var skippedCount = 0
         
-        // TODO: Speed-up this process
-        
         while let row = csvReader.next() {
-            if row.count < 14 {
-                Self.logger.warning("Skipping CSV row as it has only \(row.count) rows (< 14): \(row)")
+            if row.count < 5 {
+                Self.logger.warning("Skipping CSV row as it has only \(row.count) rows (< 5): \(row)")
                 progress()
                 continue
             }
             
             let timestamp = Int(row[0])
-            let subsystem = row[3]
-            let library = row[7]
-            let category = row[10]
-            let message = row[13]
+            let subsystem = row[1]
+            let library = row[2]
+            let category = row[3]
+            let message = row[4]
             
             guard let timestamp = timestamp else {
                 Self.logger.warning("Skipped CSV row because of missing timestamp: \(row)")
