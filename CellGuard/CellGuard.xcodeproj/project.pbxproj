@@ -28,7 +28,6 @@
 		CF2002F02A2F996A000922E6 /* TweakClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2002EF2A2F996A000922E6 /* TweakClient.swift */; };
 		CF2002F22A2F9FB5000922E6 /* CPTClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2002F12A2F9FB5000922E6 /* CPTClient.swift */; };
 		CF208D9F2A387261003A73A7 /* PacketFilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF208D9E2A387261003A73A7 /* PacketFilterView.swift */; };
-		CF2A1C1529754AA400E8B61C /* LocalNetworkAuthorization.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2A1C1429754AA400E8B61C /* LocalNetworkAuthorization.swift */; };
 		CF2A1C182975562800E8B61C /* UserDefaultsKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2A1C172975562800E8B61C /* UserDefaultsKeys.swift */; };
 		CF2A1C1B2975670000E8B61C /* CGNotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2A1C1A2975670000E8B61C /* CGNotificationManager.swift */; };
 		CF2A1C1D2975C71000E8B61C /* BackgroundState.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2A1C1C2975C71000E8B61C /* BackgroundState.swift */; };
@@ -127,7 +126,6 @@
 		CFB6CF292BD122FA00EAB7B4 /* ALSTechnology.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFCE7A8B29817E2500E28787 /* ALSTechnology.swift */; };
 		CFB6CF2A2BD122FA00EAB7B4 /* DatabaseAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFDF5D84297F09D3000708A8 /* DatabaseAnnotation.swift */; };
 		CFB6CF2B2BD122FA00EAB7B4 /* GroupedMeasurements.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF86C7982A6AD51D002EC9B6 /* GroupedMeasurements.swift */; };
-		CFB6CF2C2BD122FA00EAB7B4 /* LocalNetworkAuthorization.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2A1C1429754AA400E8B61C /* LocalNetworkAuthorization.swift */; };
 		CFB6CF2D2BD122FA00EAB7B4 /* ImportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF15E1F92AA33EA200D440AD /* ImportView.swift */; };
 		CFB6CF2E2BD122FA00EAB7B4 /* KeyValueListRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF9237122A3E1BD300FC7D21 /* KeyValueListRow.swift */; };
 		CFB6CF2F2BD122FA00EAB7B4 /* PacketCommonDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF54CCC42A33680200961E4D /* PacketCommonDetails.swift */; };
@@ -333,7 +331,6 @@
 		CF2002EF2A2F996A000922E6 /* TweakClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TweakClient.swift; sourceTree = "<group>"; };
 		CF2002F12A2F9FB5000922E6 /* CPTClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTClient.swift; sourceTree = "<group>"; };
 		CF208D9E2A387261003A73A7 /* PacketFilterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacketFilterView.swift; sourceTree = "<group>"; };
-		CF2A1C1429754AA400E8B61C /* LocalNetworkAuthorization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalNetworkAuthorization.swift; sourceTree = "<group>"; };
 		CF2A1C172975562800E8B61C /* UserDefaultsKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsKeys.swift; sourceTree = "<group>"; };
 		CF2A1C1A2975670000E8B61C /* CGNotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CGNotificationManager.swift; sourceTree = "<group>"; };
 		CF2A1C1C2975C71000E8B61C /* BackgroundState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundState.swift; sourceTree = "<group>"; };
@@ -909,7 +906,6 @@
 				CFD023672961AB9900AA5A1C /* CCTClient.swift */,
 				CF320F5429620B16009BAD18 /* CCTParser.swift */,
 				CFB8B290296359CC00503189 /* CCTCollector.swift */,
-				CF2A1C1429754AA400E8B61C /* LocalNetworkAuthorization.swift */,
 			);
 			path = "Capture Cells";
 			sourceTree = "<group>";
@@ -1231,7 +1227,6 @@
 				CFB6CF292BD122FA00EAB7B4 /* ALSTechnology.swift in Sources */,
 				CFB6CF2A2BD122FA00EAB7B4 /* DatabaseAnnotation.swift in Sources */,
 				CFB6CF2B2BD122FA00EAB7B4 /* GroupedMeasurements.swift in Sources */,
-				CFB6CF2C2BD122FA00EAB7B4 /* LocalNetworkAuthorization.swift in Sources */,
 				CFB6CF2D2BD122FA00EAB7B4 /* ImportView.swift in Sources */,
 				CF70A9862BE6AFB800989FB5 /* QPackets.swift in Sources */,
 				CFB6CF2E2BD122FA00EAB7B4 /* KeyValueListRow.swift in Sources */,
@@ -1355,7 +1350,6 @@
 				CFCE7A8C29817E2500E28787 /* ALSTechnology.swift in Sources */,
 				CFDF5D85297F09D3000708A8 /* DatabaseAnnotation.swift in Sources */,
 				CF86C7992A6AD51D002EC9B6 /* GroupedMeasurements.swift in Sources */,
-				CF2A1C1529754AA400E8B61C /* LocalNetworkAuthorization.swift in Sources */,
 				CF15E1FA2AA33EA200D440AD /* ImportView.swift in Sources */,
 				CF70A9852BE6AFB800989FB5 /* QPackets.swift in Sources */,
 				CF9237132A3E1BD300FC7D21 /* KeyValueListRow.swift in Sources */,
