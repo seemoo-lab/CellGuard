@@ -98,7 +98,6 @@
 		CF8D33212AC194A4009CA3F0 /* Atomics in Frameworks */ = {isa = PBXBuildFile; productRef = CF8D33202AC194A4009CA3F0 /* Atomics */; };
 		CF90EF1B2A30BDD200E7FDB0 /* QMIParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF90EF1A2A30BDD200E7FDB0 /* QMIParserTests.swift */; };
 		CF90EF1D2A30E7FD00E7FDB0 /* ARIParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF90EF1C2A30E7FD00E7FDB0 /* ARIParserTests.swift */; };
-		CF9156B92BC9300900E6F2F6 /* macos-unifiedlogs-license.txt in Resources */ = {isa = PBXBuildFile; fileRef = CF9156B82BC9300900E6F2F6 /* macos-unifiedlogs-license.txt */; };
 		CF9237112A3E069D00FC7D21 /* Gzip in Frameworks */ = {isa = PBXBuildFile; productRef = CF9237102A3E069D00FC7D21 /* Gzip */; };
 		CF9237132A3E1BD300FC7D21 /* KeyValueListRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF9237122A3E1BD300FC7D21 /* KeyValueListRow.swift */; };
 		CF93B84E297FF5C3003F9FFE /* CellFileTypeIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = CF93B84D297FF5C3003F9FFE /* CellFileTypeIcon.png */; };
@@ -232,7 +231,6 @@
 		CFB6CF992BD122FA00EAB7B4 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CFD0233D2961A10D00AA5A1C /* Preview Assets.xcassets */; };
 		CFB6CF9A2BD122FA00EAB7B4 /* ari-definitions.json in Resources */ = {isa = PBXBuildFile; fileRef = CF4E53912A31CE2500AE2059 /* ari-definitions.json */; };
 		CFB6CF9B2BD122FA00EAB7B4 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CFE4A7A82B35991C00A37C7A /* LaunchScreen.storyboard */; };
-		CFB6CF9C2BD122FA00EAB7B4 /* macos-unifiedlogs-license.txt in Resources */ = {isa = PBXBuildFile; fileRef = CF9156B82BC9300900E6F2F6 /* macos-unifiedlogs-license.txt */; };
 		CFB6CF9D2BD122FA00EAB7B4 /* CellFileTypeIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = CF93B84D297FF5C3003F9FFE /* CellFileTypeIcon.png */; };
 		CFB6CF9E2BD122FA00EAB7B4 /* Package.resolved in Resources */ = {isa = PBXBuildFile; fileRef = CFFF19DE2BC6CF47004E40CE /* Package.resolved */; };
 		CFB6CF9F2BD122FA00EAB7B4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CFD0233A2961A10D00AA5A1C /* Assets.xcassets */; };
@@ -394,7 +392,6 @@
 		CF8D331D2AC192B6009CA3F0 /* PortStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PortStatus.swift; sourceTree = "<group>"; };
 		CF90EF1A2A30BDD200E7FDB0 /* QMIParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QMIParserTests.swift; sourceTree = "<group>"; };
 		CF90EF1C2A30E7FD00E7FDB0 /* ARIParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARIParserTests.swift; sourceTree = "<group>"; };
-		CF9156B82BC9300900E6F2F6 /* macos-unifiedlogs-license.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "macos-unifiedlogs-license.txt"; sourceTree = "<group>"; };
 		CF9237122A3E1BD300FC7D21 /* KeyValueListRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyValueListRow.swift; sourceTree = "<group>"; };
 		CF93B84D297FF5C3003F9FFE /* CellFileTypeIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = CellFileTypeIcon.png; path = ../../../Icon/Apple/CellFileTypeIcon.png; sourceTree = "<group>"; };
 		CF93B851297FFEF9003F9FFE /* URLIdentifiable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLIdentifiable.swift; sourceTree = "<group>"; };
@@ -679,7 +676,6 @@
 			isa = PBXGroup;
 			children = (
 				CF57561C2B2F263500C7C60A /* LogArchiveReader.swift */,
-				CF9156B82BC9300900E6F2F6 /* macos-unifiedlogs-license.txt */,
 			);
 			path = "System Diagnoses";
 			sourceTree = "<group>";
@@ -1111,7 +1107,6 @@
 				CFB6CF992BD122FA00EAB7B4 /* Preview Assets.xcassets in Resources */,
 				CFB6CF9A2BD122FA00EAB7B4 /* ari-definitions.json in Resources */,
 				CFB6CF9B2BD122FA00EAB7B4 /* LaunchScreen.storyboard in Resources */,
-				CFB6CF9C2BD122FA00EAB7B4 /* macos-unifiedlogs-license.txt in Resources */,
 				CFB6CF9D2BD122FA00EAB7B4 /* CellFileTypeIcon.png in Resources */,
 				CFB6CF9E2BD122FA00EAB7B4 /* Package.resolved in Resources */,
 				CFB6CF9F2BD122FA00EAB7B4 /* Assets.xcassets in Resources */,
@@ -1128,7 +1123,6 @@
 				CFD0233E2961A10D00AA5A1C /* Preview Assets.xcassets in Resources */,
 				CF4E53932A31CE2500AE2059 /* ari-definitions.json in Resources */,
 				CFE4A7A92B35991C00A37C7A /* LaunchScreen.storyboard in Resources */,
-				CF9156B92BC9300900E6F2F6 /* macos-unifiedlogs-license.txt in Resources */,
 				CF93B84E297FF5C3003F9FFE /* CellFileTypeIcon.png in Resources */,
 				CFFF19DF2BC6CF47004E40CE /* Package.resolved in Resources */,
 				CFD0233B2961A10D00AA5A1C /* Assets.xcassets in Resources */,
