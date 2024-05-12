@@ -80,19 +80,26 @@ struct LTESignalStrengthQMI {
 
 struct NRSignalStrengthQMI {
     
+    // See:
+    // - https://gitlab.freedesktop.org/mobile-broadband/libqmi/-/blob/main/data/qmi-service-nas.json#L3883
+    
     static let missing: Int16 = Int16(bitPattern: UInt16(0x8000))
     
-    let rsrp: Int16 // dBm
-    let snr: Int16 // dB
-    let rsrq: Int16 // dB
+    let rsrp: Int16? // dBm
+    let snr: Int16? // dB
+    let rsrq: Int16? // dB
     
     init(data: Data, extendedData: Data) throws {
         let binaryData = BinaryData(data: data, bigEndian: false)
-        rsrp = try binaryData.get(0)
-        snr = try binaryData.get(2)
+        rsrp = Self.nilIfMissing(try binaryData.get(0))
+        snr = Self.nilIfMissing(try binaryData.get(2))
         
         let extendedBinaryData = BinaryData(data: extendedData, bigEndian: false)
-        rsrq = try extendedBinaryData.get(0)
+        rsrq = Self.nilIfMissing(try extendedBinaryData.get(0))
+    }
+    
+    private static func nilIfMissing(_ number: Int16) -> Int16? {
+        return number != missing ? number : nil
     }
     
 }
