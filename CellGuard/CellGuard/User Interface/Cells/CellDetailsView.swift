@@ -191,6 +191,7 @@ private struct TweakCellDetailsMeasurementCount: View {
 
 private struct TweakCellMeasurementList: View {
     
+    @State private var pipelineId: Int16 = primaryVerificationPipeline.id
     let measurements: FetchedResults<CellTweak>
     
     var body: some View {
@@ -198,10 +199,25 @@ private struct TweakCellMeasurementList: View {
             ForEach(groupByDay(), id: \.key) { (day, dayMeasurements) in
                 Section(header: Text(mediumDateFormatter.string(from: day))) {
                     ForEach(dayMeasurements, id: \CellTweak.id) { measurement in
-                        TweakCellMeasurementNavLink(measurement: measurement)
+                        TweakCellMeasurementNavLink(measurement: measurement, pipelineId: pipelineId)
                     }
                 }
             }
+        }
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Menu {
+                    Picker("Pipeline", selection: $pipelineId) {
+                        ForEach(activeVerificationPipelines, id: \.id) {
+                            Text($0.name)
+                        }
+                    }
+                } label: {
+                    Label("Pipeline", systemImage: "waveform.path.ecg")
+                }
+
+            }
+            
         }
         .navigationTitle("Measurements")
         .navigationBarTitleDisplayMode(.inline)
@@ -218,23 +234,34 @@ private struct TweakCellMeasurementList: View {
 private struct TweakCellMeasurementNavLink: View {
     
     let measurement: CellTweak
+    let pipelineId: Int16
     
     var body: some View {
-        NavigationLink {
-            // TODO: Update view
-            // TweakCellMeasurementView(measurement: measurement)
-            Text("TODO")
-        } label: {
-            HStack {
-                if let collectedDate = measurement.collected {
-                    Text("\(mediumTimeFormatter.string(from: collectedDate))")
-                } else {
-                    Text("No Date")
-                }
-                Spacer()
-                Text("\(measurement.score)")
-                    .foregroundColor(.gray)
+        if let state = measurement.verifications?.compactMap({ $0 as? VerificationState }).first(where: { $0.pipeline == pipelineId }) {
+            NavigationLink {
+                VerificationStateView(verificationState: state)
+            } label: {
+                label(score: state.score)
             }
+        } else {
+            label(score: 0)
+        }
+    }
+    
+    private func label(score: Int16) -> some View {
+        HStack {
+            date
+            Spacer()
+            Text("\(score)")
+                .foregroundColor(.gray)
+        }
+    }
+    
+    private var date: some View {
+        if let collectedDate = measurement.collected {
+            Text("\(mediumTimeFormatter.string(from: collectedDate))")
+        } else {
+            Text("No Date")
         }
     }
     
