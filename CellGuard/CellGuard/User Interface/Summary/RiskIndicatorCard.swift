@@ -75,8 +75,8 @@ enum RiskLevel: Equatable {
         // TODO: Less saturated colors for the dark mode (Test everything again in the dark mode)
         switch (self) {
         case .Unknown: return dark ? Color(UIColor.systemGray6) : .gray
-        case .Low: return .green
-        case .LowMonitor: return .green
+        case .Low: return dark ? Color(.green * 0.7 + .black * 0.3) : .green
+        case .LowMonitor: return dark ? Color(.green * 0.7 + .black * 0.3) : .green
         case .Medium: return .blue
         case .High: return .orange
         }
