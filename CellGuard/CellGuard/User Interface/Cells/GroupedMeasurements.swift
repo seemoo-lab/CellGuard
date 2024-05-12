@@ -14,9 +14,6 @@ enum GroupedMeasurementsError: Error {
     case missingEndDate
 }
 
-// TODO: Implement ObservableObject
-// - Question: How to best listen to changes for the array [CellTweak] and propagate them?
-// See: https://stackoverflow.com/a/58523692
 struct GroupedMeasurements: Identifiable {
     
     let measurements: [CellTweak]
@@ -56,7 +53,7 @@ struct GroupedMeasurements: Identifiable {
         // See: https://stackoverflow.com/a/35974079
         hash = 31 &* hash &+ stats.pending
         hash = 31 &* hash &+ stats.untrusted
-        hash = 31 &* hash &+ stats.pending
+        hash = 31 &* hash &+ stats.suspicious
         hash = 31 &* hash &+ stats.trusted
         // Use the hash code as the list's id
         self.id = hash
