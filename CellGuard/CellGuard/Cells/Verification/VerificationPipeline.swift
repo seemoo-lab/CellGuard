@@ -60,8 +60,14 @@ enum VerificationStageResult: CustomStringConvertible {
 }
 
 struct VerificationStageResultLogMetadata {
+    /// The unique identifier of the verification stage
+    var stageId: Int16
+    
     /// The name of the verification stage
     var stageName: String
+    
+    /// The number of the stage in the pipeline
+    var stageNumber: Int16
     
     /// The number of points awarded by the execution of the stage
     var pointsAwarded: Int16
@@ -81,8 +87,14 @@ struct VerificationStageResultLogMetadata {
 
 protocol VerificationStage {
     
+    /// A unique identifier for the stage within all the pipeline it is used
+    var id: Int16 { get }
+    
     /// The name of this verification stage, ensure it is registered with the backend
     var name: String { get }
+    
+    /// A textual description of the stage's purpose, shown in the app
+    var description: String { get }
     
     /// The maximum number of points this verification stage can award
     var points: Int16 { get }
@@ -161,6 +173,8 @@ extension VerificationPipeline {
     func run() async {
         logger.debug("Starting verification pipeline")
         
+        checkStages()
+        
         while (true) {
             // Don't verify cells while an import process is active
             if PortStatus.importActive.load(ordering: .relaxed) {
@@ -198,6 +212,17 @@ extension VerificationPipeline {
         }
     }
     
+    private func checkStages() {
+        // Checking for multiple stages in the pipeline with the same stageId (which is not allowed)
+        let stagesDict = Dictionary(grouping: stages, by: { $0.id })
+        for (stageId, stages) in stagesDict {
+            if stages.count > 1 {
+                let stageNames = stages.map {$0.name}
+                logger.warning("Multiple stages \(stageNames.joined(separator: ", ")) with same stageId = \(stageId)")
+            }
+        }
+    }
+    
     func pickCellAndVerify() async throws -> Bool {
         let persistence = PersistenceController.shared
         
@@ -210,30 +235,32 @@ extension VerificationPipeline {
         }
                 
         // Check if there is a cell to verify
-        guard let (startStageId, startScore, statusId, queryCellId, queryCell) = nextCell else {
+        guard let (startStageNumber, startScore, statusId, queryCellId, queryCell) = nextCell else {
             // There is currently no cell to verify
             return false
         }
 
-        var stageId = startStageId
+        var stageNumber = startStageNumber
         var score = startScore
         var finished = false
         var delay: Date?
         var logMetadata: [VerificationStageResultLogMetadata] = []
         
-        logger.debug("Resuming verification of cell \(queryCell) with stageId = \(stageId) and score = \(score)")
+        logger.debug("Resuming verification of cell \(queryCell) with stageId = \(stageNumber) and score = \(score)")
         
         // Continue with the correct verification stage (at max 10 verification stages each time)
         outer: for i in 0...10 {
+            let thisStageNumber = stageNumber
+            
             // Verification is finished when if we iterated through all stages
-            if stageId >= stages.count {
+            if stageNumber >= stages.count {
                 logger.debug("Finished verification of \(queryCell) with score = \(score)")
                 finished = true
                 break outer
             }
             
             // Get the verification stage based on its id
-            let stage = stages[Int(stageId)]
+            let stage = stages[Int(stageNumber)]
             
             // Run the verification stage for the cell's current state & measure its time
             let stageStartTimestamp = Date()
@@ -259,12 +286,12 @@ extension VerificationPipeline {
                 break outer
                 
             case let .fail(related):
-                stageId += 1
+                stageNumber += 1
                 stagePoints = 0
                 relatedObjects = related
                 
             case let .partial(points, related):
-                stageId += 1
+                stageNumber += 1
                 stagePoints = points
                 relatedObjects = related
                 if points > stage.points {
@@ -272,12 +299,12 @@ extension VerificationPipeline {
                 }
             
             case let .success(related):
-                stageId += 1
+                stageNumber += 1
                 stagePoints = stage.points
                 relatedObjects = related
                 
             case .finishEarly:
-                stageId = Int16(stages.count)
+                stageNumber = Int16(stages.count)
                 score = 0
                 stagePoints = pointsMax
             }
@@ -290,7 +317,9 @@ extension VerificationPipeline {
             score += stagePoints
             
             logMetadata.append(VerificationStageResultLogMetadata(
+                stageId: stage.id,
                 stageName: stage.name,
+                stageNumber: thisStageNumber,
                 pointsAwarded: stagePoints,
                 pointsMax: stage.points,
                 timestampStart: stageStartTimestamp,
@@ -300,7 +329,7 @@ extension VerificationPipeline {
         }
         
         // Persist results of the verification for this cell
-        try persistence.storeVerificationResults(statusId: statusId, stage: stageId, score: score, finished: finished, delayUntil: delay, logsMetadata: logMetadata)
+        try persistence.storeVerificationResults(statusId: statusId, stage: stageNumber, score: score, finished: finished, delayUntil: delay, logsMetadata: logMetadata)
         
         // We've verified a cell, so return true
         return true

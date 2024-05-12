@@ -122,8 +122,8 @@ extension PersistenceController {
     
     /// Calculates the distance between the location for the tweak cell and its verified counter part from Apple's database.
     /// If no verification or locations references cell exist, nil is returned.
-    func calculateDistance(tweakCell tweakCellID: NSManagedObjectID) -> (CellLocationDistance, NSManagedObjectID)? {
-        return try? performAndWait(name: "fetchContext", author: "calculateDistance") { (context) -> (CellLocationDistance, NSManagedObjectID)? in
+    func calculateDistance(tweakCell tweakCellID: NSManagedObjectID) -> (CellLocationDistance, NSManagedObjectID, NSManagedObjectID)? {
+        return try? performAndWait(name: "fetchContext", author: "calculateDistance") { (context) -> (CellLocationDistance, NSManagedObjectID, NSManagedObjectID)? in
             guard let tweakCell = context.object(with: tweakCellID) as? CellTweak else {
                 logger.warning("Can't calculate distance for cell \(tweakCellID): Cell missing from task context")
                 return nil
@@ -146,7 +146,7 @@ extension PersistenceController {
             }
             
             let distance = CellLocationDistance.distance(userLocation: userLocation, alsLocation: alsLocation)
-            return (distance, userLocation.objectID)
+            return (distance, userLocation.objectID, alsCell.objectID)
         }
     }
     

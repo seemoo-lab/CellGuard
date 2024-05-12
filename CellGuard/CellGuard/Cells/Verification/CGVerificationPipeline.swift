@@ -11,7 +11,9 @@ import OSLog
 
 private struct NoConnectionDummyStage: VerificationStage {
     
-    var name: String = "No Connection Dummy"
+    var id: Int16 = 1
+    var name: String = "No Connection Defaults"
+    var description: String = "Skips default measurements present when there's no connection."
     var points: Int16 = 0
     var waitForPackets: Bool = false
     
@@ -35,7 +37,9 @@ private enum ALSVerificationStageError: Error {
 
 private struct ALSVerificationStage: VerificationStage {
     
+    var id: Int16 = 2
     var name: String = "ALS"
+    var description: String = "Attempts to retrieve the cell's counterpart from Apple Location Services (ALS)."
     var points: Int16 = 20
     var waitForPackets: Bool = false
     
@@ -84,7 +88,9 @@ private struct ALSVerificationStage: VerificationStage {
 
 private struct DistanceVerificationStage: VerificationStage {
     
+    var id: Int16 = 3
     var name: String = "Distance"
+    var description: String = "Calculates the distance (with error margins) between your recorded location and the cell's location stored in ALS."
     var points: Int16 = 20
     var waitForPackets: Bool = false
     
@@ -111,7 +117,7 @@ private struct DistanceVerificationStage: VerificationStage {
         }
         
         // Calculate the distance between the location assigned to the tweak cells & the ALS cell
-        guard let (distance, locationUserId) = persistence.calculateDistance(tweakCell: queryCellId) else {
+        guard let (distance, locationUserId, alsCellId) = persistence.calculateDistance(tweakCell: queryCellId) else {
             // If we can't get the distance, we delay the verification
             logger.warning("Can't calculate distance")
             return .delay(seconds: 60)
@@ -120,14 +126,16 @@ private struct DistanceVerificationStage: VerificationStage {
         // The score is a percentage of how likely the cell is evil, so we calculate an inverse of that and multiple it by the points
         logger.info("Location verified for cell")
         let distancePoints = Int16(Double(points) * (1.0 - distance.score()))
-        return .partial(points: distancePoints, related: VerificationStageRelatedObjects(locationUser: locationUserId))
+        return .partial(points: distancePoints, related: VerificationStageRelatedObjects(cellAls: alsCellId, locationUser: locationUserId))
     }
     
 }
 
 private struct FrequencyVerificationStage: VerificationStage {
     
+    var id: Int16 = 4
     var name: String = "Frequency"
+    var description: String = "Compares the cell's frequency and PID information with those stored in ALS. This information is not available for every cell."
     var points: Int16 = 8
     var waitForPackets: Bool = false
     
@@ -141,12 +149,13 @@ private struct FrequencyVerificationStage: VerificationStage {
                 if let alsCell = measurement.appleDatabase {
                     return (
                         measurement: (pid: measurement.physicalCell, frequency: measurement.frequency),
-                        als: (pid: alsCell.physicalCell, frequency: alsCell.frequency)
+                        als: (pid: alsCell.physicalCell, frequency: alsCell.frequency),
+                        alsObjectId: alsCell.objectID
                     )
                 }
                 return nil
             }
-            if let (measurement, als) = compareData {
+            if let (measurement, als, alsObjectId) = compareData {
                 var localPoints = points
                 
                 if measurement.frequency > 0 && als.frequency > 0 && measurement.frequency != als.frequency {
@@ -158,7 +167,7 @@ private struct FrequencyVerificationStage: VerificationStage {
                     logger.info("Frequency Verification - PID not equal: \(measurement.pid) != \(als.pid)")
                 }
                 
-                return .partial(points: localPoints)
+                return .partial(points: localPoints, related: VerificationStageRelatedObjects(cellAls: alsObjectId))
             } else {
                 logger.debug("Frequency Verification: No data for comparison")
             }
@@ -172,7 +181,9 @@ private struct FrequencyVerificationStage: VerificationStage {
 
 private struct BandwidthVerificationStage: VerificationStage {
     
+    var id: Int16 = 5
     var name: String = "Bandwidth"
+    var description: String = "Assigns points based on the cell's bandwidth as achieving a higher bandwidth is more costly for attackers."
     var points: Int16 = 2
     var waitForPackets: Bool = false
     
@@ -202,7 +213,9 @@ private struct BandwidthVerificationStage: VerificationStage {
 
 private struct RejectPacketVerificationStage: VerificationStage {
     
+    var id: Int16 = 6
     var name: String = "Reject Packet"
+    var description: String = "Scans the baseband packets for a signaling an unexpected disconnection from network (reject)."
     var points: Int16 = 30
     var waitForPackets: Bool = true
     
@@ -282,7 +295,9 @@ private struct RejectPacketVerificationStage: VerificationStage {
 
 private struct SignalStrengthVerificationStage: VerificationStage {
     
+    var id: Int16 = 7
     var name: String = "Signal Strength"
+    var description: String = "Extracts the signal strength from the baseband packets and subtracts points if it is unusually high."
     var points: Int16 = 20
     var waitForPackets: Bool = true
     
@@ -331,31 +346,39 @@ private struct SignalStrengthVerificationStage: VerificationStage {
             let nrInfo = qmiSignalInfo.compactMap {$0.nr}.filter {$0.rsrp != NRSignalStrengthQMI.missing}
             
             if nrInfo.count > 0 {
-                let rsrpAvg = nrInfo.map {Double($0.rsrp)}.reduce(0.0, +) / Double(nrInfo.count)
-                let rsrqAvg = nrInfo.map {Double($0.rsrq)}.reduce(0.0, +) / Double(nrInfo.count)
-                let snrAvg = nrInfo.map {Double($0.snr)}.reduce(0.0, +) / Double(nrInfo.count)
+                let rsrpAvg = average(nrInfo.compactMap {$0.rsrp})
+                let rsrqAvg = average(nrInfo.compactMap {$0.rsrq})
+                let snrAvg = average(nrInfo.compactMap {$0.snr})
         
                 // We don't have any measurements for 5GNR
-                if rsrqAvg >= -4 && rsrpAvg >= -100 && snrAvg >= 200 {
+                if let rsrpAvg = rsrpAvg,
+                   let rsrqAvg = rsrqAvg,
+                   let snrAvg = snrAvg,
+                   rsrqAvg >= -4 && rsrpAvg >= -100 && snrAvg >= 200 {
                     // TODO: Above max. 25 and below and exponential thingy?
                     logger.info("Signal Strength QMI: 5GNR SUS")
                     return .fail(related: VerificationStageRelatedObjects(packetsQmi: Array(fetchedQmiPackets.keys)))
                 }
             } else if lteInfo.count > 0 {
-                let rssiAvg = lteInfo.map {Double($0.rssi)}.reduce(0.0, +) / Double(lteInfo.count)
-                let rsrqAvg = lteInfo.map {Double($0.rsrq)}.reduce(0.0, +) / Double(lteInfo.count)
-                let rsrpAvg = lteInfo.map {Double($0.rsrp)}.reduce(0.0, +) / Double(lteInfo.count)
-                let snrAvg = lteInfo.map {Double($0.snr)}.reduce(0.0, +) / Double(lteInfo.count)
+                let rssiAvg = average(lteInfo.map {$0.rssi})
+                let rsrqAvg = average(lteInfo.map {$0.rsrq})
+                let rsrpAvg = average(lteInfo.map {$0.rsrp})
+                let snrAvg = average(lteInfo.map {$0.snr})
                 
-                if rssiAvg >= -70 && rsrqAvg >= -4 && rsrpAvg >= -100 && snrAvg >= 200 {
+                if let rssiAvg = rssiAvg,
+                   let rsrqAvg = rsrqAvg,
+                   let rsrpAvg = rsrpAvg,
+                   let snrAvg = snrAvg,
+                    rssiAvg >= -70 && rsrqAvg >= -4 && rsrpAvg >= -100 && snrAvg >= 200 {
                     logger.info("Signal Strength QMI: LTE SUS")
                     return .fail(related: VerificationStageRelatedObjects(packetsQmi: Array(fetchedQmiPackets.keys)))
                 }
             } else if gsmInfo.count > 0 {
-                let rssiAvg = gsmInfo.map {Double($0)}.reduce(0.0, +) / Double(gsmInfo.count)
+                let rssiAvg = average(gsmInfo.compactMap {$0})
                 
                 // We don't have any measurements for GSM
-                if rssiAvg >= -60 {
+                if let rssiAvg = rssiAvg,
+                   rssiAvg >= -60 {
                     logger.info("Signal Strength QMI: GSM SUS")
                     return .fail(related: VerificationStageRelatedObjects(packetsQmi: Array(fetchedQmiPackets.keys)))
                 }
@@ -396,7 +419,17 @@ private struct SignalStrengthVerificationStage: VerificationStage {
         }
         
         
-        return .success(related: VerificationStageRelatedObjects(packetsAri: Array(fetchedQmiPackets.keys), packetsQmi: Array(fetchedAriPackets.keys)))
+        return .success(related: VerificationStageRelatedObjects(packetsAri: Array(fetchedAriPackets.keys), packetsQmi: Array(fetchedQmiPackets.keys)))
+    }
+    
+    private func average(_ values: [any FixedWidthInteger]) -> Double? {
+        let count = Double(values.count)
+        if count == 0 {
+            return nil
+        }
+        
+        let sum = values.map {Double($0)}.reduce(0, +)
+        return sum / count
     }
     
 }

@@ -36,7 +36,7 @@ extension PersistenceController {
         }
     }
     
-    func storeVerificationResults(statusId: NSManagedObjectID, stage: Int16, score: Int16, finished: Bool, delayUntil: Date? , logsMetadata: [VerificationStageResultLogMetadata]) throws {
+    func storeVerificationResults(statusId: NSManagedObjectID, stage: Int16, score: Int16, finished: Bool, delayUntil: Date?, logsMetadata: [VerificationStageResultLogMetadata]) throws {
         try performAndWait { context in
             guard let state = context.object(with: statusId) as? VerificationState else {
                 // TODO: Throw
@@ -56,7 +56,9 @@ extension PersistenceController {
                 log.duration = logMetadata.duration
                 log.pointsAwarded = logMetadata.pointsAwarded
                 log.pointsMax = logMetadata.pointsMax
+                log.stageId = logMetadata.stageId
                 log.stageName = logMetadata.stageName
+                log.stageNumber = logMetadata.stageNumber
                 
                 if let relatedMetadata = logMetadata.relatedObjects {
                     if let relatedCellAls = relatedMetadata.cellAls {
@@ -76,6 +78,8 @@ extension PersistenceController {
                         }
                     }
                 }
+                
+                state.addToLogs(log)
             }
             
             try context.save()
