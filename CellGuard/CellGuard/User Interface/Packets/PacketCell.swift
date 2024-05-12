@@ -10,6 +10,12 @@ import SwiftUI
 struct PacketCell: View {
     
     let packet: any Packet
+    let customInfo: Text?
+    
+    init(packet: any Packet, customInfo: Text? = nil) {
+        self.packet = packet
+        self.customInfo = customInfo
+    }
     
     var body: some View {
         VStack {
@@ -17,6 +23,9 @@ struct PacketCell: View {
                 PacketCellQMIBody(packet: qmiPacket)
             } else if let ariPacket = packet as? PacketARI {
                 PacketCellARIBody(packet: ariPacket)
+            }
+            if let customInfo = customInfo {
+                PacketCellCustomInfo(info: customInfo)
             }
             PacketCellFooter(packet: packet)
         }
@@ -75,7 +84,7 @@ private struct PacketCellARIBody: View {
                     Image(systemName: "arrow.left")
                 }
                 
-                Text("\(packet.proto ?? "???")")
+                Text("\(packet.proto)")
                     .bold()
                 + Text(" (\(group?.name ?? hexString(packet.group))) ")
                 + GrayText(bytes: packet.data?.count ?? 0)
@@ -84,6 +93,21 @@ private struct PacketCellARIBody: View {
             }
             HStack {
                 Text(type?.name ?? hexString(packet.type))
+                Spacer()
+            }
+        }
+    }
+    
+}
+
+private struct PacketCellCustomInfo: View {
+    
+    let info: Text
+    
+    var body: some View {
+        VStack {
+            HStack {
+                info
                 Spacer()
             }
         }
