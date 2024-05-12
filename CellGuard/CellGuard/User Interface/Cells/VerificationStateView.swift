@@ -106,7 +106,7 @@ private struct VerificationStateInternalView: View {
             }
             
             ForEach(logs, id: \.id) { logEntry in
-                VerificationStateLogEntryView(logEntry: logEntry, description: stageDescription(logEntry: logEntry))
+                VerificationStateLogEntryView(logEntry: logEntry, stage: stageFor(logEntry: logEntry))
             }
                         
             if let currentStage = currentStage {
@@ -121,19 +121,19 @@ private struct VerificationStateInternalView: View {
         }
     }
     
-    private func stageDescription(logEntry: VerificationLog) -> String? {
+    private func stageFor(logEntry: VerificationLog) -> VerificationStage? {
         // Since this verification log entry was recorded its respective verification pipeline could have been modified.
         // We try to find the current's states description in the most effective manner.
         
         // Check if the stage resides in the same position of the pipeline
         if let stage = verificationPipeline.stages[safe: Int(logEntry.stageNumber)],
             stage.id == logEntry.stageId {
-            return stage.description
+            return stage
         }
         
         // Check if the stages resides anywhere in the pipeline
         if let stage = verificationPipeline.stages.first(where: { $0.id == logEntry.stageId }) {
-            return stage.description
+            return stage
         }
         
         // The stage is missing from the pipeline
@@ -177,11 +177,11 @@ private func coordinateToDMS(latitude: Double, longitude: Double) -> (latitude: 
 private struct VerificationStateLogEntryView: View {
     
     @ObservedObject var logEntry: VerificationLog
-    let description: String?
+    let stage: VerificationStage?
     
     var body: some View {
         Group {
-            Section(header: Text("Stage: \(logEntry.stageName ?? "Missing Name") (\(logEntry.stageNumber))"), footer: Text(description ?? "")) {
+            Section(header: Text("Stage: \(stage?.name ?? "ID \(logEntry.stageId)") (\(logEntry.stageNumber))"), footer: Text(stage?.description ?? "")) {
                 CellDetailsRow("Status", "Completed")
                 CellDetailsRow("Points", "\(logEntry.pointsAwarded) / \(logEntry.pointsMax)")
                 CellDetailsRow("Duration", "\(doubleString(logEntry.duration, maxDigits: 4))s")

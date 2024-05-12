@@ -161,7 +161,6 @@
         <attribute name="pointsAwarded" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="pointsMax" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="stageId" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="stageName" optional="YES" attributeType="String"/>
         <attribute name="stageNumber" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="timestampStart" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <relationship name="relatedCellALS" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CellALS" inverseName="verificationLogs" inverseEntity="CellALS"/>
@@ -172,7 +171,7 @@
         <uniquenessConstraints>
             <uniquenessConstraint>
                 <constraint value="verification"/>
-                <constraint value="stageName"/>
+                <constraint value="stageId"/>
             </uniquenessConstraint>
         </uniquenessConstraints>
     </entity>

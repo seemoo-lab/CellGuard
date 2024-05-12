@@ -63,9 +63,6 @@ struct VerificationStageResultLogMetadata {
     /// The unique identifier of the verification stage
     var stageId: Int16
     
-    /// The name of the verification stage
-    var stageName: String
-    
     /// The number of the stage in the pipeline
     var stageNumber: Int16
     
@@ -318,7 +315,6 @@ extension VerificationPipeline {
             
             logMetadata.append(VerificationStageResultLogMetadata(
                 stageId: stage.id,
-                stageName: stage.name,
                 stageNumber: thisStageNumber,
                 pointsAwarded: stagePoints,
                 pointsMax: stage.points,

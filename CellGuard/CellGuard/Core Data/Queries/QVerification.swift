@@ -57,7 +57,6 @@ extension PersistenceController {
                 log.pointsAwarded = logMetadata.pointsAwarded
                 log.pointsMax = logMetadata.pointsMax
                 log.stageId = logMetadata.stageId
-                log.stageName = logMetadata.stageName
                 log.stageNumber = logMetadata.stageNumber
                 
                 if let relatedMetadata = logMetadata.relatedObjects {
