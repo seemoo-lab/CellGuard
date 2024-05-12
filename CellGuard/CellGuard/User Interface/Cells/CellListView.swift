@@ -212,6 +212,7 @@ private struct FilteredCellView: View {
         } else {
             Text("No cell measurements match your search criteria.")
                 .multilineTextAlignment(.center)
+                .padding()
         }
     }
     
