@@ -44,7 +44,7 @@ private struct PacketQMIDetailsList: View {
         
         Group {
             Section(header: Text("Packet")) {
-                PacketDetailsRow("Protocol", packet.proto ?? "???")
+                PacketDetailsRow("Protocol", packet.proto)
                 PacketDetailsRow("Direction", packet.direction ?? "???")
                 PacketDetailsRow("Timestamp", date: packet.collected)
                 PacketDetailsRow("Size", bytes: data.count)
@@ -81,6 +81,8 @@ private struct PacketQMIDetailsList: View {
                     PacketDetailsDataRow("Data", data: tlv.data)
                 }
             }
+            
+            // TODO: Include QMIContentParser, e.g., for signal strength, or use libqmi definitions to parse the packet on-the-fly
         }
     }
     

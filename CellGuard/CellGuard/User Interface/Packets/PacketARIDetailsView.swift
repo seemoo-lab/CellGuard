@@ -42,7 +42,7 @@ private struct PacketARIDetailsList: View {
         
         return Group {
             Section(header: Text("Packet")) {
-                PacketDetailsRow("Protocol", packet.proto ?? "???")
+                PacketDetailsRow("Protocol", packet.proto)
                 PacketDetailsRow("Direction", packet.direction ?? "???")
                 PacketDetailsRow("Timestamp", date: packet.collected)
                 PacketDetailsRow("Size", bytes: data.count)
@@ -65,6 +65,8 @@ private struct PacketARIDetailsList: View {
             ForEach(parsed.tlvs, id: \.type) { tlv in
                 PacketARIDetailsTLVSection(tlv: tlv, typeDef: typeDef)
             }
+            
+            // TODO: Include ARIContentParser, e.g., for signal strength, or use libqmi definitions to parse the packet on-the-fly
         }
     }
     
