@@ -312,8 +312,7 @@ struct LogArchiveReader {
         let csvReader = try CSVReader(stream: inputStream, hasHeaderRow: true)
         
         // TODO: Import data during import (e.g. there are >1000 entries)
-        var cells: [CCTCellProperties] = []
-        let cellDates = FirstLastDates()
+        var cells: [(CCTCellProperties, String)] = []
         var packets: [CPTPacket] = []
         let packetDates = FirstLastDates()
         var packetsPrivate: [Date] = []
@@ -349,7 +348,6 @@ struct LogArchiveReader {
                     packetDates.update(timestampDate)
                 } else if category == "ct.server" && subsystem == "com.apple.CommCenter" {
                     cells.append(try readCSVCellMeasurement(timestamp: timestampDate, message: message))
-                    cellDates.update(timestampDate)
                 } else if subsystem == "com.apple.cache_delete" {
                     // TODO: Modify the function `output` in the file `src/csv_parser.rs` to include entries from this subsystem
                     readDeletedAction(timestamp: timestampDate, message: message)
@@ -367,10 +365,38 @@ struct LogArchiveReader {
             progress()
         }
         
+        // Remove cell measurements that aren't different to their predecessor of the last second.
+        // This the same logic which is also implemented in the tweak.
+        // See: https://dev.seemoo.tu-darmstadt.de/apple/cell-guard/-/blob/main/CaptureCellsTweak/CCTManager.m?ref_type=heads#L35
+        
+        // Store the properties of the previous cell in the list
+        var prevCellDate: Date?
+        var prevCellJson: String?
+        let filteredCells = cells
+            .sorted { $0.0.timestamp ?? Date.distantPast < $1.0.timestamp ?? Date.distantPast }
+            .filter { (cell, cellJson) in
+                if let prevCellDate = prevCellDate,
+                   let prevCellJson = prevCellJson,
+                   let cellDate = cell.timestamp,
+                   cellDate.timeIntervalSince(prevCellDate) < 1,
+                   prevCellJson == cellJson {
+                    
+                    return false
+                }
+                
+                prevCellDate = cell.timestamp
+                prevCellJson = cellJson
+                
+                return true
+            }
+            .map { $0.0 }
+        Self.logger.debug("Filtered \(cells.count - filteredCells.count) similar cells, resulting in \(cells.count) cells.")
+
+        
         do {
             let controller = PersistenceController.basedOnEnvironment()
             if cells.count > 0 {
-                try controller.importCollectedCells(from: cells)
+                try controller.importCollectedCells(from: filteredCells)
             }
             if packets.count > 0 {
                 _ = try CPTCollector.store(packets)
@@ -408,7 +434,7 @@ struct LogArchiveReader {
         // TODO: Check for profile install or uninstall events
         
         return ImportResult(
-            cells: ImportCount(count: cells.count, first: cellDates.first, last: cellDates.last),
+            cells: ImportCount(count: filteredCells.count, first: filteredCells.first?.timestamp, last: filteredCells.last?.timestamp),
             alsCells: nil,
             locations: nil,
             packets: ImportCount(count: packets.count, first: packetDates.first, last: packetDates.last),
@@ -476,7 +502,7 @@ struct LogArchiveReader {
     private let regexStringQuoted = Regex("kCTCellMonitor([\\w]+) *= *\\\\\"([\\S]+)\\\\\";")
     private let replaceString = "\"$1\": \"$2\","
     
-    private func readCSVCellMeasurement(timestamp: Date, message: String) throws -> CCTCellProperties {
+    private func readCSVCellMeasurement(timestamp: Date, message: String) throws -> (CCTCellProperties, String) {
         let messageBodySuffix = message.components(separatedBy: "info=(")
         if messageBodySuffix.count < 2 {
             throw LogArchiveError.wrongCellPrefixText
@@ -514,7 +540,7 @@ struct LogArchiveReader {
         
         // Parse the JSON dictionary with our own parser
         do {
-            return try CCTParser().parse(json)
+            return (try CCTParser().parse(json), jsonMsg)
         } catch {
             throw LogArchiveError.cellCCTParseError(jsonMsg, error)
         }
