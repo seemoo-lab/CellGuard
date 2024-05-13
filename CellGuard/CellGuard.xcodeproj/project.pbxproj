@@ -34,6 +34,8 @@
 		CF2A1C202975CDD200E8B61C /* RiskIndicatorCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2A1C1F2975CDD200E8B61C /* RiskIndicatorCard.swift */; };
 		CF2A1C222975DB8100E8B61C /* CellInformationCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2A1C212975DB8100E8B61C /* CellInformationCard.swift */; };
 		CF2B94B32B0B676F00F24ED1 /* PacketConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2B94B22B0B676F00F24ED1 /* PacketConstants.swift */; };
+		CF2FF68D2BF296EE006E2DF4 /* RiskInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2FF68C2BF296EE006E2DF4 /* RiskInfoView.swift */; };
+		CF2FF68E2BF296EE006E2DF4 /* RiskInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2FF68C2BF296EE006E2DF4 /* RiskInfoView.swift */; };
 		CF320F5529620B16009BAD18 /* CCTParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF320F5429620B16009BAD18 /* CCTParser.swift */; };
 		CF320F5729621C42009BAD18 /* CCTClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF320F5629621C42009BAD18 /* CCTClientTests.swift */; };
 		CF320F59296225F9009BAD18 /* CCTResponse.txt in Resources */ = {isa = PBXBuildFile; fileRef = CF320F582962208B009BAD18 /* CCTResponse.txt */; };
@@ -331,6 +333,7 @@
 		CF2A1C1F2975CDD200E8B61C /* RiskIndicatorCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RiskIndicatorCard.swift; sourceTree = "<group>"; };
 		CF2A1C212975DB8100E8B61C /* CellInformationCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellInformationCard.swift; sourceTree = "<group>"; };
 		CF2B94B22B0B676F00F24ED1 /* PacketConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacketConstants.swift; sourceTree = "<group>"; };
+		CF2FF68C2BF296EE006E2DF4 /* RiskInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RiskInfoView.swift; sourceTree = "<group>"; };
 		CF320F5429620B16009BAD18 /* CCTParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CCTParser.swift; sourceTree = "<group>"; };
 		CF320F5629621C42009BAD18 /* CCTClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CCTClientTests.swift; sourceTree = "<group>"; };
 		CF320F582962208B009BAD18 /* CCTResponse.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CCTResponse.txt; sourceTree = "<group>"; };
@@ -590,6 +593,7 @@
 				CF0FDCBC2969A21000A6FFE2 /* WelcomeSheet.swift */,
 				CF2A1C1F2975CDD200E8B61C /* RiskIndicatorCard.swift */,
 				CF2A1C212975DB8100E8B61C /* CellInformationCard.swift */,
+				CF2FF68C2BF296EE006E2DF4 /* RiskInfoView.swift */,
 				CF0A5677298A7A910012B2A8 /* VerificationProgressView.swift */,
 				CF5672952A29E59000B6EA7C /* TweakInfoView.swift */,
 				CF7309992A79122B00498BC3 /* DataSummaryView.swift */,
@@ -1293,6 +1297,7 @@
 				CFB6CF7D2BD122FA00EAB7B4 /* TrackedUserLocation.swift in Sources */,
 				CFB6CF7E2BD122FA00EAB7B4 /* LocationDataManager.swift in Sources */,
 				CFB6CF7F2BD122FA00EAB7B4 /* QMIContentParser.swift in Sources */,
+				CF2FF68E2BF296EE006E2DF4 /* RiskInfoView.swift in Sources */,
 				CFB6CF802BD122FA00EAB7B4 /* CellGuardSceneDelegate.swift in Sources */,
 				CFD5657B2BDFA82C00925FAA /* VerificationPipeline.swift in Sources */,
 				CFB6CF812BD122FA00EAB7B4 /* CellGuardApp.swift in Sources */,
@@ -1414,6 +1419,7 @@
 				CF0FDCCD296B480B00A6FFE2 /* TrackedUserLocation.swift in Sources */,
 				CFB8B2882963417B00503189 /* LocationDataManager.swift in Sources */,
 				CFD8DD262A715E8300954A25 /* QMIContentParser.swift in Sources */,
+				CF2FF68D2BF296EE006E2DF4 /* RiskInfoView.swift in Sources */,
 				CF5CBB9529689FFE001CE9BE /* CellGuardSceneDelegate.swift in Sources */,
 				CFD5657A2BDFA82C00925FAA /* VerificationPipeline.swift in Sources */,
 				CFD023372961A10D00AA5A1C /* CellGuardApp.swift in Sources */,
