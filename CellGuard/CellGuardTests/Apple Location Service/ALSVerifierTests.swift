@@ -10,6 +10,8 @@ import CoreData
 @testable import CellGuard__Jailbreak_
 
 final class ALSVerifierTests: XCTestCase {
+    
+    // TODO: Completely rewrite those tests for the new pipeline infrastructure
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
@@ -53,9 +55,9 @@ final class ALSVerifierTests: XCTestCase {
             cell.area = area
             cell.cell = cellId
             
-            cell.status = CellStatus.imported.rawValue
-            cell.score = 0
-            cell.nextVerification = Date()
+            // cell.status = CellStatus.imported.rawValue
+            // cell.score = 0
+            // cell.nextVerification = Date()
             cell.imported = Date()
             cell.collected = Date()
             
@@ -89,7 +91,7 @@ final class ALSVerifierTests: XCTestCase {
         
         createTweakCell(context: context, area: 46452, cell: 15669002)
         
-        _ = try await CellVerifier().verifyFirst()
+        _ = try await CGVerificationPipeline().pickCellAndVerify()
         
         context.performAndWait {
             assertALSCellCount(assert: { cells in
@@ -107,7 +109,7 @@ final class ALSVerifierTests: XCTestCase {
                 
                 let tweakCell = tweakCells.first!
                 XCTAssertNotNil(tweakCell.appleDatabase)
-                XCTAssertEqual(tweakCell.status, CellStatus.processedLocation.rawValue)
+                // XCTAssertEqual(tweakCell.status, CellStatus.processedLocation.rawValue)
                 XCTAssertEqual(tweakCell.score, 60)
             } catch {
                 XCTFail(error.localizedDescription)
@@ -121,7 +123,7 @@ final class ALSVerifierTests: XCTestCase {
         
         createTweakCell(context: context, area: 46452, cell: 15669002 + 99)
         
-        _ = try await CellVerifier().verifyFirst()
+        _ = try await CGVerificationPipeline().pickCellAndVerify()
         
         context.performAndWait {
             assertALSCellCount(assert: { cells in
@@ -136,7 +138,7 @@ final class ALSVerifierTests: XCTestCase {
                 
                 let tweakCell = tweakCells.first!
                 XCTAssertNil(tweakCell.appleDatabase)
-                XCTAssertEqual(tweakCell.status, CellStatus.processedLocation.rawValue)
+                // XCTAssertEqual(tweakCell.status, CellStatus.processedLocation.rawValue)
                 XCTAssertEqual(tweakCell.score, 0)
             } catch {
                 XCTFail(error.localizedDescription)
@@ -152,9 +154,9 @@ final class ALSVerifierTests: XCTestCase {
         createTweakCell(context: context, area: 46452, cell: 15669002 + 99)
         createTweakCell(context: context, area: 45711, cell: 12941845)
         
-        _ = try await CellVerifier().verifyFirst()
-        _ = try await CellVerifier().verifyFirst()
-        _ = try await CellVerifier().verifyFirst()
+        _ = try await CGVerificationPipeline().pickCellAndVerify()
+        _ = try await CGVerificationPipeline().pickCellAndVerify()
+        _ = try await CGVerificationPipeline().pickCellAndVerify()
         
         context.performAndWait {
             assertALSCellCount(assert: { cells in
@@ -168,14 +170,14 @@ final class ALSVerifierTests: XCTestCase {
                 let allCells = NSFetchRequest<CellTweak>()
                 allCells.entity = CellTweak.entity()
                 for cell in try allCells.execute() {
-                    print("\(cell.cell): status=\(cell.status ?? "empty") score=\(cell.score)")
+                    print("\(cell.cell): score=\(cell.score)")
                 }
                 print(try allCells.execute())
                 
                 // Test failed tweak cell
                 let failedFetchRequest = NSFetchRequest<CellTweak>()
                 failedFetchRequest.entity = CellTweak.entity()
-                failedFetchRequest.predicate = NSPredicate(format: "status = %@ and score = 0", CellStatus.processedLocation.rawValue)
+                // failedFetchRequest.predicate = NSPredicate(format: "status = %@ and score = 0", CellStatus.processedLocation.rawValue)
 
                 let failedTweakCells = try failedFetchRequest.execute()
                 XCTAssertEqual(failedTweakCells.count, 1)
@@ -183,20 +185,20 @@ final class ALSVerifierTests: XCTestCase {
                 // TODO: Understand how this fails
                 let failedTweakCell = failedTweakCells.first!
                 XCTAssertNil(failedTweakCell.appleDatabase)
-                XCTAssertEqual(failedTweakCell.status, CellStatus.processedLocation.rawValue)
+                // XCTAssertEqual(failedTweakCell.status, CellStatus.processedLocation.rawValue)
                 XCTAssertEqual(failedTweakCell.score, 0)
                 
                 // Test verified tweak cell
                 let verifiedFetchRequest = NSFetchRequest<CellTweak>()
                 verifiedFetchRequest.entity = CellTweak.entity()
-                verifiedFetchRequest.predicate = NSPredicate(format: "status = %@ and score > 0", CellStatus.processedLocation.rawValue)
+                // verifiedFetchRequest.predicate = NSPredicate(format: "status = %@ and score > 0", CellStatus.processedLocation.rawValue)
                 
                 let verifiedTweakCells = try verifiedFetchRequest.execute()
                 XCTAssertEqual(verifiedTweakCells.count, 2)
                 
                 verifiedTweakCells.forEach { verifiedTweakCell in
                     XCTAssertNotNil(verifiedTweakCell.appleDatabase)
-                    XCTAssertEqual(verifiedTweakCell.status, CellStatus.processedLocation.rawValue)
+                    // XCTAssertEqual(verifiedTweakCell.status, CellStatus.processedLocation.rawValue)
 
                 }
             } catch {
@@ -211,7 +213,7 @@ final class ALSVerifierTests: XCTestCase {
         
         createTweakCell(context: context, area: 46452, cell: 15669002)
         
-        _ = try await CellVerifier().verifyFirst()
+        _ = try await CGVerificationPipeline().pickCellAndVerify()
         
         var firstALSCount = 0
         context.performAndWait {
@@ -231,7 +233,7 @@ final class ALSVerifierTests: XCTestCase {
                 
                 let tweakCell = tweakCells.first!
                 XCTAssertNotNil(tweakCell.appleDatabase)
-                XCTAssertEqual(tweakCell.status, CellStatus.processedLocation.rawValue)
+                // XCTAssertEqual(tweakCell.status, CellStatus.processedLocation.rawValue)
                 XCTAssertEqual(tweakCell.score, 60)
             } catch {
                 XCTFail(error.localizedDescription)
@@ -240,7 +242,7 @@ final class ALSVerifierTests: XCTestCase {
         
         createTweakCell(context: context, area: 46452, cell: 15669002)
         
-        _ = try await CellVerifier().verifyFirst()
+        _ = try await CGVerificationPipeline().pickCellAndVerify()
         
         context.performAndWait {
             assertALSCellCount(assert: { cells in
@@ -255,7 +257,7 @@ final class ALSVerifierTests: XCTestCase {
                 
                 tweakCells.forEach { tweakCell in
                     XCTAssertNotNil(tweakCell.appleDatabase)
-                    XCTAssertEqual(tweakCell.status, CellStatus.processedLocation.rawValue)
+                    // XCTAssertEqual(tweakCell.status, CellStatus.processedLocation.rawValue)
                     XCTAssertEqual(tweakCell.score, 40)
                 }
             } catch {
