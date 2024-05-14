@@ -177,7 +177,7 @@ extension PersistenceController {
     }
     
     func fetchIndexedQMIPackets(start: Date, end: Date, reject: Bool = false, signal: Bool = false) throws -> [NSManagedObjectID: ParsedQMIPacket] {
-        return try performAndWait(name: "fetch") { context in
+        return try performAndWait(name: "fetchContext", author: "fetchIndexedQMIPackets") { context in
             let request = PacketIndexQMI.fetchRequest()
             
             request.predicate = NSPredicate(
@@ -206,7 +206,7 @@ extension PersistenceController {
     }
     
     func fetchIndexedARIPackets(start: Date, end: Date, reject: Bool = false, signal: Bool = false) throws -> [NSManagedObjectID: ParsedARIPacket] {
-        return try performAndWait { context in
+        return try performAndWait(name: "fetchContext", author: "fetchIndexedARIPackets") { context in
             let request = PacketIndexARI.fetchRequest()
             
             request.predicate = NSPredicate(
@@ -235,13 +235,9 @@ extension PersistenceController {
     
     /// Fetches QMI packets with the specified properties from Core Data.
     /// Remember to update the fetch index `byQMIPacketPropertiesIndex` when fetching new types of packets, otherwise the query slows down significantly.
-    func fetchQMIPackets(direction: CPTDirection, service: Int16, message: Int32, indication: Bool, start: Date, end: Date) throws -> [NSManagedObjectID: ParsedQMIPacket] {
-        var packets: [NSManagedObjectID: ParsedQMIPacket] = [:]
-        
-        var fetchError: Error? = nil
-        newTaskContext().performAndWait {
-            let request = NSFetchRequest<PacketQMI>()
-            request.entity = PacketQMI.entity()
+    func fetchQMIPackets(start: Date, end: Date, direction: CPTDirection, service: Int16, message: Int32, indication: Bool) throws -> [NSManagedObjectID: ParsedQMIPacket] {
+        return try performAndWait(name: "fetchContext", author: "fetchQMIPackets") { context in
+            let request = PacketQMI.fetchRequest()
             request.predicate = NSPredicate(
                 format: "indication = %@ and service = %@ and message = %@ and %@ <= collected and collected <= %@ and direction = %@",
                 NSNumber(booleanLiteral: indication), service as NSNumber, message as NSNumber, start as NSDate, end as NSDate, direction.rawValue as NSString
@@ -249,35 +245,24 @@ extension PersistenceController {
             request.sortDescriptors = [NSSortDescriptor(keyPath: \PacketQMI.collected, ascending: false)]
             // See: https://stackoverflow.com/a/11165883
             request.propertiesToFetch = ["data"]
-            do {
-                let qmiPackets = try request.execute()
-                for qmiPacket in qmiPackets {
-                    guard let data = qmiPacket.data else {
-                        logger.warning("Skipping packet \(qmiPacket) as it provides no binary data")
-                        continue
-                    }
-                    packets[qmiPacket.objectID] = try ParsedQMIPacket(nsData: data)
+            
+            var dict: [NSManagedObjectID: ParsedQMIPacket] = [:]
+            for qmiPacket in try request.execute() {
+                guard let data = qmiPacket.data else {
+                    logger.warning("Skipping packet \(qmiPacket) as it provides no binary data")
+                    continue
                 }
-            } catch {
-                fetchError = error
+                dict[qmiPacket.objectID] = try ParsedQMIPacket(nsData: data)
             }
-        }
-        
-        if let fetchError = fetchError {
-            logger.warning("Can't fetch QMI packets (service=\(service), message=\(message), indication=\(indication)) from \(start) to \(end): \(fetchError)")
-            throw fetchError
-        }
-        
-        return packets
+            
+            return dict
+        } ?? [:]
     }
     
     /// Fetches ARI packets with the specified properties from Core Data.
     /// Remember to update the fetch index `byARIPacketPropertiesIndex` when fetching new types of packets, otherwise the query slows down significantly.
-    func fetchARIPackets(direction: CPTDirection, group: Int16, type: Int32, start: Date, end: Date) throws -> [NSManagedObjectID: ParsedARIPacket] {
-        var packets: [NSManagedObjectID: ParsedARIPacket] = [:]
-        
-        var fetchError: Error? = nil
-        newTaskContext().performAndWait {
+    func fetchARIPackets(direction: CPTDirection, group: Int16, type: Int32, start: Date, end: Date) throws -> [NSManagedObjectID : ParsedARIPacket] {
+        return try performAndWait(name: "fetchContext", author: "fetchARIPackets") { context in
             let request = NSFetchRequest<PacketARI>()
             request.entity = PacketARI.entity()
             request.predicate = NSPredicate(
@@ -286,26 +271,17 @@ extension PersistenceController {
             )
             request.sortDescriptors = [NSSortDescriptor(keyPath: \PacketARI.collected, ascending: false)]
             request.returnsObjectsAsFaults = false
-            do {
-                let ariPackets = try request.execute()
-                for ariPacket in ariPackets {
-                    guard let data = ariPacket.data else {
-                        logger.warning("Skipping packet \(ariPacket) as it provides no binary data")
-                        continue
-                    }
-                    packets[ariPacket.objectID] = try ParsedARIPacket(data: data)
+            
+            var dict: [NSManagedObjectID: ParsedARIPacket] = [:]
+            for ariPacket in try request.execute() {
+                guard let data = ariPacket.data else {
+                    logger.warning("Skipping packet \(ariPacket) as it provides no binary data")
+                    continue
                 }
-            } catch {
-                fetchError = error
+                dict[ariPacket.objectID] = try ParsedARIPacket(data: data)
             }
-        }
-        
-        if let fetchError = fetchError {
-            logger.warning("Can't fetch ARI packets (group=\(group), type=\(type)) from \(start) to \(end): \(fetchError)")
-            throw fetchError
-        }
-        
-        return packets
+            return dict
+        } ?? [:]
     }
     
     func countPacketsByType(completion: @escaping (Result<(Int, Int), Error>) -> Void) {
@@ -332,28 +308,26 @@ extension PersistenceController {
     }
     
     func deletePacketsOlderThan(days: Int) {
-        let taskContext = newTaskContext()
-        logger.debug("Start deleting packets older than \(days) day(s) from the store...")
-        
-        taskContext.performAndWait {
-            do {
+        do {
+            try performAndWait { context in
+                logger.debug("Start deleting packets older than \(days) day(s) from the store...")
                 let startOfDay = Calendar.current.startOfDay(for: Date())
                 guard let daysAgo = Calendar.current.date(byAdding: .day, value: -days, to: startOfDay) else {
                     logger.debug("Can't calculate the date for packet deletion")
                     return
                 }
                 logger.debug("Deleting packets older than \(startOfDay)")
+                
                 // Only delete packets not referenced by cells
                 let predicate = NSPredicate(format: "collected < %@ and index = nil", daysAgo as NSDate)
                 
-                let qmiCount = try deleteData(entity: PacketQMI.entity(), predicate: predicate, context: taskContext)
-                let ariCount = try deleteData(entity: PacketARI.entity(), predicate: predicate, context: taskContext)
+                let qmiCount = try deleteData(entity: PacketQMI.entity(), predicate: predicate, context: context)
+                let ariCount = try deleteData(entity: PacketARI.entity(), predicate: predicate, context: context)
                 logger.debug("Successfully deleted \(qmiCount + ariCount) old packets")
-            } catch {
-                logger.warning("Failed to delete old packets: \(error)")
             }
+        } catch {
+            logger.warning("Failed to delete old packets: \(error)")
         }
-        
     }
     
 }
