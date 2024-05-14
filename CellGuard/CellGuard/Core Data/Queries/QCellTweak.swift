@@ -68,42 +68,25 @@ extension PersistenceController {
     }
     
     func fetchCellAttribute<T>(cell: NSManagedObjectID, extract: (CellTweak) throws -> T?) -> T? {
-        let context = newTaskContext()
-        
-        var fetchError: Error? = nil
-        var attribute: T? = nil
-        context.performAndWait {
-            do {
-                if let tweakCell = context.object(with: cell) as? CellTweak {
-                    attribute = try extract(tweakCell)
-                }
-            } catch {
-                fetchError = error
+        return try? performAndWait(name: "fetchContext", author: "fetchCellAttribute") { context in
+            if let tweakCell = context.object(with: cell) as? CellTweak {
+                return try extract(tweakCell)
             }
-        }
-        
-        if fetchError != nil {
-            logger.warning("Can't fetch attribute from CellTweak: \(fetchError)")
+            
             return nil
         }
-        
-        return attribute
     }
     
     func fetchCellLifespan(of tweakCellID: NSManagedObjectID) throws -> (start: Date, end: Date, after: NSManagedObjectID)? {
-        let taskContext = newTaskContext()
-        
-        var cellTuple: (start: Date, end: Date, after: NSManagedObjectID)? = nil
-        var fetchError: Error? = nil
-        taskContext.performAndWait {
-            guard let tweakCell = taskContext.object(with: tweakCellID) as? CellTweak else {
+        return try? performAndWait(name: "fetchContext", author: "fetchCellLifespan") { context in
+            guard let tweakCell = context.object(with: tweakCellID) as? CellTweak else {
                 logger.warning("Can't convert NSManagedObjectID \(tweakCellID) to CellTweak")
-                return
+                return nil
             }
             
             guard let startTimestamp = tweakCell.collected else {
                 logger.warning("CellTweak \(tweakCell) has not collected timestamp")
-                return
+                return nil
             }
             
             let request = NSFetchRequest<CellTweak>()
@@ -112,26 +95,19 @@ extension PersistenceController {
             request.predicate = NSPredicate(format: "collected > %@", startTimestamp as NSDate)
             request.sortDescriptors = [NSSortDescriptor(keyPath: \CellTweak.collected, ascending: true)]
             request.returnsObjectsAsFaults = false
-            do {
-                let tweakCells = try request.execute()
-                if let tweakCell = tweakCells.first {
-                    if let endTimestamp = tweakCell.collected {
-                        cellTuple = (start: startTimestamp, end: endTimestamp, after: tweakCell.objectID)
-                    } else {
-                        logger.warning("CellTweak \(tweakCell) has not collected timestamp")
-                    }
-                }
-            } catch {
-                fetchError = error
+            
+            let tweakCells = try request.execute()
+            guard let tweakCell = tweakCells.first else {
+                return nil
             }
+            
+            guard let endTimestamp = tweakCell.collected else {
+                logger.warning("CellTweak \(tweakCell) has not collected timestamp")
+                return nil
+            }
+            
+            return (start: startTimestamp, end: endTimestamp, after: tweakCell.objectID)
         }
-        
-        if let fetchError = fetchError {
-            logger.warning("Can' fetch the first cell after the cell \(tweakCellID): \(fetchError)")
-            throw fetchError
-        }
-        
-        return cellTuple
     }
     
 }
