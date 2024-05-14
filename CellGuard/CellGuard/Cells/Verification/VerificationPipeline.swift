@@ -170,6 +170,7 @@ extension VerificationPipeline {
     func run() async {
         logger.debug("Starting verification pipeline")
         
+        checkPipeline()
         checkStages()
         
         while (true) {
@@ -209,7 +210,16 @@ extension VerificationPipeline {
         }
     }
     
+    private func checkPipeline() {
+        assert(id >= 0, "ID of pipeline \(name) must be positive or zero, now \(id)")
+    }
+    
     private func checkStages() {
+        // Checking that every stage id is positive
+        for stage in self.stages {
+            assert(stage.id >= 0, "ID of stage \(stage.name) must be positive or zero, now \(stage.id)")
+        }
+        
         // Checking for multiple stages in the pipeline with the same stageId (which is not allowed)
         let stagesDict = Dictionary(grouping: stages, by: { $0.id })
         for (stageId, stages) in stagesDict {
