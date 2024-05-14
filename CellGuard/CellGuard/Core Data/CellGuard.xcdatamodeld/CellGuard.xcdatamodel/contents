@@ -39,6 +39,7 @@
         <attribute name="technology" optional="YES" attributeType="String"/>
         <relationship name="appleDatabase" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CellALS" inverseName="observedCells" inverseEntity="CellALS"/>
         <relationship name="location" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="LocationUser" inverseName="cells" inverseEntity="LocationUser"/>
+        <relationship name="study" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="StudyCell" inverseName="cell" inverseEntity="StudyCell"/>
         <relationship name="verifications" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="VerificationState" inverseName="cell" inverseEntity="VerificationState"/>
         <fetchIndex name="byTweakCellCollected">
             <fetchIndexElement property="collected" type="Binary" order="descending"/>
@@ -156,6 +157,14 @@
             </uniquenessConstraint>
         </uniquenessConstraints>
     </entity>
+    <entity name="StudyCell" representedClassName="StudyCell" syncable="YES" codeGenerationType="class">
+        <attribute name="skippedDueTime" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="uploaded" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <relationship name="cell" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CellTweak" inverseName="study" inverseEntity="CellTweak"/>
+    </entity>
+    <entity name="StudySummary" representedClassName="StudySummary" syncable="YES" codeGenerationType="class">
+        <attribute name="uploaded" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+    </entity>
     <entity name="VerificationLog" representedClassName="VerificationLog" syncable="YES" codeGenerationType="class">
         <attribute name="duration" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="pointsAwarded" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
@@ -163,11 +172,11 @@
         <attribute name="stageId" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="stageNumber" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="timestampStart" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <relationship name="pipeline" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="VerificationState" inverseName="logs" inverseEntity="VerificationState"/>
         <relationship name="relatedCellALS" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CellALS" inverseName="verificationLogs" inverseEntity="CellALS"/>
         <relationship name="relatedLocationUser" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="LocationUser" inverseName="verificationLogs" inverseEntity="LocationUser"/>
         <relationship name="relatedPacketARI" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="PacketARI" inverseName="verificationLogs" inverseEntity="PacketARI"/>
         <relationship name="relatedPacketQMI" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="PacketQMI" inverseName="verificationLogs" inverseEntity="PacketQMI"/>
-        <relationship name="verification" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="VerificationState" inverseName="logs" inverseEntity="VerificationState"/>
         <uniquenessConstraints>
             <uniquenessConstraint>
                 <constraint value="verification"/>
@@ -183,7 +192,7 @@
         <attribute name="score" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="stage" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <relationship name="cell" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CellTweak" inverseName="verifications" inverseEntity="CellTweak"/>
-        <relationship name="logs" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="VerificationLog" inverseName="verification" inverseEntity="VerificationLog"/>
+        <relationship name="logs" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="VerificationLog" inverseName="pipeline" inverseEntity="VerificationLog"/>
         <uniquenessConstraints>
             <uniquenessConstraint>
                 <constraint value="pipeline"/>

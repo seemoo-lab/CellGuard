@@ -56,3 +56,19 @@ func +(color1: UIColor, color2: UIColor) -> UIColor {
 func *(color: UIColor, multiplier: Double) -> UIColor {
     return multiplyColor(color, by: CGFloat(multiplier))
 }
+
+// https://www.hackingwithswift.com/example-code/language/how-to-split-an-array-into-chunks
+extension Array {
+    func chunked(into size: Int) -> [[Element]] {
+        return stride(from: 0, to: count, by: size).map {
+            Array(self[$0 ..< Swift.min($0 + size, count)])
+        }
+    }
+}
+
+// https://stackoverflow.com/a/35946921
+extension Double {
+    func truncate(places : Int)-> Double {
+        return Double(floor(pow(10.0, Double(places)) * self)/pow(10.0, Double(places)))
+    }
+}
