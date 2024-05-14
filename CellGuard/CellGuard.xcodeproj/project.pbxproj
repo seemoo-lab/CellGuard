@@ -236,6 +236,8 @@
 		CFB8B2882963417B00503189 /* LocationDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB8B2872963417B00503189 /* LocationDataManager.swift */; };
 		CFB8B28A2963498200503189 /* CellGuardAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB8B2892963498200503189 /* CellGuardAppDelegate.swift */; };
 		CFB8B291296359CC00503189 /* CCTCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB8B290296359CC00503189 /* CCTCollector.swift */; };
+		CFB954202BF34DC500F87FF5 /* StudyPacketFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB9541F2BF34DC500F87FF5 /* StudyPacketFilter.swift */; };
+		CFB954212BF34DC500F87FF5 /* StudyPacketFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB9541F2BF34DC500F87FF5 /* StudyPacketFilter.swift */; };
 		CFBEC8402BC7F6E80021C0B9 /* PacketQMI+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFBEC83C2BC7F6E80021C0B9 /* PacketQMI+CoreDataClass.swift */; };
 		CFBEC8422BC7F6E80021C0B9 /* PacketARI+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFBEC83E2BC7F6E80021C0B9 /* PacketARI+CoreDataClass.swift */; };
 		CFBEC8462BC7F7100021C0B9 /* Packet.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFBEC8452BC7F7100021C0B9 /* Packet.swift */; };
@@ -404,6 +406,7 @@
 		CFB8B2872963417B00503189 /* LocationDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationDataManager.swift; sourceTree = "<group>"; };
 		CFB8B2892963498200503189 /* CellGuardAppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellGuardAppDelegate.swift; sourceTree = "<group>"; };
 		CFB8B290296359CC00503189 /* CCTCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CCTCollector.swift; sourceTree = "<group>"; };
+		CFB9541F2BF34DC500F87FF5 /* StudyPacketFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudyPacketFilter.swift; sourceTree = "<group>"; };
 		CFBEC83C2BC7F6E80021C0B9 /* PacketQMI+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PacketQMI+CoreDataClass.swift"; sourceTree = "<group>"; };
 		CFBEC83E2BC7F6E80021C0B9 /* PacketARI+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PacketARI+CoreDataClass.swift"; sourceTree = "<group>"; };
 		CFBEC8452BC7F7100021C0B9 /* Packet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Packet.swift; sourceTree = "<group>"; };
@@ -928,6 +931,7 @@
 			isa = PBXGroup;
 			children = (
 				CFEC5E752BD1808E004978FA /* CellGuardURLs.swift */,
+				CFB9541F2BF34DC500F87FF5 /* StudyPacketFilter.swift */,
 			);
 			path = API;
 			sourceTree = "<group>";
@@ -1262,6 +1266,7 @@
 				CFB6CF5E2BD122FA00EAB7B4 /* MapTabView.swift in Sources */,
 				CFB6CF5F2BD122FA00EAB7B4 /* CellListView.swift in Sources */,
 				CFB6CF602BD122FA00EAB7B4 /* VerificationStateView.swift in Sources */,
+				CFB954212BF34DC500F87FF5 /* StudyPacketFilter.swift in Sources */,
 				CF70A98F2BE6B57F00989FB5 /* QCellTweak.swift in Sources */,
 				CF70A9802BE6AD8600989FB5 /* QCellALS.swift in Sources */,
 				CFB6CF612BD122FA00EAB7B4 /* LargeButton.swift in Sources */,
@@ -1384,6 +1389,7 @@
 				CF0FDCB729699E5100A6FFE2 /* MapTabView.swift in Sources */,
 				CF86C7912A6A9086002EC9B6 /* CellListView.swift in Sources */,
 				CF86C79D2A6AE0E3002EC9B6 /* VerificationStateView.swift in Sources */,
+				CFB954202BF34DC500F87FF5 /* StudyPacketFilter.swift in Sources */,
 				CF70A98E2BE6B57F00989FB5 /* QCellTweak.swift in Sources */,
 				CF70A97F2BE6AD8600989FB5 /* QCellALS.swift in Sources */,
 				CF0FDCC02969A3E500A6FFE2 /* LargeButton.swift in Sources */,
