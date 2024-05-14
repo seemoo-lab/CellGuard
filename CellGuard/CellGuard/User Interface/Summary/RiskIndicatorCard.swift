@@ -91,7 +91,7 @@ struct RiskIndicatorCard: View {
     
     var body: some View {
         NavigationLink {
-            RiskIndicatorLink(risk: risk)
+            RiskInfoView(risk: risk)
         } label: {
             VStack {
                 HStack() {
@@ -125,39 +125,6 @@ struct RiskIndicatorCard: View {
             .padding()
         }
     }
-}
-
-private struct RiskIndicatorLink: View {
-    
-    let risk: RiskLevel
-    
-    var body: some View {
-        switch (risk) {
-        case .Low:
-            // TODO: Show sheet with description of the current status
-            return AnyView(CellListView())
-        case .LowMonitor:
-            // TODO: Show sheet with description of the current status
-            return AnyView(CellListView())
-        case let .Medium(cause):
-            if cause == .Permissions || cause == .Location {
-                return AnyView(SettingsView())
-            } else if cause == .TweakCells || cause == .TweakPackets {
-                // TODO: Replace with help article
-                return AnyView(TweakInfoView())
-            } else {
-                // TODO: Show sheet with description of the current status
-                return AnyView(CellListView())
-            }
-        case .High(_):
-            // TODO: Show sheet with description of the current status
-            return AnyView(CellListView())
-        case .Unknown:
-            // TODO: Expand on the verification progress view
-            return AnyView(VerificationProgressView())
-        }
-    }
-    
 }
 
 struct RiskIndicator_Previews: PreviewProvider {
