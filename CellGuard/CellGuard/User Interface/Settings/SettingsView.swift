@@ -22,6 +22,7 @@ struct SettingsView: View {
     @AppStorage(UserDefaultsKeys.showTrackingMarker.rawValue) var showTrackingMarker: Bool = false
     @AppStorage(UserDefaultsKeys.appMode.rawValue) var appMode: DataCollectionMode = .none
     @AppStorage(UserDefaultsKeys.highVolumeSpeedup.rawValue) var highVolumeSpeedup: Bool = true
+    @AppStorage(UserDefaultsKeys.study.rawValue) var studyParticipationTimestamp: Double = 0
     
     @EnvironmentObject var locationManager: LocationDataManager
     @EnvironmentObject var notificationManager: CGNotificationManager
@@ -103,6 +104,14 @@ struct SettingsView: View {
             // TODO: Should we remove this?
             Section(header: Text("Location")) {
                 Toggle("Show Tracking Indicator", isOn: $showTrackingMarker)
+            }
+            
+            Section(header: Text("Study")) {
+                Toggle("Participate", isOn: Binding(get: {
+                    studyParticipationTimestamp > 0
+                }, set: { participate in
+                    studyParticipationTimestamp = participate ? Date().timeIntervalSince1970 : 0
+                }))
             }
             
             Section(header: Text("Local Database")) {
