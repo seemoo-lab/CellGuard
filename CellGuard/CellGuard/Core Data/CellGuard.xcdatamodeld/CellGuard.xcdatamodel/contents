@@ -179,7 +179,7 @@
         <relationship name="relatedPacketQMI" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="PacketQMI" inverseName="verificationLogs" inverseEntity="PacketQMI"/>
         <uniquenessConstraints>
             <uniquenessConstraint>
-                <constraint value="verification"/>
+                <constraint value="pipeline"/>
                 <constraint value="stageId"/>
             </uniquenessConstraint>
         </uniquenessConstraints>
