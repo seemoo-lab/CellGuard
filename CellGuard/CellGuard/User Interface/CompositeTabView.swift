@@ -82,9 +82,7 @@ struct CompositeTabView: View {
         .sheet(item: $showingSheet) { (sheet: ShownSheet) in
             switch (sheet) {
             case .welcome:
-                WelcomeSheet {
-                    self.showingSheet = nil
-                }
+                WelcomeSheet ()  //showingSheet: nil  //TODO
             case let .importFile(url):
                 NavigationView {
                     ImportView(fileUrl: url)
