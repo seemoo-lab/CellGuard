@@ -15,10 +15,13 @@ enum UserDefaultsKeys: String {
     case lastExportDate
     case appMode
     case highVolumeSpeedup
+    case study
 }
 
 enum DataCollectionMode: String, CaseIterable, Identifiable {
+    #if JAILBREAK
     case automatic
+    #endif
     case manual
     case none
     
@@ -26,8 +29,10 @@ enum DataCollectionMode: String, CaseIterable, Identifiable {
     
     var description: String {
         switch self {
+        #if JAILBREAK
             // Jailbroken, i.e., import data via querying tweaks
         case .automatic: return "Automatic"
+        #endif
             // Non-jailbroken, i.e., import data by reading sysdiagnosees
         case .manual: return "Manual"
             // Don't import / collect any data, including location, but allow to import CSV files
@@ -49,6 +54,23 @@ extension UserDefaults {
         }
         
         return appMode
+    }
+    
+    func set(_ date: Date?, forKey key: String) {
+        if let date = date {
+            set(date.timeIntervalSince1970, forKey: key)
+        } else {
+            setNilValueForKey(key)
+        }
+    }
+    
+    func date(forKey key: String) -> Date? {
+        let timeIntervalSince1970 = double(forKey: key)
+        if timeIntervalSince1970 > 0 {
+            return Date(timeIntervalSince1970: timeIntervalSince1970)
+        } else {
+            return nil
+        }
     }
     
 }

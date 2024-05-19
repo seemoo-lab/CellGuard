@@ -66,6 +66,7 @@ class CellGuardSceneDelegate: NSObject, UIWindowSceneDelegate, ObservableObject 
         // (Or at least I hope that)
         
         // Only schedule refresh tasks to fetch cells & packets if the jailbroken mode is active
+        #if JAILBREAK
         if UserDefaults.standard.dataCollectionMode() == .automatic {
             do {
                 let refreshTask = BGAppRefreshTaskRequest(identifier: CellGuardAppDelegate.cellRefreshTaskIdentifier)
@@ -83,6 +84,7 @@ class CellGuardSceneDelegate: NSObject, UIWindowSceneDelegate, ObservableObject 
                 Self.logger.warning("Could not schedule the app packet refresh task: \(Self.toDescription(taskSchedulerError: error as? BGTaskScheduler.Error)) -> \(error)")
             }
         }
+        #endif
         
         do {
             let verifyTask = BGProcessingTaskRequest(identifier: CellGuardAppDelegate.verifyTaskIdentifier)

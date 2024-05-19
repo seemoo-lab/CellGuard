@@ -21,60 +21,64 @@ struct CellListFilterSettings {
     var area: Int?
     var cell: Int?
     
-    func applyTo(request: NSFetchRequest<CellTweak>) {
-        var predicateList: [NSPredicate] = []
+    func applyTo(request: NSFetchRequest<VerificationState>) {
+        var predicateList: [NSPredicate] = [
+            NSPredicate(format: "cell != nil"),
+            NSPredicate(format: "pipeline == %@", Int(primaryVerificationPipeline.id) as NSNumber)
+        ]
         
         if let technology = technology {
-            predicateList.append(NSPredicate(format: "technology == %@", technology.rawValue))
+            predicateList.append(NSPredicate(format: "cell.technology == %@", technology.rawValue))
         }
         
         if let country = country {
-            predicateList.append(NSPredicate(format: "country == %@", country as NSNumber))
+            predicateList.append(NSPredicate(format: "cell.country == %@", country as NSNumber))
         }
         
         if let network = network {
-            predicateList.append(NSPredicate(format: "network == %@", network as NSNumber))
+            predicateList.append(NSPredicate(format: "cell.network == %@", network as NSNumber))
         }
         
         if let area = area {
-            predicateList.append(NSPredicate(format: "area == %@", area as NSNumber))
+            predicateList.append(NSPredicate(format: "cell.area == %@", area as NSNumber))
         }
         
         if let cell = cell {
-            predicateList.append(NSPredicate(format: "cell == %@", cell as NSNumber))
+            predicateList.append(NSPredicate(format: "cell.cell == %@", cell as NSNumber))
         }
 
         let beginDay = Calendar.current.startOfDay(for: timeFrame == .live ? Date() : date)
         if let endDate = Calendar.current.date(byAdding: .day, value: 1, to: beginDay) {
-            predicateList.append(NSPredicate(format: "%@ <= collected and collected <= %@", beginDay as NSDate, endDate as NSDate))
+            predicateList.append(NSPredicate(format: "%@ <= cell.collected and cell.collected <= %@", beginDay as NSDate, endDate as NSDate))
         }
         
-        let thresholdSuspicious = CellVerifier.pointsSuspiciousThreshold as NSNumber
-        let thresholdUntrusted = CellVerifier.pointsUntrustedThreshold as NSNumber
+        let thresholdSuspicious = primaryVerificationPipeline.pointsSuspicious as NSNumber
+        let thresholdUntrusted = primaryVerificationPipeline.pointsUntrusted as NSNumber
         
         switch (status) {
         case .all:
             break
         case .processing:
-            predicateList.append(NSPredicate(format: "status != %@", CellStatus.verified.rawValue))
+            predicateList.append(NSPredicate(format: "finished == NO"))
         case .trusted:
-            predicateList.append(NSPredicate(format: "status == %@", CellStatus.verified.rawValue))
+            predicateList.append(NSPredicate(format: "finished == YES"))
             predicateList.append(NSPredicate(format: "score >= %@", thresholdSuspicious))
-        case .suspicious:
-            predicateList.append(NSPredicate(format: "status == %@", CellStatus.verified.rawValue))
+        case .anomalous:
+            predicateList.append(NSPredicate(format: "finished == YES"))
             predicateList.append(NSPredicate(format: "score >= %@ and score < %@", thresholdUntrusted, thresholdSuspicious))
-        case .untrusted:
-            predicateList.append(NSPredicate(format: "status == %@", CellStatus.verified.rawValue))
+        case .suspicious:
+            predicateList.append(NSPredicate(format: "finished == YES"))
             predicateList.append(NSPredicate(format: "score < %@", thresholdUntrusted))
         }
 
         request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicateList)
+        request.relationshipKeyPathsForPrefetching = ["cell"]
     }
     
 }
 
 enum CellListFilterStatus: String, CaseIterable, Identifiable {
-    case all, processing, trusted, suspicious, untrusted
+    case all, processing, trusted, anomalous, suspicious
     
     var id: Self { self }
 }

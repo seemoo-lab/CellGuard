@@ -60,10 +60,13 @@ def build_archive() -> Path:
     # https://github.com/MrKai77/Export-unsigned-ipa-files
 
     with yaspin(text="Building CellGuard...") as spinner:
-        process = subprocess.run(
-            ['xcodebuild', 'archive', '-scheme', 'CellGuard', '-archivePath', 'build/CellGuard.xcarchive',
-             '-configuration', 'Release', 'CODE_SIGN_IDENTITY=', 'CODE_SIGNING_REQUIRED=NO', 'CODE_SINGING_ALLOWED=NO'],
-            stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        process = subprocess.run([
+            'xcodebuild', 'archive',
+            '-scheme', 'CellGuard (Jailbreak)',
+            '-archivePath', 'build/CellGuard.xcarchive',
+            '-configuration', 'Release',
+            'CODE_SIGN_IDENTITY=', 'CODE_SIGNING_REQUIRED=NO', 'CODE_SINGING_ALLOWED=NO'
+        ], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         if process.returncode == 0:
             spinner.ok("🟢")
         else:

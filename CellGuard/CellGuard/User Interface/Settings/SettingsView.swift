@@ -22,6 +22,7 @@ struct SettingsView: View {
     @AppStorage(UserDefaultsKeys.showTrackingMarker.rawValue) var showTrackingMarker: Bool = false
     @AppStorage(UserDefaultsKeys.appMode.rawValue) var appMode: DataCollectionMode = .none
     @AppStorage(UserDefaultsKeys.highVolumeSpeedup.rawValue) var highVolumeSpeedup: Bool = true
+    @AppStorage(UserDefaultsKeys.study.rawValue) var studyParticipationTimestamp: Double = 0
     
     @EnvironmentObject var locationManager: LocationDataManager
     @EnvironmentObject var notificationManager: CGNotificationManager
@@ -56,18 +57,25 @@ struct SettingsView: View {
             }
         }
     )}
+    
+    private var dataCollectionFooter: String {
+        var text = "The data collection mode determines if and how CellGuard collects data. "
+        
+        #if JAILBREAK
+        text += "The automatic mode retrieves data from tweaks installed with a jailbreak on your device. "
+        #endif
+        
+        text += "The manual mode allows you to share system diagnoses with the app to import data. "
+        text += "If disabled, CellGuard does not collect locations and only allows you to import previously exported datasets."
+        
+        return text
+    }
 
     var body: some View {
         List {
-            // TODO: Should we completely remove the automatic mode from the TestFlight / App Store version?
             Section(
                 header: Text("Data Collection"),
-                footer: Text(
-                    "The data collection mode determines if and how CellGuard collects data. " +
-                    "The automatic mode is not available on most devices. " +
-                    "The manual mode allows you to share system diagnoses with the app to import data. " +
-                    "If disabled, CellGuard does not collect locations and only allows you to import previously exported datasets."
-                )
+                footer: Text(dataCollectionFooter)
             ) {
                 Picker("Mode", selection: $appMode) {
                     ForEach(DataCollectionMode.allCases) { Text($0.description) }
@@ -98,6 +106,14 @@ struct SettingsView: View {
                 Toggle("Show Tracking Indicator", isOn: $showTrackingMarker)
             }
             
+            Section(header: Text("Study")) {
+                Toggle("Participate", isOn: Binding(get: {
+                    studyParticipationTimestamp > 0
+                }, set: { participate in
+                    studyParticipationTimestamp = participate ? Date().timeIntervalSince1970 : 0
+                }))
+            }
+            
             Section(header: Text("Local Database")) {
                 NavigationLink {
                     ImportView()
@@ -125,13 +141,13 @@ struct SettingsView: View {
                 
                 KeyValueListRow(key: "Version", value: versionBuild)
 
-                Link(destination: URL(string: "https://cellguard.seemoo.de")!) {
+                Link(destination: CellGuardURLs.baseUrl) {
                     KeyValueListRow(key: "Website") {
                         Image(systemName: "link")
                     }
                 }
                 
-                Link(destination: URL(string: "https://cellguard.seemoo.de/docs/privacy-policy/")!) {
+                Link(destination: CellGuardURLs.privacyPolicy) {
                     KeyValueListRow(key: "Privacy Policy") {
                         Image(systemName: "link")
                     }
@@ -152,7 +168,6 @@ struct SettingsView: View {
                 Link(destination: URL(string: "https://hpi.de/classen/home.html")!) {
                     KeyValueListRow(key: "Jiska Classen", value: "HPI")
                 }
-                KeyValueListRow(key: "Linus Laurenz", value: "HPI")
             }
         }
         .listStyle(.insetGrouped)

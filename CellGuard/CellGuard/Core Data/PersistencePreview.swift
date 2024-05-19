@@ -37,9 +37,7 @@ struct PersistencePreview {
         cell.imported = imported
         cell.location = userLocation(location: LocationUser(context: context), error: 0.005)
         cell.location?.imported = cell.imported
-        cell.status = CellStatus.verified.rawValue
-        cell.score = Int16(CellVerifier.pointsMax)
-        cell.nextVerification = Date()
+        // TODO: Add VerificationState to TweakCell
         
         return cell
     }
@@ -55,9 +53,7 @@ struct PersistencePreview {
         cell.imported = Calendar.current.date(byAdding: .hour, value: -Int.random(in: 0..<24), to: alsCell.imported!)
         cell.location = userLocation(location: LocationUser(context: context), error: 0.01)
         cell.location?.imported = cell.imported
-        cell.status = CellStatus.imported.rawValue
-        cell.score = 0
-        cell.nextVerification = Date()
+        // TODO: Add VerificationState to TweakCell
         
         return cell
 

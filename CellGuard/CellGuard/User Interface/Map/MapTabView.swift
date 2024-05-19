@@ -20,7 +20,7 @@ struct MapTabView: View {
     
     @FetchRequest(
         sortDescriptors: [NSSortDescriptor(keyPath: \CellALS.imported, ascending: false)],
-        predicate: NSPredicate(format: "location != nil AND (ANY verified != nil)")
+        predicate: NSPredicate(format: "location != nil AND observedCells != nil")
     )
     private var alsCells: FetchedResults<CellALS>
     
@@ -42,6 +42,7 @@ struct MapTabView: View {
                 } label: {
                     EmptyView()
                 }
+                // TODO: Add button to an info page for the map explaining which cells are shown, how we get their position and what their color means.
                 MultiCellMap(alsCells: alsCells) { cellID in
                     navigationTarget = cellID
                     navigationActive = true

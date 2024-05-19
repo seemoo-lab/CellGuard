@@ -27,8 +27,9 @@ import SwiftUI
 struct SummaryTabView: View {
     
     @State private var showingCellList = false
+    #if STATS_VIEW
     @State private var showingStats = false
-    @State private var showingHelp = false
+    #endif
     @State private var showingSettings = false
     
     var body: some View {
@@ -39,17 +40,14 @@ struct SummaryTabView: View {
                 } label: {
                     EmptyView()
                 }
+                #if STATS_VIEW
                 NavigationLink(isActive: $showingStats) {
                     DataSummaryView()
                 } label: {
                     EmptyView()
                 }
+                #endif
 
-                NavigationLink(isActive: $showingHelp) {
-                    Text("TODO")
-                } label: {
-                    EmptyView()
-                }
                 NavigationLink(isActive: $showingSettings) {
                     SettingsView()
                 } label: {
@@ -64,17 +62,18 @@ struct SummaryTabView: View {
                         Button {
                             showingCellList = true
                         } label: {
-                            Label("Connected Cells", systemImage: "list.bullet")
+                            Label("Cells", systemImage: "antenna.radiowaves.left.and.right")
                         }
+                        #if STATS_VIEW
+                        // Disable stats for the beta test as it is not finished.
                         Button {
                             showingStats = true
                         } label: {
                             Label("Stats", systemImage: "chart.bar.xaxis")
                         }
-                        Button {
-                            showingHelp = true
-                        } label: {
-                            Label("Help", systemImage: "questionmark.circle")
+                        #endif
+                        Link(destination: CellGuardURLs.baseUrl) {
+                            Label("Help", systemImage: "book")
                         }
                         Button {
                             showingSettings = true

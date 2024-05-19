@@ -143,26 +143,28 @@ private struct FilteredCellView: View {
     )
     
     @FetchRequest
-    private var measurements: FetchedResults<CellTweak>
+    private var measurementsStates: FetchedResults<VerificationState>
     
     init(settings: CellListFilterSettings) {
-        let cellsRequest: NSFetchRequest<CellTweak> = CellTweak.fetchRequest()
+        let statesRequest: NSFetchRequest<VerificationState> = VerificationState.fetchRequest()
         // cellsRequest.fetchBatchSize = 25
-        cellsRequest.sortDescriptors = [NSSortDescriptor(keyPath: \CellTweak.collected, ascending: false)]
-        settings.applyTo(request: cellsRequest)
+        statesRequest.sortDescriptors = [NSSortDescriptor(key: "cell.collected", ascending: false)]
+        settings.applyTo(request: statesRequest)
         
-        self._measurements = FetchRequest(fetchRequest: cellsRequest, animation: .easeOut)
+        self._measurementsStates = FetchRequest(fetchRequest: statesRequest, animation: .easeOut)
     }
     
     private func groupMeasurements() -> [GroupedMeasurements] {
-        // TODO: Also group by day?
         let queryCell = PersistenceController.queryCell
         var groups: [GroupedMeasurements] = []
         
         // Iterate through all measurements and start a new group upon encountering a new cell
         var groupMeasurements: [CellTweak] = []
         var first = true
-        for measurement in measurements {
+        for measurementState in measurementsStates {
+            // Ensure that a cell is assigned to the state with a request predicate in CellListFilterView
+            let measurement = measurementState.cell!
+            
             // If we've encountered a new cell, we start a new group
             if let firstGroupMeasurement = groupMeasurements.first, queryCell(firstGroupMeasurement) != queryCell(measurement) {
                 do {
@@ -210,6 +212,7 @@ private struct FilteredCellView: View {
         } else {
             Text("No cell measurements match your search criteria.")
                 .multilineTextAlignment(.center)
+                .padding()
         }
     }
     

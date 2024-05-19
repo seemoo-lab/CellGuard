@@ -29,7 +29,7 @@ enum RiskMediumCause: Equatable {
         case .Location:
             return "Ensure you've granted all location permissions"
         case let .Cells(cellCount):
-            return "Detected \(cellCount) suspicious \(cellCount == 1 ? "cell" : "cells")\(ftDaysSuffix)"
+            return "Detected a minor anomaly for \(cellCount) \(cellCount == 1 ? "cell" : "cells")\(ftDaysSuffix)"
         case .CantCompute:
             return "Unable to determine your risk"
         }
@@ -48,8 +48,8 @@ enum RiskLevel: Equatable {
         case .Unknown: return "Unknown"
         case .Low: return "Low"
         case .LowMonitor: return "Low"
-        case .Medium: return "Medium"
-        case .High: return "High"
+        case .Medium: return "Low"
+        case .High: return "Increased"
         }
     }
     
@@ -66,7 +66,8 @@ enum RiskLevel: Equatable {
         case let .Medium(cause):
             return cause.text()
         case let .High(cellCount):
-            return "Detected \(cellCount) potential malicious \(cellCount == 1 ? "cell" : "cells")\(ftDaysSuffix)"
+            // TODO: of the last 14 days -> in the last 14 days
+            return "Detected \(cellCount) suspicious \(cellCount == 1 ? "cell" : "cells")\(ftDaysSuffix)"
         }
     }
     
@@ -74,10 +75,10 @@ enum RiskLevel: Equatable {
         // TODO: Less saturated colors for the dark mode (Test everything again in the dark mode)
         switch (self) {
         case .Unknown: return dark ? Color(UIColor.systemGray6) : .gray
-        case .Low: return .green
-        case .LowMonitor: return .green
-        case .Medium: return .orange
-        case .High: return .red
+        case .Low: return dark ? Color(.green * 0.7 + .black * 0.3) : .green
+        case .LowMonitor: return dark ? Color(.green * 0.7 + .black * 0.3) : .green
+        case .Medium: return .blue
+        case .High: return .orange
         }
     }
 }
@@ -90,7 +91,7 @@ struct RiskIndicatorCard: View {
     
     var body: some View {
         NavigationLink {
-            RiskIndicatorLink(risk: risk)
+            RiskInfoView(risk: risk)
         } label: {
             VStack {
                 HStack() {
@@ -124,34 +125,6 @@ struct RiskIndicatorCard: View {
             .padding()
         }
     }
-}
-
-private struct RiskIndicatorLink: View {
-    
-    let risk: RiskLevel
-    
-    var body: some View {
-        switch (risk) {
-        case .Low:
-            return AnyView(CellListView())
-        case .LowMonitor:
-            return AnyView(CellListView())
-        case let .Medium(cause):
-            if cause == .Permissions || cause == .Location {
-                return AnyView(SettingsView())
-            } else if cause == .TweakCells || cause == .TweakPackets {
-                // TODO: Replace with help article
-                return AnyView(TweakInfoView())
-            } else {
-                return AnyView(CellListView())
-            }
-        case .High(_):
-            return AnyView(CellListView())
-        case .Unknown:
-            return AnyView(VerificationProgressView())
-        }
-    }
-    
 }
 
 struct RiskIndicator_Previews: PreviewProvider {

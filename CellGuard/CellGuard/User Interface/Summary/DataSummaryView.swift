@@ -89,38 +89,39 @@ struct DataSummaryView: View {
     private func update() {
         updateInProgress = true
         Task(priority: .utility) {
+            // TODO: Change
             let persistence = PersistenceController.shared
             
-            let collectedPredicate = NSPredicate(format: "collected >= %@ and collected <= %@", start as NSDate, end as NSDate)
+            let basicPredicate = NSPredicate(format: "pipeline == %@ and cell != nil and cell.collected >= %@ and cell.collected <= %@", start as NSDate, end as NSDate, Int(primaryVerificationPipeline.id) as NSNumber)
             
             let measurementCellsResults = try persistence.performAndWait { context in
-                let fetchMeasurements: NSFetchRequest<CellTweak> = CellTweak.fetchRequest()
-                fetchMeasurements.sortDescriptors = [NSSortDescriptor(keyPath: \CellTweak.collected, ascending: true)]
-                fetchMeasurements.propertiesToFetch = ["score", "status"]
-                fetchMeasurements.predicate = collectedPredicate
-                let measurements = try context.fetch(fetchMeasurements)
+                // TODO: Update
+                let fetchVerificationStates = VerificationState.fetchRequest()
+                fetchVerificationStates.sortDescriptors = [NSSortDescriptor(key: "cell.collected", ascending: true)]
+                fetchVerificationStates.relationshipKeyPathsForPrefetching = ["cell"]
+                fetchVerificationStates.predicate = basicPredicate
+                let verificationStates = try context.fetch(fetchVerificationStates)
                 
                 var measurementsUntrusted = 0
                 var measurementsSuspicious = 0
                 var measurementsTrusted = 0
                 var measurementsPending = 0
                 
-                for measurement in measurements {
-                    if measurement.status != CellStatus.verified.rawValue {
-                        measurementsPending += 1
-                        continue
-                    }
-                    
-                    if measurement.score >= CellVerifier.pointsSuspiciousThreshold {
-                        measurementsTrusted += 1
-                    } else if measurement.score >= CellVerifier.pointsUntrustedThreshold {
-                        measurementsSuspicious += 1
+                for measurement in verificationStates {
+                    if measurement.finished {
+                        if measurement.score >= primaryVerificationPipeline.pointsSuspicious {
+                            measurementsTrusted += 1
+                        } else if measurement.score >= primaryVerificationPipeline.pointsUntrusted {
+                            measurementsSuspicious += 1
+                        } else {
+                            measurementsUntrusted += 1
+                        }
                     } else {
-                        measurementsUntrusted += 1
+                        measurementsPending += 1
                     }
                 }
                 
-                let cells = Dictionary(grouping: measurements, by: { PersistenceController.queryCell(from: $0) })
+                let cells = Dictionary(grouping: verificationStates, by: { PersistenceController.queryCell(from: $0.cell!) })
                 
                 var cellsUntrusted = 0
                 var cellsSuspicious = 0
@@ -128,17 +129,17 @@ struct DataSummaryView: View {
                 var cellsVerified = 0
                 
                 for (_, measurements) in cells {
-                    if measurements.first(where: { $0.status == CellStatus.verified.rawValue && $0.score < CellVerifier.pointsUntrustedThreshold }) != nil {
+                    if measurements.first(where: { $0.finished && $0.score < primaryVerificationPipeline.pointsUntrusted }) != nil {
                         cellsUntrusted += 1
                         continue
                     }
                     
-                    if measurements.first(where: { $0.status == CellStatus.verified.rawValue && $0.score < CellVerifier.pointsSuspiciousThreshold && $0.score >= CellVerifier.pointsUntrustedThreshold}) != nil {
+                    if measurements.first(where: { $0.finished && $0.score < primaryVerificationPipeline.pointsSuspicious && $0.score >= primaryVerificationPipeline.pointsUntrusted}) != nil {
                         cellsSuspicious += 1
                         continue
                     }
                     
-                    if measurements.first(where: { $0.status != CellStatus.verified.rawValue }) != nil {
+                    if measurements.first(where: { !$0.finished }) != nil {
                         cellsPending += 1
                         continue
                     }
@@ -147,7 +148,7 @@ struct DataSummaryView: View {
                 }
                 
                 return (
-                    measurements: (measurements.first?.collected, measurements.last?.collected, measurementsPending, measurementsUntrusted, measurementsSuspicious, measurementsTrusted),
+                    measurements: (verificationStates.first?.cell!.collected, verificationStates.last?.cell!.collected, measurementsPending, measurementsUntrusted, measurementsSuspicious, measurementsTrusted),
                     cells: (cellsPending, cellsUntrusted, cellsSuspicious, cellsVerified)
                 )
             }
@@ -160,7 +161,7 @@ struct DataSummaryView: View {
             let locations = try persistence.performAndWait { context in
                 let locationRequest: NSFetchRequest<LocationUser> = LocationUser.fetchRequest()
                 locationRequest.sortDescriptors = [NSSortDescriptor(keyPath: \LocationUser.collected, ascending: true)]
-                locationRequest.predicate = collectedPredicate
+                locationRequest.predicate = basicPredicate
                 
                 let locations = try context.fetch(locationRequest)
                 
@@ -181,12 +182,12 @@ struct DataSummaryView: View {
             
             let packets: (first: Date?, last: Date?, qmi: Int?, ari: Int?)? = try persistence.performAndWait { context in
                 let qmiRequest: NSFetchRequest<PacketQMI> = PacketQMI.fetchRequest()
-                qmiRequest.predicate = collectedPredicate
+                qmiRequest.predicate = basicPredicate
                 qmiRequest.includesSubentities = false
                 let qmiPacketCount = try context.count(for: qmiRequest)
                 
                 let ariRequest: NSFetchRequest<PacketARI> = PacketARI.fetchRequest()
-                ariRequest.predicate = collectedPredicate
+                ariRequest.predicate = basicPredicate
                 ariRequest.includesSubentities = false
                 let ariPacketCount = try context.count(for: ariRequest)
                 
