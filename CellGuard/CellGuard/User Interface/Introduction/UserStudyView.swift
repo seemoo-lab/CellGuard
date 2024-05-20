@@ -172,7 +172,10 @@ While you can use CellGuard without participating in the study, your involvemen
             .onDisappear {
                 UIScrollView.appearance().bounces = true
             }
-        }.navigationBarBackButtonHidden(true)
+        }
+        .navigationBarBackButtonHidden(true)
+        .navigationBarHidden(true)
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
 

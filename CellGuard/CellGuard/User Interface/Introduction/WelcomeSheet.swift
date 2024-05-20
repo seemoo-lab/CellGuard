@@ -17,7 +17,6 @@ struct WelcomeSheet: View {
         NavigationView {
             VStack {
                 ScrollView {
-                    Spacer()
                     
                     Text("Welcome to\n CellGuard")
                         .font(.title)
@@ -78,7 +77,10 @@ struct WelcomeSheet: View {
             .onDisappear {
                 UIScrollView.appearance().bounces = true
             }
-        }.navigationBarBackButtonHidden(true)
+        }
+        .navigationBarBackButtonHidden(true)
+        .navigationBarHidden(true)
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
 

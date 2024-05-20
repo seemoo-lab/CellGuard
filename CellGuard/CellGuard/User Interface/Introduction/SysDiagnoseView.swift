@@ -43,7 +43,10 @@ struct SysDiagnoseView: View {
             .onDisappear {
                 UIScrollView.appearance().bounces = true
             }
-        }.navigationBarBackButtonHidden(true)
+        }
+        .navigationBarBackButtonHidden(true)
+        .navigationBarHidden(true)
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
 

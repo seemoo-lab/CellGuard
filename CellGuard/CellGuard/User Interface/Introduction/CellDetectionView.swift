@@ -51,7 +51,10 @@ In a few cases, these anomalies indicate an attack by a fake base station. Such 
             .onDisappear {
                 UIScrollView.appearance().bounces = true
             }
-        }.navigationBarBackButtonHidden(true)
+        }
+        .navigationBarBackButtonHidden(true)
+        .navigationBarHidden(true)
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
 
