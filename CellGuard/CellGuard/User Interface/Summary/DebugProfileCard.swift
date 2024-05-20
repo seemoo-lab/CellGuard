@@ -50,7 +50,7 @@ private struct DebugProfileCardView: View {
             }
             
             HStack(spacing: 0) {
-                Image(systemName: "cellularbars")
+                Image(systemName: "heart.text.square")
                     .foregroundColor(.blue)
                     .font(Font.custom("SF Pro", fixedSize: 30))
                     .frame(maxWidth: 40, alignment: .center)
