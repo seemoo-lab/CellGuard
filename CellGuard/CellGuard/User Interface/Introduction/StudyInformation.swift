@@ -1,5 +1,5 @@
 //
-//  PermissionInformation.swift
+//  StudyInformation.swift
 //  CellGuard
 //
 //  Created by jiska on 20.05.24.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct PermissionInformation: View {
+struct StudyInformation: View {
     
     let icon: String
     let title: String
@@ -37,9 +37,9 @@ struct PermissionInformation: View {
                 
             
             Text(self.description)
+                .multilineTextAlignment(/*@START_MENU_TOKEN@*/.leading/*@END_MENU_TOKEN@*/)
                 .foregroundColor(.gray)
                 .padding()
-                .multilineTextAlignment(.center)
             
             .frame(maxWidth: .infinity, alignment: .leading)
         }
@@ -49,11 +49,11 @@ struct PermissionInformation: View {
     
 }
 
-struct PermissionInformation_Preview: PreviewProvider {
+struct StudyInforetain_Preview: PreviewProvider {
     static var previews: some View {
-        PermissionInformation(icon: "antenna.radiowaves.left.and.right",
-                              title: "Name of the Permission Request",
-                              description: "Why we need this permission...",
+        StudyInformation(icon: "people.3.fill",
+                              title: "Our Study",
+                              description: "Very long text alsjdfasldfj alsdjfasldf askldfjasldfj alsjdflasdkjfaslkd lasdjfalskd laksdjflasdjfladksfjadslkfj laksdjflasdjfadsl aslkdfjlaskdfj lkjsadflajsdflkasdjflaskdfj lasjdflas asdfasdf asdfasdfas asdfsadf asdfsadf asfasdfasdfsadf asdfasdf",
                               size: 120)
     }
 }

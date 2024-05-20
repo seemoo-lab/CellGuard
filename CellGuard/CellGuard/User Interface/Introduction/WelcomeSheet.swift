@@ -9,69 +9,69 @@ import SwiftUI
 
 struct WelcomeSheet: View {
     
+    //let close: () -> Void
+    @State private var action: Int? = 0
     let close: () -> Void
     
     var body: some View {
-        VStack {
-            ScrollView {
-                Spacer()
+        NavigationView {
+            VStack {
+                ScrollView {
+                    Spacer()
+                    
+                    Text("Welcome to\n CellGuard")
+                        .font(.title)
+                        .fontWeight(.bold)
+                        .padding()
+                    
+                    WelcomeInformation(
+                        icon: "antenna.radiowaves.left.and.right",
+                        title: "Collect Cellular Network Data",
+                        description: "Monitor which cells your iPhone uses to communicate with the celluar network.",
+                        size: 35
+                    )
+                    WelcomeInformation(
+                        icon: "shield",
+                        title: "Verify Cells",
+                        description: "Verify that cells in use are secure and detect suspicious behavior.",
+                        size: 35
+                    )
+                    WelcomeInformation(
+                        icon: "map",
+                        title: "Map",
+                        description: "View the location of recently connected cells on a map.",
+                        size: 35
+                    )
+                    
+                }                
                 
-                Text("Welcome to\n CellGuard")
-                    .font(.title)
-                    .fontWeight(.bold)
-                    .padding()
+                // Navigate to next permission, forward closing statement
+                // WelcomeSheet
+                //  -> CellDetectionView
+                //  -> UserStudyView
+                //  -> SysDiagnoseView (non-jailbroken)
+                //  -> LocationPermissionView
+                //  -> NotificationPermissionView
+                NavigationLink(destination: CellDetectionView{self.close()}, tag: 1, selection: $action) {}
                 
-                WelcomeInformation(
-                    icon: "antenna.radiowaves.left.and.right",
-                    title: "Collect Data",
-                    description: "Monitor which cells your iPhone uses to communicate with the celluar network",
-                    size: 30
-                )
-                WelcomeInformation(
-                    icon: "shield",
-                    title: "Verify Connections",
-                    description: "Verify that cells in use are genuine with Apple's location database",
-                    size: 30
-                )
-                WelcomeInformation(
-                    icon: "map",
-                    title: "Map",
-                    description: "View the location of recently connected cells on a map",
-                    size: 30
-                )
-                
-            }
-            
-            // The button could get a bit bigger
-            LargeButton(title: "Continue", backgroundColor: .blue) {
-                // Only show the introduction sheet once
-                UserDefaults.standard.set(true, forKey: UserDefaultsKeys.introductionShown.rawValue)
-                
-                self.close()
-                
-                // Request permissions after the introduction sheet has been closed.
-                // It's crucial that we do NOT use those manager objects as environment objects in the CompositeTabView class,
-                // otherwise there are a lot of updates and shit (including toolbar stuff) breaks, e.g. NavigationView close prematurely.
-                CGNotificationManager.shared.requestAuthorization { _ in
-                    LocationDataManager.shared.requestAuthorization { _ in
-                        CGNotificationManager.shared.requestAuthorization { _ in
-                            
-                        }
-                    }
+                LargeButton(title: "Continue", backgroundColor: .blue) {
+                    // Save that we did show the intro
+                    UserDefaults.standard.set(true, forKey: UserDefaultsKeys.introductionShown.rawValue)
+                    self.action = 1
                 }
+                
+                Spacer()
             }
-            
-            Spacer()
-        }
-        .padding()
-        // Disable the ScrollView bounce for this element
-        // https://stackoverflow.com/a/73888089
-        .onAppear {
-            UIScrollView.appearance().bounces = false
-        }
-        .onDisappear {
-            UIScrollView.appearance().bounces = true
-        }
+            .padding()
+            // Disable the ScrollView bounce for this element
+            // https://stackoverflow.com/a/73888089
+            .onAppear {
+                UIScrollView.appearance().bounces = false
+            }
+            .onDisappear {
+                UIScrollView.appearance().bounces = true
+            }
+        }.navigationBarBackButtonHidden(true)
     }
 }
 
@@ -96,8 +96,10 @@ struct WelcomeInformation: View {
             VStack(alignment: .leading) {
                 Text(self.title)
                     .bold()
+                    .padding(1)
                 Text(self.description)
                     .foregroundColor(.gray)
+                    .padding(1)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }
@@ -109,8 +111,6 @@ struct WelcomeInformation: View {
 
 struct WelcomeSheet_Previews: PreviewProvider {
     static var previews: some View {
-        WelcomeSheet{
-            // Do nothing
-        }
+        WelcomeSheet{}
     }
 }

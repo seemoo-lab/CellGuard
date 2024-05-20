@@ -82,7 +82,9 @@ struct CompositeTabView: View {
         .sheet(item: $showingSheet) { (sheet: ShownSheet) in
             switch (sheet) {
             case .welcome:
-                WelcomeSheet ()  //showingSheet: nil  //TODO
+                WelcomeSheet{
+                    self.showingSheet = nil  // close sheet when returning from onboarding
+                }
             case let .importFile(url):
                 NavigationView {
                     ImportView(fileUrl: url)

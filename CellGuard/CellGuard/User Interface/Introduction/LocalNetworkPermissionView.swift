@@ -5,6 +5,8 @@
 //  Created by Lukas Arnold on 06.01.23.
 //
 
+// TODO -- the network permission might not be needed!!
+
 import SwiftUI
 
 struct LocalNetworkPermissionView: View {
