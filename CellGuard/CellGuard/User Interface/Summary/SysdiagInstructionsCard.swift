@@ -1,66 +1,66 @@
 //
-//  OpenSysdiagnoseSettings.swift
+//  SysdiagInstructionsView.swift
 //  CellGuard
 //
-//  Created by Lukas Arnold on 21.12.23.
+//  Created by jiska on 20.05.24.
 //
 
 import SwiftUI
 
-struct OpenSysdiagnoseSettings: View {
+struct SysdiagInstructionsCard: View {
     
+    @State private var showingSysdiagInstructions = false
     @AppStorage(UserDefaultsKeys.appMode.rawValue) var appMode: DataCollectionMode = .none
     
     var body: some View {
+        
+        NavigationLink(isActive: $showingSysdiagInstructions) {
+            SysdiagInstructionsDetailedView()
+        } label: {
+            EmptyView()
+        }
+        
         if appMode == .manual {
             Button {
-                // See: https://github.com/FifiTheBulldog/ios-settings-urls/blob/master/settings-urls.md
-                
-                #if JAILBREAK
-                // Apple does not like this URL as it accesses a private API (https://stackoverflow.com/a/70838268)
-                let url = "App-prefs:Privacy&path=PROBLEM_REPORTING"
-                #else
-                // The App-Store-Safe-URL
-                let url = UIApplication.openSettingsURLString
-                #endif
-                
-                if let appSettings = URL(string: url), UIApplication.shared.canOpenURL(appSettings) {
-                    UIApplication.shared.open(appSettings)
-                }
+               // open instructions
+                showingSysdiagInstructions = true
             } label: {
-                OpenCard()
+                SysdiagCard()
             }
         } else {
             EmptyView()
         }
     }
-    
-    static func openSysdiagnoses() {
-        
-    }
-    
 }
 
-private struct OpenCard: View {
+
+private struct SysdiagCard: View {
     
     @Environment(\.colorScheme) private var colorScheme
     
     var body: some View {
         VStack {
             HStack() {
-                Text("Import Sysdiagnose")
+                Text("Create New Sysdiagnose")
                     .font(.title2)
                     .bold()
                 Spacer()
                 Image(systemName: "chevron.right.circle.fill")
                     .imageScale(.large)
             }
-            HStack {
-                Text("Open Settings to Share Data With CellGuard")
+            
+            HStack(spacing: 0) {
+                Image(systemName: "stethoscope")
+                    .foregroundColor(.blue)
+                    .font(Font.custom("SF Pro", fixedSize: 30))
+                    .frame(maxWidth: 40, alignment: .center)
+                    .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 10))  
+                
+                Text("Follow on-screen instructions to take a new system diagnose.")
                     .multilineTextAlignment(.leading)
                     .padding()
-                Spacer()
             }
+            
         }
         .frame(maxWidth: .infinity)
         .padding()
@@ -73,4 +73,9 @@ private struct OpenCard: View {
         .padding()
     }
     
+}
+
+
+#Preview {
+    SysdiagInstructionsCard()
 }

@@ -16,7 +16,7 @@ struct LocationPermissionView: View {
         NavigationView {
             VStack {
                 ScrollView {
-                    PermissionInformation(
+                    CenteredTitleIconTextView(
                         icon: "location.fill",
                         title: "Location Permission",
                         description: "CellGuard records when and where your phone is connected to a cell tower. This information is compared with a cell location database, uncovering unknown base stations.\n\nCellGuard keeps location information for seven days. You can adjust this value in the settings.",

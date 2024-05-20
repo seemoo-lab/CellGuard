@@ -111,7 +111,15 @@ private struct CombinedRiskCellView: View {
                 CellInformationCard(cell: tweakCells[0])
             }
             
-            OpenSysdiagnoseSettings()
+            // manual mode: show debug profile import instructions, if:
+            //  - last import had <10 cells, or  // todo save on userdefaults on import
+            //  - tweak cells is empty
+            
+            // manual mode: show sys diagnose taking instructions
+            SysdiagInstructionsCard()
+            
+            // manual mode: show link to opening sysdiag settings
+            SysdiagOpenSettingsCard()
         }
     }
     

@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct PermissionInformation: View {
+struct CenteredTitleIconTextView: View {
     
     let icon: String
     let title: String
@@ -49,9 +49,9 @@ struct PermissionInformation: View {
     
 }
 
-struct PermissionInformation_Preview: PreviewProvider {
+struct CenteredTitleIconTextView_Preview: PreviewProvider {
     static var previews: some View {
-        PermissionInformation(icon: "antenna.radiowaves.left.and.right",
+        CenteredTitleIconTextView(icon: "antenna.radiowaves.left.and.right",
                               title: "Name of the Permission Request",
                               description: "Why we need this permission...",
                               size: 120)

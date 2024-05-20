@@ -90,7 +90,7 @@ struct UserStudyView: View {
                 // TODO Änderung, müssen wir noch programmieren --- die Position mit random offset
                 // TODO das Melden von Zellen mit anderer Einstufung
                 ScrollView {
-                    PermissionInformation(
+                    CenteredTitleIconTextView(
                         icon: "person.3.fill",
                         title: "Our Study",
                         description: """

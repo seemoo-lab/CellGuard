@@ -16,7 +16,7 @@ struct CellDetectionView: View {
         NavigationView {
             VStack {
                 ScrollView {
-                    PermissionInformation(
+                    CenteredTitleIconTextView(
                         icon: "cellularbars",
                         title: "Fake Base Stations",
                         description: """

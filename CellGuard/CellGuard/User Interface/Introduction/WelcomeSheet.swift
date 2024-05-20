@@ -60,7 +60,7 @@ struct WelcomeSheet: View {
                     // Set data collection mode to manual if compiled for non-jailbroken
                     #if JAILBREAK
                     #else
-                    UserDefaults.standard.set("manual", forKey: UserDefaultsKeys.appMode.rawValue)
+                    UserDefaults.standard.set("Manual", forKey: UserDefaultsKeys.appMode.rawValue)
                     #endif
                     
                     self.action = 1

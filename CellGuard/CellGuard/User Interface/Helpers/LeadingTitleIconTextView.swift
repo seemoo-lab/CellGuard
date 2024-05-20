@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct StudyInformation: View {
+struct LeadingTitleIconTextView: View {
     
     let icon: String
     let title: String
@@ -49,9 +49,9 @@ struct StudyInformation: View {
     
 }
 
-struct StudyInforetain_Preview: PreviewProvider {
+struct LeadingTitleIconTextView_Preview: PreviewProvider {
     static var previews: some View {
-        StudyInformation(icon: "people.3.fill",
+        LeadingTitleIconTextView(icon: "people.3.fill",
                               title: "Our Study",
                               description: "Very long text alsjdfasldfj alsdjfasldf askldfjasldfj alsjdflasdkjfaslkd lasdjfalskd laksdjflasdjfladksfjadslkfj laksdjflasdjfadsl aslkdfjlaskdfj lkjsadflajsdflkasdjflaskdfj lasjdflas asdfasdf asdfasdfas asdfsadf asdfsadf asfasdfasdfsadf asdfasdf",
                               size: 120)

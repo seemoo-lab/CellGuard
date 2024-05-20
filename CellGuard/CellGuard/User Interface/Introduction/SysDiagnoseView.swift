@@ -16,7 +16,7 @@ struct SysDiagnoseView: View {
         NavigationView {
             VStack {
                 ScrollView {
-                    PermissionInformation(
+                    CenteredTitleIconTextView(
                         icon: "stethoscope",
                         title: "System Diagnoses",
                         description: "CellGuard captures baseband management packets using system diagnoses with a baseband mobile configuration profile.\n\nSystem diagnoses are compatible with up-to-date iPhones in Lockdown Mode.",

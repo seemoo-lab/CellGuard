@@ -16,7 +16,7 @@ struct NotificationPermissionView: View {
         NavigationView {
             VStack {
                 ScrollView {
-                    PermissionInformation(
+                    CenteredTitleIconTextView(
                         icon: "bell.fill",
                         title: "Notification Permission",
                         description: "CellGuard continues cell analysis in the background. To be informed about cellular network anomalies, you must enable CellGuard notifications.",
