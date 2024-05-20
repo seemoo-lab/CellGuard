@@ -115,8 +115,11 @@ private struct CombinedRiskCellView: View {
             NoneModeCard()
             
             // manual mode: show debug profile import instructions, if:
-            //  - last import had <10 cells, or  // todo save on userdefaults on import
+            //  - last import had <10 cells, or  // TODO: save amount to userdefaults on import
             //  - tweak cells is empty
+            if tweakCells.isEmpty {
+                DebugProfileCard()
+            }
             
             // manual mode: show sys diagnose taking instructions
             SysdiagInstructionsCard()

@@ -48,7 +48,7 @@ private struct NoneModeCardView: View {
                     .frame(maxWidth: 40, alignment: .center)
                     .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 10))
                 
-                Text("CellGuard is running without data collection enabled. To analyse your own data, change the data collection mode to \"Manual\" and provide location access.")
+                Text("CellGuard is running without data collection enabled. To analyze your own data, change the data collection mode to \"Manual\" and provide location access.")
                     .multilineTextAlignment(.leading)
                     .padding()
             }

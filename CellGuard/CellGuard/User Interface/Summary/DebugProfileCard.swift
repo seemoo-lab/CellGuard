@@ -7,15 +7,15 @@
 
 import SwiftUI
 
-struct SysdiagInstructionsCard: View {
+struct DebugProfileCard: View {
     
-    @State private var showingSysdiagInstructions = false
+    @State private var showDebugProfileInstructions = false
     @AppStorage(UserDefaultsKeys.appMode.rawValue) var appMode: DataCollectionMode = .none
     
     var body: some View {
         
-        NavigationLink(isActive: $showingSysdiagInstructions) {
-            SysdiagInstructionsDetailedView()
+        NavigationLink(isActive: $showDebugProfileInstructions) {
+            DebugProfileDetailedView()
         } label: {
             EmptyView()
         }
@@ -23,9 +23,9 @@ struct SysdiagInstructionsCard: View {
         if appMode == .manual {
             Button {
                // open instructions
-                showingSysdiagInstructions = true
+                showDebugProfileInstructions = true
             } label: {
-                SysdiagCard()
+                DebugProfileCardView()
             }
         } else {
             EmptyView()
@@ -34,14 +34,14 @@ struct SysdiagInstructionsCard: View {
 }
 
 
-private struct SysdiagCard: View {
+private struct DebugProfileCardView: View {
     
     @Environment(\.colorScheme) private var colorScheme
     
     var body: some View {
         VStack {
             HStack() {
-                Text("Create New Sysdiagnose")
+                Text("Install Debug Profile")
                     .font(.title2)
                     .bold()
                 Spacer()
@@ -50,13 +50,13 @@ private struct SysdiagCard: View {
             }
             
             HStack(spacing: 0) {
-                Image(systemName: "stethoscope")
+                Image(systemName: "cellularbars")
                     .foregroundColor(.blue)
                     .font(Font.custom("SF Pro", fixedSize: 30))
                     .frame(maxWidth: 40, alignment: .center)
-                    .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 10))  
+                    .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 10))
                 
-                Text("Create a sysdiagnose to capture baseband packets.")
+                Text("A debug profile adds baseband management packets to sysdiagnoses.")
                     .multilineTextAlignment(.leading)
                     .padding()
             }
@@ -77,5 +77,5 @@ private struct SysdiagCard: View {
 
 
 #Preview {
-    SysdiagInstructionsCard()
+    DebugProfileCardView()
 }
