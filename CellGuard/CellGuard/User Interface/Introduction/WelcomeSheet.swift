@@ -43,7 +43,9 @@ struct WelcomeSheet: View {
                         size: 35
                     )
                     
-                }                
+                }
+                
+
                 
                 // Navigate to next permission, forward closing statement
                 // WelcomeSheet
@@ -55,8 +57,13 @@ struct WelcomeSheet: View {
                 NavigationLink(destination: CellDetectionView{self.close()}, tag: 1, selection: $action) {}
                 
                 LargeButton(title: "Continue", backgroundColor: .blue) {
-                    // Save that we did show the intro
-                    UserDefaults.standard.set(true, forKey: UserDefaultsKeys.introductionShown.rawValue)
+                    
+                    // Set data collection mode to manual if compiled for non-jailbroken
+                    #if JAILBREAK
+                    #else
+                    UserDefaults.standard.set("manual", forKey: UserDefaultsKeys.appMode.rawValue)
+                    #endif
+                    
                     self.action = 1
                 }
                 

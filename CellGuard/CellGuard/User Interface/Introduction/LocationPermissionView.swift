@@ -28,8 +28,6 @@ struct LocationPermissionView: View {
                 NavigationLink(destination: NotificationPermissionView{self.close()}, tag: 1, selection: $action) {}
                 
                 LargeButton(title: "Continue", backgroundColor: .blue) {
-                    // Save that we did show the intro
-                    UserDefaults.standard.set(true, forKey: UserDefaultsKeys.introductionShown.rawValue)
                     // Request permissions after the introduction sheet has been closed.
                     // It's crucial that we do NOT use those manager objects as environment objects in the CompositeTabView class,
                     // otherwise there are a lot of updates and shit (including toolbar stuff) breaks, e.g. NavigationView close prematurely.

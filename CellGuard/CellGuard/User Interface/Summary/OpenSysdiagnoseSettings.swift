@@ -56,7 +56,7 @@ private struct OpenCard: View {
                     .imageScale(.large)
             }
             HStack {
-                Text("Open Settings to share data with CellGuard")
+                Text("Open Settings to Share Data With CellGuard")
                     .multilineTextAlignment(.leading)
                     .padding()
                 Spacer()

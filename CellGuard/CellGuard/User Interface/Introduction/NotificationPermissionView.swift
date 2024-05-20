@@ -26,7 +26,7 @@ struct NotificationPermissionView: View {
                 
                 
                 LargeButton(title: "Continue", backgroundColor: .blue) {
-                    // Save that we did show the intro
+                    // Save that we did show the intro (only on last tab due to permissions!)
                     UserDefaults.standard.set(true, forKey: UserDefaultsKeys.introductionShown.rawValue)
                     // Request permissions after the introduction sheet has been closed.
                     // It's crucial that we do NOT use those manager objects as environment objects in the CompositeTabView class,
