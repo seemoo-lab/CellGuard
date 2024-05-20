@@ -19,7 +19,7 @@ struct NotificationPermissionView: View {
                     PermissionInformation(
                         icon: "bell.fill",
                         title: "Notification Permission",
-                        description: "CellGuard continues cell analysis in background. To be informed about cellular network anomalities, you need to enable notifications for CellGuard.",
+                        description: "CellGuard continues cell analysis in the background. To be informed about cellular network anomalies, you must enable CellGuard notifications.",
                         size: 120
                     )
                 }

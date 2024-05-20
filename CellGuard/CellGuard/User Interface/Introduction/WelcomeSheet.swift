@@ -27,7 +27,7 @@ struct WelcomeSheet: View {
                     WelcomeInformation(
                         icon: "antenna.radiowaves.left.and.right",
                         title: "Collect Cellular Network Data",
-                        description: "Monitor which cells your iPhone uses to communicate with the celluar network.",
+                        description: "Monitor which cells your iPhone uses to communicate with the cellular network.",
                         size: 35
                     )
                     WelcomeInformation(

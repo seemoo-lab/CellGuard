@@ -19,7 +19,7 @@ struct SysDiagnoseView: View {
                     PermissionInformation(
                         icon: "stethoscope",
                         title: "System Diagnoses",
-                        description: "CellGuard captures baseband management packets using system diagnoses with a baseband mobile configuration profile.\n\nSystem diagnoses are compatible with up-to-date iPhones in LockDown mode.",
+                        description: "CellGuard captures baseband management packets using system diagnoses with a baseband mobile configuration profile.\n\nSystem diagnoses are compatible with up-to-date iPhones in Lockdown Mode.",
                         size: 120
                     )
                 }

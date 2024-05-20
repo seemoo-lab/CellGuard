@@ -19,7 +19,13 @@ struct CellDetectionView: View {
                     PermissionInformation(
                         icon: "cellularbars",
                         title: "Fake Base Stations",
-                        description: "CellGuard detects suspicious network cell behavior based on management information exchanged when connecting to base stations.\n\nNote that your iPhone might connect to cells categorized as suspicious during everyday usage. For example, if your provider's network coverage is low, your iPhone might connect to other service providers.",
+                        description: """
+CellGuard detects suspicious network cell behavior based on management information exchanged when connecting to base stations.
+
+Note that CellGuard senses anomalies that, in most cases, originate from legitimate network setups. For example, if your cellular network provider's coverage is low, your iPhone might connect to third-party networks. CellGuard also detects new cells added to a network, usually resulting from a change by an authorized service provider.
+
+In a few cases, these anomalies indicate an attack by a fake base station. Such an attack could lead to tracking of your iPhone's location, network traffic interception and manipulation, and enable attackers to launch remote code execution attacks on the baseband chip.
+""",
                         size: 120
                     )
                 

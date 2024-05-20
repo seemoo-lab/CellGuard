@@ -19,7 +19,7 @@ struct LocationPermissionView: View {
                     PermissionInformation(
                         icon: "location.fill",
                         title: "Location Permission",
-                        description: "CellGuard records when and where your phone connected to a cell tower. This information is compared with a cell location database, thereby uncovering unknown base stations. \n\n CellGuard keeps location information for seven days. You can adjust this value in the settings.",
+                        description: "CellGuard records when and where your phone is connected to a cell tower. This information is compared with a cell location database, uncovering unknown base stations.\n\nCellGuard keeps location information for seven days. You can adjust this value in the settings.",
                         size: 120
                     )
                 }
