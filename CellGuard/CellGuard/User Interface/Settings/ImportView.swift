@@ -296,6 +296,9 @@ struct ImportView: View {
             importStatusPackets = .count(counts.packets)
             importNotices = counts.notices
             Self.logger.info("Successfully imported \(counts.cells?.count ?? 0) cells, \(counts.alsCells?.count ?? 0) ALS cells, \(counts.locations?.count ?? 0) locations, and \(counts.packets?.count ?? 0) packets.")
+            
+            // save how many cells we imported for later
+            UserDefaults.standard.set(counts.cells?.count ?? 0, forKey: UserDefaultsKeys.importedCellNumber.rawValue)
         } catch {
             importError = error.localizedDescription
             Self.logger.info("Import failed due to \(error)")

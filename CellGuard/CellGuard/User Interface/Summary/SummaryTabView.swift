@@ -94,6 +94,7 @@ struct SummaryTabView: View {
 private struct CombinedRiskCellView: View {
     
     @FetchRequest private var tweakCells: FetchedResults<CellTweak>
+    @AppStorage(UserDefaultsKeys.importedCellNumber.rawValue) var lastImportedCells: Double = 0
     
     init() {
         let latestTweakCellRequest = NSFetchRequest<CellTweak>()
@@ -115,9 +116,9 @@ private struct CombinedRiskCellView: View {
             NoneModeCard()
             
             // manual mode: show debug profile import instructions, if:
-            //  - last import had <10 cells, or  // TODO: save amount to userdefaults on import
+            //  - last import had <5 cells
             //  - tweak cells is empty
-            if tweakCells.isEmpty {
+            if tweakCells.isEmpty || lastImportedCells < 5 {
                 DebugProfileCard()
             }
             
