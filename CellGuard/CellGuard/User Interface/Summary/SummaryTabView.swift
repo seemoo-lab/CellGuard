@@ -111,6 +111,9 @@ private struct CombinedRiskCellView: View {
                 CellInformationCard(cell: tweakCells[0])
             }
             
+            // none mode: show warning, might not be intended
+            NoneModeCard()
+            
             // manual mode: show debug profile import instructions, if:
             //  - last import had <10 cells, or  // todo save on userdefaults on import
             //  - tweak cells is empty

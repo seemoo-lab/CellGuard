@@ -57,12 +57,6 @@ struct WelcomeSheet: View {
                 
                 LargeButton(title: "Continue", backgroundColor: .blue) {
                     
-                    // Set data collection mode to manual if compiled for non-jailbroken
-                    #if JAILBREAK
-                    #else
-                    UserDefaults.standard.set("Manual", forKey: UserDefaultsKeys.appMode.rawValue)
-                    #endif
-                    
                     self.action = 1
                 }
                 

@@ -48,6 +48,7 @@ struct CompositeTabView: View {
             })
         }
         
+        
         // If the introduction already was shown, we check on every start if we still have access to the local network
         let view = TabView(selection: $showingTab) {
             SummaryTabView()
