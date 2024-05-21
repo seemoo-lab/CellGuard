@@ -14,7 +14,7 @@ struct CellListView: View {
     
     @State private var isShowingFilterView = false
     @State private var isShowingDateSheet = false
-    @State private var settings = CellListFilterSettings()
+    @State var settings = CellListFilterSettings()
     
     @State private var sheetDate = Date()
     @Environment(\.managedObjectContext) var managedObjectContext

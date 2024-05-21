@@ -14,7 +14,9 @@ struct UserStudyView: View {
     @State private var ageConfirmation: Bool = false
     @State private var policyConfirmation: Bool = false
     let close: () -> Void
-
+    var returnToPreviousView: Bool = false
+    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
+    
     var body: some View {
         NavigationView {
             VStack {
@@ -129,11 +131,10 @@ While you can use CellGuard without participating in the study, your involvemen
                 .padding(10)
                 
                 // navigation depends, show sysdiag instructions on non-jailbroken devices
-                
                 #if JAILBROKEN
-                    NavigationLink(destination: LocationPermissionView{self.close()}, tag: 1, selection: $action) {}
+                NavigationLink(destination: LocationPermissionView{self.close()}, tag: 1, selection: $action) {}
                 #else
-                    NavigationLink(destination: SysDiagnoseView{self.close()}, tag: 1, selection: $action) {}
+                NavigationLink(destination: SysDiagnoseView{self.close()}, tag: 1, selection: $action) {}
                 #endif
                 
                 HStack {
@@ -142,7 +143,12 @@ While you can use CellGuard without participating in the study, your involvemen
                     if (ageConfirmation && policyConfirmation) {
                         Button("Participate") {
                             UserDefaults.standard.set(Date().timeIntervalSince1970, forKey: UserDefaultsKeys.study.rawValue)
-                            self.action = 1
+                            
+                            if returnToPreviousView {
+                                self.presentationMode.wrappedValue.dismiss()
+                            } else {
+                                self.action = 1
+                            }
                         }
                         .buttonStyle(SmallButtonStyle())
                     } else {
@@ -154,7 +160,11 @@ While you can use CellGuard without participating in the study, your involvemen
                     // Here, save that the user opted out (currently default)
                     Button("Don't Participate") {
                         UserDefaults.standard.set(0, forKey: UserDefaultsKeys.study.rawValue)
-                        self.action = 1
+                        if returnToPreviousView {
+                            self.presentationMode.wrappedValue.dismiss()
+                        } else {
+                            self.action = 1
+                        }
                     }
                     .buttonStyle(SmallButtonStyle())
                     

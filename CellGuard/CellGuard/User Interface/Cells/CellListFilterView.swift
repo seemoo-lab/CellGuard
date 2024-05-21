@@ -14,6 +14,7 @@ struct CellListFilterSettings {
     
     var timeFrame: PacketFilterTimeFrame = .live
     var date: Date = Calendar.current.startOfDay(for: Date())
+    var showTwoWeeks: Bool = false  // needed for 14-day risk view
     
     var technology: ALSTechnology?
     var country: Int?
@@ -48,7 +49,7 @@ struct CellListFilterSettings {
         }
 
         let beginDay = Calendar.current.startOfDay(for: timeFrame == .live ? Date() : date)
-        if let endDate = Calendar.current.date(byAdding: .day, value: 1, to: beginDay) {
+        if let endDate = Calendar.current.date(byAdding: .day, value: showTwoWeeks ? 14 : 1, to: beginDay) {
             predicateList.append(NSPredicate(format: "%@ <= cell.collected and cell.collected <= %@", beginDay as NSDate, endDate as NSDate))
         }
         

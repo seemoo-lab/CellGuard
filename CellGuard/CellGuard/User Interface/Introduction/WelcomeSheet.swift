@@ -9,7 +9,6 @@ import SwiftUI
 
 struct WelcomeSheet: View {
     
-    //let close: () -> Void
     @State private var action: Int? = 0
     let close: () -> Void
     
