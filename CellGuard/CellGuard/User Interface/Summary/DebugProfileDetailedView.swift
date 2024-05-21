@@ -29,7 +29,7 @@ The debug profile expires after 21 days. Please reinstall after expiry.
             Link("Debug Profile Download Link", destination: URL(string: "https://developer.apple.com/bug-reporting/profiles-and-logs/?platform=ios&name=baseband")!)
                 .frame(alignment: .leading)
             
-            Spacer()
+            Spacer(minLength: 10)
         }
     }
 }

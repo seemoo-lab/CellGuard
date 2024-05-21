@@ -9,24 +9,21 @@ import SwiftUI
 
 struct SysdiagOpenSettingsCard: View {
     
+    @State private var showingSettingsInstructions = false
     @AppStorage(UserDefaultsKeys.appMode.rawValue) var appMode: DataCollectionMode = .none
     
     var body: some View {
+        
+        NavigationLink(isActive: $showingSettingsInstructions) {
+            SysdiagOpenSettingsDetailedView()
+        } label: {
+            EmptyView()
+        }
+        
         if appMode == .manual {
             Button {
-                // See: https://github.com/FifiTheBulldog/ios-settings-urls/blob/master/settings-urls.md
-                
-                #if JAILBREAK
-                // Apple does not like this URL as it accesses a private API (https://stackoverflow.com/a/70838268)
-                let url = "App-prefs:Privacy&path=PROBLEM_REPORTING"
-                #else
-                // The App-Store-Safe-URL
-                let url = UIApplication.openSettingsURLString
-                #endif
-                
-                if let appSettings = URL(string: url), UIApplication.shared.canOpenURL(appSettings) {
-                    UIApplication.shared.open(appSettings)
-                }
+                // open instructions
+                showingSettingsInstructions = true
             } label: {
                 OpenCard()
             }
@@ -34,11 +31,6 @@ struct SysdiagOpenSettingsCard: View {
             EmptyView()
         }
     }
-    
-    static func openSysdiagnoses() {
-        
-    }
-    
 }
 
 private struct OpenCard: View {
