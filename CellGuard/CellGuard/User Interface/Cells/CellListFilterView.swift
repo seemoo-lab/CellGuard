@@ -49,7 +49,7 @@ struct CellListFilterSettings {
         }
 
         let beginDay = Calendar.current.startOfDay(for: timeFrame == .live ? Date() : date)
-        if let endDate = Calendar.current.date(byAdding: .day, value: showTwoWeeks ? 14 : 1, to: beginDay) {
+        if let endDate = Calendar.current.date(byAdding: .day, value: showTwoWeeks ? 15 : 1, to: beginDay) {
             predicateList.append(NSPredicate(format: "%@ <= cell.collected and cell.collected <= %@", beginDay as NSDate, endDate as NSDate))
         }
         
