@@ -67,10 +67,17 @@ struct LogArchiveReader {
                     progress(phase, cur, total)
                 }
             }
-            let result = try LogArchiveReader().read(url: url, highVolumeSpeedup: highVolumeSpeedup, rust: rustApp, progress: localProgress)
+            let result = Result.init {
+                do {
+                    return try LogArchiveReader().read(url: url, highVolumeSpeedup: highVolumeSpeedup, rust: rustApp, progress: localProgress)
+                } catch {
+                    logger.warning("Failed to read sysdiagnose \(url): \(error)")
+                    throw error
+                }
+            }
             
             DispatchQueue.main.async {
-                completion(Result.success(result))
+                completion(result)
             }
             
             PortStatus.importActive.store(false, ordering: .relaxed)
@@ -173,6 +180,14 @@ struct LogArchiveReader {
     }
     
     private func unarchive(url: URL, tmpDir: URL) throws -> URL {
+        // Request access to protected resources, i.e., files on disk shared by the user with the app
+        let shouldCloseScope = url.startAccessingSecurityScopedResource()
+        defer {
+            if shouldCloseScope {
+                url.stopAccessingSecurityScopedResource()
+            }
+        }
+        
         let unarchivedData = try Data(contentsOf: url).gunzipped()
         
         Self.logger.debug("Writing gunzipped tar to FS")
@@ -227,22 +242,17 @@ struct LogArchiveReader {
             throw LogArchiveError.logArchiveDirEmpty
         }
         
-        // After unarchiving, shared sysdiagnoes files are still in the app's folder .../Documents/Inbox/
+        // After unarchiving, shared sysdiagnose files are still in the app's folder .../Documents/Inbox/
         // Delete as mentioned in https://stackoverflow.com/questions/16213226/do-you-need-to-delete-imported-files-from-documents-inbox
         var dirPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
         dirPath.append("/Inbox");
-        if let directoryContents = try? fileManager.contentsOfDirectory(atPath: dirPath)
-        {
-            for path in directoryContents
-            {
+        if let directoryContents = try? fileManager.contentsOfDirectory(atPath: dirPath) {
+            for path in directoryContents {
                 let fullPath = (dirPath as NSString).appendingPathComponent(path)
-                do
-                {
+                do {
                     try fileManager.removeItem(atPath: fullPath)
                     print("Inbox file deleted!")
-                }
-                catch let error as NSError
-                {
+                } catch let error as NSError {
                     print("Error deleting files from inbox: \(error.localizedDescription)")
                 }
             }
