@@ -7,6 +7,35 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		45C3D4A82BFD092700B5CEF3 /* SysdiagOpenSettingsDetailedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45C3D4A72BFD092700B5CEF3 /* SysdiagOpenSettingsDetailedView.swift */; };
+		45ECF5402BF98EB400DD92CF /* LocalNetworkPermissionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45ECF53D2BF98EB400DD92CF /* LocalNetworkPermissionView.swift */; };
+		45ECF5412BF98EB400DD92CF /* LocalNetworkPermissionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45ECF53D2BF98EB400DD92CF /* LocalNetworkPermissionView.swift */; };
+		45ECF54E2BFAADAA00DD92CF /* NotificationPermissionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45ECF54D2BFAADAA00DD92CF /* NotificationPermissionView.swift */; };
+		45ECF54F2BFAADAA00DD92CF /* NotificationPermissionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45ECF54D2BFAADAA00DD92CF /* NotificationPermissionView.swift */; };
+		45ECF5512BFAAF1F00DD92CF /* CenteredTitleIconTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45ECF5502BFAAF1F00DD92CF /* CenteredTitleIconTextView.swift */; };
+		45ECF5522BFAAF1F00DD92CF /* CenteredTitleIconTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45ECF5502BFAAF1F00DD92CF /* CenteredTitleIconTextView.swift */; };
+		45ECF5542BFAB97A00DD92CF /* LocationPermissionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45ECF5532BFAB97A00DD92CF /* LocationPermissionView.swift */; };
+		45ECF5552BFAB97A00DD92CF /* LocationPermissionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45ECF5532BFAB97A00DD92CF /* LocationPermissionView.swift */; };
+		45ECF5572BFAC62900DD92CF /* CellDetectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45ECF5562BFAC62800DD92CF /* CellDetectionView.swift */; };
+		45ECF5582BFAC62900DD92CF /* CellDetectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45ECF5562BFAC62800DD92CF /* CellDetectionView.swift */; };
+		45ECF55A2BFAC6F000DD92CF /* SysDiagnoseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45ECF5592BFAC6F000DD92CF /* SysDiagnoseView.swift */; };
+		45ECF55B2BFAC6F000DD92CF /* SysDiagnoseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45ECF5592BFAC6F000DD92CF /* SysDiagnoseView.swift */; };
+		45ECF55D2BFACB7D00DD92CF /* UserStudyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45ECF55C2BFACB7D00DD92CF /* UserStudyView.swift */; };
+		45ECF55E2BFACB7D00DD92CF /* UserStudyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45ECF55C2BFACB7D00DD92CF /* UserStudyView.swift */; };
+		45ECF5602BFACE8400DD92CF /* LeadingTitleIconTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45ECF55F2BFACE8400DD92CF /* LeadingTitleIconTextView.swift */; };
+		45ECF5612BFACE8400DD92CF /* LeadingTitleIconTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45ECF55F2BFACE8400DD92CF /* LeadingTitleIconTextView.swift */; };
+		45ECF5632BFBDB3800DD92CF /* SysdiagInstructionsCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45ECF5622BFBDB3800DD92CF /* SysdiagInstructionsCard.swift */; };
+		45ECF5642BFBDB3800DD92CF /* SysdiagInstructionsCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45ECF5622BFBDB3800DD92CF /* SysdiagInstructionsCard.swift */; };
+		45ECF5692BFBE44800DD92CF /* SysdiagInstructionsDetailedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45ECF5682BFBE44800DD92CF /* SysdiagInstructionsDetailedView.swift */; };
+		45ECF56A2BFBE44800DD92CF /* SysdiagInstructionsDetailedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45ECF5682BFBE44800DD92CF /* SysdiagInstructionsDetailedView.swift */; };
+		45ECF56C2BFBEA5300DD92CF /* DeviceModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45ECF56B2BFBEA5300DD92CF /* DeviceModel.swift */; };
+		45ECF56D2BFBEA5300DD92CF /* DeviceModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45ECF56B2BFBEA5300DD92CF /* DeviceModel.swift */; };
+		45ECF56F2BFBFDFB00DD92CF /* NoneModeCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45ECF56E2BFBFDFB00DD92CF /* NoneModeCard.swift */; };
+		45ECF5702BFBFDFB00DD92CF /* NoneModeCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45ECF56E2BFBFDFB00DD92CF /* NoneModeCard.swift */; };
+		45ECF5722BFC00D100DD92CF /* DebugProfileCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45ECF5712BFC00D100DD92CF /* DebugProfileCard.swift */; };
+		45ECF5732BFC00D100DD92CF /* DebugProfileCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45ECF5712BFC00D100DD92CF /* DebugProfileCard.swift */; };
+		45ECF5752BFC025300DD92CF /* DebugProfileDetailedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45ECF5742BFC025300DD92CF /* DebugProfileDetailedView.swift */; };
+		45ECF5762BFC025300DD92CF /* DebugProfileDetailedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45ECF5742BFC025300DD92CF /* DebugProfileDetailedView.swift */; };
 		CF07EFA52A3B4B56005B53ED /* OperatorDefinitions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF07EFA42A3B4B56005B53ED /* OperatorDefinitions.swift */; };
 		CF07EFA72A3B4C10005B53ED /* operator-definitions.json in Resources */ = {isa = PBXBuildFile; fileRef = CF07EFA62A3B4C10005B53ED /* operator-definitions.json */; };
 		CF0A5678298A7A910012B2A8 /* VerificationProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0A5677298A7A910012B2A8 /* VerificationProgressView.swift */; };
@@ -113,7 +142,7 @@
 		CF93B85629800451003F9FFE /* CellFileKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF93B85529800451003F9FFE /* CellFileKeys.swift */; };
 		CF9626C32AB7474500C46953 /* PersistenceCSVExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF9626C22AB7474500C46953 /* PersistenceCSVExporter.swift */; };
 		CF9EEEE62B347A7000F9B6D8 /* Regex in Frameworks */ = {isa = PBXBuildFile; productRef = CF9EEEE52B347A7000F9B6D8 /* Regex */; };
-		CF9EEEE82B34B6A500F9B6D8 /* OpenSysdiagnoseSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF9EEEE72B34B6A500F9B6D8 /* OpenSysdiagnoseSettings.swift */; };
+		CF9EEEE82B34B6A500F9B6D8 /* SysdiagOpenSettingsCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF9EEEE72B34B6A500F9B6D8 /* SysdiagOpenSettingsCard.swift */; };
 		CFA09CF92A73D4B000D16832 /* SwiftExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFA09CF82A73D4B000D16832 /* SwiftExtensions.swift */; };
 		CFA632552AB3501800D46025 /* CSV in Frameworks */ = {isa = PBXBuildFile; productRef = CFA632542AB3501800D46025 /* CSV */; };
 		CFA632582AB3503400D46025 /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = CFA632572AB3503400D46025 /* ZIPFoundation */; };
@@ -171,7 +200,7 @@
 		CFB6CF542BD122FA00EAB7B4 /* BackgroundState.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2A1C1C2975C71000E8B61C /* BackgroundState.swift */; };
 		CFB6CF552BD122FA00EAB7B4 /* SwiftBridgeCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5756182B2F25DB00C7C60A /* SwiftBridgeCore.swift */; };
 		CFB6CF562BD122FA00EAB7B4 /* CellListFilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF6EC8B02A6D9F99004CF0AB /* CellListFilterView.swift */; };
-		CFB6CF572BD122FA00EAB7B4 /* OpenSysdiagnoseSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF9EEEE72B34B6A500F9B6D8 /* OpenSysdiagnoseSettings.swift */; };
+		CFB6CF572BD122FA00EAB7B4 /* SysdiagOpenSettingsCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF9EEEE72B34B6A500F9B6D8 /* SysdiagOpenSettingsCard.swift */; };
 		CFB6CF582BD122FA00EAB7B4 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0FDCC12969AC1100A6FFE2 /* SettingsView.swift */; };
 		CFB6CF592BD122FA00EAB7B4 /* FirstLastDates.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFFF19E62BC70E83004E40CE /* FirstLastDates.swift */; };
 		CFB6CF5A2BD122FA00EAB7B4 /* CCTClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD023672961AB9900AA5A1C /* CCTClient.swift */; };
@@ -315,6 +344,21 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		45C3D4A72BFD092700B5CEF3 /* SysdiagOpenSettingsDetailedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SysdiagOpenSettingsDetailedView.swift; sourceTree = "<group>"; };
+		45ECF53D2BF98EB400DD92CF /* LocalNetworkPermissionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalNetworkPermissionView.swift; sourceTree = "<group>"; };
+		45ECF54D2BFAADAA00DD92CF /* NotificationPermissionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationPermissionView.swift; sourceTree = "<group>"; };
+		45ECF5502BFAAF1F00DD92CF /* CenteredTitleIconTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CenteredTitleIconTextView.swift; sourceTree = "<group>"; };
+		45ECF5532BFAB97A00DD92CF /* LocationPermissionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationPermissionView.swift; sourceTree = "<group>"; };
+		45ECF5562BFAC62800DD92CF /* CellDetectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellDetectionView.swift; sourceTree = "<group>"; };
+		45ECF5592BFAC6F000DD92CF /* SysDiagnoseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SysDiagnoseView.swift; sourceTree = "<group>"; };
+		45ECF55C2BFACB7D00DD92CF /* UserStudyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserStudyView.swift; sourceTree = "<group>"; };
+		45ECF55F2BFACE8400DD92CF /* LeadingTitleIconTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeadingTitleIconTextView.swift; sourceTree = "<group>"; };
+		45ECF5622BFBDB3800DD92CF /* SysdiagInstructionsCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SysdiagInstructionsCard.swift; sourceTree = "<group>"; };
+		45ECF5682BFBE44800DD92CF /* SysdiagInstructionsDetailedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SysdiagInstructionsDetailedView.swift; sourceTree = "<group>"; };
+		45ECF56B2BFBEA5300DD92CF /* DeviceModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceModel.swift; sourceTree = "<group>"; };
+		45ECF56E2BFBFDFB00DD92CF /* NoneModeCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoneModeCard.swift; sourceTree = "<group>"; };
+		45ECF5712BFC00D100DD92CF /* DebugProfileCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugProfileCard.swift; sourceTree = "<group>"; };
+		45ECF5742BFC025300DD92CF /* DebugProfileDetailedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugProfileDetailedView.swift; sourceTree = "<group>"; };
 		CF07EFA42A3B4B56005B53ED /* OperatorDefinitions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperatorDefinitions.swift; sourceTree = "<group>"; };
 		CF07EFA62A3B4C10005B53ED /* operator-definitions.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "operator-definitions.json"; sourceTree = "<group>"; };
 		CF0A5677298A7A910012B2A8 /* VerificationProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerificationProgressView.swift; sourceTree = "<group>"; };
@@ -407,7 +451,7 @@
 		CF93B851297FFEF9003F9FFE /* URLIdentifiable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLIdentifiable.swift; sourceTree = "<group>"; };
 		CF93B85529800451003F9FFE /* CellFileKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellFileKeys.swift; sourceTree = "<group>"; };
 		CF9626C22AB7474500C46953 /* PersistenceCSVExporter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PersistenceCSVExporter.swift; sourceTree = "<group>"; };
-		CF9EEEE72B34B6A500F9B6D8 /* OpenSysdiagnoseSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenSysdiagnoseSettings.swift; sourceTree = "<group>"; };
+		CF9EEEE72B34B6A500F9B6D8 /* SysdiagOpenSettingsCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SysdiagOpenSettingsCard.swift; sourceTree = "<group>"; };
 		CFA09CF82A73D4B000D16832 /* SwiftExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftExtensions.swift; sourceTree = "<group>"; };
 		CFB323A82BD03AE1007A6807 /* cargo-licenses.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "cargo-licenses.json"; sourceTree = "<group>"; };
 		CFB51833297AEFA80006C690 /* CellStatusIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellStatusIcon.swift; sourceTree = "<group>"; };
@@ -423,7 +467,7 @@
 		CFBEC84D2BC7F7CF0021C0B9 /* CellTweak+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CellTweak+CoreDataClass.swift"; sourceTree = "<group>"; };
 		CFBEC8532BC7F7D70021C0B9 /* Cell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cell.swift; sourceTree = "<group>"; };
 		CFCE7A8B29817E2500E28787 /* ALSTechnology.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ALSTechnology.swift; sourceTree = "<group>"; };
-		CFD023332961A10D00AA5A1C /* CellGuard (AppStore).app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "CellGuard (AppStore).app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		CFD023332961A10D00AA5A1C /* CellGuard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CellGuard.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFD023362961A10D00AA5A1C /* CellGuardApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellGuardApp.swift; sourceTree = "<group>"; };
 		CFD0233A2961A10D00AA5A1C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CFD0233D2961A10D00AA5A1C /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
@@ -519,6 +563,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		45ECF53F2BF98EB400DD92CF /* Introduction */ = {
+			isa = PBXGroup;
+			children = (
+				CF0FDCBC2969A21000A6FFE2 /* WelcomeSheet.swift */,
+				45ECF5562BFAC62800DD92CF /* CellDetectionView.swift */,
+				45ECF55C2BFACB7D00DD92CF /* UserStudyView.swift */,
+				45ECF5592BFAC6F000DD92CF /* SysDiagnoseView.swift */,
+				45ECF54D2BFAADAA00DD92CF /* NotificationPermissionView.swift */,
+				45ECF5532BFAB97A00DD92CF /* LocationPermissionView.swift */,
+				45ECF53D2BF98EB400DD92CF /* LocalNetworkPermissionView.swift */,
+			);
+			path = Introduction;
+			sourceTree = "<group>";
+		};
 		CF07EFA12A3B4B3A005B53ED /* Cells */ = {
 			isa = PBXGroup;
 			children = (
@@ -532,6 +590,8 @@
 		CF0FDCBE2969A3DB00A6FFE2 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				45ECF55F2BFACE8400DD92CF /* LeadingTitleIconTextView.swift */,
+				45ECF5502BFAAF1F00DD92CF /* CenteredTitleIconTextView.swift */,
 				CF2A1C1C2975C71000E8B61C /* BackgroundState.swift */,
 				CF0FDCBF2969A3E500A6FFE2 /* LargeButton.swift */,
 				CF5EF91F2977FACA00C4F50A /* Formatters.swift */,
@@ -540,6 +600,7 @@
 				CF5EA78A29892F420061E9F1 /* CGTabBarAppearance.swift */,
 				CF9237122A3E1BD300FC7D21 /* KeyValueListRow.swift */,
 				CFE988DE2AA88A2B0039EDF9 /* CircularProgressView.swift */,
+				45ECF56B2BFBEA5300DD92CF /* DeviceModel.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -603,14 +664,19 @@
 			isa = PBXGroup;
 			children = (
 				CF0FDCB429698E1500A6FFE2 /* SummaryTabView.swift */,
-				CF0FDCBC2969A21000A6FFE2 /* WelcomeSheet.swift */,
 				CF2A1C1F2975CDD200E8B61C /* RiskIndicatorCard.swift */,
 				CF2A1C212975DB8100E8B61C /* CellInformationCard.swift */,
 				CF2FF68C2BF296EE006E2DF4 /* RiskInfoView.swift */,
 				CF0A5677298A7A910012B2A8 /* VerificationProgressView.swift */,
 				CF5672952A29E59000B6EA7C /* TweakInfoView.swift */,
 				CF7309992A79122B00498BC3 /* DataSummaryView.swift */,
-				CF9EEEE72B34B6A500F9B6D8 /* OpenSysdiagnoseSettings.swift */,
+				45ECF5712BFC00D100DD92CF /* DebugProfileCard.swift */,
+				45ECF5742BFC025300DD92CF /* DebugProfileDetailedView.swift */,
+				45ECF56E2BFBFDFB00DD92CF /* NoneModeCard.swift */,
+				CF9EEEE72B34B6A500F9B6D8 /* SysdiagOpenSettingsCard.swift */,
+				45C3D4A72BFD092700B5CEF3 /* SysdiagOpenSettingsDetailedView.swift */,
+				45ECF5622BFBDB3800DD92CF /* SysdiagInstructionsCard.swift */,
+				45ECF5682BFBE44800DD92CF /* SysdiagInstructionsDetailedView.swift */,
 			);
 			path = Summary;
 			sourceTree = "<group>";
@@ -713,6 +779,7 @@
 		CF5CBB962968B7E1001CE9BE /* User Interface */ = {
 			isa = PBXGroup;
 			children = (
+				45ECF53F2BF98EB400DD92CF /* Introduction */,
 				CF54CCBF2A331E5400961E4D /* Packets */,
 				CF4EE5E0296C51C30069BA5A /* Cells */,
 				CF0FDCBE2969A3DB00A6FFE2 /* Helpers */,
@@ -826,7 +893,7 @@
 		CFD023342961A10D00AA5A1C /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				CFD023332961A10D00AA5A1C /* CellGuard (AppStore).app */,
+				CFD023332961A10D00AA5A1C /* CellGuard.app */,
 				CFD023482961A10E00AA5A1C /* CellGuardTests.xctest */,
 				CFD023522961A10E00AA5A1C /* CellGuardUITests.xctest */,
 				CFB6CFA42BD122FA00EAB7B4 /* CellGuard (Jailbreak).app */,
@@ -980,9 +1047,9 @@
 			productReference = CFB6CFA42BD122FA00EAB7B4 /* CellGuard (Jailbreak).app */;
 			productType = "com.apple.product-type.application";
 		};
-		CFD023322961A10D00AA5A1C /* CellGuard (AppStore) */ = {
+		CFD023322961A10D00AA5A1C /* CellGuard */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = CFD0235C2961A10E00AA5A1C /* Build configuration list for PBXNativeTarget "CellGuard (AppStore)" */;
+			buildConfigurationList = CFD0235C2961A10E00AA5A1C /* Build configuration list for PBXNativeTarget "CellGuard" */;
 			buildPhases = (
 				CF57560B2B2F213A00C7C60A /* Run Script */,
 				CFD0232F2961A10D00AA5A1C /* Sources */,
@@ -993,7 +1060,7 @@
 			);
 			dependencies = (
 			);
-			name = "CellGuard (AppStore)";
+			name = CellGuard;
 			packageProductDependencies = (
 				CFD0236C2961AD1500AA5A1C /* SwiftProtobuf */,
 				CF2002EC2A2F3244000922E6 /* BinarySwift */,
@@ -1006,7 +1073,7 @@
 				CFFF19E02BC6D045004E40CE /* AcknowList */,
 			);
 			productName = CellGuard;
-			productReference = CFD023332961A10D00AA5A1C /* CellGuard (AppStore).app */;
+			productReference = CFD023332961A10D00AA5A1C /* CellGuard.app */;
 			productType = "com.apple.product-type.application";
 		};
 		CFD023472961A10E00AA5A1C /* CellGuardTests */ = {
@@ -1092,7 +1159,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				CFD023322961A10D00AA5A1C /* CellGuard (AppStore) */,
+				CFD023322961A10D00AA5A1C /* CellGuard */,
 				CFB6CF0B2BD122FA00EAB7B4 /* CellGuard (Jailbreak) */,
 				CFD023472961A10E00AA5A1C /* CellGuardTests */,
 				CFD023512961A10E00AA5A1C /* CellGuardUITests */,
@@ -1223,6 +1290,7 @@
 				CFB6CF262BD122FA00EAB7B4 /* VerificationProgressView.swift in Sources */,
 				CFB6CF272BD122FA00EAB7B4 /* CellLocationDistance.swift in Sources */,
 				CFB6CF282BD122FA00EAB7B4 /* PersistenceController.swift in Sources */,
+				45ECF5762BFC025300DD92CF /* DebugProfileDetailedView.swift in Sources */,
 				CFB6CF292BD122FA00EAB7B4 /* ALSTechnology.swift in Sources */,
 				CFB6CF2A2BD122FA00EAB7B4 /* DatabaseAnnotation.swift in Sources */,
 				CFB6CF2B2BD122FA00EAB7B4 /* GroupedMeasurements.swift in Sources */,
@@ -1234,8 +1302,11 @@
 				CFB6CF312BD122FA00EAB7B4 /* PacketARIDetailsView.swift in Sources */,
 				CFB6CF322BD122FA00EAB7B4 /* UserDefaultsKeys.swift in Sources */,
 				CFB6CF332BD122FA00EAB7B4 /* CellInformationCard.swift in Sources */,
+				45ECF5412BF98EB400DD92CF /* LocalNetworkPermissionView.swift in Sources */,
 				CFB6CF342BD122FA00EAB7B4 /* LogArchiveReader.swift in Sources */,
 				CF70A9952BE6B6D600989FB5 /* QCommonFetch.swift in Sources */,
+				45ECF56D2BFBEA5300DD92CF /* DeviceModel.swift in Sources */,
+				45ECF5522BFAAF1F00DD92CF /* CenteredTitleIconTextView.swift in Sources */,
 				CFB6CF352BD122FA00EAB7B4 /* MultiCellMap.swift in Sources */,
 				CFB6CF362BD122FA00EAB7B4 /* QMIDefinitions.swift in Sources */,
 				CFB6CF372BD122FA00EAB7B4 /* TestDetection.swift in Sources */,
@@ -1252,10 +1323,13 @@
 				CFB6CF432BD122FA00EAB7B4 /* SwiftExtensions.swift in Sources */,
 				CFB6CF442BD122FA00EAB7B4 /* CCTCollector.swift in Sources */,
 				CFB6CF452BD122FA00EAB7B4 /* PacketCell.swift in Sources */,
+				45ECF5702BFBFDFB00DD92CF /* NoneModeCard.swift in Sources */,
 				CFB6CF462BD122FA00EAB7B4 /* TweakInfoView.swift in Sources */,
 				CFB6CF472BD122FA00EAB7B4 /* PacketQMIDetailsView.swift in Sources */,
 				CFB6CF482BD122FA00EAB7B4 /* CoreLocationALS.pb.swift in Sources */,
+				45ECF56A2BFBE44800DD92CF /* SysdiagInstructionsDetailedView.swift in Sources */,
 				CFB6CF4A2BD122FA00EAB7B4 /* CellGuard.xcdatamodeld in Sources */,
+				45ECF5732BFC00D100DD92CF /* DebugProfileCard.swift in Sources */,
 				CFB6CF4B2BD122FA00EAB7B4 /* SingleCellMap.swift in Sources */,
 				CFB6CF4C2BD122FA00EAB7B4 /* LocationSource.swift in Sources */,
 				CFB6CF4D2BD122FA00EAB7B4 /* PacketTabView.swift in Sources */,
@@ -1267,14 +1341,16 @@
 				CFB6CF542BD122FA00EAB7B4 /* BackgroundState.swift in Sources */,
 				CFB6CF552BD122FA00EAB7B4 /* SwiftBridgeCore.swift in Sources */,
 				CFB6CF562BD122FA00EAB7B4 /* CellListFilterView.swift in Sources */,
-				CFB6CF572BD122FA00EAB7B4 /* OpenSysdiagnoseSettings.swift in Sources */,
+				CFB6CF572BD122FA00EAB7B4 /* SysdiagOpenSettingsCard.swift in Sources */,
 				CFB6CF582BD122FA00EAB7B4 /* SettingsView.swift in Sources */,
+				45ECF54F2BFAADAA00DD92CF /* NotificationPermissionView.swift in Sources */,
 				CFB6CF592BD122FA00EAB7B4 /* FirstLastDates.swift in Sources */,
 				CFB6CF5A2BD122FA00EAB7B4 /* CCTClient.swift in Sources */,
 				CF2FF6942BF2A3DF006E2DF4 /* StudyClient.swift in Sources */,
 				CFB6CF5B2BD122FA00EAB7B4 /* DataSummaryView.swift in Sources */,
 				CFB6CF5C2BD122FA00EAB7B4 /* CellReachOverlay.swift in Sources */,
 				CF70A98C2BE6B51C00989FB5 /* QLocationUser.swift in Sources */,
+				45ECF5582BFAC62900DD92CF /* CellDetectionView.swift in Sources */,
 				CF70A9892BE6B01400989FB5 /* QNotifications.swift in Sources */,
 				CFB6CF5D2BD122FA00EAB7B4 /* CellGuardAppDelegate.swift in Sources */,
 				CFB6CF5E2BD122FA00EAB7B4 /* MapTabView.swift in Sources */,
@@ -1289,6 +1365,7 @@
 				CFB6CF642BD122FA00EAB7B4 /* LocationClusterAnnotation.swift in Sources */,
 				CFB6CF652BD122FA00EAB7B4 /* CommonDefinitions.swift in Sources */,
 				CFB6CF662BD122FA00EAB7B4 /* ActivityViewController.swift in Sources */,
+				45ECF55B2BFAC6F000DD92CF /* SysDiagnoseView.swift in Sources */,
 				CF70A9922BE6B64600989FB5 /* QCommonDeletion.swift in Sources */,
 				CFE0B6A92BE96DEF004AB5E9 /* SNVerificationPipeline.swift in Sources */,
 				CFB6CF682BD122FA00EAB7B4 /* CellAnnotation.swift in Sources */,
@@ -1320,15 +1397,19 @@
 				CFB6CF802BD122FA00EAB7B4 /* CellGuardSceneDelegate.swift in Sources */,
 				CFD5657B2BDFA82C00925FAA /* VerificationPipeline.swift in Sources */,
 				CFB6CF812BD122FA00EAB7B4 /* CellGuardApp.swift in Sources */,
+				45ECF55E2BFACB7D00DD92CF /* UserStudyView.swift in Sources */,
 				CFB6CF822BD122FA00EAB7B4 /* WelcomeSheet.swift in Sources */,
 				CFB6CF832BD122FA00EAB7B4 /* CompositeTabView.swift in Sources */,
 				CF2FF6912BF2A3D3006E2DF4 /* QStudy.swift in Sources */,
 				CFB6CF842BD122FA00EAB7B4 /* QMIParser.swift in Sources */,
 				CFB6CF852BD122FA00EAB7B4 /* CellDetailsRow.swift in Sources */,
+				45ECF5552BFAB97A00DD92CF /* LocationPermissionView.swift in Sources */,
 				CFB6CF862BD122FA00EAB7B4 /* cellguard.swift in Sources */,
 				CFB6CF872BD122FA00EAB7B4 /* CellTechnologyFormatter.swift in Sources */,
+				45ECF5642BFBDB3800DD92CF /* SysdiagInstructionsCard.swift in Sources */,
 				CFB6CF882BD122FA00EAB7B4 /* CellFileKeys.swift in Sources */,
 				CFB6CF892BD122FA00EAB7B4 /* Packet.swift in Sources */,
+				45ECF5612BFACE8400DD92CF /* LeadingTitleIconTextView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1349,6 +1430,7 @@
 				CF0A5678298A7A910012B2A8 /* VerificationProgressView.swift in Sources */,
 				CF446754298D2A040083EE63 /* CellLocationDistance.swift in Sources */,
 				CFD023402961A10D00AA5A1C /* PersistenceController.swift in Sources */,
+				45ECF5752BFC025300DD92CF /* DebugProfileDetailedView.swift in Sources */,
 				CFCE7A8C29817E2500E28787 /* ALSTechnology.swift in Sources */,
 				CFDF5D85297F09D3000708A8 /* DatabaseAnnotation.swift in Sources */,
 				CF86C7992A6AD51D002EC9B6 /* GroupedMeasurements.swift in Sources */,
@@ -1359,9 +1441,13 @@
 				CFDF5D77297EF1E8000708A8 /* LocationAnnotation.swift in Sources */,
 				CF54CCC72A33699A00961E4D /* PacketARIDetailsView.swift in Sources */,
 				CF2A1C182975562800E8B61C /* UserDefaultsKeys.swift in Sources */,
+				45C3D4A82BFD092700B5CEF3 /* SysdiagOpenSettingsDetailedView.swift in Sources */,
 				CF2A1C222975DB8100E8B61C /* CellInformationCard.swift in Sources */,
+				45ECF5402BF98EB400DD92CF /* LocalNetworkPermissionView.swift in Sources */,
 				CF57561D2B2F263500C7C60A /* LogArchiveReader.swift in Sources */,
 				CF70A9942BE6B6D600989FB5 /* QCommonFetch.swift in Sources */,
+				45ECF56C2BFBEA5300DD92CF /* DeviceModel.swift in Sources */,
+				45ECF5512BFAAF1F00DD92CF /* CenteredTitleIconTextView.swift in Sources */,
 				CFDF5D6F297EF05D000708A8 /* MultiCellMap.swift in Sources */,
 				CF4E53962A31CE3F00AE2059 /* QMIDefinitions.swift in Sources */,
 				CF5EF92829793F7500C4F50A /* TestDetection.swift in Sources */,
@@ -1378,10 +1464,13 @@
 				CFA09CF92A73D4B000D16832 /* SwiftExtensions.swift in Sources */,
 				CFB8B291296359CC00503189 /* CCTCollector.swift in Sources */,
 				CF54CCC32A331ED300961E4D /* PacketCell.swift in Sources */,
+				45ECF56F2BFBFDFB00DD92CF /* NoneModeCard.swift in Sources */,
 				CF5672962A29E59000B6EA7C /* TweakInfoView.swift in Sources */,
 				CF54CCC12A331E7100961E4D /* PacketQMIDetailsView.swift in Sources */,
 				CF53DB42297473E8005DCD10 /* CoreLocationALS.pb.swift in Sources */,
+				45ECF5692BFBE44800DD92CF /* SysdiagInstructionsDetailedView.swift in Sources */,
 				CFD023432961A10D00AA5A1C /* CellGuard.xcdatamodeld in Sources */,
+				45ECF5722BFC00D100DD92CF /* DebugProfileCard.swift in Sources */,
 				CFDF5D7F297F05A0000708A8 /* SingleCellMap.swift in Sources */,
 				CF5EF92A2979B8D800C4F50A /* LocationSource.swift in Sources */,
 				CF4E53A22A321B3000AE2059 /* PacketTabView.swift in Sources */,
@@ -1393,14 +1482,16 @@
 				CF2A1C1D2975C71000E8B61C /* BackgroundState.swift in Sources */,
 				CF57561A2B2F25DB00C7C60A /* SwiftBridgeCore.swift in Sources */,
 				CF6EC8B12A6D9F99004CF0AB /* CellListFilterView.swift in Sources */,
-				CF9EEEE82B34B6A500F9B6D8 /* OpenSysdiagnoseSettings.swift in Sources */,
+				CF9EEEE82B34B6A500F9B6D8 /* SysdiagOpenSettingsCard.swift in Sources */,
 				CF0FDCC22969AC1100A6FFE2 /* SettingsView.swift in Sources */,
+				45ECF54E2BFAADAA00DD92CF /* NotificationPermissionView.swift in Sources */,
 				CFFF19E72BC70E83004E40CE /* FirstLastDates.swift in Sources */,
 				CFD023682961AB9900AA5A1C /* CCTClient.swift in Sources */,
 				CF2FF6932BF2A3DF006E2DF4 /* StudyClient.swift in Sources */,
 				CF73099A2A79122B00498BC3 /* DataSummaryView.swift in Sources */,
 				CF1FAFB32986B11200106930 /* CellReachOverlay.swift in Sources */,
 				CF70A98B2BE6B51C00989FB5 /* QLocationUser.swift in Sources */,
+				45ECF5572BFAC62900DD92CF /* CellDetectionView.swift in Sources */,
 				CF70A9882BE6B01400989FB5 /* QNotifications.swift in Sources */,
 				CFB8B28A2963498200503189 /* CellGuardAppDelegate.swift in Sources */,
 				CF0FDCB729699E5100A6FFE2 /* MapTabView.swift in Sources */,
@@ -1415,6 +1506,7 @@
 				CFDF5D7D297EF76C000708A8 /* LocationClusterAnnotation.swift in Sources */,
 				CF4E539C2A31E73F00AE2059 /* CommonDefinitions.swift in Sources */,
 				CFDF5D89297F340E000708A8 /* ActivityViewController.swift in Sources */,
+				45ECF55A2BFAC6F000DD92CF /* SysDiagnoseView.swift in Sources */,
 				CF70A9912BE6B64600989FB5 /* QCommonDeletion.swift in Sources */,
 				CFE0B6A82BE96DEF004AB5E9 /* SNVerificationPipeline.swift in Sources */,
 				CFDF5D71297EF0C6000708A8 /* CellAnnotation.swift in Sources */,
@@ -1446,15 +1538,19 @@
 				CF5CBB9529689FFE001CE9BE /* CellGuardSceneDelegate.swift in Sources */,
 				CFD5657A2BDFA82C00925FAA /* VerificationPipeline.swift in Sources */,
 				CFD023372961A10D00AA5A1C /* CellGuardApp.swift in Sources */,
+				45ECF55D2BFACB7D00DD92CF /* UserStudyView.swift in Sources */,
 				CF0FDCBD2969A21000A6FFE2 /* WelcomeSheet.swift in Sources */,
 				CF0FDCBB29699E8A00A6FFE2 /* CompositeTabView.swift in Sources */,
 				CF2FF6902BF2A3D3006E2DF4 /* QStudy.swift in Sources */,
 				CF2002E82A2F2BE2000922E6 /* QMIParser.swift in Sources */,
 				CF86C7972A6ACDAA002EC9B6 /* CellDetailsRow.swift in Sources */,
+				45ECF5542BFAB97A00DD92CF /* LocationPermissionView.swift in Sources */,
 				CF5756152B2F232A00C7C60A /* cellguard.swift in Sources */,
 				CF5EF9222977FCF800C4F50A /* CellTechnologyFormatter.swift in Sources */,
+				45ECF5632BFBDB3800DD92CF /* SysdiagInstructionsCard.swift in Sources */,
 				CF93B85629800451003F9FFE /* CellFileKeys.swift in Sources */,
 				CFBEC8462BC7F7100021C0B9 /* Packet.swift in Sources */,
+				45ECF5602BFACE8400DD92CF /* LeadingTitleIconTextView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1508,7 +1604,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"CellGuard/Preview Content\"";
-				DEVELOPMENT_TEAM = K2B79VWGA3;
+				DEVELOPMENT_TEAM = 426NCVN7XZ;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -1531,7 +1627,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/../target/universal/debug";
 				MARKETING_VERSION = 1.4.1;
-				PRODUCT_BUNDLE_IDENTIFIER = "de.tu-darmstadt.www.cellguard.ios";
+				PRODUCT_BUNDLE_IDENTIFIER = de.cellguard.jiska;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -1555,7 +1651,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"CellGuard/Preview Content\"";
-				DEVELOPMENT_TEAM = K2B79VWGA3;
+				DEVELOPMENT_TEAM = 426NCVN7XZ;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -1578,7 +1674,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/../target/universal/release";
 				MARKETING_VERSION = 1.4.1;
-				PRODUCT_BUNDLE_IDENTIFIER = "de.tu-darmstadt.www.cellguard.ios";
+				PRODUCT_BUNDLE_IDENTIFIER = de.cellguard.jiska;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -1718,7 +1814,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"CellGuard/Preview Content\"";
-				DEVELOPMENT_TEAM = K2B79VWGA3;
+				DEVELOPMENT_TEAM = 426NCVN7XZ;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -1741,7 +1837,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/../target/universal/debug";
 				MARKETING_VERSION = 1.4.1;
-				PRODUCT_BUNDLE_IDENTIFIER = "de.tu-darmstadt.www.cellguard.ios";
+				PRODUCT_BUNDLE_IDENTIFIER = de.jiska.CellGuard;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -1764,7 +1860,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"CellGuard/Preview Content\"";
-				DEVELOPMENT_TEAM = K2B79VWGA3;
+				DEVELOPMENT_TEAM = 426NCVN7XZ;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -1787,7 +1883,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/../target/universal/release";
 				MARKETING_VERSION = 1.4.1;
-				PRODUCT_BUNDLE_IDENTIFIER = "de.tu-darmstadt.www.cellguard.ios";
+				PRODUCT_BUNDLE_IDENTIFIER = de.jiska.CellGuard;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -1898,7 +1994,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		CFD0235C2961A10E00AA5A1C /* Build configuration list for PBXNativeTarget "CellGuard (AppStore)" */ = {
+		CFD0235C2961A10E00AA5A1C /* Build configuration list for PBXNativeTarget "CellGuard" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				CFD0235D2961A10E00AA5A1C /* Debug */,
