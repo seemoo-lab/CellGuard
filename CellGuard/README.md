@@ -2,7 +2,26 @@
 
 Monitor and visualize cellular base stations collected by the accompanying tweak.
 
-iOS Versions: 14.0 - 17.2
+iOS Versions: 14.0 - 17.5.1
+
+## Setup
+
+- Clone this repo:
+```sh
+$ git clone https://dev.seemoo.tu-darmstadt.de/apple/cell-guard.git
+$ cd cell-guard/CellGuard
+```
+
+- Rename and populate the developer team ID file:
+```sh
+$ cp CellGuard/Config/Developer.xcconfig.template CellGuard/Config/Developer.template
+$ nano CellGuard/Config/Developer.template
+```
+
+- Open the project in Xcode:
+```sh
+$ open CellGuard.xcodeproj
+```
 
 ## Build
 The app can either be distributed as a .deb package for jailbroken devices with Cydia or as an .ipa file which can be installed using TrollStore.
@@ -25,7 +44,7 @@ For release builds required for TestFlight uploads, also run the following comma
 ```sh
 PROJECT_DIR=. CONFIGURATION=Release ./build-rust.sh
 ```
-If you're using XCode to build an app archive for TestFlight distribution, you should switch the *Build Configuration* setting to *Release* in the *Archive* section. 
+If you're using XCode to build an app archive for TestFlight distribution, you should switch the *Build Configuration* setting to *Release* in the *Archive* section.
 
 Upon changes, XCode will rebuild the libraries automatically.
 
@@ -54,7 +73,7 @@ A .ipa file can be installed using [TrollStore](https://github.com/opa334/TrollS
 Copy the final .ipa file via iCloud to iPhone and install it using TrollStore.
 
 References:
-- [GeneXus](https://wiki.genexus.com/commwiki/servlet/wiki?34616,HowTo%3A+Create+an+.ipa+file+from+XCode): Requires paid Apple Developer Account 
+- [GeneXus](https://wiki.genexus.com/commwiki/servlet/wiki?34616,HowTo%3A+Create+an+.ipa+file+from+XCode): Requires paid Apple Developer Account
 - https://stackoverflow.com/a/72724017: Doesn't require an Apple Developer Account
 
 The [`build-ipa.py`](./build_ipa.py) script automates all of these steps:
@@ -64,7 +83,7 @@ pipenv run python3 build_ipa.py
 
 ### .deb
 
-A .deb file can be installed on jailbroken iPhones using the included dpkg package manager or alternative app stores like Cydia, Zebra, or Sileo. 
+A .deb file can be installed on jailbroken iPhones using the included dpkg package manager or alternative app stores like Cydia, Zebra, or Sileo.
 
 First, install [Theos](https://theos.dev/docs/) and setup its environment variables.
 Then you can run of one of the following commands:
