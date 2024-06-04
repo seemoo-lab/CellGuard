@@ -11,5 +11,4 @@ The repository consists of seven directories:
   - iOS and the iPhone's baseband utilize them for communication
 - [CellGuard](./CellGuard): The CellGuard iOS app
 - [Icon](./Icon): CellGuard branding assets
-- [IosUnifiedLogs](./IosUnifiedLogs): A proof-of-concept iOS app for parsing system diagnoses on device
 - [src](./src): The Rust source code for the CellGuard iOS app
