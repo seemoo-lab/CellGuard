@@ -11,7 +11,7 @@ import CoreData
 extension PersistenceController {
     
     func determineDataRiskStatus() -> RiskLevel {
-        return (try? performAndWait(name: "fetchContext", author: "determineDataRiskStatus") { context in
+        return (try? performAndWait(name: "fetchContext", author: "determineDataRiskStatus") { context -> RiskLevel in
             let dataCollectionMode = UserDefaults.standard.dataCollectionMode()
             
             // == Predicates ==
@@ -127,6 +127,29 @@ extension PersistenceController {
                 }
             }
             #endif
+            
+            // Only ensure that log collection works if the manual mode is active
+            if dataCollectionMode == .manual {
+                // == Low Power Mode ==
+                // See: https://developer.apple.com/documentation/foundation/processinfo/1617047-islowpowermodeenabled
+                if ProcessInfo.processInfo.isLowPowerModeEnabled {
+                    return .Medium(cause: .LowPowerMode)
+                }
+                
+                // == Disk Space ==
+                // See: https://stackoverflow.com/a/26198164
+                let homeURL = URL(fileURLWithPath: NSHomeDirectory() as String, isDirectory: true)
+                do {
+                    let values = try homeURL.resourceValues(forKeys: [.volumeAvailableCapacityForOpportunisticUsageKey])
+                    if let volumeAvailableCapacityForOpportunisticUsage = values.volumeAvailableCapacityForOpportunisticUsage {
+                        if volumeAvailableCapacityForOpportunisticUsage < 1024 * 1024 * 1024 {
+                            return .Medium(cause: .DiskSpace)
+                        }
+                    }
+                } catch {
+                    logger.warning("Failed to get available disk space for opportunistic usage: \(error)")
+                }
+            }
             
             // Only check locations if the data collection is active
             if dataCollectionMode != .none {
