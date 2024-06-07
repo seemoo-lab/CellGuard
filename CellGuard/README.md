@@ -117,3 +117,13 @@ cargo update
 # See: https://github.com/sstadick/cargo-bundle-licenses?tab=readme-ov-file#usage
 cargo bundle-licenses --format json --output CellGuard/cargo-licenses.json --previous CellGuard/cargo-licenses.json
 ```
+
+## Privacy Manifest
+
+Apple requires apps to include a [privacy manifest](./PrivacyInfo.xcprivacy).
+Remember to expand the manifest if you use new APIs or collect new types of data.
+
+Read more:
+- https://developer.apple.com/documentation/bundleresources/privacy_manifest_files
+- https://developer.apple.com/app-store/user-privacy-and-data-use/
+- https://developer.apple.com/app-store/app-privacy-details/
