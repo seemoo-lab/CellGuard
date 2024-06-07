@@ -24,6 +24,16 @@ class CGNotificationManager: ObservableObject {
     private init() { }
     
     func requestAuthorization(completion: @escaping (Bool) -> Void) {
+        if authorizationStatus == .denied {
+            completion(false)
+            return
+        }
+        
+        if authorizationStatus == .authorized {
+            completion(true)
+            return
+        }
+        
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { success, error in
             if let error = error {
                 Self.logger.info("Can't request authorization for notifications: \(error.localizedDescription)")

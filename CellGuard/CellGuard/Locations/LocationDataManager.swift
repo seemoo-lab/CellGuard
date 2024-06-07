@@ -58,21 +58,7 @@ class LocationDataManager : NSObject, CLLocationManagerDelegate, ObservableObjec
         }
         
         if manager.authorizationStatus == .authorizedWhenInUse && authorizationCompletion != nil {
-            // The second part of the request the always authorization, see below in requestAuthorization()
-            locationManager.requestAlwaysAuthorization()
-            
-            // Solution for missing callback copied from AirGuard:
-            
-            // If the user previously selected "Allow once" for location, no dialogue will appear when requesting always usage.
-            // We detect if a dialogue is shown using the background property.
-            // If the dialogue is show, the app is in background.
-            // If not, we open the app settings.
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
-                if !BackgroundState.shared.inBackground {
-                    self.authorizationCompletion?(false)
-                    self.authorizationCompletion = nil
-                }
-            })
+            requestAlwaysAuthorization()
             return
         }
         
@@ -95,12 +81,50 @@ class LocationDataManager : NSObject, CLLocationManagerDelegate, ObservableObjec
         }
     }
     
+    private func requestAlwaysAuthorization() {
+        // The second part of the request the always authorization, see below in requestAuthorization()
+        locationManager.requestAlwaysAuthorization()
+        
+        // Solution for missing callback copied from AirGuard:
+        
+        // If the user previously selected "Allow once" for location, no dialogue will appear when requesting always usage.
+        // We detect if a dialogue is shown using the background property.
+        // If the dialogue is show, the app is in background.
+        // If not, we open the app settings.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
+            if !BackgroundState.shared.inBackground {
+                self.authorizationCompletion?(false)
+                self.authorizationCompletion = nil
+            }
+        })
+        return
+    }
+    
     func requestAuthorization(completion: @escaping (Bool) -> Void) {
+        // If the user denied the authorization, return false
+        if authorizationStatus == .denied || authorizationStatus == .restricted {
+            completion(false)
+            return
+        }
+        
+        // If we already received the authorization, we can instantly return true
+        if authorizationStatus == .authorizedAlways {
+            completion(true)
+            return
+        }
+        
         self.authorizationCompletion = completion
+        
         // First we have to request, when in use authorization.
         // When we've got the permission, we can request always authorization.
         // https://developer.apple.com/documentation/corelocation/cllocationmanager/1620551-requestalwaysauthorization
-        locationManager.requestWhenInUseAuthorization()
+        
+        if authorizationStatus == .authorizedWhenInUse {
+            // We can skip requesting the when-in-authorization if it has already been granted
+            requestAlwaysAuthorization()
+        } else {
+            locationManager.requestWhenInUseAuthorization()
+        }
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
