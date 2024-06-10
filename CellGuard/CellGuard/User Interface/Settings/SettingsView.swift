@@ -19,10 +19,8 @@ enum SettingsCloseReason {
 
 struct SettingsView: View {
     
-    @AppStorage(UserDefaultsKeys.showTrackingMarker.rawValue) var showTrackingMarker: Bool = false
-    @AppStorage(UserDefaultsKeys.appMode.rawValue) var appMode: DataCollectionMode = .none
-    @AppStorage(UserDefaultsKeys.highVolumeSpeedup.rawValue) var highVolumeSpeedup: Bool = true
     @AppStorage(UserDefaultsKeys.study.rawValue) var studyParticipationTimestamp: Double = 0
+    @AppStorage(UserDefaultsKeys.introductionShown.rawValue) var introductionShown: Bool = true
     
     @EnvironmentObject var locationManager: LocationDataManager
     @EnvironmentObject var notificationManager: CGNotificationManager
@@ -58,129 +56,90 @@ struct SettingsView: View {
         }
     )}
     
-    private var dataCollectionFooter: String {
-        var text = "The data collection mode determines if and how CellGuard collects data. "
-        
-        #if JAILBREAK
-        text += "The automatic mode retrieves data from tweaks installed with a jailbreak on your device. "
-        #endif
-        
-        text += "The manual mode allows you to share system diagnoses with the app to import data. "
-        text += "If disabled, CellGuard does not collect locations and only allows you to import previously exported datasets."
-        
-        return text
-    }
+    @State private var showQuitStudyAlert = false
 
     var body: some View {
         List {
-            Section(
-                header: Text("Data Collection"),
-                footer: Text(dataCollectionFooter)
-            ) {
-                Picker("Mode", selection: $appMode) {
-                    ForEach(DataCollectionMode.allCases) { Text($0.description) }
-                }
-            }
-            
-            Section(header: Text("Baseband Profile"), footer: Text("CellGuard only can extract data from sysdiagnoses which are created with an active baseband debug profile. The profile expires after 21 days.")) {
-                Link(destination: URL(string: "https://developer.apple.com/bug-reporting/profiles-and-logs/?platform=ios&name=baseband")!, label: {
-                    KeyValueListRow(key: "Download Profile") {
-                        Image(systemName: "link")
-                    }
-                })
-                // TODO: Add expected date of expiry & allow the user to manually set the date
-                // TODO: Add toggle to notify user notifications before the profile's expiry
-            }
-            
-            Section(header: Text("HighVolume Log Speedup"), footer: Text("Only scan certain log files from sysdiagnoses to speed up their import. Will be automatically disabled if not applicable for your system.")) {
-                Toggle("Enable Speedup", isOn: $highVolumeSpeedup)
-            }
-            
-            Section(header: Text("Permissions")) {
+            Section(header: Text("Permissions"), footer: Text("Check that CellGuard has all required permission to function correctly.")) {
                 Toggle("Location (Always)", isOn: isPermissionAlwaysLocation)
                 Toggle("Notifications", isOn: isPermissionNotifications)
             }
             
-            // TODO: Should we remove this?
-            Section(header: Text("Location")) {
-                Toggle("Show Tracking Indicator", isOn: $showTrackingMarker)
-            }
+            // TODO: Add notifications sections
+            // - Toggle for suspicious cell notifications
+            // - Toggle for anomalous cell notifications
+            // - Toggle for close notifications
+            // - (TODO) Toggle for regular sysdiagnose record reminders
+            // - (TODO) Toggle for regular sysdiagnose import reminders
+            // - (TODO) Toggle for profile expiry notification
             
-            Section(header: Text("Study")) {
-                Toggle("Participate", isOn: Binding(get: {
-                    studyParticipationTimestamp > 0
-                }, set: { participate in
-                    studyParticipationTimestamp = participate ? Date().timeIntervalSince1970 : 0
-                }))
-            }
-            
-            Section(header: Text("Local Database")) {
+            // TODO: Add expected date of expiry (read from sysdiagnose) & allow the user to manually set the date
+            Section(header: Text("Baseband Profile"), footer: Text("Keep the baseband debug profile on your device up-to-date to collect logs for CellGuard.")) {
                 NavigationLink {
-                    ImportView()
+                    DebugProfileDetailedView()
                 } label: {
-                    Text("Import Data")
-                }
-                NavigationLink {
-                    ExportView()
-                } label: {
-                    Text("Export Data")
-                }
-                NavigationLink {
-                    DeleteView()
-                } label: {
-                    Text("Delete Data")
+                    Text("Install Profile")
                 }
             }
             
-            Section(header: Text("About CellGuard")) {
-                NavigationLink {
-                    AcknowledgementView()
-                } label: {
-                    Text("Acknowledgements")
-                }
-                
-                KeyValueListRow(key: "Version", value: versionBuild)
-
-                Link(destination: CellGuardURLs.baseUrl) {
-                    KeyValueListRow(key: "Website") {
-                        Image(systemName: "link")
+            Section(header: Text("Study"), footer: Text("Join our study to improve CellGuard.")) {
+                if studyParticipationTimestamp == 0 {
+                    NavigationLink {
+                        // TODO: Why does
+                        UserStudyView(returnToPreviousView: true)
+                    } label: {
+                        Text("Participate")
+                    }
+                } else {
+                    Button {
+                        showQuitStudyAlert = true
+                    } label: {
+                        Text("End Participation")
                     }
                 }
                 
-                Link(destination: CellGuardURLs.privacyPolicy) {
-                    KeyValueListRow(key: "Privacy Policy") {
-                        Image(systemName: "link")
-                    }
-                }
-                
-                // TODO: Create GitHub project
-                Link(destination: URL(string: "http://github.com/seemoo-lab/CellGuard")!) {
-                    KeyValueListRow(key: "Report Issues") {
-                        Image(systemName: "link")
-                    }
+                NavigationLink {
+                    ContributedStudyDataView()
+                } label: {
+                    Text("Your Contributions")
                 }
             }
             
-            Section(header: Text("Developers"), footer: Text("CellGuard is a research project by the Secure Mobile Networking Lab at TU Darmstadt (SEEMOO) and the Cybersecurity - Mobile & Wireless group at the Hasso Plattner Institute (HPI).")) {
-                Link(destination: URL(string: "https://lukasarnold.de")!) {
-                    KeyValueListRow(key: "Lukas Arnold", value: "SEEMOO")
+            Section(header: Text("Introduction"), footer: Text("View the introduction to learn how CellGuard works.")) {
+                Button("Restart Intro") {
+                    introductionShown = false
                 }
-                Link(destination: URL(string: "https://hpi.de/classen/home.html")!) {
-                    KeyValueListRow(key: "Jiska Classen", value: "HPI")
+            }
+            
+            Section {
+                NavigationLink {
+                    InformationContactView()
+                } label: {
+                    Text("Information & Contact")
+                }
+                NavigationLink {
+                    AdvancedSettingsView()
+                } label: {
+                    Text("Advanced Settings")
                 }
             }
         }
         .listStyle(.insetGrouped)
         .navigationTitle(Text("Settings"))
         .navigationBarTitleDisplayMode(.inline)
-    }
-    
-    var versionBuild: String {
-        // https://stackoverflow.com/a/28153897
-        let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "???"
-        let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String  ?? "???"
-        
-        return "\(version) (\(build))"
+        .alert(isPresented: $showQuitStudyAlert) {
+            Alert(
+                title: Text("End Participation?"),
+                message: Text("You will no longer contribute data to the CellGuard study."),
+                primaryButton: .destructive(Text("End"), action: {
+                    studyParticipationTimestamp = 0
+                    showQuitStudyAlert = false
+                }),
+                secondaryButton: .default(Text("Continue"), action: {
+                    showQuitStudyAlert = false
+                })
+            )
+        }
     }
     
     private func openAppSettings() {

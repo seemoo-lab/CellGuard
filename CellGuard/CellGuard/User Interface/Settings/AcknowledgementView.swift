@@ -99,6 +99,7 @@ struct AcknowledgementView: View {
                 loadRustAcknowledgements()
             }
         }
+        .navigationTitle("Third-Party Libraries")
     }
     
 }
