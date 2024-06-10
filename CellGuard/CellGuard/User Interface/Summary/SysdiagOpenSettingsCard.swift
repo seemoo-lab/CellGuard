@@ -15,11 +15,7 @@ struct SysdiagOpenSettingsCard: View {
     var body: some View {
         
         NavigationLink(isActive: $showingSettingsInstructions) {
-            // TODO: super weird class not found error in jailbreak case...
-            #if JAILBREAK
-            #else
             SysdiagOpenSettingsDetailedView()
-            #endif
         } label: {
             EmptyView()
         }
