@@ -9,54 +9,45 @@ import SwiftUI
 
 
 struct NotificationPermissionView: View {
-    
-    let close: () -> Void
 
     var body: some View {
-        NavigationView {
-            VStack {
-                ScrollView {
-                    CenteredTitleIconTextView(
-                        icon: "bell.fill",
-                        title: "Notification Permission",
-                        description: "CellGuard continues cell analysis in the background. To be informed about cellular network anomalies, you must enable CellGuard notifications.",
-                        size: 120
-                    )
-                }
+        VStack {
+            ScrollView {
+                CenteredTitleIconTextView(
+                    icon: "bell.fill",
+                    description: "CellGuard continues the cell analysis in the background. To receive alerts about cellular network anomalies, you can allow CellGuard to send notifications.",
+                    size: 120
+                )
+            }
+            
+            
+            LargeButton(title: "Continue", backgroundColor: .blue) {
+                // Request permissions after the introduction sheet has been closed.
+                // It's crucial that we do NOT use those manager objects as environment objects in the CompositeTabView class,
+                // otherwise there are a lot of updates and shit (including toolbar stuff) breaks, e.g. NavigationView close prematurely.
                 
-                
-                LargeButton(title: "Continue", backgroundColor: .blue) {
-                    // Save that we did show the intro (only on last tab due to permissions!)
+                CGNotificationManager.shared.requestAuthorization { _ in
+                    // Save that we did show the intro (only once we receive a result for the notification permission)
                     UserDefaults.standard.set(true, forKey: UserDefaultsKeys.introductionShown.rawValue)
-                    // Request permissions after the introduction sheet has been closed.
-                    // It's crucial that we do NOT use those manager objects as environment objects in the CompositeTabView class,
-                    // otherwise there are a lot of updates and shit (including toolbar stuff) breaks, e.g. NavigationView close prematurely.
-                    CGNotificationManager.shared.requestAuthorization { _ in}
-                    self.close()  // end of introduction, close to return to CompositeTabView
                 }
-                
-                
-                Spacer()
             }
             .padding()
-            // Disable the ScrollView bounce for this element
-            // https://stackoverflow.com/a/73888089
-            .onAppear {
-                UIScrollView.appearance().bounces = false
-            }
-            .onDisappear {
-                UIScrollView.appearance().bounces = true
-            }
         }
-        .navigationBarBackButtonHidden(true)
-        .navigationBarHidden(true)
-        .navigationBarTitleDisplayMode(.inline)
+        .navigationTitle("Notification Permission")
+        .navigationBarTitleDisplayMode(.large)
+        .toolbar(content: {
+            ToolbarItem {
+                Button("Skip") {
+                    UserDefaults.standard.set(true, forKey: UserDefaultsKeys.introductionShown.rawValue)
+                }
+            }
+        })
     }
 }
 
-struct NotificationPermissionView_Preview: PreviewProvider {
-    static var previews: some View {
-        NotificationPermissionView{}
+#Preview {
+    NavigationView {
+        NotificationPermissionView()
     }
 }
 

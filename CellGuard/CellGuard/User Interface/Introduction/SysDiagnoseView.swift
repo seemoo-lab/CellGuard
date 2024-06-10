@@ -10,48 +10,32 @@ import SwiftUI
 struct SysDiagnoseView: View {
     
     @State private var action: Int? = 0
-    let close: () -> Void
 
     var body: some View {
-        NavigationView {
-            VStack {
-                ScrollView {
-                    CenteredTitleIconTextView(
-                        icon: "stethoscope",
-                        title: "System Diagnoses",
-                        description: "CellGuard captures baseband management packets using system diagnoses with a baseband mobile configuration profile.\n\nSystem diagnoses are compatible with up-to-date iPhones in Lockdown Mode.",
-                        size: 120
-                    )
-                }
-                
-                // Navigate to next permission, forward closing statement
-                NavigationLink(destination: LocationPermissionView{self.close()}, tag: 1, selection: $action) {}
-                
-                LargeButton(title: "Continue", backgroundColor: .blue) {
-                    self.action = 1
-                }
-                
-                
-                Spacer()
+        VStack {
+            ScrollView {
+                CenteredTitleIconTextView(
+                    icon: "stethoscope",
+                    description: "CellGuard reads baseband management packets from system diagnoses. You can record system diagnoses with packets by installing a baseband mobile configuration profile from Apple.\n\nSystem diagnoses are compatible with up-to-date iPhones in Lockdown Mode. Note that you have to install the profile before enabling Lockdown Mode.",
+                    size: 120
+                )
+            }
+            
+            // Navigate to next permission, forward closing statement
+            NavigationLink(destination: LocationPermissionView(), tag: 1, selection: $action) {}
+            
+            LargeButton(title: "Continue", backgroundColor: .blue) {
+                self.action = 1
             }
             .padding()
-            // Disable the ScrollView bounce for this element
-            // https://stackoverflow.com/a/73888089
-            .onAppear {
-                UIScrollView.appearance().bounces = false
-            }
-            .onDisappear {
-                UIScrollView.appearance().bounces = true
-            }
         }
-        .navigationBarBackButtonHidden(true)
-        .navigationBarHidden(true)
-        .navigationBarTitleDisplayMode(.inline)
+        .navigationTitle("System Diagnoses")
+        .navigationBarTitleDisplayMode(.large)
     }
 }
 
-struct SysDiagnoseView_Provider: PreviewProvider {
-    static var previews: some View {
-        SysDiagnoseView{}
+#Preview {
+    NavigationView {
+        SysDiagnoseView()
     }
 }

@@ -10,52 +10,51 @@ import SwiftUI
 struct LocationPermissionView: View {
     
     @State private var action: Int? = 0
-    let close: () -> Void
 
     var body: some View {
-        NavigationView {
-            VStack {
-                ScrollView {
-                    CenteredTitleIconTextView(
-                        icon: "location.fill",
-                        title: "Location Permission",
-                        description: "CellGuard records when and where your phone is connected to a cell tower. This information is compared with a cell location database, uncovering unknown base stations.\n\nCellGuard keeps location information for seven days. You can adjust this value in the settings.",
-                        size: 120
-                    )
-                }
-                
-                // Navigate to next permission, forward closing statement
-                NavigationLink(destination: NotificationPermissionView{self.close()}, tag: 1, selection: $action) {}
-                
-                LargeButton(title: "Continue", backgroundColor: .blue) {
-                    // Request permissions after the introduction sheet has been closed.
-                    // It's crucial that we do NOT use those manager objects as environment objects in the CompositeTabView class,
-                    // otherwise there are a lot of updates and shit (including toolbar stuff) breaks, e.g. NavigationView close prematurely.
-                    LocationDataManager.shared.requestAuthorization { _ in}
+        VStack {
+            ScrollView {
+                CenteredTitleIconTextView(
+                    icon: "location.fill",
+                    description: "CellGuard records when and where your phone is connected to a cell tower. This information is compared with a cell location database, uncovering unknown base stations.\n\nCellGuard keeps location information for seven days. You can adjust this value in the settings.",
+                    size: 120
+                )
+            }
+            
+            // Navigate to next permission, forward closing statement
+            NavigationLink(destination: NotificationPermissionView(), tag: 1, selection: $action) {}
+            
+            LargeButton(title: "Continue", backgroundColor: .blue) {
+                // Request permissions after the introduction sheet has been closed.
+                // It's crucial that we do NOT use those manager objects as environment objects in the CompositeTabView class,
+                // otherwise there are a lot of updates and shit (including toolbar stuff) breaks, e.g. NavigationView close prematurely.
+                LocationDataManager.shared.requestAuthorization { _ in
+                    // Enable the data collection (depending on the app type)
+                    #if JAILBREAK
+                    UserDefaults.standard.setValue(DataCollectionMode.automatic.rawValue, forKey: UserDefaultsKeys.appMode.rawValue)
+                    #else
+                    UserDefaults.standard.setValue(DataCollectionMode.manual.rawValue, forKey: UserDefaultsKeys.appMode.rawValue)
+                    #endif
+                    
                     self.action = 1
                 }
-                
-                
-                Spacer()
             }
             .padding()
-            // Disable the ScrollView bounce for this element
-            // https://stackoverflow.com/a/73888089
-            .onAppear {
-                UIScrollView.appearance().bounces = false
-            }
-            .onDisappear {
-                UIScrollView.appearance().bounces = true
-            }
         }
-        .navigationBarBackButtonHidden(true)
-        .navigationBarHidden(true)
-        .navigationBarTitleDisplayMode(.inline)
+        .navigationTitle("Location Permission")
+        .toolbar(content: {
+            ToolbarItem {
+                Button("Skip") {
+                    self.action = 1
+                }
+            }
+        })
+
     }
 }
 
-struct LocationPermissionView_Preview: PreviewProvider {
-    static var previews: some View {
-        LocationPermissionView{}
+#Preview {
+    NavigationView {
+        LocationPermissionView()
     }
 }

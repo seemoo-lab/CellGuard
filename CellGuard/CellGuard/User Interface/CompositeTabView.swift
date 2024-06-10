@@ -20,7 +20,6 @@ private enum ShownTab: Identifiable {
 }
 
 private enum ShownSheet: Hashable, Identifiable {
-    case welcome
     case importFile(URL)
 
     var id: Self {
@@ -35,6 +34,8 @@ struct CompositeTabView: View {
         category: String(describing: CompositeTabView.self)
     )
     
+    @AppStorage(UserDefaultsKeys.introductionShown.rawValue) var introductionShown: Bool = false
+    
     @State private var showingTab = ShownTab.summary
     @State private var showingImport = false
     @State private var showingSheet: ShownSheet?
@@ -46,6 +47,15 @@ struct CompositeTabView: View {
                 Text("Importing")
                     .font(.title)
             })
+        }
+        
+        // Only show the introduction if it never has been shown before
+        if !introductionShown {
+            // TODO: Add transition animation
+            // See: https://www.youtube.com/watch?v=-sOkTOsAzMs
+            // See: https://www.hackingwithswift.com/quick-start/swiftui/how-to-add-and-remove-views-with-a-transition
+            // See: https://developer.apple.com/documentation/swiftui/view/transition(_:)-5h5h0
+            return AnyView(IntroductionView())
         }
         
         
@@ -68,11 +78,6 @@ struct CompositeTabView: View {
                 .tag(ShownTab.packets)
         }
         .onAppear {
-            // Only show the introduction if it never has been shown before
-            if !UserDefaults.standard.bool(forKey: UserDefaultsKeys.introductionShown.rawValue) {
-                showingSheet = .welcome
-            }
-            
             // The tab bar on iOS 15 and above is by default translucent.
             // However in the map tab, it doesn't switch from the transparent to its opaque mode.
             // Therefore, we keep the tab for now always opaque.
@@ -82,10 +87,6 @@ struct CompositeTabView: View {
         // See: https://stackoverflow.com/a/63181811
         .sheet(item: $showingSheet) { (sheet: ShownSheet) in
             switch (sheet) {
-            case .welcome:
-                WelcomeSheet{
-                    self.showingSheet = nil  // close sheet when returning from onboarding
-                }
             case let .importFile(url):
                 NavigationView {
                     ImportView(fileUrl: url)

@@ -2,18 +2,21 @@
 //  IntroductionView.swift
 //  CellGuard
 //
-//  Created by jiska on 19.05.24.
-//  Adapted from AirGuard
+//  Created by Lukas Arnold on 06.06.24.
+//
 
 import SwiftUI
 
 struct IntroductionView: View {
-        
+    
     var body: some View {
-
-        VStack {
-            Text("Onboarding Information")
+        NavigationView {
+            WelcomeView()
         }
     }
+    
 }
 
+#Preview {
+    IntroductionView()
+}
