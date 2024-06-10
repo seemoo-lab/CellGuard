@@ -15,6 +15,8 @@ enum RiskMediumCause: Equatable {
     case Location
     case Cells(cellCount: Int)
     case CantCompute
+    case DiskSpace
+    case LowPowerMode
     
     func text() -> String {
         let ftDaysSuffix = UserDefaults.standard.dataCollectionMode() != .none ? " in the last 14 days" : ""
@@ -32,6 +34,10 @@ enum RiskMediumCause: Equatable {
             return "Detected a minor anomaly for \(cellCount) \(cellCount == 1 ? "cell" : "cells")\(ftDaysSuffix)."
         case .CantCompute:
             return "Unable to determine your risk."
+        case .DiskSpace:
+            return "There's less than 1GB of disk space available for opportunistic usage. This might impact your iPhone's ability to collect logs!"
+        case .LowPowerMode:
+            return "Disable Low-Power-Mode to collect logs!"
         }
     }
 }
