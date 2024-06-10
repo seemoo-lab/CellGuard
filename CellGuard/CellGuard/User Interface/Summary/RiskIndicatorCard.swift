@@ -94,7 +94,12 @@ enum RiskLevel: Equatable {
         case .LowMonitor:
             return "CellGuard is monitoring the connected cell and verified the remaining cells. No anomalies were detected."
         case let .Medium(cause):
-            return "\(cause.text()) \(explanationSuffix)"
+            switch cause {
+            case .Cells(cellCount: _):
+                return "\(cause.text()) \(explanationSuffix)"
+            default:
+                return cause.text()
+            }
         case let .High(cellCount):
             return "Detected \(cellCount) suspicious \(cellCount == 1 ? "cell" : "cells")\(ftDaysSuffix). \(explanationSuffix)\n\n\(studySuffix)"
         }
