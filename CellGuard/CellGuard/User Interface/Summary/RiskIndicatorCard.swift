@@ -114,6 +114,29 @@ enum RiskLevel: Equatable {
         case .High: return dark ? Color(.red * 0.2 + .yellow * 0.1 + .black * 0.4) : .orange
         }
     }
+    
+    
+}
+
+extension RiskLevel: Comparable {
+    func level() -> Int {
+        switch self {
+        case .Low:
+            return 0
+        case .LowMonitor:
+            return 0
+        case .Unknown:
+            return 1
+        case .Medium(cause: _):
+            return 2
+        case .High(cellCount: _):
+            return 3
+        }
+    }
+    
+    static func < (lhs: RiskLevel, rhs: RiskLevel) -> Bool {
+        return lhs.level() < rhs.level()
+    }
 }
 
 struct RiskIndicatorCard: View {
