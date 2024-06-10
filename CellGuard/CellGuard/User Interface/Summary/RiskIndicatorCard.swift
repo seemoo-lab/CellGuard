@@ -108,8 +108,8 @@ enum RiskLevel: Equatable {
     func color(dark: Bool) -> Color {
         switch (self) {
         case .Unknown: return dark ? Color(UIColor.systemGray6) : .gray
-        case .Low: return dark ? Color(.green * 0.4 + .black * 0.7) : .green
-        case .LowMonitor: return dark ? Color(.green * 0.4 + .black * 0.7) : .green
+        case .Low: return dark ? Color(.green * 0.6 + .black * 0.4) : .green
+        case .LowMonitor: return dark ? Color(.green * 0.6 + .black * 0.4) : .green
         case .Medium: return dark ? Color(.blue * 0.4 + .black * 0.7): .blue
         case .High: return dark ? Color(.red * 0.2 + .yellow * 0.1 + .black * 0.4) : .orange
         }
