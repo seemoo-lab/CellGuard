@@ -56,7 +56,7 @@ private struct DebugProfileCardView: View {
                     .frame(maxWidth: 40, alignment: .center)
                     .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 10))
                 
-                Text("A debug profile adds baseband management packets to sysdiagnoses.")
+                Text("Expose baseband management packets to sysdiagnoses.")
                     .multilineTextAlignment(.leading)
                     .padding()
             }
