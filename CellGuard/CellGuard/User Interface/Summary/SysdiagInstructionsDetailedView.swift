@@ -11,7 +11,7 @@ struct SysdiagInstructionsDetailedView: View {
     var body: some View {
         VStack(spacing: 0) {
             
-            Text("Take a Sysdiagnose")
+            Text("Capture a Sysdiagnose")
                 .font(.title)
                 .fontWeight(.bold)
                 .padding()
@@ -45,7 +45,6 @@ struct SysdiagInstructionsDetailedView: View {
                     
                 }
             } else {
-                
                 HStack {
                     VStack {
                         Image(systemName: "arrow.left")
@@ -78,7 +77,6 @@ struct SysdiagInstructionsDetailedView: View {
                 
                 Spacer()
                 
-                
                 Image(systemName: "waveform.path.ecg")
                     .foregroundColor(.blue)
                     .font(Font.custom("SF Pro", fixedSize: 120))
@@ -90,6 +88,9 @@ struct SysdiagInstructionsDetailedView: View {
                 
                 // https://it-training.apple.com/tutorials/support/sup075
                 // if we also support iPad: no vibration
+                // TODO: iPhones with a home button do not take a screenshot
+                // TODO: We can detect when the user takes a screenshot: https://stackoverflow.com/a/63955097
+                // TODO: We can use the iPhone's gyroscope to detect the short vibration (?)
                 Text("Press and hold both volume buttons and the power button for 1 to 1.5 seconds to start a sysdiagnose. You feel a short vibration when sysdiagnose starts. Your iPhone will also take a screenshot. It takes approximately 3 minutes to take a sysdiagnose. Afterwards, it appears in the system settings.")
                     .foregroundColor(.gray)
                     .padding()
@@ -98,7 +99,6 @@ struct SysdiagInstructionsDetailedView: View {
         }
     }
 }
-
 
 
 #Preview {

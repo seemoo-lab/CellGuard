@@ -41,7 +41,7 @@ private struct SysdiagCard: View {
     var body: some View {
         VStack {
             HStack() {
-                Text("Create New Sysdiagnose")
+                Text("Capture Sysdiagnose")
                     .font(.title2)
                     .bold()
                 Spacer()
