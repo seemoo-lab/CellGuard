@@ -100,7 +100,6 @@ extension PersistenceController {
                 guard let latestTweakCell = all.first?.cell else {
                     return .Medium(cause: .TweakCells)
                 }
-                logger.info("latestTweakCell date : \(latestTweakCell.collected ?? Date.distantPast)")
                 if latestTweakCell.collected ?? Date.distantPast < thirtyMinutesAgo {
                     return .Medium(cause: .TweakCells)
                 }
