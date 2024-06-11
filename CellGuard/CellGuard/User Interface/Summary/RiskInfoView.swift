@@ -25,6 +25,10 @@ struct RiskInfoView: View {
                     Text(risk.header())
                         .foregroundColor(risk.color(dark: false))
                 }
+                
+                if risk == .Unknown {
+                    ProgressCounterView()
+                }
             }
             
             if risk >= .Medium(cause: .Cells(cellCount: 1)) {
@@ -90,6 +94,19 @@ struct RiskInfoView: View {
         
 }
 
+private struct ProgressCounterView: View {
+    
+    @FetchRequest(
+        sortDescriptors: [],
+        predicate: NSPredicate(format: "finished == NO and pipeline == %@", Int(primaryVerificationPipeline.id) as NSNumber)
+    )
+    private var unverifiedStates: FetchedResults<VerificationState>
+    
+    var body: some View {
+        KeyValueListRow(key: "Verification Progress", value: "\(unverifiedStates.count)")
+    }
+    
+}
 
 struct RiskInfoView_Previews: PreviewProvider {
     static var previews: some View {
