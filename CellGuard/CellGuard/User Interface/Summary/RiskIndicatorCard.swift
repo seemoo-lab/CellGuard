@@ -25,9 +25,9 @@ enum RiskMediumCause: Equatable {
         case .Permissions:
             return "Ensure you granted all required permissions!"
         case .TweakCells:
-            return "Ensure the CaptureCellsTweak is active!"
+            return "Waiting for data from the CaptureCellsTweak"
         case .TweakPackets:
-            return "Ensure the CapturePacketsTweak is active!"
+            return "Waiting for data from the CapturePacketTweak"
         case .Location:
             return "Ensure you granted always on location permissions!"
         case let .Cells(cellCount):
