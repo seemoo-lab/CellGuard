@@ -60,7 +60,11 @@ struct RiskInfoView: View {
                     NavigationLink {
                         UserStudyView(returnToPreviousView: true)
                     } label: {
-                        Text(Image(systemName: "pencil.and.list.clipboard")) + Text(" Participate")
+                        if #available(iOS 17, *) {
+                            Text(Image(systemName: "pencil.and.list.clipboard")) + Text(" Participate")
+                        } else {
+                            Text(Image(systemName: "doc.on.clipboard")) + Text(" Participate")
+                        }
                     }
                     .foregroundColor(.blue)
                 }
@@ -90,6 +94,7 @@ struct RiskInfoView: View {
         }
         .navigationBarTitleDisplayMode(.inline)
         .navigationTitle("Risk Level")
+        .listStyle(.insetGrouped)
     }
         
 }

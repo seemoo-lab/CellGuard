@@ -16,7 +16,7 @@ struct CellDetectionView: View {
             ScrollView {
                 // TODO: Mark the words "legitimate network setup" with a bold font
                 CenteredTitleIconTextView(
-                    icon: "cellularbars",
+                    icon: icon,
                     description: """
 CellGuard detects suspicious network cell behavior based on management information exchanged when connecting to base stations.
 
@@ -38,6 +38,14 @@ In a few cases, these anomalies indicate an attack by a fake base station. Such 
         }
         .navigationTitle("Fake Base Stations")
         .navigationBarTitleDisplayMode(.large)
+    }
+    
+    private var icon: String {
+        if #available(iOS 16, *) {
+            return "cellularbars"
+        } else {
+            return "antenna.radiowaves.left.and.right"
+        }
     }
 }
 

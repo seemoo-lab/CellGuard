@@ -64,6 +64,7 @@ struct AdvancedSettingsView: View {
             }
         }
         .navigationTitle("Advanced Settings")
+        .listStyle(.insetGrouped)
     }
     
 }

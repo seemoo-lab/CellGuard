@@ -690,8 +690,8 @@
 			children = (
 				CF0FDCB429698E1500A6FFE2 /* SummaryTabView.swift */,
 				CF2A1C1F2975CDD200E8B61C /* RiskIndicatorCard.swift */,
-				CF2A1C212975DB8100E8B61C /* CellInformationCard.swift */,
 				CF2FF68C2BF296EE006E2DF4 /* RiskInfoView.swift */,
+				CF2A1C212975DB8100E8B61C /* CellInformationCard.swift */,
 				CF0A5677298A7A910012B2A8 /* VerificationProgressView.swift */,
 				CF5672952A29E59000B6EA7C /* TweakInfoView.swift */,
 				CF7309992A79122B00498BC3 /* DataSummaryView.swift */,

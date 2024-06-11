@@ -68,6 +68,7 @@ struct InformationContactView: View {
             }
         }
         .navigationTitle("Information & Contact")
+        .listStyle(.insetGrouped)
     }
 }
 

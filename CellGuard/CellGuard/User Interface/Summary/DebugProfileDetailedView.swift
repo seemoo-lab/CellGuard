@@ -13,7 +13,7 @@ struct DebugProfileDetailedView: View {
     var body: some View {
         ScrollView {
             CenteredTitleIconTextView(
-                icon: "cellularbars",
+                icon: icon,
                 title: "Baseband Debug Profile",
                 description: """
 A baseband debug profile adds more data about cellular network connections to your system logs. This includes all baseband management packets exchanged between iOS and the baseband chip.
@@ -31,6 +31,14 @@ The debug profile expires after 21 days. Please reinstall after expiry.
             .padding()
             
             Spacer(minLength: 10)
+        }
+    }
+    
+    private var icon: String {
+        if #available(iOS 16, *) {
+            return "cellularbars"
+        } else {
+            return "antenna.radiowaves.left.and.right"
         }
     }
 }

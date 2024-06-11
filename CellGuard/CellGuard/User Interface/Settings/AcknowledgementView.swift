@@ -100,6 +100,7 @@ struct AcknowledgementView: View {
             }
         }
         .navigationTitle("Third-Party Libraries")
+        .listStyle(.insetGrouped)
     }
     
 }

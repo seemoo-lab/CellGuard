@@ -16,6 +16,7 @@ struct ContributedStudyDataView: View {
             Text("Weekly Measurements")
         }
         .navigationTitle("Your Contributions")
+        .listStyle(.insetGrouped)
     }
 }
 

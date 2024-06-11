@@ -21,6 +21,7 @@ struct SettingsView: View {
     
     @AppStorage(UserDefaultsKeys.study.rawValue) var studyParticipationTimestamp: Double = 0
     @AppStorage(UserDefaultsKeys.introductionShown.rawValue) var introductionShown: Bool = true
+    @AppStorage(UserDefaultsKeys.appMode.rawValue) var appMode: DataCollectionMode = .none
     
     @EnvironmentObject var locationManager: LocationDataManager
     @EnvironmentObject var notificationManager: CGNotificationManager
@@ -73,12 +74,15 @@ struct SettingsView: View {
             // - (TODO) Toggle for regular sysdiagnose import reminders
             // - (TODO) Toggle for profile expiry notification
             
-            // TODO: Add expected date of expiry (read from sysdiagnose) & allow the user to manually set the date
-            Section(header: Text("Baseband Profile"), footer: Text("Keep the baseband debug profile on your device up-to-date to collect logs for CellGuard.")) {
-                NavigationLink {
-                    DebugProfileDetailedView()
-                } label: {
-                    Text("Install Profile")
+            // Only show the baseband profile setting in the manual mode
+            if appMode == .manual {
+                // TODO: Add expected date of expiry (read from sysdiagnose) & allow the user to manually set the date
+                Section(header: Text("Baseband Profile"), footer: Text("Keep the baseband debug profile on your device up-to-date to collect logs for CellGuard.")) {
+                    NavigationLink {
+                        DebugProfileDetailedView()
+                    } label: {
+                        Text("Install Profile")
+                    }
                 }
             }
             
