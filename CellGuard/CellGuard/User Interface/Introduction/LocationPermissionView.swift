@@ -28,13 +28,16 @@ struct LocationPermissionView: View {
                 // Request permissions after the introduction sheet has been closed.
                 // It's crucial that we do NOT use those manager objects as environment objects in the CompositeTabView class,
                 // otherwise there are a lot of updates and shit (including toolbar stuff) breaks, e.g. NavigationView close prematurely.
-                LocationDataManager.shared.requestAuthorization { _ in
-                    // Enable the data collection (depending on the app type)
-                    #if JAILBREAK
-                    UserDefaults.standard.setValue(DataCollectionMode.automatic.rawValue, forKey: UserDefaultsKeys.appMode.rawValue)
-                    #else
-                    UserDefaults.standard.setValue(DataCollectionMode.manual.rawValue, forKey: UserDefaultsKeys.appMode.rawValue)
-                    #endif
+                LocationDataManager.shared.requestAuthorization { success in
+                    
+                    // Enable the data collection (depending on the app type) if the user shares their location with CellGuard
+                    if success {
+                        #if JAILBREAK
+                        UserDefaults.standard.setValue(DataCollectionMode.automatic.rawValue, forKey: UserDefaultsKeys.appMode.rawValue)
+                        #else
+                        UserDefaults.standard.setValue(DataCollectionMode.manual.rawValue, forKey: UserDefaultsKeys.appMode.rawValue)
+                        #endif
+                    }
                     
                     self.action = 1
                 }

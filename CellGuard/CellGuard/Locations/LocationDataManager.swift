@@ -71,13 +71,6 @@ class LocationDataManager : NSObject, CLLocationManagerDelegate, ObservableObjec
         // https://developer.apple.com/forums/thread/117256?page=2
         if manager.authorizationStatus == .authorizedAlways {
             resumeLocationUpdates()
-            
-            // check permissions. on non-jailbroken devices, this determines if we are in "manual" or "none" mode!
-            #if JAILBREAK
-            #else
-            UserDefaults.standard.set("manual", forKey: UserDefaultsKeys.appMode.rawValue) // authorizedWhenInUse is insufficient for manual mode
-            NSLog("Changing app import mode to manual.")
-            #endif
         }
     }
     
