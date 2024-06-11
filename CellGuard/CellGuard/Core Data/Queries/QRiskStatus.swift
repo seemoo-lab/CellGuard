@@ -91,17 +91,18 @@ extension PersistenceController {
             if dataCollectionMode == .automatic {
                 
                 // == Latest Measurement ==
-                let allFetchRequest: NSFetchRequest<CellTweak> = CellTweak.fetchRequest()
+                let allFetchRequest: NSFetchRequest<VerificationState> = VerificationState.fetchRequest()
                 allFetchRequest.fetchLimit = 1
                 allFetchRequest.sortDescriptors = sortDescriptor
                 let all = try context.fetch(allFetchRequest)
                 
                 // We've received no cells for 30 minutes from the tweak, so we warn the user
-                guard let latestTweakCell = all.first else {
-                    return CCTClient.lastConnectionReady > thirtyMinutesAgo ? .Unknown : .Medium(cause: .TweakCells)
+                guard let latestTweakCell = all.first?.cell else {
+                    return .Medium(cause: .TweakCells)
                 }
+                logger.info("latestTweakCell date : \(latestTweakCell.collected ?? Date.distantPast)")
                 if latestTweakCell.collected ?? Date.distantPast < thirtyMinutesAgo {
-                    return CCTClient.lastConnectionReady > thirtyMinutesAgo ? .Unknown : .Medium(cause: .TweakCells)
+                    return .Medium(cause: .TweakCells)
                 }
                 
                 // == Latest Packet ==
@@ -120,10 +121,10 @@ extension PersistenceController {
                     .sorted { return $0.collected ?? Date.distantPast < $1.collected ?? Date.distantPast }
                     .last
                 guard let latestPacket = latestPacket else {
-                    return CPTClient.lastConnectionReady > thirtyMinutesAgo ? .Unknown : .Medium(cause: .TweakPackets)
+                    return .Medium(cause: .TweakPackets)
                 }
                 if latestPacket.collected ?? Date.distantPast < thirtyMinutesAgo {
-                    return CPTClient.lastConnectionReady > thirtyMinutesAgo ? .Unknown : .Medium(cause: .TweakPackets)
+                    return .Medium(cause: .TweakPackets)
                 }
             }
             #endif
