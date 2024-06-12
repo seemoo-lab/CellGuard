@@ -467,7 +467,7 @@
 		CFA09CF82A73D4B000D16832 /* SwiftExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftExtensions.swift; sourceTree = "<group>"; };
 		CFB323A82BD03AE1007A6807 /* cargo-licenses.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "cargo-licenses.json"; sourceTree = "<group>"; };
 		CFB51833297AEFA80006C690 /* CellStatusIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellStatusIcon.swift; sourceTree = "<group>"; };
-		CFB6CFA42BD122FA00EAB7B4 /* CellGuard (Jailbreak).app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "CellGuard (Jailbreak).app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		CFB6CFA42BD122FA00EAB7B4 /* CellGuard Jailbreak.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "CellGuard Jailbreak.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFB8B2872963417B00503189 /* LocationDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationDataManager.swift; sourceTree = "<group>"; };
 		CFB8B2892963498200503189 /* CellGuardAppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellGuardAppDelegate.swift; sourceTree = "<group>"; };
 		CFB8B290296359CC00503189 /* CCTCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CCTCollector.swift; sourceTree = "<group>"; };
@@ -480,7 +480,7 @@
 		CFBEC8532BC7F7D70021C0B9 /* Cell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cell.swift; sourceTree = "<group>"; };
 		CFC041112C1249F800BCD692 /* IntroductionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroductionView.swift; sourceTree = "<group>"; };
 		CFCE7A8B29817E2500E28787 /* ALSTechnology.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ALSTechnology.swift; sourceTree = "<group>"; };
-		CFD023332961A10D00AA5A1C /* CellGuard (AppStore).app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "CellGuard (AppStore).app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		CFD023332961A10D00AA5A1C /* CellGuard AppStore.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "CellGuard AppStore.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFD023362961A10D00AA5A1C /* CellGuardApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellGuardApp.swift; sourceTree = "<group>"; };
 		CFD0233A2961A10D00AA5A1C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CFD0233D2961A10D00AA5A1C /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
@@ -923,10 +923,10 @@
 		CFD023342961A10D00AA5A1C /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				CFD023332961A10D00AA5A1C /* CellGuard (AppStore).app */,
+				CFD023332961A10D00AA5A1C /* CellGuard AppStore.app */,
 				CFD023482961A10E00AA5A1C /* CellGuardTests.xctest */,
 				CFD023522961A10E00AA5A1C /* CellGuardUITests.xctest */,
-				CFB6CFA42BD122FA00EAB7B4 /* CellGuard (Jailbreak).app */,
+				CFB6CFA42BD122FA00EAB7B4 /* CellGuard Jailbreak.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1049,9 +1049,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		CFB6CF0B2BD122FA00EAB7B4 /* CellGuard (Jailbreak) */ = {
+		CFB6CF0B2BD122FA00EAB7B4 /* CellGuard Jailbreak */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = CFB6CFA12BD122FA00EAB7B4 /* Build configuration list for PBXNativeTarget "CellGuard (Jailbreak)" */;
+			buildConfigurationList = CFB6CFA12BD122FA00EAB7B4 /* Build configuration list for PBXNativeTarget "CellGuard Jailbreak" */;
 			buildPhases = (
 				CFB6CFA02BD122FA00EAB7B4 /* Run Script */,
 				CFB6CF1E2BD122FA00EAB7B4 /* Sources */,
@@ -1062,7 +1062,7 @@
 			);
 			dependencies = (
 			);
-			name = "CellGuard (Jailbreak)";
+			name = "CellGuard Jailbreak";
 			packageProductDependencies = (
 				CFB6CF0C2BD122FA00EAB7B4 /* SwiftProtobuf */,
 				CFB6CF0E2BD122FA00EAB7B4 /* BinarySwift */,
@@ -1075,12 +1075,12 @@
 				CFB6CF1C2BD122FA00EAB7B4 /* AcknowList */,
 			);
 			productName = CellGuard;
-			productReference = CFB6CFA42BD122FA00EAB7B4 /* CellGuard (Jailbreak).app */;
+			productReference = CFB6CFA42BD122FA00EAB7B4 /* CellGuard Jailbreak.app */;
 			productType = "com.apple.product-type.application";
 		};
-		CFD023322961A10D00AA5A1C /* CellGuard (AppStore) */ = {
+		CFD023322961A10D00AA5A1C /* CellGuard AppStore */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = CFD0235C2961A10E00AA5A1C /* Build configuration list for PBXNativeTarget "CellGuard (AppStore)" */;
+			buildConfigurationList = CFD0235C2961A10E00AA5A1C /* Build configuration list for PBXNativeTarget "CellGuard AppStore" */;
 			buildPhases = (
 				CF57560B2B2F213A00C7C60A /* Run Script */,
 				CFD0232F2961A10D00AA5A1C /* Sources */,
@@ -1091,7 +1091,7 @@
 			);
 			dependencies = (
 			);
-			name = "CellGuard (AppStore)";
+			name = "CellGuard AppStore";
 			packageProductDependencies = (
 				CFD0236C2961AD1500AA5A1C /* SwiftProtobuf */,
 				CF2002EC2A2F3244000922E6 /* BinarySwift */,
@@ -1104,7 +1104,7 @@
 				CFFF19E02BC6D045004E40CE /* AcknowList */,
 			);
 			productName = CellGuard;
-			productReference = CFD023332961A10D00AA5A1C /* CellGuard (AppStore).app */;
+			productReference = CFD023332961A10D00AA5A1C /* CellGuard AppStore.app */;
 			productType = "com.apple.product-type.application";
 		};
 		CFD023472961A10E00AA5A1C /* CellGuardTests */ = {
@@ -1190,8 +1190,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				CFD023322961A10D00AA5A1C /* CellGuard (AppStore) */,
-				CFB6CF0B2BD122FA00EAB7B4 /* CellGuard (Jailbreak) */,
+				CFD023322961A10D00AA5A1C /* CellGuard AppStore */,
+				CFB6CF0B2BD122FA00EAB7B4 /* CellGuard Jailbreak */,
 				CFD023472961A10E00AA5A1C /* CellGuardTests */,
 				CFD023512961A10E00AA5A1C /* CellGuardUITests */,
 			);
@@ -1626,12 +1626,12 @@
 /* Begin PBXTargetDependency section */
 		CFEC5E702BD17544004978FA /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = CFB6CF0B2BD122FA00EAB7B4 /* CellGuard (Jailbreak) */;
+			target = CFB6CF0B2BD122FA00EAB7B4 /* CellGuard Jailbreak */;
 			targetProxy = CFEC5E6F2BD17544004978FA /* PBXContainerItemProxy */;
 		};
 		CFEC5E722BD1754D004978FA /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = CFB6CF0B2BD122FA00EAB7B4 /* CellGuard (Jailbreak) */;
+			target = CFB6CF0B2BD122FA00EAB7B4 /* CellGuard Jailbreak */;
 			targetProxy = CFEC5E712BD1754D004978FA /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -2016,7 +2016,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		CFB6CFA12BD122FA00EAB7B4 /* Build configuration list for PBXNativeTarget "CellGuard (Jailbreak)" */ = {
+		CFB6CFA12BD122FA00EAB7B4 /* Build configuration list for PBXNativeTarget "CellGuard Jailbreak" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				CFB6CFA22BD122FA00EAB7B4 /* Debug */,
@@ -2034,7 +2034,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		CFD0235C2961A10E00AA5A1C /* Build configuration list for PBXNativeTarget "CellGuard (AppStore)" */ = {
+		CFD0235C2961A10E00AA5A1C /* Build configuration list for PBXNativeTarget "CellGuard AppStore" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				CFD0235D2961A10E00AA5A1C /* Debug */,
