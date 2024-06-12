@@ -18,6 +18,8 @@ struct PacketTabView: View {
         category: String(describing: PacketTabView.self)
     )
     
+    @AppStorage(UserDefaultsKeys.appMode.rawValue) private var appMode: DataCollectionMode = .none
+    
     @State private var filter: PacketFilterSettings = PacketFilterSettings()
     @State private var isShowingFilterView = false
     
@@ -38,9 +40,13 @@ struct PacketTabView: View {
             }
             .navigationTitle("Packets")
             .toolbar {
+                #if JAILBREAK
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    PauseContinueButton(filter: $filter)
+                    if appMode == .automatic {
+                        PauseContinueButton(filter: $filter)
+                    }
                 }
+                #endif
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
                         isShowingFilterView = true
