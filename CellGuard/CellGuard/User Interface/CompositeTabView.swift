@@ -37,30 +37,11 @@ struct CompositeTabView: View {
     @AppStorage(UserDefaultsKeys.introductionShown.rawValue) var introductionShown: Bool = false
     
     @State private var showingTab = ShownTab.summary
-    @State private var showingImport = false
     @State private var showingSheet: ShownSheet?
     
     var body: some View {
-        if showingImport {
-            // https://swiftwithmajid.com/2021/11/25/mastering-progressview-in-swiftui/
-            return AnyView(ProgressView() {
-                Text("Importing")
-                    .font(.title)
-            })
-        }
-        
-        // Only show the introduction if it never has been shown before
-        if !introductionShown {
-            // TODO: Add transition animation
-            // See: https://www.youtube.com/watch?v=-sOkTOsAzMs
-            // See: https://www.hackingwithswift.com/quick-start/swiftui/how-to-add-and-remove-views-with-a-transition
-            // See: https://developer.apple.com/documentation/swiftui/view/transition(_:)-5h5h0
-            return AnyView(IntroductionView())
-        }
-        
-        
         // If the introduction already was shown, we check on every start if we still have access to the local network
-        let view = TabView(selection: $showingTab) {
+        TabView(selection: $showingTab) {
             SummaryTabView()
                 .tabItem {
                     Label("Summary", systemImage: "shield.fill")
@@ -93,6 +74,13 @@ struct CompositeTabView: View {
                 }
             }
         }
+        .fullScreenCover(isPresented: Binding(get: {
+            !introductionShown
+        }, set: { Bool in
+            // Ignore the change
+        })) {
+            IntroductionView()
+        }
         .onOpenURL { url in
             Self.logger.debug("Open URL: \(url)")
             
@@ -106,7 +94,6 @@ struct CompositeTabView: View {
                 self.showingSheet = ShownSheet.importFile(url)
             }
         }
-        return AnyView(view)
     }
 }
 
