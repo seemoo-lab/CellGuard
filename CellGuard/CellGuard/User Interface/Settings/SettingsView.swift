@@ -23,8 +23,8 @@ struct SettingsView: View {
     @AppStorage(UserDefaultsKeys.introductionShown.rawValue) var introductionShown: Bool = true
     @AppStorage(UserDefaultsKeys.appMode.rawValue) var appMode: DataCollectionMode = .none
     
-    @EnvironmentObject var locationManager: LocationDataManager
-    @EnvironmentObject var notificationManager: CGNotificationManager
+    @ObservedObject private var locationManager = LocationDataManager.shared
+    @ObservedObject var notificationManager = CGNotificationManager.shared
     
     private var isPermissionNotifications: Binding<Bool> { Binding(
         get: { notificationManager.authorizationStatus == .authorized },

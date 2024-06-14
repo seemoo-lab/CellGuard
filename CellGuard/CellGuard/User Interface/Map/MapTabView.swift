@@ -15,8 +15,7 @@ struct MapTabView: View {
     @Environment(\.managedObjectContext)
     private var managedContext: NSManagedObjectContext
     
-    @EnvironmentObject
-    private var locationManager: LocationDataManager
+    @ObservedObject private var locationManager = LocationDataManager.shared
     
     @FetchRequest(
         sortDescriptors: [NSSortDescriptor(keyPath: \CellALS.imported, ascending: false)],

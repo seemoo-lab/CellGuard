@@ -114,7 +114,5 @@ struct CompositeTabView_Previews: PreviewProvider {
     static var previews: some View {
         CompositeTabView()
             .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
-            .environmentObject(LocationDataManager.shared)
-            .environmentObject(CGNotificationManager.shared)
     }
 }

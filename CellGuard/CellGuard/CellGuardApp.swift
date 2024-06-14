@@ -12,17 +12,12 @@ struct CellGuardApp: App {
     @UIApplicationDelegateAdaptor(CellGuardAppDelegate.self) var appDelegate
     @Environment(\.scenePhase) var scenePhase
     
-    let persistenceController = PersistenceController.shared
-    let locationManager = LocationDataManager.shared
-    let notificationManager = CGNotificationManager.shared
-    let backgroundState = BackgroundState.shared
+    @StateObject var backgroundState = BackgroundState.shared
 
     var body: some Scene {
         WindowGroup {
             CompositeTabView()
-                .environment(\.managedObjectContext, persistenceController.container.viewContext)
-                .environmentObject(locationManager)
-                .environmentObject(notificationManager)
+                .environment(\.managedObjectContext, PersistenceController.shared.container.viewContext)
                 .onChange(of: scenePhase) { backgroundState.update(from: $0) }
                 .onAppear { backgroundState.update(from: scenePhase) }
         }

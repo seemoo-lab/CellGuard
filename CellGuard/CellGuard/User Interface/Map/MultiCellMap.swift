@@ -22,8 +22,7 @@ struct MultiCellMap: UIViewRepresentable {
     let alsCells: FetchedResults<CellALS>
     let onTap: (NSManagedObjectID) -> Void
     
-    @EnvironmentObject
-    private var locationManager: LocationDataManager
+    @ObservedObject private var locationManager = LocationDataManager.shared
     
     func makeUIView(context: Context) -> MKMapView {
         let mapView = MKMapView(frame: .zero)
