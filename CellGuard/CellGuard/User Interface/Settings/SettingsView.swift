@@ -66,7 +66,7 @@ struct SettingsView: View {
                 }
                 
                 NavigationLink {
-                    ContributedStudyDataView()
+                    StudyContributionsView()
                 } label: {
                     Text("Your Contributions")
                 }

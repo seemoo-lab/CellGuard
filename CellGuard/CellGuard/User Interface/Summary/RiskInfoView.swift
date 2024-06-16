@@ -31,6 +31,7 @@ struct RiskInfoView: View {
                 }
             }
             
+            // TODO: This might causes issues on iOS 14
             if risk >= .Medium(cause: .Cells(cellCount: 1)) {
                 Section(header: Text("Affected Cells")) {
                     let calendar = Calendar.current
@@ -71,7 +72,7 @@ struct RiskInfoView: View {
             } else {
                 Section(header: Text("Study"), footer: Text("Thank you for contributing to the CellGuard study. Your input will help us improve our metrics and uncover fake base station abuse.")) {
                     NavigationLink {
-                        ContributedStudyDataView()
+                        StudyContributionsView()
                     } label: {
                         Text("Your Contributions")
                     }

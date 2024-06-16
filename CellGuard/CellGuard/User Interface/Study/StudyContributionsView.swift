@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ContributedStudyDataView: View {
+struct StudyContributionsView: View {
     var body: some View {
         // TODO: Implement
         // TODO: Show message if so far no data has been transmitted
@@ -21,5 +21,5 @@ struct ContributedStudyDataView: View {
 }
 
 #Preview {
-    ContributedStudyDataView()
+    StudyContributionsView()
 }
