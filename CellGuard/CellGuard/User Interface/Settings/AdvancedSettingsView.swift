@@ -11,7 +11,7 @@ struct AdvancedSettingsView: View {
     
     @AppStorage(UserDefaultsKeys.showTrackingMarker.rawValue) var showTrackingMarker: Bool = false
     @AppStorage(UserDefaultsKeys.appMode.rawValue) var appMode: DataCollectionMode = .none
-    @AppStorage(UserDefaultsKeys.highVolumeSpeedup.rawValue) var highVolumeSpeedup: Bool = true
+    @AppStorage(UserDefaultsKeys.logArchiveSpeedup.rawValue) var logArchiveSpeedup: Bool = true
     
     private var dataCollectionFooter: String {
         var text = "The data collection mode determines if and how CellGuard collects data. "
@@ -37,8 +37,8 @@ struct AdvancedSettingsView: View {
                 }
             }
             
-            Section(header: Text("HighVolume Log Speedup"), footer: Text("Only scan certain log files from sysdiagnoses to speed up their import. Will be automatically disabled if not applicable for your system.")) {
-                Toggle("Enable Speedup", isOn: $highVolumeSpeedup)
+            Section(header: Text("Logarchive Import Speedup"), footer: Text("Only scan certain log files from sysdiagnoses to speed up their import. Will be automatically disabled if not applicable for your system.")) {
+                Toggle("Enable Speedup", isOn: $logArchiveSpeedup)
             }
             
             Section(header: Text("Location"), footer: Text("Show iOS' background indicator to quickly access CellGuard.")) {

@@ -57,7 +57,7 @@ struct LogArchiveReader {
     private static let rustApp = RustApp.init()
     public static var logParseProgress: (() -> Void)?
     
-    static func importInBackground(url: URL, highVolumeSpeedup: Bool, progress: @escaping LogProgressFunc, completion: @escaping (Result<ImportResult, Error>) -> ()) {
+    static func importInBackground(url: URL, speedup: Bool, progress: @escaping LogProgressFunc, completion: @escaping (Result<ImportResult, Error>) -> ()) {
         // It's crucial that the task has not the lowest priority, otherwise the process is very slloooowww
         Task(priority: TaskPriority.high) {
             PortStatus.importActive.store(true, ordering: .relaxed)
@@ -69,7 +69,7 @@ struct LogArchiveReader {
             }
             let result = Result.init {
                 do {
-                    return try LogArchiveReader().read(url: url, highVolumeSpeedup: highVolumeSpeedup, rust: rustApp, progress: localProgress)
+                    return try LogArchiveReader().read(url: url, speedup: speedup, rust: rustApp, progress: localProgress)
                 } catch {
                     logger.warning("Failed to read sysdiagnose \(url): \(error)")
                     throw error
@@ -86,8 +86,8 @@ struct LogArchiveReader {
     
     private let fileManager = FileManager.default
     
-    func read(url: URL, highVolumeSpeedup: Bool, rust: RustApp, progress: @escaping LogProgressFunc) throws -> ImportResult {
-        Self.logger.debug("Reading log archive at \(url) with HighVolume speedup = \(highVolumeSpeedup)")
+    func read(url: URL, speedup: Bool, rust: RustApp, progress: @escaping LogProgressFunc) throws -> ImportResult {
+        Self.logger.debug("Reading log archive at \(url) with speedup = \(speedup)")
         progress(.unarchiving, 0, 0)
         let tmpDir: URL
         do {
@@ -107,23 +107,23 @@ struct LogArchiveReader {
         
         progress(.extractingTar, 0, 0)
         var logArchive: URL
-        var highVolumeSpeedup = highVolumeSpeedup
+        var speedup = speedup
         var fileCountTraceV3 = 0
         do {
-            logArchive = try extractLogArchive(tmpDir: tmpDir, tmpTarFile: tmpTarFile, highVolumeSpeedup: highVolumeSpeedup)
-            fileCountTraceV3 = try countLogArchiveFiles(logArchiveDir: logArchive, highVolumeSpeedup: highVolumeSpeedup)
+            logArchive = try extractLogArchive(tmpDir: tmpDir, tmpTarFile: tmpTarFile, speedup: speedup)
+            fileCountTraceV3 = try countLogArchiveFiles(logArchiveDir: logArchive, speedup: speedup)
             
-            // If the speed-up is enabled, check if the log archive yields HighVolume tracev3 files.
+            // If the speed-up is enabled, check if the log archive has Persist or HighVolume tracev3 files.
             // If not, we can't apply the speed-up and have to scan all tracev3 files.
-            if highVolumeSpeedup && fileCountTraceV3 == 0 {
-                Self.logger.debug("Disables HighVolume speed-up as there is no HighVolume directory")
-                highVolumeSpeedup = false
+            if speedup && fileCountTraceV3 == 0 {
+                Self.logger.debug("Disables Persist & HighVolume speed-up as there is none the relevant directories")
+                speedup = false
                 // Redo the extraction as we need all tracev3 files for parsing
-                logArchive = try extractLogArchive(tmpDir: tmpDir, tmpTarFile: tmpTarFile, highVolumeSpeedup: highVolumeSpeedup)
-                fileCountTraceV3 = try countLogArchiveFiles(logArchiveDir: logArchive, highVolumeSpeedup: highVolumeSpeedup)
+                logArchive = try extractLogArchive(tmpDir: tmpDir, tmpTarFile: tmpTarFile, speedup: speedup)
+                fileCountTraceV3 = try countLogArchiveFiles(logArchiveDir: logArchive, speedup: speedup)
                 // Disable the speed-up for future invocations as future sysdiagnoses recorded with the device will also not support the speed-up.
                 // The user can always re-enable the speed-up in the settings.
-                UserDefaults.standard.setValue(false, forKey: UserDefaultsKeys.highVolumeSpeedup.rawValue)
+                UserDefaults.standard.setValue(false, forKey: UserDefaultsKeys.logArchiveSpeedup.rawValue)
             }
             
             try fileManager.removeItem(at: tmpTarFile)
@@ -144,7 +144,7 @@ struct LogArchiveReader {
             // Can we do the same? -> Yes, we already doing this in Rust.
             // The function `output` in the file `src/csv_parser.rs` filters log entries based on their subsystem and content.
             // Therefore, we have to modify the function if we want to analyze log entries of different subsystems.
-            csvFile = try parseLogArchive(tmpDir: tmpDir, logArchiveDir: logArchive, highVolumeSpeedup: highVolumeSpeedup, rust: rust)
+            csvFile = try parseLogArchive(tmpDir: tmpDir, logArchiveDir: logArchive, speedup: speedup, rust: rust)
             
             Self.logParseProgress = nil
             try fileManager.removeItem(at: logArchive)
@@ -198,7 +198,7 @@ struct LogArchiveReader {
         return tmpTarFile
     }
     
-    private func extractLogArchive(tmpDir: URL, tmpTarFile: URL, highVolumeSpeedup: Bool) throws -> URL {
+    private func extractLogArchive(tmpDir: URL, tmpTarFile: URL, speedup: Bool) throws -> URL {
         Self.logger.debug("Extracting tar contents")
         let fileHandle = try FileHandle(forReadingFrom: tmpTarFile)
         defer { try? fileHandle.close() }
@@ -222,15 +222,16 @@ struct LogArchiveReader {
                 let path = nameComponents[logArchiveIndex...nameComponents.count-1]
                     .reduce(tmpDir) { $0.appendingPathComponent(String($1)) }
                 
-                // Only extract HighVolume/*.travev3 files if the speedup is enabled as other tracev3 files are not read.
-                if highVolumeSpeedup && path.lastPathComponent.hasSuffix(".tracev3") && !path.pathComponents.contains("HighVolume") {
-                    Self.logger.debug("Skipping extraction from TAR due to HighVolume speed up: \(path)")
+                // Only extract HighVolume/*.travev3 & Persist/*.tracev3 files if the speedup is enabled as other tracev3 files are not read.
+                if speedup && path.lastPathComponent.hasSuffix(".tracev3") &&
+                    !(path.pathComponents.contains("HighVolume") || path.pathComponents.contains("Persist")) {
+                    Self.logger.debug("Skipping extraction from tar due to speed up: \(path)")
                     return
                 }
                 
                 try fileManager.createDirectory(at: path.deletingLastPathComponent(), withIntermediateDirectories: true)
                 try entry.data?.write(to: path)
-                Self.logger.debug("Extracting from TAR: \(path)")
+                Self.logger.debug("Extracting from tar: \(path)")
             }
         }
         
@@ -261,7 +262,7 @@ struct LogArchiveReader {
         return logArchiveDir
     }
         
-    private func countLogArchiveFiles(logArchiveDir: URL, highVolumeSpeedup: Bool) throws -> Int {
+    private func countLogArchiveFiles(logArchiveDir: URL, speedup: Bool) throws -> Int {
         // See: https://stackoverflow.com/a/41979314
         let resourceKeys : [URLResourceKey] = [.isDirectoryKey]
         guard let enumerator = fileManager.enumerator(at: logArchiveDir, includingPropertiesForKeys: resourceKeys) else {
@@ -277,9 +278,11 @@ struct LogArchiveReader {
             }
             // We search for files which will be parsed by the library
             if fileUrl.lastPathComponent.hasSuffix(".tracev3") {
-                if highVolumeSpeedup && fileUrl.pathComponents.contains("HighVolume") {
-                    count += 1
-                } else if !highVolumeSpeedup {
+                if speedup {
+                    if fileUrl.pathComponents.contains("HighVolume") || fileUrl.pathComponents.contains("Persist") {
+                        count += 1
+                    }
+                } else if !speedup {
                     count += 1
                 }
             }
@@ -288,7 +291,7 @@ struct LogArchiveReader {
         return count
     }
     
-    private func parseLogArchive(tmpDir: URL, logArchiveDir: URL, highVolumeSpeedup: Bool, rust: RustApp) throws -> URL {
+    private func parseLogArchive(tmpDir: URL, logArchiveDir: URL, speedup: Bool, rust: RustApp) throws -> URL {
         Self.logger.debug("Parsing extracted log archive using macos-unifiedlogs")
         
         // Define the path of the output file
@@ -296,7 +299,7 @@ struct LogArchiveReader {
         
         // Call the native macos-unifiedlogs via swift-bridge
         // It the returns the total number of parsed log lines
-        _ = rust.parse_system_log(logArchiveDir.path, outFile.path, highVolumeSpeedup)
+        _ = rust.parse_system_log(logArchiveDir.path, outFile.path, speedup)
 
         return outFile
     }

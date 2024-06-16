@@ -96,7 +96,7 @@ struct ImportView: View {
     
     @State private var importNotices: [ImportNotice] = []
     
-    @AppStorage(UserDefaultsKeys.highVolumeSpeedup.rawValue) private var highVolumeSpeedup = true
+    @AppStorage(UserDefaultsKeys.logArchiveSpeedup.rawValue) private var logArchiveSpeedup = true
     
     init() {
         self.fileUrlFixed = false
@@ -257,7 +257,7 @@ struct ImportView: View {
             }
             break
         case .sysdiagnose:
-            LogArchiveReader.importInBackground(url: url, highVolumeSpeedup: highVolumeSpeedup) { phase, currentProgress, totalProgress in
+            LogArchiveReader.importInBackground(url: url, speedup: logArchiveSpeedup) { phase, currentProgress, totalProgress in
                 let progress = Float(currentProgress) / Float(totalProgress)
                 switch (phase) {
                 case .unarchiving:

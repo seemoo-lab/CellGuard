@@ -25,8 +25,8 @@ impl RustApp {
         RustApp {}
     }
 
-    fn parse_system_log(&self, input: &str, output: &str, high_volume_speedup: bool) -> u32 {
+    fn parse_system_log(&self, input: &str, output: &str, speedup: bool) -> u32 {
         csv_parser::output_header(output).unwrap();
-        return csv_parser::parse_log_archive(input, output, high_volume_speedup);
+        return csv_parser::parse_log_archive(input, output, speedup);
     }
 }

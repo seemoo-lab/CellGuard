@@ -14,7 +14,7 @@ enum UserDefaultsKeys: String {
     case showTrackingMarker
     case lastExportDate
     case appMode
-    case highVolumeSpeedup
+    case logArchiveSpeedup
     case study
     case importedCellNumber
 }

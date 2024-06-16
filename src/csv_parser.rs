@@ -53,14 +53,14 @@ pub fn parse_log_archive(path: &str, output_path: &str, high_volume_speedup: boo
 
 // Use the provided strings, shared strings, timesync data to parse the Unified Log data at provided path.
 // Currently, expect the path to follow macOS log collect structure.
-// If high_volume = true, only scan tracev3 files in the HighVolume folder as they are the only ones containing interesting cellular logs.
+// If speedup = true, only scan tracev3 files in the Persist & HighVolume folders as they are the only ones containing interesting cellular logs.
 fn parse_trace_files(
     string_results: &[UUIDText],
     shared_strings_results: &[SharedCacheStrings],
     timesync_data: &[TimesyncBoot],
     path: &str,
     output_path: &str,
-    high_volume_speedup: bool,
+    speedup: bool,
 ) -> u32 {
     // We need to persist the Oversize log entries (they contain large strings that don't fit in normal log entries)
     // Some log entries have Oversize strings located in different tracev3 files.
@@ -80,7 +80,7 @@ fn parse_trace_files(
     archive_path.push("Persist");
 
     let mut log_count: usize = 0;
-    if archive_path.exists() && !high_volume_speedup {
+    if archive_path.exists() {
         let paths = fs::read_dir(&archive_path).unwrap();
 
         // Loop through all tracev3 files in Persist directory
@@ -121,7 +121,7 @@ fn parse_trace_files(
     archive_path.pop();
     archive_path.push("Special");
 
-    if archive_path.exists() && !high_volume_speedup {
+    if archive_path.exists() && !speedup {
         let paths = fs::read_dir(&archive_path).unwrap();
 
         // Loop through all tracev3 files in Special directory
@@ -161,7 +161,7 @@ fn parse_trace_files(
     archive_path.pop();
     archive_path.push("Signpost");
 
-    if archive_path.exists() && !high_volume_speedup {
+    if archive_path.exists() && !speedup {
         let paths = fs::read_dir(&archive_path).unwrap();
 
         // Loop through all tracev3 files in Signpost directory
@@ -238,7 +238,7 @@ fn parse_trace_files(
     archive_path.push("logdata.LiveData.tracev3");
 
     // Check if livedata exists. We only have it if 'log collect' was used
-    if archive_path.exists() && !high_volume_speedup {
+    if archive_path.exists() && !speedup {
         println!("Parsing: logdata.LiveData.tracev3");
         let mut log_data = parse_log(&archive_path.display().to_string()).unwrap();
         log_data.oversize.append(&mut oversize_strings.oversize);
