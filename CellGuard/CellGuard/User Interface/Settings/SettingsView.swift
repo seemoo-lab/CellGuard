@@ -23,48 +23,11 @@ struct SettingsView: View {
     @AppStorage(UserDefaultsKeys.introductionShown.rawValue) var introductionShown: Bool = true
     @AppStorage(UserDefaultsKeys.appMode.rawValue) var appMode: DataCollectionMode = .none
     
-    @ObservedObject private var locationManager = LocationDataManager.shared
-    @ObservedObject var notificationManager = CGNotificationManager.shared
-    
-    private var isPermissionNotifications: Binding<Bool> { Binding(
-        get: { notificationManager.authorizationStatus == .authorized },
-        set: { value in
-            if value {
-                notificationManager.requestAuthorization() { result in
-                    if !result {
-                        openAppSettings()
-                        // TODO: Update auth status once the app regains focus from settings
-                    }
-                }
-            } else {
-                openAppSettings()
-            }
-        }
-    )}
-    
-    private var isPermissionAlwaysLocation: Binding<Bool> { Binding(
-        get: { locationManager.authorizationStatus == .authorizedAlways },
-        set: { value in
-            if value && locationManager.authorizationStatus == .notDetermined {
-                locationManager.requestAuthorization() { result in
-                    if !result {
-                        openAppSettings()
-                    }
-                }
-            } else {
-                openAppSettings()
-            }
-        }
-    )}
-    
     @State private var showQuitStudyAlert = false
 
     var body: some View {
         List {
-            Section(header: Text("Permissions"), footer: Text("Check that CellGuard has all required permission to function correctly.")) {
-                Toggle("Location (Always)", isOn: isPermissionAlwaysLocation)
-                Toggle("Notifications", isOn: isPermissionNotifications)
-            }
+            PermissionSection()
             
             // TODO: Add notifications sections
             // - Toggle for suspicious cell notifications
@@ -143,6 +106,50 @@ struct SettingsView: View {
                     showQuitStudyAlert = false
                 })
             )
+        }
+    }
+}
+
+private struct PermissionSection: View {
+    
+    @ObservedObject private var locationManager = LocationDataManager.shared
+    @ObservedObject var notificationManager = CGNotificationManager.shared
+    
+    private var isPermissionNotifications: Binding<Bool> { Binding(
+        get: { notificationManager.authorizationStatus == .authorized },
+        set: { value in
+            if value {
+                notificationManager.requestAuthorization() { result in
+                    if !result {
+                        openAppSettings()
+                        // TODO: Update auth status once the app regains focus from settings
+                    }
+                }
+            } else {
+                openAppSettings()
+            }
+        }
+    )}
+    
+    private var isPermissionAlwaysLocation: Binding<Bool> { Binding(
+        get: { locationManager.authorizationStatus == .authorizedAlways },
+        set: { value in
+            if value && locationManager.authorizationStatus == .notDetermined {
+                locationManager.requestAuthorization() { result in
+                    if !result {
+                        openAppSettings()
+                    }
+                }
+            } else {
+                openAppSettings()
+            }
+        }
+    )}
+    
+    var body: some View {
+        Section(header: Text("Permissions"), footer: Text("Check that CellGuard has all required permission to function correctly.")) {
+            Toggle("Location (Always)", isOn: isPermissionAlwaysLocation)
+            Toggle("Notifications", isOn: isPermissionNotifications)
         }
     }
     
