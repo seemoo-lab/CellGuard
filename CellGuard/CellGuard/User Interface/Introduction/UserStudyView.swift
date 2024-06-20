@@ -82,6 +82,7 @@ struct UserStudyView: View {
     @AppStorage(UserDefaultsKeys.study.rawValue) private var studyParticipationTimestamp: Double = 0
     @Environment(\.presentationMode) private var presentationMode: Binding<PresentationMode>
     
+    @State private var agePolicyConfirmation: Bool = false
     @State private var action: Int? = 0
     @State private var confirmationSheet: Bool = false
     
@@ -110,19 +111,29 @@ While you can use CellGuard without participating in the study, your involvemen
             #endif
             
             HStack {
+                Toggle(isOn: $agePolicyConfirmation) {
+                    Text("I'm over 18 years or older and agree to the privacy policy.")
+                }
+                .toggleStyle(CheckboxStyle())
+                
+                Link(destination: CellGuardURLs.privacyPolicy) {
+                    Image(systemName: "link")
+                        .font(.system(size: 20))
+                }
+            }
+            .padding(EdgeInsets(top: 2, leading: 10, bottom: 0, trailing: 10))
+            
+            HStack {
+                // Here, save that the user agreed to join the study
                 Button {
-                    if studyParticipationTimestamp > 0 {
-                        // Skip confirmation sheet as the user already agreed to it
-                        nextView()
-                    } else {
-                        // Show confirmation sheet for age verification
-                        confirmationSheet = true
-                    }
+                    studyParticipationTimestamp = Date().timeIntervalSince1970
+                    nextView()
                 } label: {
                     Text("Participate")
                 }
                 .buttonStyle(SmallButtonStyle())
                 .padding(3)
+                .disabled(!agePolicyConfirmation)
                 
                 
                 // Here, save that the user opted out (currently default)
@@ -139,14 +150,6 @@ While you can use CellGuard without participating in the study, your involvemen
         }
         .navigationTitle("Our Study")
         .navigationBarTitleDisplayMode(returnToPreviousView ? .automatic : .large)
-        .sheet(isPresented: $confirmationSheet) {
-            UserStudyViewSheet { accepted in
-                confirmationSheet = false
-                if accepted {
-                    nextView()
-                }
-            }
-        }
     }
     
     func nextView() {
@@ -158,65 +161,40 @@ While you can use CellGuard without participating in the study, your involvemen
     }
 }
 
-private struct UserStudyViewSheet: View {
+// See: https://stackoverflow.com/a/65895802
+
+private struct CheckboxStyle: ToggleStyle {
     
-    let close: (Bool) -> Void
-    
-    @AppStorage(UserDefaultsKeys.study.rawValue) private var studyParticipationTimestamp: Double = 0
-    
-    @State private var ageConfirmation: Bool = false
-    @State private var policyConfirmation: Bool = false
-    
-    var body: some View {
-        NavigationView {
-            List {
-                Section {
-                    Toggle(isOn: $ageConfirmation) {
-                        Text("I am 18 years or older")
-                    }
-                    Toggle(isOn: $policyConfirmation) {
-                        Text("I agree to the privacy policy")
-                    }
-                }
-                Section {
-                    Link(destination: CellGuardURLs.privacyPolicy) {
-                        KeyValueListRow(key: "View Privacy Policy") {
-                            Image(systemName: "link")
-                        }
-                    }
-                }
-            }
-            .listStyle(.insetGrouped)
-            .navigationTitle("Study")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Back") {
-                        close(false)
-                    }
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Participate") {
-                        studyParticipationTimestamp = Date().timeIntervalSince1970
-                        close(true)
-                    }
-                    .disabled(!ageConfirmation || !policyConfirmation)
-                }
-            }
+    func makeBody(configuration: Self.Configuration) -> some View {
+        return HStack {
+            Image(systemName: configuration.isOn ? "checkmark.circle" : "circle")
+                .resizable()
+                .frame(width: 24, height: 24)
+                .foregroundColor(configuration.isOn ? .blue : .gray)
+                .font(.system(size: 20, weight: .regular, design: .default))
+                configuration.label
         }
+        .onTapGesture { configuration.isOn.toggle() }
     }
-    
 }
 
 // Some hack as the big button is not resizable, so we're using a smaller button here
 
 private struct SmallButtonStyle: ButtonStyle {
+    @Environment(\.isEnabled) private var isEnabled: Bool
+    
     func makeBody(configuration: Configuration) -> some View {
+        let foregroundColor = Color(UIColor.white)
+        let backgroundColor = Color(UIColor.systemBlue)
+        
+        let confForegroundColor = !isEnabled || configuration.isPressed ? foregroundColor.opacity(0.3) : foregroundColor
+        let confBackgroundColor = !isEnabled || configuration.isPressed ? backgroundColor.opacity(0.3) : backgroundColor
+        
         configuration.label
             .frame(maxWidth: .infinity)
             .padding()
-            .background(Color(UIColor.systemBlue))
-            .foregroundColor(Color(UIColor.white))
+            .background(confBackgroundColor)
+            .foregroundColor(confForegroundColor)
             //.foregroundStyle(.white)
             .clipShape(RoundedRectangle(cornerSize: CGSize(width: 10, height: 20)))
     }
