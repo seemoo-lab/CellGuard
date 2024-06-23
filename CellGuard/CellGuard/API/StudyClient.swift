@@ -276,7 +276,7 @@ struct StudyClient {
         
         return CreateUserFeedbackDTO(
             suggestedLevel: feedbackLevel,
-            comment: feedbackComment
+            comment: String(feedbackComment.prefix(1000))
         )
     }
     
