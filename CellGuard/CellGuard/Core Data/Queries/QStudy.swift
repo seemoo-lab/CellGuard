@@ -72,9 +72,12 @@ extension PersistenceController {
                 }
                 
                 if lastStoredDate.timeIntervalSince(cell.collected!) < 15 * 60 {
-                    let studyCell = StudyCell(context: context)
-                    studyCell.skippedDueTime = true
-                    cell.study = studyCell
+                    // If the cell object already exists, the user might have uploaded it manually by providing feedback
+                    if cell.study == nil {
+                        let studyCell = StudyCell(context: context)
+                        studyCell.skippedDueTime = true
+                        cell.study = studyCell
+                    }
                     return true
                 }
                 
@@ -89,11 +92,11 @@ extension PersistenceController {
     }
     
     /// Assigns the given upload date to all cells.
-    func saveStudyUploadDate(cells: [NSManagedObjectID], uploadDate: Date) throws {
+    func saveStudyUploadDate(cells: [CellIdWithFeedback], uploadDate: Date) throws {
         try performAndWait(name: "updateTask", author: "setStudyUploadDate") { context in
-            // Assign the upload date to all cells
+            // Assign the upload date and optional feedback to all cells
             for cellId in cells {
-                if let cell = context.object(with: cellId) as? CellTweak {
+                if let cell = context.object(with: cellId.cell) as? CellTweak {
                     if cell.study == nil {
                         let studyCell = StudyCell(context: context)
                         cell.study = studyCell
@@ -101,6 +104,8 @@ extension PersistenceController {
                     
                     cell.study?.uploaded = uploadDate
                     cell.study?.skippedDueTime = false
+                    cell.study?.feedbackText = cellId.feedbackComment
+                    cell.study?.feedbackCategory = cellId.feedbackLevel?.rawValue
                 }
             }
          

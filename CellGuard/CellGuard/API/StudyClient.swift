@@ -189,7 +189,7 @@ struct StudyClient {
             }
             
             // Store that we've successfully uploaded those cells
-            try persistence.saveStudyUploadDate(cells: cellsChunk.map { $0.cell }, uploadDate: Date())
+            try persistence.saveStudyUploadDate(cells: cellsChunk, uploadDate: Date())
         }
     }
     
