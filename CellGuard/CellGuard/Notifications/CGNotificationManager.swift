@@ -75,16 +75,16 @@ class CGNotificationManager: ObservableObject {
         
         // Set the notification text
         let content = UNMutableNotificationContent()
-        content.title = counts.untrusted > 0 ? "Found Untrusted Cells" : "Found Suspicious Cells"
+        content.title = counts.untrusted > 0 ? "Found Suspicious Cells" : "Found Anomalous Cells"
         content.sound = counts.untrusted > 0 ? .default : nil
         
         var body = "Your iPhone recently connected to "
         if counts.untrusted > 0 && counts.suspicious > 0 {
-            body.append("\(counts.untrusted) untrusted and \(counts.suspicious) suspicious cell" + ((counts.untrusted != 1 || counts.suspicious != 1 ? "s" : "")))
+            body.append("\(counts.untrusted) suspicious and \(counts.suspicious) anomalous cell" + ((counts.untrusted + counts.suspicious != 1 ? "s" : "")))
         } else if counts.untrusted > 0 {
-            body.append("\(counts.untrusted) untrusted cell" + (counts.untrusted != 1 ? "s" : ""))
+            body.append("\(counts.untrusted) suspicious cell" + (counts.untrusted != 1 ? "s" : ""))
         } else {
-            body.append("\(counts.suspicious) suspicious cell" + (counts.suspicious != 1 ? "s" : ""))
+            body.append("\(counts.suspicious) anomalous cell" + (counts.suspicious != 1 ? "s" : ""))
         }
         content.body = body
         
