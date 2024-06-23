@@ -1,0 +1,248 @@
+//
+//  VerificationStateStudy.swift
+//  CellGuard
+//
+//  Created by Lukas Arnold on 23.06.24.
+//
+
+import SwiftUI
+
+private enum StudyMeasurementUploadStatus {
+    // Measurement will not be uploaded
+    case verificationNotFinished
+    case statusGood
+    case noParticipation
+    case joinedStudyAfter
+    case otherNearbyMeasurementsSubmitted
+    case studyPaused // Uploaded at a later point
+    
+    // Measurement will (maybe) be uploaded
+    case determiningStatus
+    case failed
+    
+    // Measurement was uploaded
+    case uploadAutomatic
+    case uploadFeedback
+    
+    func submitted() -> String {
+        switch self {
+        case .determiningStatus:
+            return "Processing"
+        case .failed:
+            return "Failed"
+        case .uploadAutomatic:
+            return "Yes"
+        case .uploadFeedback:
+            return "No"
+        default:
+            return "No"
+        }
+    }
+    
+    func description() -> String {
+        switch self {
+        case .verificationNotFinished:
+            return "Please wait until the verification is finished."
+        case .statusGood:
+            return "The measurement is in good standing and thus was not selected for the study."
+        case .noParticipation:
+            return "You've decided not to participate in the study."
+        case .joinedStudyAfter:
+            return "You joined the study after this measurement was recorded. You can submit it manually by providing feedback."
+        case .otherNearbyMeasurementsSubmitted:
+            return "The measurement was not submitted for the study as it is in temporal proximity of another measurement selected for the study. You can submit it manually by providing feedback."
+        case .studyPaused:
+            return "The study is currently paused and the measurements will be submitted at a later point in time."
+        case .determiningStatus:
+            return "CellGuard currently determines if this measurement should be submitted for the study."
+        case .failed:
+            return "Could not submit the measurement to the study server. Please create a bug report."
+        case .uploadAutomatic:
+            return "The measurement was submitted automatically for the study."
+        case .uploadFeedback:
+            return "The measurement was submitted manually as you've provided feedback."
+        }
+    }
+    
+    static func determineStatus(verificationState: VerificationState, verificationPipeline: VerificationPipeline, measurement: CellTweak) -> StudyMeasurementUploadStatus {
+        if !verificationState.finished {
+            return .verificationNotFinished
+        }
+        
+        if verificationState.score >= verificationPipeline.pointsSuspicious {
+            return .statusGood
+        }
+        
+        if let studyStatus = measurement.study {
+            // The cell was not uploaded as it was to close to another cell which will be uploaded
+            if studyStatus.skippedDueTime {
+                return .otherNearbyMeasurementsSubmitted
+            }
+            
+            // The measurement fulfills all requirements to be uploaded
+            if studyStatus.uploaded == nil {
+                // But something must have gone wrong
+                return .failed
+            }
+            
+            // The
+            if studyStatus.feedbackText == nil && studyStatus.feedbackCategory == nil {
+                return .uploadAutomatic
+            }
+            
+            return .uploadFeedback
+        } else {
+            let studyParticipationStart = UserDefaults.standard.date(forKey: UserDefaultsKeys.study.rawValue)
+            guard let studyParticipationStart = studyParticipationStart else {
+                return .noParticipation
+            }
+            
+            if studyParticipationStart < measurement.collected ?? Date.distantFuture {
+                return .joinedStudyAfter
+            }
+            
+            // TODO: Remove to begin study
+            let studyEarlyAdopter = UserDefaults.standard.bool(forKey: UserDefaultsKeys.studyEarlyAdopter.rawValue)
+            if !studyEarlyAdopter {
+                return .studyPaused
+            }
+            
+            return .determiningStatus
+        }
+    }
+}
+
+private struct AlertModel: Identifiable {
+    var id: String { title }
+    var title: String
+    var message: String
+}
+
+struct VerificationStateStudyView: View {
+    
+    let verificationPipeline: VerificationPipeline
+    
+    @ObservedObject var verificationState: VerificationState
+    @ObservedObject var measurement: CellTweak
+    
+    @AppStorage(UserDefaultsKeys.study.rawValue) var studyParticipationStart: Double = 0
+    @AppStorage(UserDefaultsKeys.studyEarlyAdopter.rawValue) var studyEarlyAdopter: Bool = false
+    
+    @State private var showFeedbackSheet = false
+    @State private var alert: AlertModel? = nil
+    
+    init(verificationPipeline: VerificationPipeline, verificationState: VerificationState, measurement: CellTweak) {
+        self.verificationPipeline = verificationPipeline
+        self.verificationState = verificationState
+        self.measurement = measurement
+    }
+    
+    var body: some View {
+        let studyStatus = StudyMeasurementUploadStatus.determineStatus(verificationState: verificationState, verificationPipeline: verificationPipeline, measurement: measurement)
+        
+        Section(header: Text("Study"), footer: Text(studyStatus.description())) {
+            // We have to put the sheet and alert items down here, otherwise the Section element does not work :/
+            KeyValueListRow(key: "Submitted", value: studyStatus.submitted())
+                .sheet(isPresented: $showFeedbackSheet) {
+                    VerificationStateStudyViewSheet(isPresented: $showFeedbackSheet)
+                }
+                .alert(item: $alert) { detail in
+                    Alert(
+                        title: Text(detail.title),
+                        message: Text(detail.message)
+                    )
+                }
+            
+            // Either show the submitted feedback or allow user to create it
+            if studyStatus == .uploadFeedback {
+                KeyValueListRow(key: "Suggested Level", value: FeedbackRiskLevel(rawValue: measurement.study?.feedbackCategory ?? "")?.name() ?? "None")
+                Text("Comment\n") + Text(measurement.study?.feedbackText ?? "None").font(.footnote)
+            } else {
+                Button {
+                    if studyParticipationStart == 0 {
+                        alert = AlertModel(title: "Study Opt-in Required", message: "You have to join the study to provide feedback for the measurement.")
+                        return
+                    }
+                    
+                    if !studyEarlyAdopter {
+                        alert = AlertModel(title: "Study Paused", message: "The study is currently paused. Please try again later.")
+                        return
+                    }
+                    
+                    showFeedbackSheet = true
+                } label: {
+                    Text("Provide Feedback")
+                }
+            }
+        }
+    }
+}
+
+private struct VerificationStateStudyViewSheet: View {
+    
+    @Binding var isPresented: Bool
+    
+    @State private var riskLevel: FeedbackRiskLevel = .untrusted
+    @State private var comment: String = ""
+    
+    @State private var submitting: Bool = false
+    
+    var body: some View {
+        NavigationView {
+            List {
+                Section (header: Text("Suggested Level"), footer: Text("Trusted cells are genuine parts of their network. Anomalous cells exhibit some unusual behavior. Suspicious cells exhibit suspicious behavior in multiple regards.")) {
+                    Picker(selection: $riskLevel, label: Text("Level")) {
+                        ForEach([FeedbackRiskLevel.trusted, FeedbackRiskLevel.suspicious, FeedbackRiskLevel.untrusted]) { level in
+                            Text(level.name()).tag(level)
+                        }
+                    }
+                }
+                
+                // Limit the length to 1000 characters
+                let cutoffBinding = Binding<String> {
+                    comment
+                } set: { newVal in
+                    comment = String(newVal.prefix(1000))
+                }
+                
+                Section(header: Text("Comment"), footer: Text("\(String(format: "%04d", comment.count)) / 1000 characters")) {
+                    TextEditor(text: cutoffBinding)
+                }
+            }
+            .listStyle(.insetGrouped)
+            .navigationTitle("Feedback")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button {
+                        isPresented = false
+                    } label: {
+                        Text("Close")
+                    }
+                    .disabled(submitting)
+                }
+                
+                ToolbarItem(placement: .confirmationAction) {
+                    Button {
+                        submitting = true
+                        Task.detached(priority: .userInitiated) {
+                            try await StudyClient().uploadCellSamples(cells: [
+                                
+                            ])
+                            
+                            await MainActor.run {
+                                submitting = false
+                                isPresented = false
+                            }
+                        }
+                    } label: {
+                        Text("Submit")
+                    }
+                    .disabled(comment.isEmpty || submitting)
+                }
+            }
+        }
+    }
+    
+}
+

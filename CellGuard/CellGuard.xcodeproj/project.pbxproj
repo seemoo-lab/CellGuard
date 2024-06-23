@@ -148,6 +148,10 @@
 		CFA09CF92A73D4B000D16832 /* SwiftExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFA09CF82A73D4B000D16832 /* SwiftExtensions.swift */; };
 		CFA632552AB3501800D46025 /* CSV in Frameworks */ = {isa = PBXBuildFile; productRef = CFA632542AB3501800D46025 /* CSV */; };
 		CFA632582AB3503400D46025 /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = CFA632572AB3503400D46025 /* ZIPFoundation */; };
+		CFAE88142C2887C400092B15 /* VerificationStateLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFAE88132C2887C400092B15 /* VerificationStateLog.swift */; };
+		CFAE88152C2887C400092B15 /* VerificationStateLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFAE88132C2887C400092B15 /* VerificationStateLog.swift */; };
+		CFAE88172C2887F300092B15 /* VerificationStateStudy.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFAE88162C2887F300092B15 /* VerificationStateStudy.swift */; };
+		CFAE88182C2887F300092B15 /* VerificationStateStudy.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFAE88162C2887F300092B15 /* VerificationStateStudy.swift */; };
 		CFB323A92BD03AE1007A6807 /* cargo-licenses.json in Resources */ = {isa = PBXBuildFile; fileRef = CFB323A82BD03AE1007A6807 /* cargo-licenses.json */; };
 		CFB51834297AEFA80006C690 /* CellStatusIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB51833297AEFA80006C690 /* CellStatusIcon.swift */; };
 		CFB6CF1F2BD122FA00EAB7B4 /* CellAnnotationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFDF5D72297EF0E4000708A8 /* CellAnnotationView.swift */; };
@@ -465,6 +469,8 @@
 		CF9626C22AB7474500C46953 /* PersistenceCSVExporter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PersistenceCSVExporter.swift; sourceTree = "<group>"; };
 		CF9EEEE72B34B6A500F9B6D8 /* SysdiagOpenSettingsCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SysdiagOpenSettingsCard.swift; sourceTree = "<group>"; };
 		CFA09CF82A73D4B000D16832 /* SwiftExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftExtensions.swift; sourceTree = "<group>"; };
+		CFAE88132C2887C400092B15 /* VerificationStateLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerificationStateLog.swift; sourceTree = "<group>"; };
+		CFAE88162C2887F300092B15 /* VerificationStateStudy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerificationStateStudy.swift; sourceTree = "<group>"; };
 		CFB323A82BD03AE1007A6807 /* cargo-licenses.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "cargo-licenses.json"; sourceTree = "<group>"; };
 		CFB51833297AEFA80006C690 /* CellStatusIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellStatusIcon.swift; sourceTree = "<group>"; };
 		CFB6CFA42BD122FA00EAB7B4 /* CellGuard Jailbreak.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "CellGuard Jailbreak.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -724,10 +730,10 @@
 		CF4EE5E0296C51C30069BA5A /* Cells */ = {
 			isa = PBXGroup;
 			children = (
+				CFAE88122C28879300092B15 /* Verification State */,
 				CF86C7902A6A9086002EC9B6 /* CellListView.swift */,
 				CF6EC8B02A6D9F99004CF0AB /* CellListFilterView.swift */,
 				CF86C7922A6AC25D002EC9B6 /* CellDetailsView.swift */,
-				CF86C79C2A6AE0E3002EC9B6 /* VerificationStateView.swift */,
 				CFB51833297AEFA80006C690 /* CellStatusIcon.swift */,
 				CF86C7962A6ACDAA002EC9B6 /* CellDetailsRow.swift */,
 				CF86C7982A6AD51D002EC9B6 /* GroupedMeasurements.swift */,
@@ -870,6 +876,16 @@
 				CF8D331B2AC19293009CA3F0 /* PersistenceCSVImporter.swift */,
 			);
 			name = CSV;
+			sourceTree = "<group>";
+		};
+		CFAE88122C28879300092B15 /* Verification State */ = {
+			isa = PBXGroup;
+			children = (
+				CF86C79C2A6AE0E3002EC9B6 /* VerificationStateView.swift */,
+				CFAE88132C2887C400092B15 /* VerificationStateLog.swift */,
+				CFAE88162C2887F300092B15 /* VerificationStateStudy.swift */,
+			);
+			path = "Verification State";
 			sourceTree = "<group>";
 		};
 		CFB8B28B2963560100503189 /* Core Data */ = {
@@ -1314,6 +1330,7 @@
 				CFB6CF202BD122FA00EAB7B4 /* CGTabBarAppearance.swift in Sources */,
 				CFB6CF212BD122FA00EAB7B4 /* CellClusterAnnotation.swift in Sources */,
 				CFB6CF222BD122FA00EAB7B4 /* ImportResult.swift in Sources */,
+				CFAE88182C2887F300092B15 /* VerificationStateStudy.swift in Sources */,
 				CFB6CF232BD122FA00EAB7B4 /* ARIContentParser.swift in Sources */,
 				CFB6CF242BD122FA00EAB7B4 /* PersistenceCSVExporter.swift in Sources */,
 				CF70A97D2BE682F900989FB5 /* QVerification.swift in Sources */,
@@ -1417,6 +1434,7 @@
 				CFEA68ED2C13B0B600F781BC /* InformationContactView.swift in Sources */,
 				CFB6CF702BD122FA00EAB7B4 /* PersistenceCategories.swift in Sources */,
 				CFB6CF712BD122FA00EAB7B4 /* PersistencePreview.swift in Sources */,
+				CFAE88152C2887C400092B15 /* VerificationStateLog.swift in Sources */,
 				CFB6CF722BD122FA00EAB7B4 /* PacketQMI+CoreDataClass.swift in Sources */,
 				CFB6CF732BD122FA00EAB7B4 /* PacketARI+CoreDataClass.swift in Sources */,
 				CFB6CF742BD122FA00EAB7B4 /* AcknowledgementView.swift in Sources */,
@@ -1459,6 +1477,7 @@
 				CF5EA78B29892F420061E9F1 /* CGTabBarAppearance.swift in Sources */,
 				CFDF5D7B297EF71F000708A8 /* CellClusterAnnotation.swift in Sources */,
 				CFFF19E52BC70E63004E40CE /* ImportResult.swift in Sources */,
+				CFAE88172C2887F300092B15 /* VerificationStateStudy.swift in Sources */,
 				CFD8DD282A7175AF00954A25 /* ARIContentParser.swift in Sources */,
 				CF9626C32AB7474500C46953 /* PersistenceCSVExporter.swift in Sources */,
 				CF1CD4752BE16C1C009A3582 /* QVerification.swift in Sources */,
@@ -1562,6 +1581,7 @@
 				CFEA68EC2C13B0B600F781BC /* InformationContactView.swift in Sources */,
 				CFF05F6F2A39ABF500DE6FB2 /* PersistenceCategories.swift in Sources */,
 				CF0FDCC9296B310400A6FFE2 /* PersistencePreview.swift in Sources */,
+				CFAE88142C2887C400092B15 /* VerificationStateLog.swift in Sources */,
 				CFBEC8402BC7F6E80021C0B9 /* PacketQMI+CoreDataClass.swift in Sources */,
 				CFBEC8422BC7F6E80021C0B9 /* PacketARI+CoreDataClass.swift in Sources */,
 				CFFF19E32BC6D2D3004E40CE /* AcknowledgementView.swift in Sources */,
