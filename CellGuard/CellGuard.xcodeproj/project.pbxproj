@@ -69,8 +69,8 @@
 		CF2FF68E2BF296EE006E2DF4 /* RiskInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2FF68C2BF296EE006E2DF4 /* RiskInfoView.swift */; };
 		CF2FF6902BF2A3D3006E2DF4 /* QStudy.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2FF68F2BF2A3D3006E2DF4 /* QStudy.swift */; };
 		CF2FF6912BF2A3D3006E2DF4 /* QStudy.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2FF68F2BF2A3D3006E2DF4 /* QStudy.swift */; };
-		CF2FF6932BF2A3DF006E2DF4 /* StudyClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2FF6922BF2A3DF006E2DF4 /* StudyClient.swift */; };
-		CF2FF6942BF2A3DF006E2DF4 /* StudyClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2FF6922BF2A3DF006E2DF4 /* StudyClient.swift */; };
+		CF2FF6932BF2A3DF006E2DF4 /* StudyClientSamples.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2FF6922BF2A3DF006E2DF4 /* StudyClientSamples.swift */; };
+		CF2FF6942BF2A3DF006E2DF4 /* StudyClientSamples.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2FF6922BF2A3DF006E2DF4 /* StudyClientSamples.swift */; };
 		CF320F5529620B16009BAD18 /* CCTParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF320F5429620B16009BAD18 /* CCTParser.swift */; };
 		CF320F5729621C42009BAD18 /* CCTClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF320F5629621C42009BAD18 /* CCTClientTests.swift */; };
 		CF320F59296225F9009BAD18 /* CCTResponse.txt in Resources */ = {isa = PBXBuildFile; fileRef = CF320F582962208B009BAD18 /* CCTResponse.txt */; };
@@ -152,6 +152,10 @@
 		CFAE88152C2887C400092B15 /* VerificationStateLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFAE88132C2887C400092B15 /* VerificationStateLog.swift */; };
 		CFAE88172C2887F300092B15 /* VerificationStateStudy.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFAE88162C2887F300092B15 /* VerificationStateStudy.swift */; };
 		CFAE88182C2887F300092B15 /* VerificationStateStudy.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFAE88162C2887F300092B15 /* VerificationStateStudy.swift */; };
+		CFAE881A2C28B9C100092B15 /* StudyClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFAE88192C28B9C100092B15 /* StudyClient.swift */; };
+		CFAE881B2C28B9C100092B15 /* StudyClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFAE88192C28B9C100092B15 /* StudyClient.swift */; };
+		CFAE881D2C28BA4300092B15 /* StudyClientScores.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFAE881C2C28BA4300092B15 /* StudyClientScores.swift */; };
+		CFAE881E2C28BA4300092B15 /* StudyClientScores.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFAE881C2C28BA4300092B15 /* StudyClientScores.swift */; };
 		CFB323A92BD03AE1007A6807 /* cargo-licenses.json in Resources */ = {isa = PBXBuildFile; fileRef = CFB323A82BD03AE1007A6807 /* cargo-licenses.json */; };
 		CFB51834297AEFA80006C690 /* CellStatusIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB51833297AEFA80006C690 /* CellStatusIcon.swift */; };
 		CFB6CF1F2BD122FA00EAB7B4 /* CellAnnotationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFDF5D72297EF0E4000708A8 /* CellAnnotationView.swift */; };
@@ -403,7 +407,7 @@
 		CF2B94B22B0B676F00F24ED1 /* PacketConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacketConstants.swift; sourceTree = "<group>"; };
 		CF2FF68C2BF296EE006E2DF4 /* RiskInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RiskInfoView.swift; sourceTree = "<group>"; };
 		CF2FF68F2BF2A3D3006E2DF4 /* QStudy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QStudy.swift; sourceTree = "<group>"; };
-		CF2FF6922BF2A3DF006E2DF4 /* StudyClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StudyClient.swift; sourceTree = "<group>"; };
+		CF2FF6922BF2A3DF006E2DF4 /* StudyClientSamples.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StudyClientSamples.swift; sourceTree = "<group>"; };
 		CF320F5429620B16009BAD18 /* CCTParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CCTParser.swift; sourceTree = "<group>"; };
 		CF320F5629621C42009BAD18 /* CCTClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CCTClientTests.swift; sourceTree = "<group>"; };
 		CF320F582962208B009BAD18 /* CCTResponse.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CCTResponse.txt; sourceTree = "<group>"; };
@@ -471,6 +475,8 @@
 		CFA09CF82A73D4B000D16832 /* SwiftExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftExtensions.swift; sourceTree = "<group>"; };
 		CFAE88132C2887C400092B15 /* VerificationStateLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerificationStateLog.swift; sourceTree = "<group>"; };
 		CFAE88162C2887F300092B15 /* VerificationStateStudy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerificationStateStudy.swift; sourceTree = "<group>"; };
+		CFAE88192C28B9C100092B15 /* StudyClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudyClient.swift; sourceTree = "<group>"; };
+		CFAE881C2C28BA4300092B15 /* StudyClientScores.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudyClientScores.swift; sourceTree = "<group>"; };
 		CFB323A82BD03AE1007A6807 /* cargo-licenses.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "cargo-licenses.json"; sourceTree = "<group>"; };
 		CFB51833297AEFA80006C690 /* CellStatusIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellStatusIcon.swift; sourceTree = "<group>"; };
 		CFB6CFA42BD122FA00EAB7B4 /* CellGuard Jailbreak.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "CellGuard Jailbreak.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1055,7 +1061,9 @@
 			isa = PBXGroup;
 			children = (
 				CFEC5E752BD1808E004978FA /* CellGuardURLs.swift */,
-				CF2FF6922BF2A3DF006E2DF4 /* StudyClient.swift */,
+				CFAE88192C28B9C100092B15 /* StudyClient.swift */,
+				CF2FF6922BF2A3DF006E2DF4 /* StudyClientSamples.swift */,
+				CFAE881C2C28BA4300092B15 /* StudyClientScores.swift */,
 				CFB9541F2BF34DC500F87FF5 /* StudyPacketFilter.swift */,
 				CF8F3E342BF3C4DE00FC9F43 /* StudyTask.swift */,
 			);
@@ -1383,6 +1391,7 @@
 				45ECF56A2BFBE44800DD92CF /* SysdiagInstructionsDetailedView.swift in Sources */,
 				CFB6CF4A2BD122FA00EAB7B4 /* CellGuard.xcdatamodeld in Sources */,
 				45ECF5732BFC00D100DD92CF /* DebugProfileCard.swift in Sources */,
+				CFAE881B2C28B9C100092B15 /* StudyClient.swift in Sources */,
 				CFB6CF4B2BD122FA00EAB7B4 /* SingleCellMap.swift in Sources */,
 				CFB6CF4C2BD122FA00EAB7B4 /* LocationSource.swift in Sources */,
 				CFB6CF4D2BD122FA00EAB7B4 /* PacketTabView.swift in Sources */,
@@ -1399,7 +1408,7 @@
 				45ECF54F2BFAADAA00DD92CF /* NotificationPermissionView.swift in Sources */,
 				CFB6CF592BD122FA00EAB7B4 /* FirstLastDates.swift in Sources */,
 				CFB6CF5A2BD122FA00EAB7B4 /* CCTClient.swift in Sources */,
-				CF2FF6942BF2A3DF006E2DF4 /* StudyClient.swift in Sources */,
+				CF2FF6942BF2A3DF006E2DF4 /* StudyClientSamples.swift in Sources */,
 				CFB6CF5B2BD122FA00EAB7B4 /* DataSummaryView.swift in Sources */,
 				CFB6CF5C2BD122FA00EAB7B4 /* CellReachOverlay.swift in Sources */,
 				CF70A98C2BE6B51C00989FB5 /* QLocationUser.swift in Sources */,
@@ -1418,6 +1427,7 @@
 				CFB6CF632BD122FA00EAB7B4 /* CellTweak+CoreDataClass.swift in Sources */,
 				CFB6CF642BD122FA00EAB7B4 /* LocationClusterAnnotation.swift in Sources */,
 				CFB6CF652BD122FA00EAB7B4 /* CommonDefinitions.swift in Sources */,
+				CFAE881E2C28BA4300092B15 /* StudyClientScores.swift in Sources */,
 				CFB6CF662BD122FA00EAB7B4 /* ActivityViewController.swift in Sources */,
 				45ECF55B2BFAC6F000DD92CF /* SysDiagnoseView.swift in Sources */,
 				CF70A9922BE6B64600989FB5 /* QCommonDeletion.swift in Sources */,
@@ -1530,6 +1540,7 @@
 				45ECF5692BFBE44800DD92CF /* SysdiagInstructionsDetailedView.swift in Sources */,
 				CFD023432961A10D00AA5A1C /* CellGuard.xcdatamodeld in Sources */,
 				45ECF5722BFC00D100DD92CF /* DebugProfileCard.swift in Sources */,
+				CFAE881A2C28B9C100092B15 /* StudyClient.swift in Sources */,
 				CFDF5D7F297F05A0000708A8 /* SingleCellMap.swift in Sources */,
 				CF5EF92A2979B8D800C4F50A /* LocationSource.swift in Sources */,
 				CF4E53A22A321B3000AE2059 /* PacketTabView.swift in Sources */,
@@ -1546,7 +1557,7 @@
 				45ECF54E2BFAADAA00DD92CF /* NotificationPermissionView.swift in Sources */,
 				CFFF19E72BC70E83004E40CE /* FirstLastDates.swift in Sources */,
 				CFD023682961AB9900AA5A1C /* CCTClient.swift in Sources */,
-				CF2FF6932BF2A3DF006E2DF4 /* StudyClient.swift in Sources */,
+				CF2FF6932BF2A3DF006E2DF4 /* StudyClientSamples.swift in Sources */,
 				CF73099A2A79122B00498BC3 /* DataSummaryView.swift in Sources */,
 				CF1FAFB32986B11200106930 /* CellReachOverlay.swift in Sources */,
 				CF70A98B2BE6B51C00989FB5 /* QLocationUser.swift in Sources */,
@@ -1565,6 +1576,7 @@
 				CFBEC8512BC7F7CF0021C0B9 /* CellTweak+CoreDataClass.swift in Sources */,
 				CFDF5D7D297EF76C000708A8 /* LocationClusterAnnotation.swift in Sources */,
 				CF4E539C2A31E73F00AE2059 /* CommonDefinitions.swift in Sources */,
+				CFAE881D2C28BA4300092B15 /* StudyClientScores.swift in Sources */,
 				CFDF5D89297F340E000708A8 /* ActivityViewController.swift in Sources */,
 				45ECF55A2BFAC6F000DD92CF /* SysDiagnoseView.swift in Sources */,
 				CF70A9912BE6B64600989FB5 /* QCommonDeletion.swift in Sources */,

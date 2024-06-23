@@ -164,8 +164,14 @@
         <attribute name="uploaded" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <relationship name="cell" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CellTweak" inverseName="study" inverseEntity="CellTweak"/>
     </entity>
-    <entity name="StudySummary" representedClassName="StudySummary" syncable="YES" codeGenerationType="class">
+    <entity name="StudyScore" representedClassName="StudyScore" syncable="YES" codeGenerationType="class">
+        <attribute name="cellCount" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="country" attributeType="String"/>
+        <attribute name="rateSuspicious" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="rateUntrusted" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="scheduled" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="uploaded" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="week" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
     </entity>
     <entity name="VerificationLog" representedClassName="VerificationLog" syncable="YES" codeGenerationType="class">
         <attribute name="duration" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>

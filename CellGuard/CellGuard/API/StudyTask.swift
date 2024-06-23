@@ -7,11 +7,22 @@
 
 import CoreData
 import Foundation
+import OSLog
 
 struct StudyTask {
     
+    private static let logger = Logger(
+        subsystem: Bundle.main.bundleIdentifier!,
+        category: String(describing: StudyTask.self)
+    )
+    
     private let persistence = PersistenceController.shared
     private let client = StudyClient()
+    private let calendar = {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(identifier: "UTC")!
+        return calendar
+    }()
     
     // TODO: Create task in CellGuardAppDelegate.swift
     
@@ -33,12 +44,17 @@ struct StudyTask {
             try await client.uploadCellSamples(cells: studyCellsWithoutFeedback)
         }
         
-        // TODO: Gather and upload weekly summary
-        // - Check if the study participation was activated before the last week
-        // --> Do we want to use fixed intervals (from Monday UTC to Sunday UTC) or intervals based on the activation of the switch?
-        // - Generate weekly report from DB
-        // -> Only if at least one cell is present
-        // -> Date + randomness
+        // Get the beginning of the current week (UTC) and query all relevant weekly scores that should be uploaded
+        let beginningOfWeek = calendar.dateComponents([.calendar, .yearForWeekOfYear, .weekOfYear], from: Date())
+        if let beginningOfWeek = beginningOfWeek.date {
+            let weeklyScores = try persistence.fetchWeeklyUploadScores(week: beginningOfWeek)
+            if !weeklyScores.isEmpty {
+                // Upload those weekly scores to the backend
+                try await client.uploadWeeklyDetectionSummary(scoreIds: weeklyScores)
+            }
+        } else {
+            Self.logger.info("Can't determine beginning of week: \(beginningOfWeek)")
+        }
     }
     
 }
