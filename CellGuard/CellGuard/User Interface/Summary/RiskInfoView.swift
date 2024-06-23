@@ -31,8 +31,33 @@ struct RiskInfoView: View {
                 }
             }
             
-            // TODO: This might causes issues on iOS 14
-            if risk >= .Medium(cause: .Cells(cellCount: 1)) {
+            // iOS 14 doesn't like it if a subview is open but the originating NavigationLink vanishes and removes "Back" button.
+            // Thus, we have to implement a work around for iOS 14.
+            if #available(iOS 15, *) {
+                if risk >= .Medium(cause: .Cells(cellCount: 1)) {
+                    Section(header: Text("Affected Cells")) {
+                        let calendar = Calendar.current
+                        let subTwoWeeksFromCurrentDate = calendar.date(byAdding: .weekOfYear, value: -2, to: Date()) ?? Date()
+                        
+                        // We don't link trusted cells as this list would be too large and cause performance issues (?)
+                        
+                        NavigationLink {
+                            // TODO: Add date sections in the cell list if the showTwoWeeks settings is activated
+                            CellListView(settings: CellListFilterSettings(status: .anomalous, timeFrame: PacketFilterTimeFrame.past, date: subTwoWeeksFromCurrentDate, showTwoWeeks: true))
+                        } label: {
+                            Text(Image(systemName: "shield")) + Text(" Anomalous Cells")
+                        }
+                        
+                        if risk >= .High(cellCount: 1) {
+                            NavigationLink {
+                                CellListView(settings: CellListFilterSettings(status: .suspicious, timeFrame: PacketFilterTimeFrame.past, date: subTwoWeeksFromCurrentDate, showTwoWeeks: true))
+                            } label: {
+                                Text(Image(systemName: "exclamationmark.shield")) + Text(" Suspicious Cells")
+                            }
+                        }
+                    }
+                }
+            } else {
                 Section(header: Text("Affected Cells")) {
                     let calendar = Calendar.current
                     let subTwoWeeksFromCurrentDate = calendar.date(byAdding: .weekOfYear, value: -2, to: Date()) ?? Date()
@@ -45,14 +70,13 @@ struct RiskInfoView: View {
                     } label: {
                         Text(Image(systemName: "shield")) + Text(" Anomalous Cells")
                     }
+                    .disabled(risk < .Medium(cause: .Cells(cellCount: 1)))
                     
-                    if risk >= .High(cellCount: 1) {
-                        NavigationLink {
-                            CellListView(settings: CellListFilterSettings(status: .suspicious, timeFrame: PacketFilterTimeFrame.past, date: subTwoWeeksFromCurrentDate, showTwoWeeks: true))
-                        } label: {
-                            Text(Image(systemName: "exclamationmark.shield")) + Text(" Suspicious Cells")
-                        }
-                    }
+                    NavigationLink {
+                        CellListView(settings: CellListFilterSettings(status: .suspicious, timeFrame: PacketFilterTimeFrame.past, date: subTwoWeeksFromCurrentDate, showTwoWeeks: true))
+                    } label: {
+                        Text(Image(systemName: "exclamationmark.shield")) + Text(" Suspicious Cells")
+                    }.disabled(risk < .High(cellCount: 1))
                 }
             }
             
