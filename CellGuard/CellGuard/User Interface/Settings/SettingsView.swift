@@ -108,6 +108,7 @@ struct SettingsView: View {
                 title: Text("End Participation?"),
                 message: Text("You will no longer contribute data to the CellGuard study."),
                 primaryButton: .destructive(Text("End"), action: {
+                    studyEarlyAdopter = false
                     studyParticipationTimestamp = 0
                     showQuitStudyAlert = false
                 }),
