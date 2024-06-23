@@ -158,8 +158,8 @@
         </uniquenessConstraints>
     </entity>
     <entity name="StudyCell" representedClassName="StudyCell" syncable="YES" codeGenerationType="class">
-        <attribute name="feedbackCategory" optional="YES" attributeType="String"/>
-        <attribute name="feedbackText" optional="YES" attributeType="String"/>
+        <attribute name="feedbackComment" optional="YES" attributeType="String"/>
+        <attribute name="feedbackLevel" optional="YES" attributeType="String"/>
         <attribute name="skippedDueTime" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="uploaded" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <relationship name="cell" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CellTweak" inverseName="study" inverseEntity="CellTweak"/>

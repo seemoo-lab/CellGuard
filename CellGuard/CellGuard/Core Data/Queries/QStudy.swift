@@ -104,8 +104,8 @@ extension PersistenceController {
                     
                     cell.study?.uploaded = uploadDate
                     cell.study?.skippedDueTime = false
-                    cell.study?.feedbackText = cellId.feedbackComment
-                    cell.study?.feedbackCategory = cellId.feedbackLevel?.rawValue
+                    cell.study?.feedbackComment = cellId.feedbackComment
+                    cell.study?.feedbackLevel = cellId.feedbackLevel?.rawValue
                 }
             }
          

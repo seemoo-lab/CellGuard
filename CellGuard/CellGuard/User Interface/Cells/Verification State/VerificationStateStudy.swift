@@ -86,7 +86,7 @@ private enum StudyMeasurementUploadStatus {
             }
             
             // The
-            if studyStatus.feedbackText == nil && studyStatus.feedbackCategory == nil {
+            if studyStatus.feedbackComment == nil && studyStatus.feedbackLevel == nil {
                 return .uploadAutomatic
             }
             
@@ -155,8 +155,8 @@ struct VerificationStateStudyView: View {
             
             // Either show the submitted feedback or allow user to create it
             if studyStatus == .uploadFeedback {
-                KeyValueListRow(key: "Suggested Level", value: FeedbackRiskLevel(rawValue: measurement.study?.feedbackCategory ?? "")?.name() ?? "None")
-                Text("Comment\n") + Text(measurement.study?.feedbackText ?? "None").font(.footnote)
+                KeyValueListRow(key: "Suggested Level", value: FeedbackRiskLevel(rawValue: measurement.study?.feedbackLevel ?? "")?.name() ?? "None")
+                Text("Comment\n") + Text(measurement.study?.feedbackComment ?? "None").font(.footnote)
             } else {
                 Button {
                     if studyParticipationStart == 0 {
