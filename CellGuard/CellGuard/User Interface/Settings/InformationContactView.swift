@@ -9,6 +9,11 @@ import SwiftUI
 
 struct InformationContactView: View {
     
+    @AppStorage(UserDefaultsKeys.study.rawValue) var studyParticipationTimestamp: Double = 0
+    @AppStorage(UserDefaultsKeys.studyEarlyAdopter.rawValue) var studyEarlyAdopter: Bool = false
+    
+    @State private var alertStudyEarlyAdopter = false
+    
     var versionBuild: String {
         // https://stackoverflow.com/a/28153897
         let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "???"
@@ -23,7 +28,12 @@ struct InformationContactView: View {
             
             Section(header: Text("About CellGuard")) {
                 KeyValueListRow(key: "Version", value: versionBuild)
-
+                    .onLongPressGesture(minimumDuration: 5.0) {
+                        if studyParticipationTimestamp > 0 && !studyEarlyAdopter {
+                            alertStudyEarlyAdopter = true
+                        }
+                    }
+                
                 Link(destination: CellGuardURLs.baseUrl) {
                     KeyValueListRow(key: "Website") {
                         Image(systemName: "link")
@@ -69,6 +79,16 @@ struct InformationContactView: View {
         }
         .navigationTitle("Information & Contact")
         .listStyle(.insetGrouped)
+        .alert(isPresented: $alertStudyEarlyAdopter) {
+            Alert(
+                title: Text("Share Personal Data?"),
+                message: Text("This is a DEVELOPMENT setting not intended for regular users that might expose your personal data. Please do not continue!"),
+                primaryButton: .destructive(Text("Continue")) {
+                    studyEarlyAdopter = true
+                },
+                secondaryButton: .cancel()
+            )
+        }
     }
 }
 

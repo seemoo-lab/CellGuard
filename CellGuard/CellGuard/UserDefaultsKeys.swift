@@ -17,6 +17,7 @@ enum UserDefaultsKeys: String {
     case logArchiveSpeedup
     case study
     case importedCellNumber
+    case studyEarlyAdopter
 }
 
 enum DataCollectionMode: String, CaseIterable, Identifiable {

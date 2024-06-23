@@ -19,9 +19,10 @@ enum SettingsCloseReason {
 
 struct SettingsView: View {
     
-    @AppStorage(UserDefaultsKeys.study.rawValue) var studyParticipationTimestamp: Double = 0
     @AppStorage(UserDefaultsKeys.introductionShown.rawValue) var introductionShown: Bool = true
     @AppStorage(UserDefaultsKeys.appMode.rawValue) var appMode: DataCollectionMode = .none
+    @AppStorage(UserDefaultsKeys.study.rawValue) var studyParticipationTimestamp: Double = 0
+    @AppStorage(UserDefaultsKeys.studyEarlyAdopter.rawValue) var studyEarlyAdopter: Bool = false
     
     @State private var showQuitStudyAlert = false
 
@@ -62,6 +63,14 @@ struct SettingsView: View {
                         showQuitStudyAlert = true
                     } label: {
                         Text("End Participation")
+                    }
+                }
+                
+                if studyEarlyAdopter {
+                    Button {
+                        studyEarlyAdopter = false
+                    } label: {
+                        Text("End Early Adoption")
                     }
                 }
                 
