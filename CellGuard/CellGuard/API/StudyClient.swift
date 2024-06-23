@@ -13,8 +13,21 @@ import OSLog
 private typealias Content = Codable
 
 // Definitions from the backend
-enum FeedbackRiskLevel: String, Codable, CaseIterable {
+enum FeedbackRiskLevel: String, Codable, CaseIterable, Identifiable {
     case untrusted, suspicious, trusted
+    
+    var id: Self { self }
+    
+    func name() -> String {
+        switch (self) {
+        case .trusted:
+            return "Trusted"
+        case .suspicious:
+            return "Anomalous"
+        case .untrusted:
+            return "Suspicious"
+        }
+    }
 }
 
 private enum CellTechnology: String, Codable, CaseIterable {
