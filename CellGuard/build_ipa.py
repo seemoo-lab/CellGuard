@@ -84,7 +84,7 @@ def create_ipa(archive_path: Path, ipa_path: Path):
     # https://realpython.com/python-zipfile/#creating-a-zip-file-from-multiple-regular-files
 
     with yaspin(text="Creating IPA file...") as spinner:
-        app_path = archive_path.joinpath('Products', 'Applications', 'CellGuard.app')
+        app_path = archive_path.joinpath('Products', 'Applications', 'CellGuard Jailbreak.app')
         with zipfile.ZipFile(ipa_path, 'w') as ipa_file:
             for file_path in app_path.rglob('*'):
                 file_zip_path = Path.joinpath(Path('Payload'), file_path.relative_to(app_path.parent))
