@@ -166,10 +166,10 @@
     </entity>
     <entity name="StudyScore" representedClassName="StudyScore" syncable="YES" codeGenerationType="class">
         <attribute name="cellCount" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="country" attributeType="String"/>
+        <attribute name="country" optional="YES" attributeType="String"/>
         <attribute name="rateSuspicious" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="rateUntrusted" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
-        <attribute name="scheduled" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="scheduled" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="uploaded" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="week" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
     </entity>

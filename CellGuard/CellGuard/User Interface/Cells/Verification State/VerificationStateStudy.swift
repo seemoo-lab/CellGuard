@@ -5,6 +5,8 @@
 //  Created by Lukas Arnold on 23.06.24.
 //
 
+import CoreData
+import OSLog
 import SwiftUI
 
 private enum StudyMeasurementUploadStatus {
@@ -144,7 +146,11 @@ struct VerificationStateStudyView: View {
             // We have to put the sheet and alert items down here, otherwise the Section element does not work :/
             KeyValueListRow(key: "Submitted", value: studyStatus.submitted())
                 .sheet(isPresented: $showFeedbackSheet) {
-                    VerificationStateStudyViewSheet(isPresented: $showFeedbackSheet)
+                    if let cellId = verificationState.cell?.objectID {
+                        VerificationStateStudyViewSheet(isPresented: $showFeedbackSheet, cell: cellId)
+                    } else {
+                        Text("An error occurred (Cell ID missing)")
+                    }
                 }
                 .alert(item: $alert) { detail in
                     Alert(
@@ -180,7 +186,13 @@ struct VerificationStateStudyView: View {
 
 private struct VerificationStateStudyViewSheet: View {
     
+    private static let logger = Logger(
+        subsystem: Bundle.main.bundleIdentifier!,
+        category: String(describing: VerificationStateStudyViewSheet.self)
+    )
+    
     @Binding var isPresented: Bool
+    let cell: NSManagedObjectID
     
     @State private var riskLevel: FeedbackRiskLevel = .untrusted
     @State private var comment: String = ""
@@ -226,9 +238,13 @@ private struct VerificationStateStudyViewSheet: View {
                     Button {
                         submitting = true
                         Task.detached(priority: .userInitiated) {
-                            try await StudyClient().uploadCellSamples(cells: [
-                                
-                            ])
+                            do {
+                                try await StudyClient().uploadCellSamples(cells: [
+                                    CellIdWithFeedback(cell: cell, feedbackComment: comment, feedbackLevel: riskLevel)
+                                ])
+                            } catch {
+                                Self.logger.warning("Could not upload user feedback for cell: \(error)\n\(cell)")
+                            }
                             
                             await MainActor.run {
                                 submitting = false

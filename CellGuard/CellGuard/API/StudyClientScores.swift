@@ -24,6 +24,7 @@ private struct CreateWeeklyRatesDTO: Content {
 extension StudyClient {
     
     func uploadWeeklyDetectionSummary(scoreIds: [NSManagedObjectID]) async throws {
+        Self.logger.info("Preparing upload of weekly detection scores")
         
         // Gathering all information for this chunk.
         // Usually we put all queries into Core Data / Queries, but we make an exception here as we don't want to expose all backend structs.
@@ -44,11 +45,13 @@ extension StudyClient {
         }
         
         // Upload data
-        let jsonData = try jsonEncoder.encode(dtos)
+        let jsonData = try jsonEncoder.encode(CreateWeeklyRatesDTO(rates: dtos))
         try await upload(jsonData: jsonData, url: CellGuardURLs.apiCells, description: "weekly scores")
         
         // Store that we've successfully uploaded those weekly rates
         try persistence.saveStudyScoresUploadDate(scores: scoreIds, uploadDate: Date())
+        
+        Self.logger.info("Successfully uploaded the weekly detection scores")
     }
     
     private func createDTO(fromRate rate: StudyScore) -> CreateWeeklyRateDTO {

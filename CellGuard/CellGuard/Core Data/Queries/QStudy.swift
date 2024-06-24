@@ -22,13 +22,16 @@ extension PersistenceController {
             // - the primary verification pipeline has deemed the cell as suspicious
             // - the cell hasn't been uploaded
             fetchRequest.predicate = NSPredicate(
-                format: "finished == YES and score < %@ and cell != nil and cell.imported >= %@ and cell.study == nil and and (ALL cell.verifications.finished == YES)",
-                primaryVerificationPipeline.pointsSuspicious as NSNumber, startDate as NSDate
+                format: "pipeline == %@ and finished == YES and score < %@ and cell != nil and cell.imported >= %@ and cell.study == nil",
+                Int(primaryVerificationPipeline.id) as NSNumber,
+                Int(primaryVerificationPipeline.pointsSuspicious) as NSNumber,
+                startDate as NSDate
             )
             fetchRequest.sortDescriptors = [NSSortDescriptor(key: "cell.collected", ascending: true)]
             fetchRequest.relationshipKeyPathsForPrefetching = ["cell"]
             
             var cellsToBeUploaded = try fetchRequest.execute()
+                .filter { $0.cell?.verifications?.allSatisfy { ($0 as? VerificationState)?.finished ?? false } ?? false }
                 .compactMap { $0.cell }
                 .filter { $0.collected != nil }
             if cellsToBeUploaded.isEmpty {
@@ -127,8 +130,8 @@ extension PersistenceController {
                 // Collect all cells from the past week
                 let verificationFetchRequest = VerificationState.fetchRequest()
                 verificationFetchRequest.predicate = NSPredicate(
-                    format: "cell != nil && finished == YES && pipeline == %@ && collected >= %@ && collected <= %@",
-                    Int(primaryVerificationPipeline.id) as NSInteger,
+                    format: "finished == YES && pipeline == %@ && cell != nil && cell.collected >= %@ && cell.collected <= %@",
+                    Int(primaryVerificationPipeline.id) as NSNumber,
                     week.addingTimeInterval(-60 * 60 * 24 * 7) as NSDate,
                     week as NSDate
                 )

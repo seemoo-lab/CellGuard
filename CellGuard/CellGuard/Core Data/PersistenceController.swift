@@ -54,7 +54,7 @@ class PersistenceController {
     static let shared = PersistenceController()
 
     /// A persistence provider to use with canvas previews.
-    static let preview = PersistencePreview.controller()
+    static let preview = PersistenceController(inMemory: true)
     
     static func basedOnEnvironment() -> PersistenceController {
         if PreviewInfo.active() {
@@ -95,7 +95,7 @@ class PersistenceController {
     }
     private let lastTokenUserDefaultsKey = "persistence-last-token"
 
-    init(inMemory: Bool = false) {
+    private init(inMemory: Bool = false) {
         self.inMemory = inMemory
         
         // It's better to directly initialize the container instead of using a lazy variable

@@ -21,7 +21,7 @@ struct StudyClient {
         category: String(describing: StudyClient.self)
     )
     
-    internal let persistence = PersistenceController()
+    internal let persistence = PersistenceController.shared
     internal let jsonEncoder = {
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .millisecondsSince1970
@@ -29,6 +29,8 @@ struct StudyClient {
     }()
     
     internal func upload(jsonData: Data, url: URL, description: String) async throws {
+        Self.logger.debug("Sending backend request with \(description) to \(url)")
+        
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -41,7 +43,13 @@ struct StudyClient {
                     return
                 }
                 guard let response = response as? HTTPURLResponse, response.statusCode == 201 else {
-                    Self.logger.debug("Server error while \(description): \(response)")
+                    let dataString: String
+                    if let data = data {
+                        dataString = String(data: data, encoding: .utf8) ?? data.base64EncodedString()
+                    } else {
+                        dataString = "no data"
+                    }
+                    Self.logger.debug("Server error while \(description): \(response)\n\(dataString)")
                     continuation.resume(throwing: StudyClientError.uploadErrorExternal(response))
                     return
                 }
@@ -49,7 +57,7 @@ struct StudyClient {
                 Self.logger.debug("Successfully \(description): \(response)")
                 continuation.resume()
                 return
-            }
+            }.resume()
         }
     }
     

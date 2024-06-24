@@ -81,6 +81,10 @@ private struct CreateCellDTO: Content {
     var scores: [CreateCellScoreDTO]
 }
 
+private struct CreateCellsDTO: Content {
+    var cells: [CreateCellDTO]
+}
+
 // Definitions for the app
 struct CellIdWithFeedback {
     let cell: NSManagedObjectID
@@ -92,6 +96,8 @@ extension StudyClient {
     
     func uploadCellSamples(cells: [CellIdWithFeedback]) async throws {
         let packetFilter = StudyPacketFilter()
+        
+        Self.logger.info("Uploading \(cells.count) to the backend:\n\(cells)")
         
         // Chunking the samples into blocks of 10 as this is the maximum limit for one API request.
         for (index, cellsChunk) in cells.chunked(into: 10).enumerated() {
@@ -143,12 +149,16 @@ extension StudyClient {
             }
             
             // Upload the data
-            let jsonData = try jsonEncoder.encode(dtos)
+            let jsonData = try jsonEncoder.encode(CreateCellsDTO(cells: dtos))
             try await upload(jsonData: jsonData, url: CellGuardURLs.apiCells, description: "cell samples chunk \(index)")
             
             // Store that we've successfully uploaded those cells
             try persistence.saveStudyCellUploadDate(cells: cellsChunk, uploadDate: Date())
+            
+            Self.logger.debug("Uploaded chunk \(index) of \(cellsChunk.count) cell(s)")
         }
+        
+        Self.logger.info("Successfully uploaded \(cells.count) to the backend")
     }
     
     /// Converts a CellTweak to a CreateCellDTO.

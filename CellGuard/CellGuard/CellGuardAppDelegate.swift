@@ -250,7 +250,19 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
             
             // TODO: Add maintenance task for verifications (delete verification without cells, create verifications for cells without one)
             
-            // TODO: Add maintenance task for the study
+            // Send samples & weekly measurements to backend
+            Task {
+                try? await Task.sleep(nanoseconds: 15 * NSEC_PER_SEC)
+                let task = StudyTask()
+                while (true) {
+                    do {
+                        try await task.run()
+                    } catch {
+                        Self.logger.warning("Upload task failed with error: \(error)")
+                    }
+                    try? await Task.sleep(nanoseconds: 60 * NSEC_PER_SEC)
+                }
+            }
             
             Self.logger.debug("Started all maintenance background tasks")
             

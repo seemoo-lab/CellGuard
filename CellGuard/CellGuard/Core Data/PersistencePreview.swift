@@ -122,7 +122,7 @@ struct PersistencePreview {
     }
     
     static func controller() -> PersistenceController {
-        let result = PersistenceController(inMemory: true)
+        let result = PersistenceController.preview
         let viewContext = result.container.viewContext
         
         let importedDate = Date()
