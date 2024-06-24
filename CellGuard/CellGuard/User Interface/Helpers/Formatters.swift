@@ -13,6 +13,15 @@ let plainNumberFormatter: NumberFormatter = {
     return formatter
 }()
 
+let percentNumberFormatter: NumberFormatter = {
+    let formatter = NumberFormatter()
+    formatter.numberStyle = .percent
+    formatter.minimumIntegerDigits = 1
+    formatter.maximumIntegerDigits = 1
+    formatter.maximumFractionDigits = 2
+    return formatter
+}()
+
 let mediumDateFormatter: DateFormatter = {
     let formatter = DateFormatter()
     formatter.dateStyle = .medium

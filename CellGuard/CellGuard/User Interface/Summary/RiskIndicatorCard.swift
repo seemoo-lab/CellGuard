@@ -139,6 +139,26 @@ extension RiskLevel: Comparable {
     }
 }
 
+extension RiskLevel {
+    
+    func isCausedByCells() -> Bool {
+        switch (self) {
+        case let .Medium(cause: mediumCause):
+            switch (mediumCause) {
+            case .Cells(cellCount: _):
+                return true
+            default:
+                return false
+            }
+        case .High(cellCount: _):
+            return true
+        default:
+            return false
+        }
+    }
+    
+}
+
 struct RiskIndicatorCard: View {
     
     let risk: RiskLevel

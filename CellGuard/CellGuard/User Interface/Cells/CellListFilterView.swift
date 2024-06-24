@@ -11,10 +11,10 @@ import SwiftUI
 struct CellListFilterSettings {
     
     var status: CellListFilterStatus = .all
+    var study: CellListFilterStudyOptions = .all
     
-    var timeFrame: PacketFilterTimeFrame = .live
+    var timeFrame: CellListFilterTimeFrame = .live
     var date: Date = Calendar.current.startOfDay(for: Date())
-    var showTwoWeeks: Bool = false  // needed for 14-day risk view
     
     var technology: ALSTechnology?
     var country: Int?
@@ -47,11 +47,23 @@ struct CellListFilterSettings {
         if let cell = cell {
             predicateList.append(NSPredicate(format: "cell.cell == %@", cell as NSNumber))
         }
-
-        let beginDay = Calendar.current.startOfDay(for: timeFrame == .live ? Date() : date)
-        if let endDate = Calendar.current.date(byAdding: .day, value: showTwoWeeks ? 15 : 1, to: beginDay) {
-            predicateList.append(NSPredicate(format: "%@ <= cell.collected and cell.collected <= %@", beginDay as NSDate, endDate as NSDate))
+        
+        var beginDate: Date
+        var endDate: Date
+        let calendar = Calendar.current
+        
+        switch (timeFrame) {
+        case .live:
+            beginDate = calendar.startOfDay(for: Date())
+            endDate = calendar.date(byAdding: .day, value: 1, to: beginDate)!
+        case .pastDay:
+            beginDate = calendar.startOfDay(for: date)
+            endDate = calendar.date(byAdding: .day, value: 1, to: beginDate)!
+        case .pastDays:
+            beginDate = calendar.startOfDay(for: date)
+            endDate = calendar.date(byAdding: .day, value: 1, to: calendar.startOfDay(for: Date()))!
         }
+        predicateList.append(NSPredicate(format: "%@ <= cell.collected and cell.collected <= %@", beginDate as NSDate, endDate as NSDate))
         
         let thresholdSuspicious = primaryVerificationPipeline.pointsSuspicious as NSNumber
         let thresholdUntrusted = primaryVerificationPipeline.pointsUntrusted as NSNumber
@@ -71,11 +83,24 @@ struct CellListFilterSettings {
             predicateList.append(NSPredicate(format: "finished == YES"))
             predicateList.append(NSPredicate(format: "score < %@", thresholdUntrusted))
         }
+        
+        switch (study) {
+        case .all:
+            break
+        case .submitted:
+            predicateList.append(NSPredicate(format: "cell.study != nil and cell.study.uploaded != nil"))
+        }
 
         request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicateList)
         request.relationshipKeyPathsForPrefetching = ["cell"]
     }
     
+}
+
+enum CellListFilterTimeFrame: String, CaseIterable, Identifiable {
+    case live, pastDay, pastDays
+    
+    var id: Self { self }
 }
 
 enum CellListFilterStatus: String, CaseIterable, Identifiable {
@@ -92,6 +117,12 @@ enum CellListFilterCustomOptions: String, CaseIterable, Identifiable {
 
 enum CellListFilterPredefinedOptions: String, CaseIterable, Identifiable {
     case all, predefined, custom
+    
+    var id: Self { self }
+}
+
+enum CellListFilterStudyOptions: String, CaseIterable, Identifiable {
+    case all, submitted
     
     var id: Self { self }
 }
@@ -161,11 +192,18 @@ private struct CellListFilterSettingsView: View {
             }
             Section(header: Text("Data")) {
                 Picker("Display", selection: $settings.timeFrame) {
-                    Text("Live").tag(PacketFilterTimeFrame.live)
-                    Text("Recorded").tag(PacketFilterTimeFrame.past)
+                    Text("Live").tag(CellListFilterTimeFrame.live)
+                    Text("Recorded").tag(CellListFilterTimeFrame.pastDay)
                 }
-                if settings.timeFrame == .past {
+                if settings.timeFrame == .pastDay {
                     DatePicker("Day", selection: $settings.date, in: ...Date(), displayedComponents: [.date])
+                }
+            }
+            
+            Section(header: Text("Study")) {
+                Picker("Stauts", selection: $settings.study) {
+                    Text("All").tag(CellListFilterStudyOptions.all)
+                    Text("Submitted").tag(CellListFilterStudyOptions.submitted)
                 }
             }
             

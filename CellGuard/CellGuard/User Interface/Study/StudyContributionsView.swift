@@ -9,11 +9,21 @@ import SwiftUI
 
 struct StudyContributionsView: View {
     var body: some View {
-        // TODO: Implement
-        // TODO: Show message if so far no data has been transmitted
         List {
-            Text("Cells")
-            Text("Weekly Measurements")
+            NavigationLink {
+                CellListView(settings: CellListFilterSettings(
+                    study: .submitted,
+                    timeFrame: .pastDays
+                ))
+            } label: {
+                Text("Cells")
+            }
+            
+            NavigationLink {
+                StudyWeeklyScoresView()
+            } label: {
+                Text("Weekly Measurements")
+            }
         }
         .navigationTitle("Your Contributions")
         .listStyle(.insetGrouped)

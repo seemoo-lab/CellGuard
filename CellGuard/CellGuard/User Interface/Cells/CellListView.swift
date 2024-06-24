@@ -14,10 +14,14 @@ struct CellListView: View {
     
     @State private var isShowingFilterView = false
     @State private var isShowingDateSheet = false
-    @State var settings = CellListFilterSettings()
+    @State var settings: CellListFilterSettings
     
     @State private var sheetDate = Date()
     @Environment(\.managedObjectContext) var managedObjectContext
+    
+    init(settings: CellListFilterSettings = CellListFilterSettings()) {
+        self._settings = State(initialValue: settings)
+    }
     
     var body: some View {
         VStack {
@@ -36,26 +40,54 @@ struct CellListView: View {
         }
         .navigationTitle("Cells")
         .toolbar {
+            // We hide the toolbar buttons on iOS 14 if the view is shown with the past day settings,
+            // because changing the date causes a the view to go rough and forget its parent.
             ToolbarItem(placement: .navigationBarTrailing) {
-                Button {
-                    sheetDate = settings.date
-                    isShowingDateSheet.toggle()
-                } label: {
-                    Image(systemName: "calendar")
+                if #available(iOS 15, *) {
+                    Button {
+                        sheetDate = settings.date
+                        isShowingDateSheet.toggle()
+                    } label: {
+                        Image(systemName: settings.timeFrame == .pastDays ? "calendar.badge.clock" : "calendar")
+                    }
+                } else {
+                    if settings.timeFrame != .pastDays {
+                        Button {
+                            sheetDate = settings.date
+                            isShowingDateSheet.toggle()
+                        } label: {
+                            Image(systemName: settings.timeFrame == .pastDays ? "calendar.badge.clock" : "calendar")
+                        }
+                    }
                 }
             }
             ToolbarItem(placement: .navigationBarTrailing) {
-                Button {
-                    isShowingFilterView = true
-                } label: {
-                    // Starting with iOS 15: line.3.horizontal.decrease.circle
-                    Image(systemName: "line.horizontal.3.decrease.circle")
+                if #available(iOS 15, *) {
+                    Button {
+                        isShowingFilterView = true
+                    } label: {
+                        // Starting with iOS 15: line.3.horizontal.decrease.circle
+                        Image(systemName: "line.horizontal.3.decrease.circle")
+                    }
+                } else {
+                    if settings.timeFrame != .pastDays {
+                        Button {
+                            isShowingFilterView = true
+                        } label: {
+                            // Starting with iOS 15: line.3.horizontal.decrease.circle
+                            Image(systemName: "line.horizontal.3.decrease.circle")
+                        }
+                    }
                 }
             }
         }
         .sheet(isPresented: $isShowingDateSheet) {
-            SelectCellDateView(settings: $settings, sheetDate: $sheetDate, isShowingDateSheet: $isShowingDateSheet)
-                .environment(\.managedObjectContext, managedObjectContext)
+            SelectCellDateView(
+                settings: $settings,
+                sheetDate: $sheetDate,
+                isShowingDateSheet: $isShowingDateSheet
+            )
+            .environment(\.managedObjectContext, managedObjectContext)
         }
         // Magic that prevents Pickers from closing
         // See: https://stackoverflow.com/a/70307271
@@ -121,7 +153,7 @@ private struct SelectCellDateView: View {
                 let startOfToday = Calendar.current.startOfDay(for: Date())
                 let startOfDate: Date = Calendar.current.startOfDay(for: selectedDate)
                 
-                settings.timeFrame = startOfToday == startOfDate ? .live : .past
+                settings.timeFrame = startOfToday == startOfDate ? .live : .pastDay
                 settings.date = selectedDate
                 isShowingDateSheet.toggle()
             } label: {
@@ -142,10 +174,14 @@ private struct FilteredCellView: View {
         category: String(describing: FilteredCellView.self)
     )
     
+    private let settings: CellListFilterSettings
+    
     @FetchRequest
     private var measurementsStates: FetchedResults<VerificationState>
-    
+
     init(settings: CellListFilterSettings) {
+        self.settings = settings
+        
         let statesRequest: NSFetchRequest<VerificationState> = VerificationState.fetchRequest()
         // cellsRequest.fetchBatchSize = 25
         statesRequest.sortDescriptors = [NSSortDescriptor(key: "cell.collected", ascending: false)]
@@ -192,27 +228,60 @@ private struct FilteredCellView: View {
         return groups
     }
     
+    private func groupMeasurementsByDay(_ groupedMeasurements: [GroupedMeasurements]) -> [(Date, [GroupedMeasurements])] {
+        return Dictionary(grouping: groupedMeasurements) { measurement in
+            Calendar.current.startOfDay(for: measurement.start)
+        }
+        .sorted { groupOne, groupTwo in
+            groupOne.key > groupTwo.key
+        }
+    }
+    
     var body: some View {
         let groupedMeasurements = groupMeasurements()
         if !groupedMeasurements.isEmpty {
-            List(groupedMeasurements) { cellMeasurements in
-                NavigationLink {
-                    // The first entry should also update to include newer cell measurements
-                    CellDetailsView(
-                        // The init method of the GroupedMeasurement class guarantees that each instance contains at least one measurement
-                        cell: cellMeasurements.measurements.first!,
-                        start: cellMeasurements.start,
-                        end: cellMeasurements.openEnd ? nil : cellMeasurements.end
-                    )
-                } label: {
-                    ListPacketCell(measurements: cellMeasurements)
+            if settings.timeFrame == .pastDays {
+                // Split the measurements in to day sections
+                List(groupMeasurementsByDay(groupedMeasurements), id: \.0) { (day, dayMeasurements) in
+                    Section(header: Text(mediumDateFormatter.string(from: day))) {
+                        ForEach(dayMeasurements) { cellMeasurements in
+                            GroupedNavigationLink(cellMeasurements: cellMeasurements)
+                        }
+                    }
                 }
+                .listStyle(.insetGrouped)
+            } else {
+                // Show cells of one day
+                List(groupedMeasurements) { cellMeasurements in
+                    GroupedNavigationLink(cellMeasurements: cellMeasurements)
+                }
+                .listStyle(.insetGrouped)
             }
-            .listStyle(.insetGrouped)
+            
         } else {
-            Text("No cell measurements match your search criteria.")
+            Text("No cells match your query.")
                 .multilineTextAlignment(.center)
                 .padding()
+        }
+    }
+    
+}
+
+private struct GroupedNavigationLink: View {
+    
+    let cellMeasurements: GroupedMeasurements
+    
+    var body: some View {
+        return NavigationLink {
+            // The first entry should also update to include newer cell measurements
+            CellDetailsView(
+                // The init method of the GroupedMeasurement class guarantees that each instance contains at least one measurement
+                cell: cellMeasurements.measurements.first!,
+                start: cellMeasurements.start,
+                end: cellMeasurements.openEnd ? nil : cellMeasurements.end
+            )
+        } label: {
+            ListPacketCell(measurements: cellMeasurements)
         }
     }
     
