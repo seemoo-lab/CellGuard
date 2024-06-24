@@ -82,7 +82,7 @@ enum RiskLevel: Equatable {
         @AppStorage(UserDefaultsKeys.study.rawValue) var studyParticipationTimestamp: Double = 0
         let ftDaysSuffix = UserDefaults.standard.dataCollectionMode() != .none ? " collected in the last 14 days" : ""
         
-        let explanationSuffix = "In most cases, cellular anomalies can be explained by non-malicious network settings: The ALS scores trigger when your network provider legitimately sets up new cells, authentication fails when your iPhone connects to third-party cells to enable emergency calls during lousy network coverage, and bandwidth decreases for high-user-density environments. We recommend taking a detailed look into the scores and manually comparing the detection result with the actual circumstances of the anomaly detection."
+        let explanationSuffix = "In most cases, cellular anomalies can be explained by non-malicious network settings: The ALS scores trigger when your network provider legitimately sets up new cells, authentication fails when your iPhone connects to third-party cells to enable emergency calls during lousy network coverage, and bandwidth decreases for high-user-density environments.\n\nWe recommend taking a detailed look into the scores and manually comparing the detection result with the actual circumstances of the anomaly detection."
         
         let studySuffix = studyParticipationTimestamp == 0 ? "The CellGuard team is studying fake base station behavior and countermeasures! As a next step in the fight against fake base stations, we recommend that you participate in our study." : "By participating in the study, you did everything possible to uncover fake base station abuse. The CellGuard team is actively analyzing and studying fake base station behavior and countermeasures!"
         
@@ -96,12 +96,12 @@ enum RiskLevel: Equatable {
         case let .Medium(cause):
             switch cause {
             case .Cells(cellCount: _):
-                return "\(cause.text()) \(explanationSuffix)"
+                return "\(cause.text())\n\n\(explanationSuffix)"
             default:
                 return cause.text()
             }
         case let .High(cellCount):
-            return "Detected \(cellCount) suspicious \(cellCount == 1 ? "cell" : "cells")\(ftDaysSuffix). \(explanationSuffix)\n\n\(studySuffix)"
+            return "Detected \(cellCount) suspicious \(cellCount == 1 ? "cell" : "cells")\(ftDaysSuffix).\n\n\(explanationSuffix)\n\n\(studySuffix)"
         }
     }
     
