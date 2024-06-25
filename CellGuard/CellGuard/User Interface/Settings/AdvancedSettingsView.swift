@@ -45,6 +45,21 @@ struct AdvancedSettingsView: View {
                 Toggle("Background Indicator", isOn: $showTrackingMarker)
             }
             
+            #if LOCAL_BACKEND
+            Section(header: Text("Backend"), footer: Text("\(CellGuardURLs.baseUrl.absoluteString)")) {
+                Button {
+                    Task.detached(priority: .userInitiated) {
+                        var calendar = Calendar(identifier: .gregorian)
+                        calendar.timeZone = TimeZone(identifier: "UTC")!
+                        let beginningOfWeek = calendar.dateComponents([.calendar, .yearForWeekOfYear, .weekOfYear], from: Date()).date!
+                        try PersistenceController.shared.deleteStudyScore(of: beginningOfWeek)
+                    }
+                } label: {
+                    Text("Clear Weekly Scores")
+                }
+            }
+            #endif            
+            
             Section(header: Text("Local Database")) {
                 NavigationLink {
                     ImportView()

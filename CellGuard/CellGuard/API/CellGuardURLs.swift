@@ -9,7 +9,11 @@ import Foundation
 
 struct CellGuardURLs {
     
+    #if LOCAL_BACKEND
+    static let baseUrl = URL(string: "http://MacBook-Pro-von-Lukas.local")!
+    #else
     static let baseUrl = URL(string: "https://cellguard.seemoo.de")!
+    #endif
     
     static let docs = URL(string: "docs/", relativeTo: baseUrl)!
     static let privacyPolicy = URL(string: "privacy-policy", relativeTo: docs)!

@@ -202,4 +202,21 @@ extension PersistenceController {
         }
     }
     
+    func deleteStudyScore(of week: Date) throws {
+        try performAndWait(name: "deleteTask", author: "deleteStudyScore") { context in
+            // Fetch
+            let scoreFetchRequest = StudyScore.fetchRequest()
+            scoreFetchRequest.predicate = NSPredicate(format: "week == %@", week as NSDate)
+            let scores = try scoreFetchRequest.execute()
+            
+            // Delete
+            scores.forEach { context.delete($0) }
+            
+            // Save
+            try context.save()
+            
+            logger.info("Delete \(scores.count) weekly scores for week = \(week)")
+        }
+    }
+    
 }
