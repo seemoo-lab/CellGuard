@@ -46,7 +46,7 @@ extension StudyClient {
         
         // Upload data
         let jsonData = try jsonEncoder.encode(CreateWeeklyRatesDTO(rates: dtos))
-        try await upload(jsonData: jsonData, url: CellGuardURLs.apiCells, description: "weekly scores")
+        try await upload(jsonData: jsonData, url: CellGuardURLs.apiWeekly, description: "weekly scores")
         
         // Store that we've successfully uploaded those weekly rates
         try persistence.saveStudyScoresUploadDate(scores: scoreIds, uploadDate: Date())

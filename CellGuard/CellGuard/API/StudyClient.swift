@@ -49,12 +49,12 @@ struct StudyClient {
                     } else {
                         dataString = "no data"
                     }
-                    Self.logger.debug("Server error while \(description): \(response)\n\(dataString)")
+                    Self.logger.debug("Server error while uploading \(description): \(response)\n\(dataString)")
                     continuation.resume(throwing: StudyClientError.uploadErrorExternal(response))
                     return
                 }
                 
-                Self.logger.debug("Successfully \(description): \(response)")
+                Self.logger.debug("Successfully uploaded \(description): \(response)")
                 continuation.resume()
                 return
             }.resume()

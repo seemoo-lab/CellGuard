@@ -122,9 +122,10 @@ extension PersistenceController {
             let scoreFetchRequest = StudyScore.fetchRequest()
             scoreFetchRequest.predicate = NSPredicate(format: "week == %@", week as NSDate)
             
-            var scores = try scoreFetchRequest.execute()
+            let scoresFetch = try scoreFetchRequest.execute()
+            var scoresUpload: [StudyScore] = []
             
-            if scores.isEmpty {
+            if scoresFetch.isEmpty {
                 // So far no scores have been created, so we'll do that right now.
                 
                 // Collect all cells from the past week
@@ -142,6 +143,9 @@ extension PersistenceController {
                     // If there's no cell we just store a dummy entry to prevent reevaluation
                     let score = StudyScore(context: context)
                     score.cellCount = 0
+                    score.week = week
+                    
+                    logger.info("Not uploading a weekly score for week \(week): \(score)")
                     
                     // Save the changes
                     try context.save()
@@ -152,37 +156,41 @@ extension PersistenceController {
                 let scheduledUploadDate = week.addingTimeInterval(Double(randomSeconds))
                 
                 // Group the cells by country and create entries
-                let countryCells = Dictionary(grouping: cells, by: { OperatorDefinitions.shared.translate(country: $0.cell?.country ?? -1) })
+                let countryCells = Dictionary(grouping: cells, by: { OperatorDefinitions.shared.translate(country: $0.cell?.country ?? -1, iso: true) })
                 
                 for (country, cells) in countryCells {
-                    let untrustedCount = cells
+                    let suspiciousCount = cells
                         .filter { $0.score >= primaryVerificationPipeline.pointsUntrusted && $0.score < primaryVerificationPipeline.pointsSuspicious }
                         .count
                     
-                    let suspiciousCount = cells
+                    let untrustedCount = cells
                         .filter { $0.score < primaryVerificationPipeline.pointsUntrusted }
                         .count
                     
                     let score = StudyScore(context: context)
+                    score.week = week
                     score.country = country
                     score.cellCount = Int32(cells.count)
                     score.rateUntrusted = Double(untrustedCount) / Double(cells.count)
                     score.rateSuspicious = Double(suspiciousCount) / Double(cells.count)
                     score.scheduled = scheduledUploadDate
-                    scores.append(score)
+                    scoresUpload.append(score)
+                    logger.info("Uploading weekly score at \(scheduledUploadDate): \(score)")
                 }
                 
                 // Save the context and return the remaining cells satisfying the criteria
                 try context.save()
+            } else {
+                scoresUpload.append(contentsOf: scoresFetch)
             }
             
             // Search for score that can be uploaded right now
-            return scores.filter { score in
+            return scoresUpload.filter { score in
                 guard let scheduled = score.scheduled else {
                     return false
                 }
                 
-                return scheduled >= Date()
+                return scheduled < Date()
             }.map { $0.objectID }
         } ?? []
     }
