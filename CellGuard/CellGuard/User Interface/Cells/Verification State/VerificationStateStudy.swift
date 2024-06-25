@@ -99,7 +99,7 @@ private enum StudyMeasurementUploadStatus {
                 return .noParticipation
             }
             
-            if studyParticipationStart < measurement.collected ?? Date.distantFuture {
+            if studyParticipationStart > measurement.collected ?? Date.distantFuture {
                 return .joinedStudyAfter
             }
             
