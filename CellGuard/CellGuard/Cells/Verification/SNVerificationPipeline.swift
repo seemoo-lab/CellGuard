@@ -8,33 +8,46 @@
 import Foundation
 import CoreData
 import OSLog
+import Dispatch
 import CoreLocation
 
-func getCountryCode(latitude: Double, longitude: Double, completion: @escaping (String?) -> Void) {
+func getCountryCode(latitude: Double, longitude: Double, completion: @escaping (String) -> Void) {
     let location = CLLocation(latitude: latitude, longitude: longitude)
     
     let geocoder = CLGeocoder()
     geocoder.reverseGeocodeLocation(location) { (placemarks, error) in
         if let error = error {
-            print("Reverse geocode failed with error: \(error.localizedDescription)")
-            completion(nil)
+            completion("UNKNOWN")
             return
         }
         
         guard let placemark = placemarks?.first else {
-            print("No placemark found")
-            completion(nil)
+            completion("UNKNOWN")
             return
         }
         
         if let isoCountryCode = placemark.isoCountryCode {
             completion(isoCountryCode)
         } else {
-            print("Country code not found")
-            completion(nil)
+            completion("UNKNOWN")
         }
     }
 }
+
+// Synchronous wrapper
+func getCountryCodeSync(latitude: Double, longitude: Double) -> String {
+    let semaphore = DispatchSemaphore(value: 0)
+    var result: String = "UNKNOWN"
+    
+    getCountryCode(latitude: latitude, longitude: longitude) { countryCode in
+        result = countryCode
+        semaphore.signal()
+    }
+    
+    semaphore.wait()
+    return result
+}
+
 
 private struct NoConnectionDummyStage: VerificationStage {
     
@@ -63,19 +76,23 @@ private struct No3GConnectionStage: VerificationStage {
     var points: Int16 = 1
     var waitForPackets: Bool = false
     
+    private let persistence = PersistenceController.shared
+    
     func verify(queryCell: ALSQueryCell, queryCellId: NSManagedObjectID, logger: Logger) async throws -> VerificationStageResult {
         if queryCell.technology == .UMTS {
-            var cc: String = ""
-            getCountryCode(latitude: queryCell.location?.latitude ?? 0.0, longitude: queryCell.location?.longitude ?? 0.0) { countryCode in cc = countryCode ?? ""}
-            
-            switch cc {
-            case "DE", "NO", "LU", "CZ", "NL", "HU", "IT", "CY", "MT", "GR":
-                return .fail()
-            default:
-                return .success()
-            }
+            if let latitude = persistence.fetchCellAttribute(cell: queryCellId, extract: {$0.location?.latitude}) {
+                if let longitude = persistence.fetchCellAttribute(cell: queryCellId, extract: {$0.location?.longitude}) {
+                    let cc = getCountryCodeSync(latitude: latitude, longitude: longitude)
+                    
+                    switch cc {
+                    case "DE", "NO", "LU", "CZ", "NL", "HU", "IT", "CY", "MT", "GR":
+                        return .fail()
+                    default:
+                        return .success()
+                    }
+                } else { return .delay(seconds: 3) }
+            } else { return .delay(seconds: 2) }
         }
-        
         return .success()
     }
 }
@@ -88,21 +105,76 @@ private struct No2GConnectionStage: VerificationStage {
     var points: Int16 = 1
     var waitForPackets: Bool = false
     
+    private let persistence = PersistenceController.shared
+    
     func verify(queryCell: ALSQueryCell, queryCellId: NSManagedObjectID, logger: Logger) async throws -> VerificationStageResult {
+        
         if queryCell.technology == .GSM {
-            var cc: String = ""
-            getCountryCode(latitude: queryCell.location?.latitude ?? 0.0, longitude: queryCell.location?.longitude ?? 0.0) { countryCode in cc = countryCode ?? ""}
-            
-            switch cc {
-            // ISO 3166 codes for countries, that reportedly, don't use GSM/2G anymore.
-            case "CH", "AU", "BH", "BN", "CN", "CO", "HK", "JP", "MX", "SG", "ZA", "KR", "TW", "AE", "US":
-                return .fail()
-            default:
-                return .success()
-            }
+            if let latitude = persistence.fetchCellAttribute(cell: queryCellId, extract: {$0.location?.latitude}) {
+                if let longitude = persistence.fetchCellAttribute(cell: queryCellId, extract: {$0.location?.longitude}) {
+                    let cc = getCountryCodeSync(latitude: latitude, longitude: longitude)
+                    
+                    switch cc {
+                    // ISO 3166 codes for countries, that reportedly, don't use GSM/2G anymore.
+                    case "CH", "AU", "BH", "BN", "CN", "CO", "HK", "JP", "MX", "SG", "ZA", "KR", "TW", "AE", "US":
+                        return .fail()
+                    default:
+                        return .success()
+                    }
+                } else { return .delay(seconds: 3) }
+            } else { return .delay(seconds: 2) }
         }
         
         return .success()
+    }
+}
+
+
+
+private struct CheckCorrectMCCStage: VerificationStage {
+    
+    var id: Int16 = 4
+    var name: String = "Correct MCC"
+    var description: String = "Checks wether the MCC is corresponded to the correct country."
+    var points: Int16 = 1
+    var waitForPackets: Bool = false
+    
+    private let persistence = PersistenceController.shared
+        
+    func verify(queryCell: ALSQueryCell, queryCellId: NSManagedObjectID, logger: Logger) async throws -> VerificationStageResult {
+        if let latitude = persistence.fetchCellAttribute(cell: queryCellId, extract: {$0.location?.latitude}) {
+            if let longitude = persistence.fetchCellAttribute(cell: queryCellId, extract: {$0.location?.longitude}) {
+                let cc = getCountryCodeSync(latitude: latitude, longitude: longitude)
+                
+                /// Checks wether the translated MCC is corrosponend to the users country code
+                if OperatorDefinitions.shared.translate(country: queryCell.country, iso: true)!.uppercased() == cc.uppercased() {
+                    return .success()
+                } else { return .fail() }
+            } else { return .delay(seconds: 3) }
+        } else { return .delay(seconds: 2) }
+    }
+}
+
+private struct CheckCorrectMNCStage: VerificationStage {
+    
+    var id: Int16 = 5
+    var name: String = "Correct MNC"
+    var description: String = "Checks wether the MNC is corresponded to the correct operator in the correct country."
+    var points: Int16 = 1
+    var waitForPackets: Bool = false
+    
+    private let persistence = PersistenceController.shared
+        
+    func verify(queryCell: ALSQueryCell, queryCellId: NSManagedObjectID, logger: Logger) async throws -> VerificationStageResult {
+        if let latitude = persistence.fetchCellAttribute(cell: queryCellId, extract: {$0.location?.latitude}) {
+            if let longitude = persistence.fetchCellAttribute(cell: queryCellId, extract: {$0.location?.longitude}) {
+                let cc = getCountryCodeSync(latitude: latitude, longitude: longitude)
+                
+                if OperatorDefinitions.shared.translate(country: queryCell.country, network: queryCell.network, iso: true).0?.uppercased() == cc.uppercased() {
+                    return .success()
+                } else { return .fail() }
+            } else { return .delay(seconds: 3) }
+        } else { return .delay(seconds: 2) }
     }
 }
 
@@ -119,7 +191,9 @@ struct SNVerificationPipeline: VerificationPipeline {
     var stages: [any VerificationStage] = [
         NoConnectionDummyStage(),
         No3GConnectionStage(),
-        No2GConnectionStage()
+        No2GConnectionStage(),
+        CheckCorrectMCCStage(),
+        CheckCorrectMNCStage()
     ]
     
     static var instance = SNVerificationPipeline()
