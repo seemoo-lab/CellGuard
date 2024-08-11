@@ -11,6 +11,12 @@ import OSLog
 import Dispatch
 import CoreLocation
 
+extension Double {
+    var degrees_to_Radians: Double {
+        return self * .pi / 180.0
+    }
+}
+
 func getCountryCode(latitude: Double, longitude: Double, completion: @escaping (String) -> Void) {
     let location = CLLocation(latitude: latitude, longitude: longitude)
     
@@ -48,6 +54,75 @@ func getCountryCodeSync(latitude: Double, longitude: Double) -> String {
     return result
 }
 
+func loadGeoJSON(from data: Data) -> [String: [[CLLocationCoordinate2D]]]? {
+    do {
+        if let geoJSON = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any],
+           let features = geoJSON["features"] as? [[String: Any]] {
+            
+            var countryBorders: [String: [[CLLocationCoordinate2D]]] = [:]
+            
+            for feature in features {
+                if let properties = feature["properties"] as? [String: Any],
+                   let countryISOA2 = properties["ISO_A2"] as? String,
+                   //let country_name = properties["ADMIN"] as? String,
+                   let geometry = feature["geometry"] as? [String: Any],
+                   let coordinates = geometry["coordinates"] as? [[[[Double]]]] {
+                    
+                    var borders = [[CLLocationCoordinate2D]]()
+                    
+                    for polygon in coordinates {
+                        var borderCoordinates = [CLLocationCoordinate2D]()
+                        for coordinateSet in polygon {
+                            for coordinate in coordinateSet {
+                                let lon = coordinate[0]
+                                let lat = coordinate[1]
+                                borderCoordinates.append(CLLocationCoordinate2D(latitude: lat, longitude: lon))
+                            }
+                        }
+                        borders.append(borderCoordinates)
+                    }
+                    
+                    countryBorders[countryISOA2] = borders
+                }
+            }
+            
+            return countryBorders
+        }
+    } catch {
+        print("Error parsing GeoJSON: \(error)")
+    }
+    
+    return nil
+}
+
+func haversineDistance(lat1: Double, lon1: Double, lat2: Double, lon2: Double) -> Double {
+    let R = 6371.00887714 // Mean earth radius in km, we just take this value as the truth. R_0 of the WGS 84.
+    let dLat = (lat2 - lat1).degrees_to_Radians
+    let dLon = (lon2 - lon1).degrees_to_Radians
+    let a = sin(dLat / 2) * sin(dLat / 2) +
+            cos(lat1.degrees_to_Radians) * cos(lat2.degrees_to_Radians) *
+            sin(dLon / 2) * sin(dLon / 2)
+    let c = 2 * atan2(sqrt(a), sqrt(1 - a))
+    return R * c
+}
+
+func isCountryWithinDistance(start: CLLocationCoordinate2D, radius: Double, countryBorders: [String: [[CLLocationCoordinate2D]]]) -> [String] {
+    var nearbyCountries = [String]()
+    
+    for (country, borders) in countryBorders {
+        for border in borders {
+            for borderCoordinate in border {
+                let distance = haversineDistance(lat1: start.latitude, lon1: start.longitude, lat2: borderCoordinate.latitude, lon2: borderCoordinate.longitude)
+                if distance <= radius {
+                    nearbyCountries.append(country)
+                    break
+                }
+            }
+        }
+    }
+    
+    return nearbyCountries
+}
 
 private struct NoConnectionDummyStage: VerificationStage {
     
@@ -178,6 +253,59 @@ private struct CheckCorrectMNCStage: VerificationStage {
     }
 }
 
+private struct CheckDistanceofCell: VerificationStage {
+    
+    var id: Int16 = 6
+    var name: String = "Correct Distance of Cell"
+    var description: String = "Checks wether it is possible, that a user is near a country boarder, thus connecting to a different MCC."
+    var points: Int16 = 1
+    var waitForPackets: Bool = false
+    
+    private let persistence = PersistenceController.shared
+        
+    func verify(queryCell: ALSQueryCell, queryCellId: NSManagedObjectID, logger: Logger) async throws -> VerificationStageResult {
+        if let latitude = persistence.fetchCellAttribute(cell: queryCellId, extract: {$0.location?.latitude}) {
+            if let longitude = persistence.fetchCellAttribute(cell: queryCellId, extract: {$0.location?.longitude}) {
+                let cc = getCountryCodeSync(latitude: latitude, longitude: longitude).uppercased()
+                
+                let cell_cc = OperatorDefinitions.shared.translate(country: queryCell.country, iso: true)!.uppercased()
+                
+                /// Checks wether the translated MCC is corrosponend to the users country code
+                if cell_cc == cc {
+                    if let path = Bundle.main.path(forResource: "countries", ofType: "geojson"),
+                       let data = try? Data(contentsOf: URL(fileURLWithPath: path)),
+                       let countryBorders = loadGeoJSON(from: data) {
+                        
+                        guard let (distance, _, _) = persistence.calculateDistance(tweakCell: queryCellId) else {
+                            // If we can't get the distance, we delay the verification
+                            logger.warning("Can't calculate distance")
+                            return .delay(seconds: 60)
+                        }
+                        
+                        let startPoint = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+                        let radius = distance.distance.degrees_to_Radians
+                        
+                        
+                        var nearbyCountries = isCountryWithinDistance(start: startPoint, radius: radius, countryBorders: countryBorders)
+                        nearbyCountries.append(cc)
+                        
+                        if nearbyCountries.contains(cell_cc) {
+                            logger.info("GEO: Countries within \(radius) km: \(nearbyCountries)")
+                            return .success()
+                        } else {return .fail()}
+                        
+                        
+                    } else {
+                        logger.warning("GEO: Failed to load GeoJSON data.")
+                    }
+                    
+                    return .success()
+                } else { return .fail() }
+            } else { return .delay(seconds: 3) }
+        } else { return .delay(seconds: 2) }
+    }
+}
+
 struct SNVerificationPipeline: VerificationPipeline {
     
     var logger = Logger(
@@ -193,7 +321,8 @@ struct SNVerificationPipeline: VerificationPipeline {
         No3GConnectionStage(),
         No2GConnectionStage(),
         CheckCorrectMCCStage(),
-        CheckCorrectMNCStage()
+        CheckCorrectMNCStage(),
+        CheckDistanceofCell()
     ]
     
     static var instance = SNVerificationPipeline()
