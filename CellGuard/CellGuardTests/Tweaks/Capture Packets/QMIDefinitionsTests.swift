@@ -7,7 +7,7 @@
 
 import Foundation
 import XCTest
-@testable import CellGuard__Jailbreak_
+@testable import CellGuard_Jailbreak
 
 final class QMIDefinitionsTests: XCTestCase {
     

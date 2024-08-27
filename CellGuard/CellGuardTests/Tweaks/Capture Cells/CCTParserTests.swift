@@ -7,7 +7,7 @@
 
 import XCTest
 import Network
-@testable import CellGuard__Jailbreak_
+@testable import CellGuard_Jailbreak
 
 final class CCTParserTests: XCTestCase {
     

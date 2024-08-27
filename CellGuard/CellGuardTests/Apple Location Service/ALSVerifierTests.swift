@@ -7,7 +7,7 @@
 
 import XCTest
 import CoreData
-@testable import CellGuard__Jailbreak_
+@testable import CellGuard_Jailbreak
 
 final class ALSVerifierTests: XCTestCase {
     
