@@ -95,8 +95,6 @@ struct CellIdWithFeedback {
 extension StudyClient {
     
     func uploadCellSamples(cells: [CellIdWithFeedback]) async throws {
-        let packetFilter = StudyPacketFilter()
-        
         Self.logger.info("Uploading \(cells.count) to the backend:\n\(cells)")
         
         // Chunking the samples into blocks of 10 as this is the maximum limit for one API request.
@@ -133,11 +131,10 @@ extension StudyClient {
                     ariPacketFetchRequest.predicate = packetPredicate
                     ariPacketFetchRequest.sortDescriptors = [packetSortDescriptor]
                     
-                    // Fetch and filter the packets to remove personal information (AS IS APPROVED BY ETHICS BOARD)
-                    let qmiPackets = (try qmiPacketFetchRequest.execute()).filter(packetFilter.filter)
-                    let ariPackets = (try ariPacketFetchRequest.execute()).filter(packetFilter.filter)
+                    let qmiPackets = try qmiPacketFetchRequest.execute()
+                    let ariPackets = try ariPacketFetchRequest.execute()
                     
-                    return createDTO(fromCell: cell, packets: qmiPackets + ariPackets, feedback: cellIdWithFeedback)
+                    return try createDTO(fromCell: cell, packets: qmiPackets + ariPackets, feedback: cellIdWithFeedback)
                 }
             }
             
@@ -163,9 +160,9 @@ extension StudyClient {
     
     /// Converts a CellTweak to a CreateCellDTO.
     /// Only call this method from within  the Core Data context.
-    private func createDTO(fromCell cell: CellTweak, packets: [any Packet], feedback: CellIdWithFeedback) -> CreateCellDTO {
+    private func createDTO(fromCell cell: CellTweak, packets: [any Packet], feedback: CellIdWithFeedback) throws -> CreateCellDTO {
         // Map each packet to this DTO
-        let packets = packets.compactMap { createDTO(fromPacket: $0) }
+        let packets = try packets.compactMap { try createDTO(fromPacket: $0) }
         
         // Get all VerificationLogs for each pipeline and convert each one to its DTO
         let scores = cell.verifications?
@@ -202,7 +199,7 @@ extension StudyClient {
         )
     }
     
-    private func createDTO(fromPacket packet: any Packet) -> CreateCellPacketDTO? {
+    private func createDTO(fromPacket packet: any Packet) throws -> CreateCellPacketDTO? {
         guard let directionString = packet.direction,
               let data = packet.data,
               let collected = packet.collected else {
@@ -232,10 +229,20 @@ extension StudyClient {
             return nil
         }
         
+        // Replace packet data with PPI to strip it (AS IS APPROVED BY ETHICS BOARD)
+        let ppiFreeData: Data
+        if let packet = packet as? PacketQMI, !StudyPacketFilter.filter(qmi: packet) {
+            ppiFreeData = try StudyPacketFilter.strip(qmi: data)
+        } else if let packet = packet as? PacketARI, !StudyPacketFilter.filter(ari: packet) {
+            ppiFreeData = try StudyPacketFilter.strip(ari: data)
+        } else {
+            ppiFreeData = data
+        }
+        
         return CreateCellPacketDTO(
             proto: proto,
             direction: direction,
-            data: data,
+            data: ppiFreeData,
             collectedAt: collected
         )
     }

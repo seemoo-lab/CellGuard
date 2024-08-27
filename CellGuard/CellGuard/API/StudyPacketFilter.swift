@@ -11,7 +11,7 @@ struct StudyPacketFilter {
     
     /// Filters QMI packets to decide if they should be included in the study.
     /// Returns true if the packet should be included.
-    func filter(qmi packet: PacketQMI) -> Bool {
+    static func filter(qmi packet: PacketQMI) -> Bool {
         let indication = packet.indication
         let service = packet.service
         let message = packet.message
@@ -31,9 +31,27 @@ struct StudyPacketFilter {
         return true
     }
     
+    /// Strips PPI from the QMI packet and marks it as stripped.
+    /// Returns the stripped data.
+    static func strip(qmi packet: Data) throws -> Data {
+        let parsed = try ParsedQMIPacket(nsData: packet)
+        
+        let qmuxHeader = parsed.qmuxHeader
+        let messageHeader = parsed.messageHeader
+        let txHeader = parsed.transactionHeader
+        
+        // Modifying the flag to signal that we removed PPI from this packet
+        return try ParsedQMIPacket(
+            flag: qmuxHeader.flag + 1, serviceId: qmuxHeader.serviceId, clientId: qmuxHeader.clientId,
+            messageId: messageHeader.messageId,
+            compound: txHeader.compound, indication: txHeader.indication, response: txHeader.response, transactionId: txHeader.transactionId,
+            tlvs: []
+        ).write()
+    }
+    
     /// Filters ARI packets to decide if they should be included in the study.
     /// Returns true if the packet should be included.
-    func filter(ari packet: PacketARI) -> Bool {
+    static func filter(ari packet: PacketARI) -> Bool {
         let group = packet.group
         let type = packet.type
         
@@ -49,6 +67,21 @@ struct StudyPacketFilter {
         
         // By default we include all packets
         return true
+    }
+    
+    /// Strips PPI from the ARI packet and marks it as stripped.
+    /// Returns the stripped data.
+    static func strip(ari packet: Data) throws -> Data {
+        let parsed = try ParsedARIPacket(data: packet)
+        let header = parsed.header
+        
+        // Adding a dummy TLV to signal that we removed PPI from this packet
+        return try ParsedARIPacket(
+            group: header.group, type: header.type,
+            transaction: header.transaction, sequenceNumber: header.sequenceNumber,
+            acknowledgement: header.acknowledgement,
+            tlvs: [ARITLV(type: 1 << 10, version: 0, data: Data())]
+        ).write()
     }
     
 }

@@ -51,6 +51,8 @@ final class ARIParserTests: XCTestCase {
         XCTAssertEqual(packet.tlvs[4].version, 1)
         XCTAssertEqual(packet.tlvs[4].length, 4)
         XCTAssertEqual(packet.tlvs[4].data, Data(count: 4))
+        
+        XCTAssertEqual(try packet.write(), data)
     }
     
     func testSecondPacket() throws {
@@ -96,6 +98,8 @@ final class ARIParserTests: XCTestCase {
         XCTAssertEqual(packet.tlvs[5].version, 1)
         XCTAssertEqual(packet.tlvs[5].length, 100)
         // We've omitted its data check
+        
+        XCTAssertEqual(try packet.write(), data)
     }
     
     func testFunc() throws {
@@ -103,6 +107,7 @@ final class ARIParserTests: XCTestCase {
         let packet = try ParsedARIPacket(data: data!)
         print(packet)
         
+        XCTAssertEqual(try packet.write(), data)
     }
     
     func testInvalidPacket() throws {

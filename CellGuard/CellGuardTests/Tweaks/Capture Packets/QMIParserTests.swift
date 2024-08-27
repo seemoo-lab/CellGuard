@@ -38,6 +38,9 @@ final class QMIParserTests: XCTestCase {
         XCTAssertEqual(packet.tlvs[1].type, 0x01)
         XCTAssertEqual(packet.tlvs[1].length, 2)
         XCTAssertEqual(packet.tlvs[1].data, Data([0x30, 0x0C]))
+        
+        print(try packet.write().base64EncodedString())
+        XCTAssertEqual(data, try packet.write())
     }
     
     func testCTLPacketWithEmptyTLV() throws {
@@ -67,6 +70,8 @@ final class QMIParserTests: XCTestCase {
         XCTAssertEqual(packet.tlvs[1].type, 0x11)
         XCTAssertEqual(packet.tlvs[1].length, 0)
         XCTAssertEqual(packet.tlvs[1].data, Data(count: 0))
+        
+        XCTAssertEqual(data, try packet.write())
     }
     
     func testNASPacket() throws {
@@ -112,6 +117,8 @@ final class QMIParserTests: XCTestCase {
         XCTAssertEqual(packet.tlvs[7].type, 0x21)
         XCTAssertEqual(packet.tlvs[7].length, 1)
         XCTAssertEqual(packet.tlvs[7].data, Data([0x01]))
+        
+        XCTAssertEqual(data, try packet.write())
     }
     
     func testInvalidPacket() throws {
