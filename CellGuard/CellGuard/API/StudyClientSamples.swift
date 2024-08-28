@@ -229,20 +229,20 @@ extension StudyClient {
             return nil
         }
         
-        // Replace packet data with PPI to strip it (AS IS APPROVED BY ETHICS BOARD)
-        let ppiFreeData: Data
+        // Replace packet data with PII to strip it (AS IS APPROVED BY ETHICS BOARD)
+        let piiFreeData: Data
         if let packet = packet as? PacketQMI, !StudyPacketFilter.filter(qmi: packet) {
-            ppiFreeData = try StudyPacketFilter.strip(qmi: data)
+            piiFreeData = try StudyPacketFilter.strip(qmi: data)
         } else if let packet = packet as? PacketARI, !StudyPacketFilter.filter(ari: packet) {
-            ppiFreeData = try StudyPacketFilter.strip(ari: data)
+            piiFreeData = try StudyPacketFilter.strip(ari: data)
         } else {
-            ppiFreeData = data
+            piiFreeData = data
         }
         
         return CreateCellPacketDTO(
             proto: proto,
             direction: direction,
-            data: ppiFreeData,
+            data: piiFreeData,
             collectedAt: collected
         )
     }
