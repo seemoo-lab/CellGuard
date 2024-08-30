@@ -142,6 +142,11 @@ private struct CalculatedRiskView: View {
             .onAppear() {
                 // Update the risk indicator asynchronously to reduce the Core Data load
                 timer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { _ in
+                    // Skip the update of the risk status if the app is in the background
+                    if UIApplication.shared.applicationState == .background {
+                        return
+                    }
+                    
                     DispatchQueue.global(qos: .utility).async {
                         let risk = PersistenceController.basedOnEnvironment().determineDataRiskStatus()
                         DispatchQueue.main.async {
