@@ -31,6 +31,8 @@ class LocationDataManager : NSObject, CLLocationManagerDelegate, ObservableObjec
         
         locationManager.delegate = self
         locationManager.allowsBackgroundLocationUpdates = true
+        // TODO: Can we use a distance filter to reduce the number of location updates?
+        // locationManager.distanceFilter = 10
         
         updateAccuracy()
         
