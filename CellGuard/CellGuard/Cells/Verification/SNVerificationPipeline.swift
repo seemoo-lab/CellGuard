@@ -253,7 +253,7 @@ private struct CheckCorrectMNCStage: VerificationStage {
     }
 }
 
-private struct CheckDistanceofCell: VerificationStage {
+private struct CheckDistanceOfCell: VerificationStage {
     
     var id: Int16 = 6
     var name: String = "Correct Distance of Cell"
@@ -322,7 +322,7 @@ struct SNVerificationPipeline: VerificationPipeline {
         No2GConnectionStage(),
         CheckCorrectMCCStage(),
         CheckCorrectMNCStage(),
-        CheckDistanceofCell()
+        CheckDistanceOfCell()
     ]
     
     static var instance = SNVerificationPipeline()
