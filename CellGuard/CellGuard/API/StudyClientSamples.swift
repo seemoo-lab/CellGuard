@@ -175,7 +175,7 @@ extension StudyClient {
         
         // Return the combined cell DTO
         return CreateCellDTO(
-            technology: CellTechnology(rawValue: cell.technology ?? "") ?? .cdma,
+            technology: CellTechnology(rawValue: cell.technology?.lowercased() ?? "") ?? .cdma,
             country: UInt16(cell.country),
             network: UInt16(cell.network),
             area: UInt32(cell.area),
