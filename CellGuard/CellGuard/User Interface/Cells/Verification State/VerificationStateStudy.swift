@@ -103,12 +103,6 @@ private enum StudyMeasurementUploadStatus {
                 return .joinedStudyAfter
             }
             
-            // TODO: Remove to begin study
-            let studyEarlyAdopter = UserDefaults.standard.bool(forKey: UserDefaultsKeys.studyEarlyAdopter.rawValue)
-            if !studyEarlyAdopter {
-                return .studyPaused
-            }
-            
             return .determiningStatus
         }
     }
@@ -128,7 +122,6 @@ struct VerificationStateStudyView: View {
     @ObservedObject var measurement: CellTweak
     
     @AppStorage(UserDefaultsKeys.study.rawValue) var studyParticipationStart: Double = 0
-    @AppStorage(UserDefaultsKeys.studyEarlyAdopter.rawValue) var studyEarlyAdopter: Bool = false
     
     @State private var showFeedbackSheet = false
     @State private var alert: AlertModel? = nil
@@ -167,11 +160,6 @@ struct VerificationStateStudyView: View {
                 Button {
                     if studyParticipationStart == 0 {
                         alert = AlertModel(title: "Study Opt-in Required", message: "You have to join the study to provide feedback for the measurement.")
-                        return
-                    }
-                    
-                    if !studyEarlyAdopter {
-                        alert = AlertModel(title: "Study Paused", message: "The study is currently paused. Please try again later.")
                         return
                     }
                     

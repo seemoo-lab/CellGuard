@@ -22,7 +22,6 @@ struct SettingsView: View {
     @AppStorage(UserDefaultsKeys.introductionShown.rawValue) var introductionShown: Bool = true
     @AppStorage(UserDefaultsKeys.appMode.rawValue) var appMode: DataCollectionMode = .none
     @AppStorage(UserDefaultsKeys.study.rawValue) var studyParticipationTimestamp: Double = 0
-    @AppStorage(UserDefaultsKeys.studyEarlyAdopter.rawValue) var studyEarlyAdopter: Bool = false
     
     @State private var showQuitStudyAlert = false
 
@@ -66,14 +65,6 @@ struct SettingsView: View {
                     }
                 }
                 
-                if studyEarlyAdopter {
-                    Button {
-                        studyEarlyAdopter = false
-                    } label: {
-                        Text("End Early Adoption")
-                    }
-                }
-                
                 NavigationLink {
                     StudyContributionsView()
                 } label: {
@@ -108,7 +99,6 @@ struct SettingsView: View {
                 title: Text("End Participation?"),
                 message: Text("You will no longer contribute data to the CellGuard study."),
                 primaryButton: .destructive(Text("End"), action: {
-                    studyEarlyAdopter = false
                     studyParticipationTimestamp = 0
                     showQuitStudyAlert = false
                 }),

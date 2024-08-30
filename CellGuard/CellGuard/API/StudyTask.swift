@@ -31,11 +31,6 @@ struct StudyTask {
             return
         }
         
-        // TODO: Remove to begin study
-        if !UserDefaults.standard.bool(forKey: UserDefaultsKeys.studyEarlyAdopter.rawValue) {
-            return
-        }
-        
         // Query all cells relevant for the study which have not been uploaded
         let studyCells = try persistence.fetchStudyUploadCells(startDate: participationSince)
         if !studyCells.isEmpty {
