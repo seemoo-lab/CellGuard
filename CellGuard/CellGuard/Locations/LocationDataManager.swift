@@ -218,6 +218,17 @@ class LocationDataManager : NSObject, CLLocationManagerDelegate, ObservableObjec
             locationManager.desiredAccuracy = kCLLocationAccuracyBest
             return
         }
+        
+        #if !JAILBREAK
+        // Reduce the location accuracy if the lower power is active to preserve battery.
+        // We don't require the location during those times as the device does not collect debug data (including cells & packets) if the mode is active.
+        // See: https://developer.apple.com/documentation/foundation/processinfo/1617047-islowpowermodeenabled
+        if ProcessInfo.processInfo.isLowPowerModeEnabled {
+            Self.logger.debug("Accuracy -> ThreeKilometers (Low Power Mode)")
+            locationManager.desiredAccuracy = kCLLocationAccuracyThreeKilometers
+            return
+        }
+        #endif
 
         // https://stackoverflow.com/a/3460632
         // https://developer.apple.com/documentation/corelocation/cllocationmanager/1620553-pauseslocationupdatesautomatical
