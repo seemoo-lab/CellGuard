@@ -35,7 +35,7 @@ private enum StudyMeasurementUploadStatus {
         case .uploadAutomatic:
             return "Yes"
         case .uploadFeedback:
-            return "No"
+            return "Yes"
         default:
             return "No"
         }
@@ -67,12 +67,10 @@ private enum StudyMeasurementUploadStatus {
     }
     
     static func determineStatus(verificationState: VerificationState, verificationPipeline: VerificationPipeline, measurement: CellTweak) -> StudyMeasurementUploadStatus {
+        
+        // The verification is not yet complete
         if !verificationState.finished {
             return .verificationNotFinished
-        }
-        
-        if verificationState.score >= verificationPipeline.pointsSuspicious {
-            return .statusGood
         }
         
         if let studyStatus = measurement.study {
@@ -87,22 +85,31 @@ private enum StudyMeasurementUploadStatus {
                 return .failed
             }
             
-            // The
+            // The measurement was uploaded automatically
             if studyStatus.feedbackComment == nil && studyStatus.feedbackLevel == nil {
                 return .uploadAutomatic
             }
             
+            // The measurement was uploaded with user feedback
             return .uploadFeedback
         } else {
+            // The cell is in good standing
+            if verificationState.score >= verificationPipeline.pointsSuspicious {
+                return .statusGood
+            }
+            
+            // The user does not participate in the study
             let studyParticipationStart = UserDefaults.standard.date(forKey: UserDefaultsKeys.study.rawValue)
             guard let studyParticipationStart = studyParticipationStart else {
                 return .noParticipation
             }
             
+            // The cell was not uploaded because the user did not yet participate in the study
             if studyParticipationStart > measurement.collected ?? Date.distantFuture {
                 return .joinedStudyAfter
             }
             
+            // We're determining the cell's status
             return .determiningStatus
         }
     }
@@ -133,7 +140,11 @@ struct VerificationStateStudyView: View {
     }
     
     var body: some View {
-        let studyStatus = StudyMeasurementUploadStatus.determineStatus(verificationState: verificationState, verificationPipeline: verificationPipeline, measurement: measurement)
+        let studyStatus = StudyMeasurementUploadStatus.determineStatus(
+            verificationState: verificationState,
+            verificationPipeline: verificationPipeline,
+            measurement: measurement
+        )
         
         Section(header: Text("Study"), footer: Text(studyStatus.description())) {
             // We have to put the sheet and alert items down here, otherwise the Section element does not work :/
