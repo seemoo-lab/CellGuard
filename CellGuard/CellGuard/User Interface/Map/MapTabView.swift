@@ -34,7 +34,7 @@ struct MapTabView: View {
                 NavigationLink(isActive: $navigationActive) {
                     if let target = navigationTarget,
                        let cell = managedContext.object(with: target) as? CellALS {
-                        CellDetailsView(cell: cell)
+                        CellDetailsView(alsCell: cell)
                     } else {
                         Text("Cell not found")
                     }

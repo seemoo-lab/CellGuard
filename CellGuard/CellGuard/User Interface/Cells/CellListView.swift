@@ -41,7 +41,7 @@ struct CellListView: View {
         .navigationTitle("Cells")
         .toolbar {
             // We hide the toolbar buttons on iOS 14 if the view is shown with the past day settings,
-            // because changing the date causes a the view to go rough and forget its parent.
+            // because changing the date causes a the view to go rogue and forget its parent.
             ToolbarItem(placement: .navigationBarTrailing) {
                 if #available(iOS 15, *) {
                     Button {
@@ -204,7 +204,7 @@ private struct FilteredCellView: View {
             // If we've encountered a new cell, we start a new group
             if let firstGroupMeasurement = groupMeasurements.first, queryCell(firstGroupMeasurement) != queryCell(measurement) {
                 do {
-                    groups.append(try GroupedMeasurements(measurements: groupMeasurements, openEnd: first))
+                    groups.append(try GroupedMeasurements(measurements: groupMeasurements, openEnd: first, settings: settings))
                 } catch {
                     Self.logger.warning("Can't group cell measurements (\(groupMeasurements)): \(error)")
                 }
@@ -219,7 +219,7 @@ private struct FilteredCellView: View {
         // The final batch of measurements
         if !groupMeasurements.isEmpty {
             do {
-                groups.append(try GroupedMeasurements(measurements: groupMeasurements, openEnd: first))
+                groups.append(try GroupedMeasurements(measurements: groupMeasurements, openEnd: first, settings: settings))
             } catch {
                 Self.logger.warning("Can't group cell measurements (\(groupMeasurements)): \(error)")
             }
@@ -276,9 +276,8 @@ private struct GroupedNavigationLink: View {
             // The first entry should also update to include newer cell measurements
             CellDetailsView(
                 // The init method of the GroupedMeasurement class guarantees that each instance contains at least one measurement
-                cell: cellMeasurements.measurements.first!,
-                start: cellMeasurements.start,
-                end: cellMeasurements.openEnd ? nil : cellMeasurements.end
+                tweakCell: cellMeasurements.measurements.first!,
+                predicate: cellMeasurements.detailsPredicate()
             )
         } label: {
             ListPacketCell(measurements: cellMeasurements)
@@ -298,7 +297,7 @@ private struct ListPacketCell: View {
         let calendar = Calendar.current
         let sameDay = calendar.startOfDay(for: measurements.start) == calendar.startOfDay(for: measurements.end)
         
-        let count = GroupedMeasurements.countByStatus(measurements: measurements.measurements)
+        let count = GroupedMeasurements.countByStatus(measurements.measurements)
                 
         VStack {
             HStack {

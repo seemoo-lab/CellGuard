@@ -22,7 +22,7 @@ struct CellListFilterSettings {
     var area: Int?
     var cell: Int?
     
-    func applyTo(request: NSFetchRequest<VerificationState>) {
+    func predicates(startDate: Date?, endDate: Date?) -> [NSPredicate] {
         var predicateList: [NSPredicate] = [
             NSPredicate(format: "cell != nil"),
             NSPredicate(format: "pipeline == %@", Int(primaryVerificationPipeline.id) as NSNumber)
@@ -48,22 +48,12 @@ struct CellListFilterSettings {
             predicateList.append(NSPredicate(format: "cell.cell == %@", cell as NSNumber))
         }
         
-        var beginDate: Date
-        var endDate: Date
-        let calendar = Calendar.current
-        
-        switch (timeFrame) {
-        case .live:
-            beginDate = calendar.startOfDay(for: Date())
-            endDate = calendar.date(byAdding: .day, value: 1, to: beginDate)!
-        case .pastDay:
-            beginDate = calendar.startOfDay(for: date)
-            endDate = calendar.date(byAdding: .day, value: 1, to: beginDate)!
-        case .pastDays:
-            beginDate = calendar.startOfDay(for: date)
-            endDate = calendar.date(byAdding: .day, value: 1, to: calendar.startOfDay(for: Date()))!
+        if let start = startDate {
+            predicateList.append(NSPredicate(format: "%@ <= cell.collected", start as NSDate))
         }
-        predicateList.append(NSPredicate(format: "%@ <= cell.collected and cell.collected <= %@", beginDate as NSDate, endDate as NSDate))
+        if let end = endDate {
+            predicateList.append(NSPredicate(format: "cell.collected <= %@", end as NSDate))
+        }
         
         let thresholdSuspicious = primaryVerificationPipeline.pointsSuspicious as NSNumber
         let thresholdUntrusted = primaryVerificationPipeline.pointsUntrusted as NSNumber
@@ -91,7 +81,27 @@ struct CellListFilterSettings {
             predicateList.append(NSPredicate(format: "cell.study != nil and cell.study.uploaded != nil"))
         }
 
-        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicateList)
+        return predicateList
+    }
+    
+    func applyTo(request: NSFetchRequest<VerificationState>) {
+        var beginDate: Date
+        var endDate: Date
+        let calendar = Calendar.current
+        
+        switch (timeFrame) {
+        case .live:
+            beginDate = calendar.startOfDay(for: Date())
+            endDate = calendar.date(byAdding: .day, value: 1, to: beginDate)!
+        case .pastDay:
+            beginDate = calendar.startOfDay(for: date)
+            endDate = calendar.date(byAdding: .day, value: 1, to: beginDate)!
+        case .pastDays:
+            beginDate = calendar.startOfDay(for: date)
+            endDate = calendar.date(byAdding: .day, value: 1, to: calendar.startOfDay(for: Date()))!
+        }
+
+        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates(startDate: beginDate, endDate: endDate))
         request.relationshipKeyPathsForPrefetching = ["cell"]
     }
     

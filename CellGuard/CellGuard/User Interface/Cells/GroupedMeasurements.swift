@@ -16,19 +16,21 @@ enum GroupedMeasurementsError: Error {
 
 struct GroupedMeasurements: Identifiable {
     
+    let settings: CellListFilterSettings
     let measurements: [CellTweak]
     let openEnd: Bool
     let start: Date
     let end: Date
     let id: Int
     
-    init(measurements: [CellTweak], openEnd: Bool) throws {
+    init(measurements: [CellTweak], openEnd: Bool, settings: CellListFilterSettings) throws {
         // We require that the list contains at least one element
         if measurements.isEmpty {
             throw GroupedMeasurementsError.emptyList
         }
         self.measurements = measurements
         self.openEnd = openEnd
+        self.settings = settings
         
         // We assume the measurements are sorted in descending order based on their timestamp
         guard let end = measurements.first?.collected else {
@@ -40,7 +42,7 @@ struct GroupedMeasurements: Identifiable {
         self.start = start
         self.end = end
         
-        let stats = Self.countByStatus(measurements: measurements)
+        let stats = Self.countByStatus(measurements)
         
         // Use the list's hash value to identify the list.
         // See: https://stackoverflow.com/a/68068346
@@ -59,9 +61,17 @@ struct GroupedMeasurements: Identifiable {
         self.id = hash
     }
     
-    static func countByStatus(measurements: any RandomAccessCollection<CellTweak>) -> (pending: Int, trusted: Int, suspicious: Int, untrusted: Int) {
-        let verificationStates = measurements.compactMap { $0.primaryVerification }
-        
+    func detailsPredicate() -> NSPredicate {
+        return NSCompoundPredicate(
+            andPredicateWithSubpredicates: settings.predicates(startDate: start, endDate: openEnd ? nil : end)
+        )
+    }
+    
+    static func countByStatus(_ measurements: any RandomAccessCollection<CellTweak>) -> (pending: Int, trusted: Int, suspicious: Int, untrusted: Int) {
+        return countByStatus(measurements.compactMap { $0.primaryVerification })
+    }
+    
+    static func countByStatus(_ verificationStates: any RandomAccessCollection<VerificationState>) -> (pending: Int, trusted: Int, suspicious: Int, untrusted: Int) {
         var pending = 0
         
         var untrusted = 0

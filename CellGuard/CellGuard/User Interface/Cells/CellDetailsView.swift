@@ -5,37 +5,36 @@
 //  Created by Lukas Arnold on 21.07.23.
 //
 
+import CoreData
 import SwiftUI
 
 struct CellDetailsView: View {
     
     let cell: Cell
-    let start: Date?
-    let end: Date?
+    let predicate: NSPredicate?
     
     @State private var showAll: Bool
     
-    init(cell: Cell) {
-        self.cell = cell
-        self.start = nil
-        self.end = nil
+    init(alsCell: CellALS) {
+        self.cell = alsCell
+        self.predicate = nil
         self._showAll = State(initialValue: true)
     }
     
-    init(cell: Cell, start: Date, end: Date?) {
-        self.cell = cell
-        self.start = start
-        self.end = end
+    init(tweakCell: CellTweak, predicate: NSPredicate) {
+        self.cell = tweakCell
+        self.predicate = predicate
         self._showAll = State(initialValue: false)
     }
     
     var body: some View {
-        let (alsCellsRequest, measurementsRequest) = fetchRequests()
+        let alsCellsRequest = alsFetchRequest()
+        let measurementsRequest = tweakFetchRequest()
         
         List {
-            TweakCellDetailsMap(alsCells: alsCellsRequest, measurements: measurementsRequest)
+            TweakCellDetailsMap(alsCells: alsCellsRequest, verifyStates: measurementsRequest)
             CellDetailsCell(cell: cell)
-            TweakCellDetailsMeasurementCount(alsCells: alsCellsRequest, measurements: measurementsRequest)
+            TweakCellDetailsMeasurementCount(alsCells: alsCellsRequest, verifyStates: measurementsRequest)
             // A toolbar item somehow hides the navigation history (back button) upon state change and thus, we use a simple button
             Button {
                 showAll = true
@@ -48,29 +47,33 @@ struct CellDetailsView: View {
         .navigationTitle("\(cell.technology ?? "Unknown") Cell")
     }
     
-    private func fetchRequests() -> (FetchRequest<CellALS>, FetchRequest<CellTweak>) {
-        let alsCellsRequest = FetchRequest<CellALS>(
+    private func alsFetchRequest() -> FetchRequest<CellALS> {
+        return FetchRequest<CellALS>(
             sortDescriptors: [NSSortDescriptor(keyPath: \CellALS.imported, ascending: false)],
             predicate: PersistenceController.shared.sameCellPredicate(cell: cell, mergeUMTS: true),
             animation: .default
         )
+    }
+    
+    private func tweakFetchRequest() -> FetchRequest<VerificationState> {
+        var predicates = [
+            PersistenceController.shared.sameCellPredicate(cell: cell, mergeUMTS: false, prefix: "cell.")
+        ]
         
-        var measurementPredicates = [PersistenceController.shared.sameCellPredicate(cell: cell, mergeUMTS: false)]
-        if !showAll {
-            if let start = start {
-                measurementPredicates.append(NSPredicate(format: "collected >= %@", start as NSDate))
-            }
-            if let end = end {
-                measurementPredicates.append(NSPredicate(format: "collected <= %@", end as NSDate))
-            }
+        // Append custom predicates
+        if !showAll, let predicate = predicate {
+            predicates.append(predicate)
         }
-        let measurementsRequest = FetchRequest<CellTweak>(
-            sortDescriptors: [NSSortDescriptor(keyPath: \CellTweak.collected, ascending: false)],
-            predicate: NSCompoundPredicate(andPredicateWithSubpredicates: measurementPredicates),
-            animation: .default
-        )
         
-        return (alsCellsRequest, measurementsRequest)
+        // Ensure the correct pipeline is used & the cell is not null
+        predicates.append(NSPredicate(format: "pipeline == %@", Int(primaryVerificationPipeline.id) as NSNumber))
+        predicates.append(NSPredicate(format: "cell != nil"))
+        
+        let request = VerificationState.fetchRequest()
+        request.sortDescriptors = [NSSortDescriptor(key: "cell.collected", ascending: false)]
+        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
+        request.relationshipKeyPathsForPrefetching = ["cell"]
+        return FetchRequest(fetchRequest: request, animation: .default)
     }
     
 }
@@ -78,16 +81,18 @@ struct CellDetailsView: View {
 private struct TweakCellDetailsMap: View {
     
     @FetchRequest private var alsCells: FetchedResults<CellALS>
-    @FetchRequest private var measurements: FetchedResults<CellTweak>
+    @FetchRequest private var verifyStates: FetchedResults<VerificationState>
     
-    init(alsCells: FetchRequest<CellALS>, measurements: FetchRequest<CellTweak>) {
+    init(alsCells: FetchRequest<CellALS>, verifyStates: FetchRequest<VerificationState>) {
         self._alsCells = alsCells
-        self._measurements = measurements
+        self._verifyStates = verifyStates
     }
     
     var body: some View {
-        if SingleCellMap.hasAnyLocation(alsCells, measurements) {
-            SingleCellMap(alsCells: alsCells, tweakCells: measurements)
+        let tweakCells = verifyStates.compactMap { $0.cell }
+        
+        if SingleCellMap.hasAnyLocation(alsCells, tweakCells) {
+            SingleCellMap(alsCells: alsCells, tweakCells: tweakCells)
                 .frame(height: 200)
                 .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
         }
@@ -156,22 +161,22 @@ private struct CellDetailsALSInfo: View {
 private struct TweakCellDetailsMeasurementCount: View {
     
     @FetchRequest private var alsCells: FetchedResults<CellALS>
-    @FetchRequest private var measurements: FetchedResults<CellTweak>
+    @FetchRequest private var verifyStates: FetchedResults<VerificationState>
     
-    init(alsCells: FetchRequest<CellALS>, measurements: FetchRequest<CellTweak>) {
+    init(alsCells: FetchRequest<CellALS>, verifyStates: FetchRequest<VerificationState>) {
         self._alsCells = alsCells
-        self._measurements = measurements
+        self._verifyStates = verifyStates
     }
     
     var body: some View {
-        let count = GroupedMeasurements.countByStatus(measurements: measurements)
+        let count = GroupedMeasurements.countByStatus(verifyStates)
         
         Section(header: Text("Measurements")) {
             // We query the measurements in descending order, so that's we have to replace last with first and so on
-            if let lastMeasurement = measurements.last, let firstCollected = lastMeasurement.collected {
+            if let lastMeasurement = verifyStates.last?.cell, let firstCollected = lastMeasurement.collected {
                 CellDetailsRow("First", mediumDateTimeFormatter.string(from: firstCollected))
             }
-            if let firstMeasurement = measurements.first, let lastCollected = firstMeasurement.collected {
+            if let firstMeasurement = verifyStates.first?.cell, let lastCollected = firstMeasurement.collected {
                 CellDetailsRow("Last", mediumDateTimeFormatter.string(from: lastCollected))
             }
             CellDetailsRow("Pending", count.pending)
@@ -179,11 +184,11 @@ private struct TweakCellDetailsMeasurementCount: View {
             CellDetailsRow("Anomalous", count.suspicious)
             CellDetailsRow("Trusted", count.trusted)
             NavigationLink {
-                TweakCellMeasurementList(measurements: measurements)
+                TweakCellMeasurementList(measurements: verifyStates.compactMap { $0.cell })
             } label: {
                 Text("Show Details")
             }
-            .disabled(measurements.count == 0)
+            .disabled(verifyStates.count == 0)
         }
     
     }
@@ -192,7 +197,7 @@ private struct TweakCellDetailsMeasurementCount: View {
 private struct TweakCellMeasurementList: View {
     
     @State private var pipelineId: Int16 = primaryVerificationPipeline.id
-    let measurements: FetchedResults<CellTweak>
+    let measurements: any RandomAccessCollection<CellTweak>
     
     var body: some View {
         List {
@@ -274,9 +279,8 @@ struct CellDetailsView_Previews: PreviewProvider {
         
         NavigationView {
             CellDetailsView(
-                cell: measurements.first!,
-                start: measurements.min(by: { $0.collected! < $1.collected! })!.collected!,
-                end: measurements.max(by: { $0.collected! < $1.collected! })?.collected
+                tweakCell: measurements.first!,
+                predicate: NSPredicate(value: true)
             )
         }
         .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
@@ -284,7 +288,7 @@ struct CellDetailsView_Previews: PreviewProvider {
         
         NavigationView {
             CellDetailsView(
-                cell: alsCell
+                alsCell: alsCell
             )
         }
         .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
