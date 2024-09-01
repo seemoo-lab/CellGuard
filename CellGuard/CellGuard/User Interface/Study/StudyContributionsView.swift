@@ -13,7 +13,8 @@ struct StudyContributionsView: View {
             NavigationLink {
                 CellListView(settings: CellListFilterSettings(
                     study: .submitted,
-                    timeFrame: .pastDays
+                    timeFrame: .pastDays,
+                    date: Date.distantPast
                 ))
             } label: {
                 Text("Cells")
