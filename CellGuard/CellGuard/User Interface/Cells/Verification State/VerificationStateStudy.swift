@@ -166,7 +166,10 @@ struct VerificationStateStudyView: View {
             // Either show the submitted feedback or allow user to create it
             if studyStatus == .uploadFeedback {
                 KeyValueListRow(key: "Suggested Level", value: FeedbackRiskLevel(rawValue: measurement.study?.feedbackLevel ?? "")?.name() ?? "None")
-                Text("Comment\n") + Text(measurement.study?.feedbackComment ?? "None").font(.footnote)
+                Text("Comment\n") + 
+                Text(measurement.study?.feedbackComment ?? "None")
+                    .font(.footnote)
+                    .foregroundColor(.gray)
             } else {
                 Button {
                     if studyParticipationStart == 0 {
