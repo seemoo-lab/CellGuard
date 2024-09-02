@@ -300,7 +300,7 @@ struct ImportView: View {
             // save how many cells we imported for later
             UserDefaults.standard.set(counts.cells?.count ?? 0, forKey: UserDefaultsKeys.importedCellNumber.rawValue)
         } catch {
-            importError = error.localizedDescription
+            importError = error.localizedDescription + "\nPlease restart the app and try again."
             Self.logger.info("Import failed due to \(error)")
             
         }

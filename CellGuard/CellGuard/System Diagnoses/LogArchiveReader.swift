@@ -299,7 +299,14 @@ struct LogArchiveReader {
         
         // Call the native macos-unifiedlogs via swift-bridge
         // It the returns the total number of parsed log lines
-        _ = rust.parse_system_log(logArchiveDir.path, outFile.path, speedup)
+        let parsedFiles = rust.parse_system_log(logArchiveDir.path, outFile.path, speedup)
+        
+        // An error occurred while parsing the files.
+        // See src/lib.rs for more information.
+        if parsedFiles == UInt32.max {
+            Self.logger.warning("An error occurred while parsing the log archive.")
+            throw LogArchiveError.parsingFailed
+        }
 
         return outFile
     }
