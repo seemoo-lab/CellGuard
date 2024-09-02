@@ -8,8 +8,14 @@
 import CoreData
 import Foundation
 import MapKit
+import OSLog
 
 class CellMapDelegate: NSObject, MKMapViewDelegate {
+    
+    private static let logger = Logger(
+        subsystem: Bundle.main.bundleIdentifier!,
+        category: String(describing: CellMapDelegate.self)
+    )
     
     let onTap: ((NSManagedObjectID) -> Void)?
     
@@ -35,15 +41,24 @@ class CellMapDelegate: NSObject, MKMapViewDelegate {
                 view.updateColor(technology: annotation.technology)
             }
             return view
-        } else if annotation is LocationAnnotation || annotation is LocationClusterAnnotation {
+        } else if annotation is LocationAnnotation {
             return mapView.dequeueReusableAnnotationView(withIdentifier: LocationAnnotationView.ReuseID, for: annotation)
+        } else if annotation is LocationClusterAnnotation {
+            // I assume we have to use a separate identifier for the cluster view, otherwise we get a crash
+            // See: https://forums.developer.apple.com/forums/thread/89427
+            return mapView.dequeueReusableAnnotationView(withIdentifier: LocationAnnotationView.ClusterReuseID, for: annotation)
         } else if annotation is CellClusterAnnotation {
             return mapView.dequeueReusableAnnotationView(withIdentifier: CellClusterAnnotationView.ReuseID, for: annotation)
+        } else if annotation is MKUserLocation {
+            // We can return nil as MapKit takes care of drawing this annotation
+            return nil
         }
         
         // TODO: Sometimes simple red pins are shown but when they're are tapped they show a callout and turn into correct annotations.
         // We don't know why
         // See Discussion: https://developer.apple.com/documentation/mapkit/mkmapviewdelegate/1452045-mapview
+        
+        Self.logger.warning("Annotation view for unknown annotation type: \(String(describing: annotation.self))")
         return nil
     }
     
@@ -54,6 +69,7 @@ class CellMapDelegate: NSObject, MKMapViewDelegate {
             return LocationClusterAnnotation(memberAnnotations: memberAnnotations)
         }
         
+        Self.logger.warning("Cluster annotation for unknown annotation type: \(String(describing: memberAnnotations.first.self))")
         return MKClusterAnnotation(memberAnnotations: memberAnnotations)
     }
     

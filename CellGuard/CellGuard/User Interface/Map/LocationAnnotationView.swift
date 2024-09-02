@@ -11,6 +11,7 @@ import MapKit
 class LocationAnnotationView: MKAnnotationView {
     
     static let ReuseID = "locationAnnotation"
+    static let ClusterReuseID = "clusterLocationAnnotation"
 
     override init(annotation: MKAnnotation?, reuseIdentifier: String?) {
         super.init(annotation: annotation, reuseIdentifier: reuseIdentifier)

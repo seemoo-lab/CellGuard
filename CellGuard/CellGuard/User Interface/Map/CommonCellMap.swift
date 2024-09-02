@@ -30,6 +30,9 @@ struct CommonCellMap {
         
         // Cluster annotations
         mapView.register(
+            LocationAnnotationView.self,
+            forAnnotationViewWithReuseIdentifier: LocationAnnotationView.ClusterReuseID)
+        mapView.register(
             CellClusterAnnotationView.self,
             forAnnotationViewWithReuseIdentifier: CellClusterAnnotationView.ReuseID)
     }
