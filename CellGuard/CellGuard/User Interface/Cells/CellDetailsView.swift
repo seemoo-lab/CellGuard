@@ -246,14 +246,14 @@ private struct TweakCellMeasurementNavLink: View {
             NavigationLink {
                 VerificationStateView(verificationState: state)
             } label: {
-                label(score: state.score, study: measurement.study != nil)
+                label(score: state.finished ? state.score : nil, study: measurement.study != nil)
             }
         } else {
             label(score: 0, study: false)
         }
     }
     
-    private func label(score: Int16, study: Bool) -> some View {
+    private func label(score: Int16?, study: Bool) -> some View {
         HStack {
             date
             Spacer()
@@ -261,8 +261,12 @@ private struct TweakCellMeasurementNavLink: View {
                 Image(systemName: "arrow.up.circle")
                     .foregroundColor(.gray)
             }
-            Text("\(score)")
-                .foregroundColor(.gray)
+            if let score = score {
+                Text("\(score)")
+                    .foregroundColor(.gray)
+            } else {
+                ProgressView()
+            }
         }
     }
     
