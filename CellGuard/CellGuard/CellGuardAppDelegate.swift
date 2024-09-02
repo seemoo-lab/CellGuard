@@ -258,13 +258,13 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
                     do {
                         try await task.run()
                     } catch {
-                        Self.logger.warning("Upload task failed with error: \(error)")
+                        await Self.logger.warning("Upload task failed with error: \(error)")
                     }
                     try? await Task.sleep(nanoseconds: 60 * NSEC_PER_SEC)
                 }
             }
             
-            Self.logger.debug("Started all maintenance background tasks")
+            await Self.logger.debug("Started all maintenance background tasks")
             
             // TODO: Add task to regularly delete old ALS cells (>= 90 days) to force a refresh
             // -> Then, also reset the status of the associated tweak cells
@@ -282,7 +282,7 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
                 }
             }
             
-            Self.logger.debug("Started all verification background tasks")
+            await Self.logger.debug("Started all verification background tasks")
         }
     }
     
