@@ -246,17 +246,21 @@ private struct TweakCellMeasurementNavLink: View {
             NavigationLink {
                 VerificationStateView(verificationState: state)
             } label: {
-                label(score: state.score)
+                label(score: state.score, study: measurement.study != nil)
             }
         } else {
-            label(score: 0)
+            label(score: 0, study: false)
         }
     }
     
-    private func label(score: Int16) -> some View {
+    private func label(score: Int16, study: Bool) -> some View {
         HStack {
             date
             Spacer()
+            if study {
+                Image(systemName: "arrow.up.circle")
+                    .foregroundColor(.gray)
+            }
             Text("\(score)")
                 .foregroundColor(.gray)
         }
