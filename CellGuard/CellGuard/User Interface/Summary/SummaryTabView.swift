@@ -140,20 +140,28 @@ private struct CalculatedRiskView: View {
     var body: some View {
         return RiskIndicatorCard(risk: risk)
             .onAppear() {
-                // Update the risk indicator asynchronously to reduce the Core Data load
-                timer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { _ in
-                    // Skip the update of the risk status if the app is in the background
-                    if UIApplication.shared.applicationState == .background {
-                        return
-                    }
-                    
+                func computeRiskStatus() {
                     DispatchQueue.global(qos: .utility).async {
+                        // TODO: Can we reduce the CPU load of this check?
                         let risk = PersistenceController.basedOnEnvironment().determineDataRiskStatus()
                         DispatchQueue.main.async {
                             self.risk = risk
                         }
                     }
                 }
+                
+                // Update the risk indicator asynchronously to reduce the Core Data load
+                timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
+                    // Skip the update of the risk status if the app is in the background
+                    if UIApplication.shared.applicationState == .background {
+                        return
+                    }
+                    
+                    computeRiskStatus()
+                }
+                
+                // Instantly compute the new risk status
+                computeRiskStatus()
             }
             .onDisappear() {
                 timer?.invalidate()
