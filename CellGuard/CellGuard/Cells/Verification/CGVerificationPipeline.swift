@@ -444,6 +444,7 @@ struct CGVerificationPipeline: VerificationPipeline {
     var id: Int16 = 1
     var name = "CellGuard"
     
+    var after: (any VerificationPipeline)? = nil
     var stages: [any VerificationStage] = [
         NoConnectionDummyStage(),
         ALSVerificationStage(),

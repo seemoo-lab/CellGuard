@@ -122,6 +122,9 @@ protocol VerificationPipeline {
     /// The logger used by the verification pipeline
     var logger: Logger { get }
     
+    /// Run this pipeline after the other pipeline has verified the cell
+    var after: VerificationPipeline? { get }
+    
 }
 
 extension VerificationPipeline {
@@ -236,7 +239,7 @@ extension VerificationPipeline {
         // Fetch the cell collected last for verification
         let nextCell: (stage: Int16, score: Int16, statusId: NSManagedObjectID, cellId: NSManagedObjectID, cellProperties: ALSQueryCell)?
         do {
-            nextCell = try persistence.fetchNextVerification(pipelineId: id)
+            nextCell = try persistence.fetchNextVerification(pipelineId: id, afterPipelineId: after?.id)
         } catch {
             throw VerificationPipelineError.fetchCellToVerify(error)
         }

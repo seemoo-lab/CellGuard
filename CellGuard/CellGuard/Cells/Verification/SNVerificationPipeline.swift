@@ -316,6 +316,7 @@ struct SNVerificationPipeline: VerificationPipeline {
     var id: Int16 = 2
     var name = "SnoopSnitch"
     
+    var after: (any VerificationPipeline)? = CGVerificationPipeline.instance
     var stages: [any VerificationStage] = [
         NoConnectionDummyStage(),
         No3GConnectionStage(),

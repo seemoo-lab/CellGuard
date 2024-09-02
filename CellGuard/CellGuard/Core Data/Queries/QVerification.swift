@@ -10,7 +10,7 @@ import CoreData
 
 extension PersistenceController {
     
-    func fetchNextVerification(pipelineId: Int16) throws -> (stage: Int16, score: Int16, statusId: NSManagedObjectID, cellId: NSManagedObjectID, cellProperties: ALSQueryCell)? {
+    func fetchNextVerification(pipelineId: Int16, afterPipelineId: Int16?) throws -> (stage: Int16, score: Int16, statusId: NSManagedObjectID, cellId: NSManagedObjectID, cellProperties: ALSQueryCell)? {
         // TODO: Issue sometimes observed ->
         // Thread Performance Checker: Thread running at User-interactive quality-of-service class waiting on a lower QoS thread running at Background quality-of-service class. Investigate ways to avoid priority inversions.
         
@@ -18,8 +18,15 @@ extension PersistenceController {
             let request = VerificationState.fetchRequest()
             // It's important to wrap NSPredicate arguments as NSNumber's otherwise the app crashes with EXC_BAD_ACCESS.
             // See: https://stackoverflow.com/a/28622582
-            request.predicate = NSPredicate(format: "finished == NO AND pipeline == %@ AND delayUntil <= %@ AND cell != NIL", Int(pipelineId) as NSNumber, Date() as NSDate)
-            // TODO: Check if that works
+            var predicates: [NSPredicate] = []
+            predicates.append(NSPredicate(format: "finished == NO AND pipeline == %@ AND delayUntil <= %@ AND cell != NIL", Int(pipelineId) as NSNumber, Date() as NSDate))
+            
+            // Append a predicate to ensure the other pipeline already finished (if attribute set)
+            if let afterPipelineId = afterPipelineId {
+                predicates.append(NSPredicate(format: "SUBQUERY(cell.verifications, $ver, $ver.finished == YES AND $ver.pipeline == %@).@count > 0", Int(afterPipelineId) as NSNumber))
+            }
+            
+            request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
             request.sortDescriptors = [NSSortDescriptor(key: "cell.collected", ascending: false)]
             request.relationshipKeyPathsForPrefetching = ["cell"]
             
