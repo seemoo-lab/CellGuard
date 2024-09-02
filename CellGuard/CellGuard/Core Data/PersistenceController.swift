@@ -117,21 +117,32 @@ class PersistenceController {
         // Enable persistent history tracking which keeps track of changes in the Core Data store
         description.setOption(true as NSNumber, forKey: NSPersistentHistoryTrackingKey)
         
-        // Load data from the stores into the container and abort on error
-        container.loadPersistentStores { storeDescription, error in
-            if let error = error as NSError? {
-                fatalError("Unresolved error \(error), \(error.userInfo)")
+        // Request more time from iOS to perform CoreData migrations to prevent crash.
+        // We observed this kind of crash on the next start after the app crashed for other reasons.
+        // See: https://stackoverflow.com/a/77517090
+        ProcessInfo.processInfo.performExpiringActivity(withReason: "Load persistent stores") { expired in
+            guard !expired else {
+                // The app is about to be suspended, we should stop the work somehow
+                self.logger.warning("App will be suspended before the database could has been loaded :(")
+                return
             }
+            
+            // Load data from the stores into the container and abort on error
+            self.container.loadPersistentStores { storeDescription, error in
+                if let error = error as NSError? {
+                    fatalError("Unresolved error \(error), \(error.userInfo)")
+                }
+            }
+            
+            // We refresh the UI by consuming store changes via persistent history tracking
+            self.container.viewContext.automaticallyMergesChangesFromParent = false
+            self.container.viewContext.name = "viewContext"
+            // If the data is already stored (identified by constraints), we only update the existing properties
+            self.container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+            // We do not use the undo manager therefore we save resources and disable it
+            self.container.viewContext.undoManager = nil
+            self.container.viewContext.shouldDeleteInaccessibleFaults = true
         }
-        
-        // We refresh the UI by consuming store changes via persistent history tracking
-        container.viewContext.automaticallyMergesChangesFromParent = false
-        container.viewContext.name = "viewContext"
-        // If the data is already stored (identified by constraints), we only update the existing properties
-        container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
-        // We do not use the undo manager therefore we save resources and disable it
-        container.viewContext.undoManager = nil
-        container.viewContext.shouldDeleteInaccessibleFaults = true
         
         // Read the last token from UserDefaults to speed up the start of the app and prevent unnecessary merges
         do {
