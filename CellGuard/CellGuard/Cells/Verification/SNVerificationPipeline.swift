@@ -11,117 +11,90 @@ import OSLog
 import Dispatch
 import CoreLocation
 
+// TODO: Test if this refactored version of the pipeline works as intended
+// If yes, reenable the pipeline by removing the comment in VerificationPipeline (line 15)
+
+// Hint: Use a logger instead of print
+private let pipelineLogger = Logger(
+    subsystem: Bundle.main.bundleIdentifier!,
+    category: String(describing: SNVerificationPipeline.self)
+)
+
 extension Double {
-    var degrees_to_Radians: Double {
+    // Hint: Use camcelCase for variable names
+    var degreesToRadians: Double {
         return self * .pi / 180.0
     }
 }
 
-func getCountryCode(latitude: Double, longitude: Double, completion: @escaping (String) -> Void) {
-    let location = CLLocation(latitude: latitude, longitude: longitude)
+private enum CountryCodeResult {
+    case found(String)
+    case none
+    case error
+}
+
+private struct CompareableCLLocation: Hashable {
+    let latitude: Double
+    let longitude: Double
     
-    let geocoder = CLGeocoder()
-    geocoder.reverseGeocodeLocation(location) { (placemarks, error) in
-        if let error = error {
-            completion("UNKNOWN")
-            return
-        }
-        
-        guard let placemark = placemarks?.first else {
-            completion("UNKNOWN")
-            return
-        }
-        
-        if let isoCountryCode = placemark.isoCountryCode {
-            completion(isoCountryCode)
-        } else {
-            completion("UNKNOWN")
-        }
+    func toCL() -> CLLocation {
+        return CLLocation(latitude: latitude, longitude: longitude)
+    }
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(latitude)
+        hasher.combine(longitude)
     }
 }
 
-// Synchronous wrapper
-func getCountryCodeSync(latitude: Double, longitude: Double) -> String {
-    let semaphore = DispatchSemaphore(value: 0)
-    var result: String = "UNKNOWN"
+// Cache for the country code to prevent unnecessary requests -> speed up + less rate-limit issues
+private var countryCodeCache: [CompareableCLLocation : String] = [:]
+
+// Hint: You can use async & await instead of semaphores
+// Hint: You can use optionals to signal that a value is missing or if there are multiple return "cases" you can also use an enum.
+private func getCountryCode(latitude: Double, longitude: Double) async -> CountryCodeResult {
+    let location = CompareableCLLocation(latitude: latitude, longitude: longitude)
     
-    getCountryCode(latitude: latitude, longitude: longitude) { countryCode in
-        result = countryCode
-        semaphore.signal()
+    // Hint: Cache stuff if you have to perform a web request for it etc.
+    if let cacheResult = countryCodeCache[location] {
+        return .found(cacheResult)
     }
     
-    semaphore.wait()
-    return result
-}
-
-func loadGeoJSON(from data: Data) -> [String: [[CLLocationCoordinate2D]]]? {
+    // ReverseGeocodeLocation performs an API call every time and is rate-limited.
+    // The rate limiting is noticeable especially when importing a new sysdiagnose (see errors in console).
+    // TODO: Can you either cache the results (more efficiently) or find another way to get the ISO code from coordinates (would be even better)?
+    // Idea: You are already loading the GeoJSON, maybe you can use it to determine the ISO from coordinates
+    // Feel free to include libraries to help you with that task.
+    // Some I found on the Internet:
+    // - https://github.com/kiliankoe/GeoJSON
+    // - https://github.com/maparoni/GeoJSONKit
+    // - https://github.com/Outdooractive/gis-tools (Looks very efficient for this task & the task below due to the R-tree)
     do {
-        if let geoJSON = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any],
-           let features = geoJSON["features"] as? [[String: Any]] {
-            
-            var countryBorders: [String: [[CLLocationCoordinate2D]]] = [:]
-            
-            for feature in features {
-                if let properties = feature["properties"] as? [String: Any],
-                   let countryISOA2 = properties["ISO_A2"] as? String,
-                   //let country_name = properties["ADMIN"] as? String,
-                   let geometry = feature["geometry"] as? [String: Any],
-                   let coordinates = geometry["coordinates"] as? [[[[Double]]]] {
-                    
-                    var borders = [[CLLocationCoordinate2D]]()
-                    
-                    for polygon in coordinates {
-                        var borderCoordinates = [CLLocationCoordinate2D]()
-                        for coordinateSet in polygon {
-                            for coordinate in coordinateSet {
-                                let lon = coordinate[0]
-                                let lat = coordinate[1]
-                                borderCoordinates.append(CLLocationCoordinate2D(latitude: lat, longitude: lon))
-                            }
-                        }
-                        borders.append(borderCoordinates)
-                    }
-                    
-                    countryBorders[countryISOA2] = borders
-                }
+        let placemarks = try await CLGeocoder().reverseGeocodeLocation(location.toCL())
+        for placemark in placemarks {
+            if let isoCountryCode = placemark.isoCountryCode {
+                countryCodeCache[location] = isoCountryCode
+                return .found(isoCountryCode)
             }
-            
-            return countryBorders
         }
+        
+        return .none
     } catch {
-        print("Error parsing GeoJSON: \(error)")
+        pipelineLogger.warning("Failed to get country code for (\(latitude), \(longitude)): \(error)")
+        return .error
     }
-    
-    return nil
 }
 
-func haversineDistance(lat1: Double, lon1: Double, lat2: Double, lon2: Double) -> Double {
-    let R = 6371.00887714 // Mean earth radius in km, we just take this value as the truth. R_0 of the WGS 84.
-    let dLat = (lat2 - lat1).degrees_to_Radians
-    let dLon = (lon2 - lon1).degrees_to_Radians
-    let a = sin(dLat / 2) * sin(dLat / 2) +
-            cos(lat1.degrees_to_Radians) * cos(lat2.degrees_to_Radians) *
-            sin(dLon / 2) * sin(dLon / 2)
-    let c = 2 * atan2(sqrt(a), sqrt(1 - a))
-    return R * c
-}
-
-func isCountryWithinDistance(start: CLLocationCoordinate2D, radius: Double, countryBorders: [String: [[CLLocationCoordinate2D]]]) -> [String] {
-    var nearbyCountries = [String]()
-    
-    for (country, borders) in countryBorders {
-        for border in borders {
-            for borderCoordinate in border {
-                let distance = haversineDistance(lat1: start.latitude, lon1: start.longitude, lat2: borderCoordinate.latitude, lon2: borderCoordinate.longitude)
-                if distance <= radius {
-                    nearbyCountries.append(country)
-                    break
-                }
-            }
+// I've put the functionality to query the longitude & latitude in one function
+// Hint: You can declare functions only intended for this file as private.
+private func queryLatLong(_ queryCellId: NSManagedObjectID) -> (Double, Double)? {
+    // Hint: You can return tuples, thus saving one additional DB request (they're expensive timewise)
+    return PersistenceController.shared.fetchCellAttribute(cell: queryCellId) { cell -> (Double, Double)? in
+        guard let location = cell.location else {
+            return nil
         }
+        return (location.latitude, location.longitude)
     }
-    
-    return nearbyCountries
 }
 
 private struct NoConnectionDummyStage: VerificationStage {
@@ -154,21 +127,32 @@ private struct No3GConnectionStage: VerificationStage {
     private let persistence = PersistenceController.shared
     
     func verify(queryCell: ALSQueryCell, queryCellId: NSManagedObjectID, logger: Logger) async throws -> VerificationStageResult {
-        if queryCell.technology == .UMTS {
-            if let latitude = persistence.fetchCellAttribute(cell: queryCellId, extract: {$0.location?.latitude}) {
-                if let longitude = persistence.fetchCellAttribute(cell: queryCellId, extract: {$0.location?.longitude}) {
-                    let cc = getCountryCodeSync(latitude: latitude, longitude: longitude)
-                    
-                    switch cc {
-                    case "DE", "NO", "LU", "CZ", "NL", "HU", "IT", "CY", "MT", "GR":
-                        return .fail()
-                    default:
-                        return .success()
-                    }
-                } else { return .delay(seconds: 3) }
-            } else { return .delay(seconds: 2) }
+        // Hint: Use guard statements to simply & flatten your code
+        guard queryCell.technology == .UMTS else {
+            return .success()
         }
-        return .success()
+        
+        // Update: Thanks to the changes you can assume that either a location has been assigned or none is available for this cell.
+        // Hint: Feel free to extract common functionality into functions to make everything a bit cleaner
+        guard let (latitude, longitude) = queryLatLong(queryCellId) else {
+            // Hint: You can abort the pipeline early if a condition  (here: no location) is not but is required by every following stage
+            return .finishEarly
+        }
+        
+        switch await getCountryCode(latitude: latitude, longitude: longitude) {
+        case let .found(cc):
+            if ["DE", "NO", "LU", "CZ", "NL", "HU", "IT", "CY", "MT", "GR"].contains(cc) {
+                return .fail()
+            }
+            return .success()
+        case .error:
+            // TODO: Is this delay a good idea?
+            // I've added it because if the Geocoder exceeds its rate limit we have to wait until we can perform requests again.
+            // Or is there also an error if there's no Internet, do we have to handle that separately?
+            return .delay(seconds: 60)
+        case .none:
+            return .success()
+        }
     }
 }
 
@@ -183,24 +167,26 @@ private struct No2GConnectionStage: VerificationStage {
     private let persistence = PersistenceController.shared
     
     func verify(queryCell: ALSQueryCell, queryCellId: NSManagedObjectID, logger: Logger) async throws -> VerificationStageResult {
-        
-        if queryCell.technology == .GSM {
-            if let latitude = persistence.fetchCellAttribute(cell: queryCellId, extract: {$0.location?.latitude}) {
-                if let longitude = persistence.fetchCellAttribute(cell: queryCellId, extract: {$0.location?.longitude}) {
-                    let cc = getCountryCodeSync(latitude: latitude, longitude: longitude)
-                    
-                    switch cc {
-                    // ISO 3166 codes for countries, that reportedly, don't use GSM/2G anymore.
-                    case "CH", "AU", "BH", "BN", "CN", "CO", "HK", "JP", "MX", "SG", "ZA", "KR", "TW", "AE", "US":
-                        return .fail()
-                    default:
-                        return .success()
-                    }
-                } else { return .delay(seconds: 3) }
-            } else { return .delay(seconds: 2) }
+        guard queryCell.technology == .GSM else {
+            return .success()
         }
         
-        return .success()
+        guard let (latitude, longitude) = queryLatLong(queryCellId) else {
+            return .finishEarly
+        }
+        
+        switch await getCountryCode(latitude: latitude, longitude: longitude) {
+        case let .found(cc):
+            // ISO 3166 codes for countries, that reportedly, don't use GSM/2G anymore.
+            if ["CH", "AU", "BH", "BN", "CN", "CO", "HK", "JP", "MX", "SG", "ZA", "KR", "TW", "AE", "US"].contains(cc) {
+                return .fail()
+            }
+            return .success()
+        case .error:
+            return .delay(seconds: 60)
+        case .none:
+            return .success()
+        }
     }
 }
 
@@ -215,18 +201,31 @@ private struct CheckCorrectMCCStage: VerificationStage {
     var waitForPackets: Bool = false
     
     private let persistence = PersistenceController.shared
-        
+    
     func verify(queryCell: ALSQueryCell, queryCellId: NSManagedObjectID, logger: Logger) async throws -> VerificationStageResult {
-        if let latitude = persistence.fetchCellAttribute(cell: queryCellId, extract: {$0.location?.latitude}) {
-            if let longitude = persistence.fetchCellAttribute(cell: queryCellId, extract: {$0.location?.longitude}) {
-                let cc = getCountryCodeSync(latitude: latitude, longitude: longitude)
-                
-                /// Checks wether the translated MCC is corrosponend to the users country code
-                if OperatorDefinitions.shared.translate(country: queryCell.country, iso: true)!.uppercased() == cc.uppercased() {
-                    return .success()
-                } else { return .fail() }
-            } else { return .delay(seconds: 3) }
-        } else { return .delay(seconds: 2) }
+        guard let (latitude, longitude) = queryLatLong(queryCellId) else {
+            return .finishEarly
+        }
+        
+        switch await getCountryCode(latitude: latitude, longitude: longitude) {
+        case let .found(cc):
+            let operatorCountry = OperatorDefinitions.shared.translate(country: queryCell.country, iso: true)
+            // Hint: Don't use the ! operator in production as the app will crash if there is a null value, instead it's better to handle both cases.
+            guard let operatorCountry = operatorCountry else {
+                return .success()
+            }
+            
+            // Checks wether the translated MCC corresponds to the user's country code
+            if operatorCountry.uppercased() == cc.uppercased() {
+                return .success()
+            } else {
+                return .fail()
+            }
+        case .error:
+            return .delay(seconds: 60)
+        case .none:
+            return .success()
+        }
     }
 }
 
@@ -234,22 +233,37 @@ private struct CheckCorrectMNCStage: VerificationStage {
     
     var id: Int16 = 5
     var name: String = "Correct MNC"
-    var description: String = "Checks wether the MNC is corresponded to the correct operator in the correct country."
+    var description: String = "Checks wether the MNC corresponds to the correct operator in the correct country."
     var points: Int16 = 1
     var waitForPackets: Bool = false
     
     private let persistence = PersistenceController.shared
-        
+    
     func verify(queryCell: ALSQueryCell, queryCellId: NSManagedObjectID, logger: Logger) async throws -> VerificationStageResult {
-        if let latitude = persistence.fetchCellAttribute(cell: queryCellId, extract: {$0.location?.latitude}) {
-            if let longitude = persistence.fetchCellAttribute(cell: queryCellId, extract: {$0.location?.longitude}) {
-                let cc = getCountryCodeSync(latitude: latitude, longitude: longitude)
-                
-                if OperatorDefinitions.shared.translate(country: queryCell.country, network: queryCell.network, iso: true).0?.uppercased() == cc.uppercased() {
-                    return .success()
-                } else { return .fail() }
-            } else { return .delay(seconds: 3) }
-        } else { return .delay(seconds: 2) }
+        guard let (latitude, longitude) = queryLatLong(queryCellId) else {
+            return .finishEarly
+        }
+        
+        switch await getCountryCode(latitude: latitude, longitude: longitude) {
+        case let .found(cc):
+            // TODO: Think if this stage is required or does it effectively perform the same check as the stage above?
+            // To do this look at the source code of the OperatorDefinitions
+            let (country, _) = OperatorDefinitions.shared.translate(country: queryCell.country, network: queryCell.network, iso: true)
+            guard let country = country else {
+                return .success()
+            }
+            
+            // Checks wether the translated MNC corresponds to the user's country code
+            if country.uppercased() == cc.uppercased() {
+                return .success()
+            } else {
+                return .fail()
+            }
+        case .error:
+            return .delay(seconds: 60)
+        case .none:
+            return .success()
+        }
     }
 }
 
@@ -262,59 +276,144 @@ private struct CheckDistanceOfCell: VerificationStage {
     var waitForPackets: Bool = false
     
     private let persistence = PersistenceController.shared
+    // Hint: Only perform disk operations once if you to save time during the stage's execution
+    private let countryBorders = loadGeoJson()
+    
+    private static func loadGeoJson() -> [String: [[CLLocationCoordinate2D]]]? {
+        // TODO: I can't find this file. Did you add it to Git and also pushed the updated .xcodeproject?
+        guard let path = Bundle.main.path(forResource: "countries", ofType: "geojson") else {
+            pipelineLogger.warning("Can't find GeoJSON")
+            return nil
+        }
         
-    func verify(queryCell: ALSQueryCell, queryCellId: NSManagedObjectID, logger: Logger) async throws -> VerificationStageResult {
-        if let latitude = persistence.fetchCellAttribute(cell: queryCellId, extract: {$0.location?.latitude}) {
-            if let longitude = persistence.fetchCellAttribute(cell: queryCellId, extract: {$0.location?.longitude}) {
-                let cc = getCountryCodeSync(latitude: latitude, longitude: longitude).uppercased()
+        let geoJson: Any
+        do {
+            let data = try Data(contentsOf: URL(fileURLWithPath: path))
+            geoJson = try JSONSerialization.jsonObject(with: data, options: [])
+        } catch {
+            pipelineLogger.warning("Failed to load / parse GeoJSON: \(error)")
+            return nil
+        }
+        
+        // TODO: See above maybe you can use a geojson library to make your life easier
+        guard let geoJson = geoJson as? [String: Any],
+              let features = geoJson["features"] as? [[String: Any]] else {
+            return nil
+        }
+        
+        var countryBorders: [String: [[CLLocationCoordinate2D]]] = [:]
+        for feature in features {
+            if let properties = feature["properties"] as? [String: Any],
+               let countryISOA2 = properties["ISO_A2"] as? String,
+               // let country_name = properties["ADMIN"] as? String,
+               let geometry = feature["geometry"] as? [String: Any],
+               let coordinates = geometry["coordinates"] as? [[[[Double]]]] {
                 
-                let cell_cc = OperatorDefinitions.shared.translate(country: queryCell.country, iso: true)!.uppercased()
+                var borders = [[CLLocationCoordinate2D]]()
                 
-                /// Checks wether the translated MCC is corrosponend to the users country code
-                if cell_cc == cc {
-                    if let path = Bundle.main.path(forResource: "countries", ofType: "geojson"),
-                       let data = try? Data(contentsOf: URL(fileURLWithPath: path)),
-                       let countryBorders = loadGeoJSON(from: data) {
-                        
-                        guard let (distance, _, _) = persistence.calculateDistance(tweakCell: queryCellId) else {
-                            // If we can't get the distance, we delay the verification
-                            logger.warning("Can't calculate distance")
-                            return .delay(seconds: 60)
+                for polygon in coordinates {
+                    var borderCoordinates = [CLLocationCoordinate2D]()
+                    for coordinateSet in polygon {
+                        for coordinate in coordinateSet {
+                            let lon = coordinate[0]
+                            let lat = coordinate[1]
+                            borderCoordinates.append(CLLocationCoordinate2D(latitude: lat, longitude: lon))
                         }
-                        
-                        let startPoint = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
-                        let radius = distance.distance.degrees_to_Radians
-                        
-                        
-                        var nearbyCountries = isCountryWithinDistance(start: startPoint, radius: radius, countryBorders: countryBorders)
-                        nearbyCountries.append(cc)
-                        
-                        if nearbyCountries.contains(cell_cc) {
-                            logger.info("GEO: Countries within \(radius) km: \(nearbyCountries)")
-                            return .success()
-                        } else {return .fail()}
-                        
-                        
-                    } else {
-                        logger.warning("GEO: Failed to load GeoJSON data.")
                     }
-                    
-                    return .success()
-                } else { return .fail() }
-            } else { return .delay(seconds: 3) }
-        } else { return .delay(seconds: 2) }
+                    borders.append(borderCoordinates)
+                }
+                
+                countryBorders[countryISOA2] = borders
+            }
+        }
+        return countryBorders
+    }
+    
+    private func haversineDistance(lat1: Double, lon1: Double, lat2: Double, lon2: Double) -> Double {
+        let R = 6371.00887714 // Mean earth radius in km, we just take this value as the truth. R_0 of the WGS 84.
+        let dLat = (lat2 - lat1).degreesToRadians
+        let dLon = (lon2 - lon1).degreesToRadians
+        let a = sin(dLat / 2) * sin(dLat / 2) +
+        cos(lat1.degreesToRadians) * cos(lat2.degreesToRadians) *
+        sin(dLon / 2) * sin(dLon / 2)
+        let c = 2 * atan2(sqrt(a), sqrt(1 - a))
+        return R * c
+    }
+    
+    private func isCountryWithinDistance(start: CLLocationCoordinate2D, radius: Double, countryBorders: [String: [[CLLocationCoordinate2D]]]) -> [String] {
+        var nearbyCountries = [String]()
+        
+        // TODO: See above maybe you can use a geojson library to improve the speed of this distance calculation.
+        for (country, borders) in countryBorders {
+            for border in borders {
+                for borderCoordinate in border {
+                    let distance = haversineDistance(lat1: start.latitude, lon1: start.longitude, lat2: borderCoordinate.latitude, lon2: borderCoordinate.longitude)
+                    if distance <= radius {
+                        nearbyCountries.append(country)
+                        break
+                    }
+                }
+            }
+        }
+        
+        return nearbyCountries
+    }
+    
+    func verify(queryCell: ALSQueryCell, queryCellId: NSManagedObjectID, logger: Logger) async throws -> VerificationStageResult {
+        guard let (latitude, longitude) = queryLatLong(queryCellId) else {
+            return .finishEarly
+        }
+        
+        let cc: String
+        switch await getCountryCode(latitude: latitude, longitude: longitude) {
+        case let .found(foundCC):
+            cc = foundCC
+        case .error:
+            return .delay(seconds: 60)
+        case .none:
+            return .success()
+        }
+        
+        guard let cellCc = OperatorDefinitions.shared.translate(country: queryCell.country, iso: true)?.uppercased() else {
+            return .success()
+        }
+        
+        // Checks wether the translated MCC is corresponds to the user's country code
+        guard cellCc == cc else {
+            return .fail()
+        }
+        
+        guard let countryBorders = countryBorders else {
+            logger.warning("Skipping stage as borders failed to load")
+            return .success()
+        }
+        
+        guard let (distance, _, _) = persistence.calculateDistance(tweakCell: queryCellId) else {
+            // If we can't get the distance, we delay the verification
+            logger.warning("Can't calculate distance")
+            return .success()
+        }
+        
+        let startPoint = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+        let radius = distance.distance.degreesToRadians
+        
+        var nearbyCountries = isCountryWithinDistance(start: startPoint, radius: radius, countryBorders: countryBorders)
+        nearbyCountries.append(cc)
+        
+        if nearbyCountries.contains(cellCc) {
+            logger.info("GEO: Countries within \(radius) km: \(nearbyCountries)")
+            return .success()
+        } else {
+            return .fail()
+        }
     }
 }
 
 struct SNVerificationPipeline: VerificationPipeline {
     
-    var logger = Logger(
-        subsystem: Bundle.main.bundleIdentifier!,
-        category: String(describing: SNVerificationPipeline.self)
-    )
-    
     var id: Int16 = 2
     var name = "SnoopSnitch"
+    var logger = pipelineLogger
     
     var after: (any VerificationPipeline)? = CGVerificationPipeline.instance
     var stages: [any VerificationStage] = [
