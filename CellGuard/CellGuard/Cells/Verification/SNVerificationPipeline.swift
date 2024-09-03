@@ -176,7 +176,9 @@ private struct No2GConnectionStage: VerificationStage {
         }
         
         guard let (latitude, longitude) = queryLatLong(queryCellId) else {
-            return .finishEarly
+            // Here we don't finish early because in theory the stage beforehand could have deducted points
+            // (but this is very unlikely because once a user location is assigned to a cell it is never removed again)
+            return .success()
         }
         
         switch await getCountryCode(latitude: latitude, longitude: longitude) {
@@ -208,7 +210,7 @@ private struct CheckCorrectMCCStage: VerificationStage {
     
     func verify(queryCell: ALSQueryCell, queryCellId: NSManagedObjectID, logger: Logger) async throws -> VerificationStageResult {
         guard let (latitude, longitude) = queryLatLong(queryCellId) else {
-            return .finishEarly
+            return .success()
         }
         
         switch await getCountryCode(latitude: latitude, longitude: longitude) {
@@ -245,7 +247,7 @@ private struct CheckCorrectMNCStage: VerificationStage {
     
     func verify(queryCell: ALSQueryCell, queryCellId: NSManagedObjectID, logger: Logger) async throws -> VerificationStageResult {
         guard let (latitude, longitude) = queryLatLong(queryCellId) else {
-            return .finishEarly
+            return .success()
         }
         
         switch await getCountryCode(latitude: latitude, longitude: longitude) {
