@@ -63,7 +63,11 @@ private func getCountryCode(latitude: Double, longitude: Double) async -> Countr
     // ReverseGeocodeLocation performs an API call every time and is rate-limited.
     // The rate limiting is noticeable especially when importing a new sysdiagnose (see errors in console).
     // TODO: Can you either cache the results (more efficiently) or find another way to get the ISO code from coordinates (would be even better)?
-    // Idea: You are already loading the GeoJSON, maybe you can use it to determine the ISO from coordinates
+    // Idea: You can trim the lat & lon values to 4 decimals places to reuse the cache more often and prevent unnecessary queries.
+    //       This should be fine as CellGuard only requests locations with an accuracy of 10m.
+    //       Cutting 4 decimals places results in such an accuracy (https://en.wikipedia.org/wiki/Decimal_degrees).
+    //       You can use the Double.truncate method for this.
+    // Idea: You are already loading the GeoJSON, maybe you can use it to determine the ISO from coordinates on-device
     // Feel free to include libraries to help you with that task.
     // Some I found on the Internet:
     // - https://github.com/kiliankoe/GeoJSON
