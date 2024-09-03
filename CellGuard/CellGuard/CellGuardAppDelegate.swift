@@ -79,8 +79,8 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
             // TODO: Should we allow to cancel the task somehow?
             // task.expirationHandler
             
-            collector.collectAndStore { result in
-                let count = try? result.get()
+            Task {
+                let count = try? await collector.collectAndStore()
                 task.setTaskCompleted(success: count != nil)
             }
         }
@@ -94,13 +94,8 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
             
             let collector = CPTCollector(client: CPTClient(queue: DispatchQueue.global()))
             
-            collector.collectAndStore { result in
-                let count = try? result.get()
-                task.setTaskCompleted(success: count != nil)
-            }
-            
-            collector.collectAndStore { result in
-                let count = try? result.get()
+            Task {
+                let count = try? await collector.collectAndStore()
                 task.setTaskCompleted(success: count != nil)
             }
         }
@@ -117,60 +112,56 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
         Task.detached(priority: .background) {
             #if JAILBREAK
             let cellCollector = CCTCollector(client: CCTClient(queue: .global(qos: .background)))
-            let collectCellsTask: () -> () = {
+            let collectCellsTask: () async -> () = {
                 // Only run the task if the jailbreak mode is active
                 guard UserDefaults.standard.dataCollectionMode() == .automatic else { return }
                 
                 // Only run task when we currently don't manually import any new data
                 guard !PortStatus.importActive.load(ordering: .relaxed) else { return }
                 
-                cellCollector.collectAndStore { result in
-                    do {
-                        // Get the number of successfully collected & stored cells
-                        _ = try result.get()
-                    } catch {
-                        // Print the error if the task execution was not successful
-                        Self.logger.warning("Failed to collect & store cells in scheduled timer: \(error)")
-                    }
+                do {
+                    // Get the number of successfully collected & stored cells
+                    _ = try await cellCollector.collectAndStore()
+                } catch {
+                    // Print the error if the task execution was not successful
+                    await Self.logger.warning("Failed to collect & store cells in scheduled timer: \(error)")
                 }
             }
             // Schedule a timer to continuously poll the latest cells
             Task {
                 while (true) {
-                    collectCellsTask()
+                    await collectCellsTask()
                     do {
                         try await Task.sleep(nanoseconds: 30 * NSEC_PER_SEC)
                     } catch {
-                        Self.logger.warning("Failed to sleep after collecting cells: \(error)")
+                        await Self.logger.warning("Failed to sleep after collecting cells: \(error)")
                     }
                 }
             }
             
             let packetCollector = CPTCollector(client: CPTClient(queue: .global(qos: .background)))
-            let collectPacketsTask: () -> () = {
+            let collectPacketsTask: () async -> () = {
                 // Only run the task if the jailbreak mode is active
                 guard UserDefaults.standard.dataCollectionMode() == .automatic else { return }
                 
                 // Only run the task when we currently don't manually import any new data
                 guard !PortStatus.importActive.load(ordering: .relaxed) else { return }
                 
-                packetCollector.collectAndStore { result in
-                    do {
-                        _ = try result.get()
-                    } catch {
-                        // Print the error if the task execution was not successful
-                        Self.logger.warning("Failed to collect & store packets in scheduled timer: \(error)")
-                    }
+                do {
+                    _ = try await packetCollector.collectAndStore()
+                } catch {
+                    // Print the error if the task execution was not successful
+                   await Self.logger.warning("Failed to collect & store packets in scheduled timer: \(error)")
                 }
             }
             // Schedule a timer to continuously poll the latest packets
             Task {
                 while (true) {
-                    collectPacketsTask()
+                    await collectPacketsTask()
                     do {
                         try await Task.sleep(nanoseconds: 15 * NSEC_PER_SEC)
                     } catch {
-                        Self.logger.warning("Failed to sleep after collecting packets: \(error)")
+                        await Self.logger.warning("Failed to sleep after collecting packets: \(error)")
                     }
                 }
              }

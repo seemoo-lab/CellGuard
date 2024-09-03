@@ -23,17 +23,19 @@ struct CPTCollector {
         self.client = client
     }
     
-    func collectAndStore(completion: @escaping (Result<(Int, Int),Error>) -> Void) {
-        client.queryPackets { result in
-            do {
-                let packets = try result.get()
-                let (qmiPackets, ariPackets) = try Self.store(packets)
-                completion(.success((qmiPackets, ariPackets)))
-                Self.logger.debug("Imported \(qmiPackets) QMI and \(ariPackets) ARI packets")
-            } catch {
-                // TODO: Count failures and if they exceed a given threshold, output a warning notification
-                Self.logger.warning("Can't request packets from tweak: \(error)")
-                completion(.failure(error))
+    func collectAndStore() async throws -> (Int, Int) {
+        return try await withCheckedThrowingContinuation { completion in
+            client.queryPackets { result in
+                do {
+                    let packets = try result.get()
+                    let (qmiPackets, ariPackets) = try Self.store(packets)
+                    Self.logger.debug("Imported \(qmiPackets) QMI and \(ariPackets) ARI packets")
+                    completion.resume(returning: (qmiPackets, ariPackets))
+                } catch {
+                    // TODO: Count failures and if they exceed a given threshold, output a warning notification
+                    Self.logger.warning("Can't request packets from tweak: \(error)")
+                    completion.resume(throwing: error)
+                }
             }
         }
     }
