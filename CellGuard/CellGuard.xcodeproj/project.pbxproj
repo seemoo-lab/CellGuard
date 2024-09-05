@@ -151,6 +151,8 @@
 		CFA09CF92A73D4B000D16832 /* SwiftExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFA09CF82A73D4B000D16832 /* SwiftExtensions.swift */; };
 		CFA632552AB3501800D46025 /* CSV in Frameworks */ = {isa = PBXBuildFile; productRef = CFA632542AB3501800D46025 /* CSV */; };
 		CFA632582AB3503400D46025 /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = CFA632572AB3503400D46025 /* ZIPFoundation */; };
+		CFAD2F022C89A343000C90A5 /* countries.geojson in Resources */ = {isa = PBXBuildFile; fileRef = CFAD2F012C89A343000C90A5 /* countries.geojson */; };
+		CFAD2F032C89A343000C90A5 /* countries.geojson in Resources */ = {isa = PBXBuildFile; fileRef = CFAD2F012C89A343000C90A5 /* countries.geojson */; };
 		CFAE88142C2887C400092B15 /* VerificationStateLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFAE88132C2887C400092B15 /* VerificationStateLog.swift */; };
 		CFAE88152C2887C400092B15 /* VerificationStateLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFAE88132C2887C400092B15 /* VerificationStateLog.swift */; };
 		CFAE88172C2887F300092B15 /* VerificationStateStudy.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFAE88162C2887F300092B15 /* VerificationStateStudy.swift */; };
@@ -478,6 +480,7 @@
 		CF9626C22AB7474500C46953 /* PersistenceCSVExporter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PersistenceCSVExporter.swift; sourceTree = "<group>"; };
 		CF9EEEE72B34B6A500F9B6D8 /* SysdiagOpenSettingsCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SysdiagOpenSettingsCard.swift; sourceTree = "<group>"; };
 		CFA09CF82A73D4B000D16832 /* SwiftExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftExtensions.swift; sourceTree = "<group>"; };
+		CFAD2F012C89A343000C90A5 /* countries.geojson */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = countries.geojson; sourceTree = "<group>"; };
 		CFAE88132C2887C400092B15 /* VerificationStateLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerificationStateLog.swift; sourceTree = "<group>"; };
 		CFAE88162C2887F300092B15 /* VerificationStateStudy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerificationStateStudy.swift; sourceTree = "<group>"; };
 		CFAE88192C28B9C100092B15 /* StudyClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudyClient.swift; sourceTree = "<group>"; };
@@ -617,6 +620,7 @@
 			isa = PBXGroup;
 			children = (
 				CF7BE25D2A67EBCB007FF930 /* Verification */,
+				CFAD2F012C89A343000C90A5 /* countries.geojson */,
 				CF07EFA62A3B4C10005B53ED /* operator-definitions.json */,
 				CF07EFA42A3B4B56005B53ED /* OperatorDefinitions.swift */,
 			);
@@ -1238,6 +1242,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CFAD2F032C89A343000C90A5 /* countries.geojson in Resources */,
 				CFB6CF962BD122FA00EAB7B4 /* cargo-licenses.json in Resources */,
 				CFB6CF972BD122FA00EAB7B4 /* operator-definitions.json in Resources */,
 				CFB6CF982BD122FA00EAB7B4 /* qmi-definitions.json in Resources */,
@@ -1255,6 +1260,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CFAD2F022C89A343000C90A5 /* countries.geojson in Resources */,
 				CFB323A92BD03AE1007A6807 /* cargo-licenses.json in Resources */,
 				CF07EFA72A3B4C10005B53ED /* operator-definitions.json in Resources */,
 				CF4E53942A31CE2500AE2059 /* qmi-definitions.json in Resources */,

@@ -286,7 +286,6 @@ private struct CheckDistanceOfCell: VerificationStage {
     private let countryBorders = loadGeoJson()
     
     private static func loadGeoJson() -> [String: [[CLLocationCoordinate2D]]]? {
-        // TODO: I can't find this file. Did you add it to Git and also pushed the updated .xcodeproject?
         guard let path = Bundle.main.path(forResource: "countries", ofType: "geojson") else {
             pipelineLogger.warning("Can't find GeoJSON")
             return nil
