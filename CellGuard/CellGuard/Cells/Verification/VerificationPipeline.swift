@@ -12,7 +12,7 @@ import OSLog
 let primaryVerificationPipeline = CGVerificationPipeline.instance
 let activeVerificationPipelines: [VerificationPipeline] = [
     CGVerificationPipeline.instance,
-    SNVerificationPipeline.instance
+    // SNVerificationPipeline.instance
 ]
 
 struct VerificationStageRelatedObjects {
