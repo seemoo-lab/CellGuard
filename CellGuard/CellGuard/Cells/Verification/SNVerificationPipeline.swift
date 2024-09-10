@@ -3,7 +3,6 @@ import CoreData
 import OSLog
 import Dispatch
 import CoreLocation
-import CoreTelephony
 
 // Logger instance for the pipeline
 private let pipelineLogger = Logger(
