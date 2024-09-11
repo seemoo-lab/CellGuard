@@ -30,8 +30,12 @@ class LocationDataManager : NSObject, CLLocationManagerDelegate, ObservableObjec
         super.init()
         
         locationManager.delegate = self
+        // TODO: We could disable background location updates if the app is in the analysis & manual modes to save battery
+        // -> Which accuracy for the locations if the app is in background? (Important for manual mode)
+        // -> We have to listen for changes of the mode to dis- or enable this setting
         locationManager.allowsBackgroundLocationUpdates = true
         // TODO: Can we use a distance filter to reduce the number of location updates?
+        // -> Then we would have to update our location assignment algorithm
         // locationManager.distanceFilter = 10
         
         updateAccuracy()
