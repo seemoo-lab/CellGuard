@@ -51,7 +51,6 @@ impl RustApp {
         }));
 
         let result = std::panic::catch_unwind(||  {
-            csv_parser::output_header(output).unwrap();
             return csv_parser::parse_log_archive(input, output, speedup);
         });
 

@@ -239,7 +239,7 @@ dependencies = [
 [[package]]
 name = "macos-unifiedlogs"
 version = "0.1.0"
-source = "git+https://github.com/LukBukkit/macos-UnifiedLogs?branch=build-log-with-filter#e6e3b4574a08fc7d32794280fcaea6514c434878"
+source = "git+https://github.com/mandiant/macos-UnifiedLogs#6eade82fe9938c7818ab22c7ca24d133d90565c7"
 dependencies = [
  "base64",
  "byteorder",
@@ -373,9 +373,9 @@ checksum = "7a66a03ae7c801facd77a29370b4faec201768915ac14a721ba36f20bc9c209b"
 
 [[package]]
 name = "rustix"
-version = "0.38.36"
+version = "0.38.37"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3f55e80d50763938498dd5ebb18647174e0c76dc38c5505294bb224624f30f36"
+checksum = "8acb788b847c24f28525660c4d7758620a7210875711f79e7f663cc152726811"
 dependencies = [
  "bitflags",
  "errno",
