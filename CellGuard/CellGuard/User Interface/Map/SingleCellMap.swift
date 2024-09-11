@@ -62,6 +62,11 @@ struct SingleCellMap: UIViewRepresentable {
     }
     
     func updateUIView(_ uiView: MKMapView, context: Context) {
+        // Don't update map annotations if the app is in the background
+        if UIApplication.shared.applicationState == .background {
+            return
+        }
+        
         let (added, _) = CommonCellMap.updateCellAnnotations(data: alsCells, uiView: uiView)
         _ = CommonCellMap.updateLocationAnnotations(data: tweakCells, uiView: uiView)
         

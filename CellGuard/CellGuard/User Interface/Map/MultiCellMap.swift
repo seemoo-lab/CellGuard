@@ -52,6 +52,11 @@ struct MultiCellMap: UIViewRepresentable {
     }
     
     func updateUIView(_ uiView: MKMapView, context: Context) {
+        // Don't update map annotations if the app is in the background
+        if UIApplication.shared.applicationState == .background {
+            return
+        }
+        
         _ = CommonCellMap.updateCellAnnotations(data: alsCells, uiView: uiView)
     }
     
