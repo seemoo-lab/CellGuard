@@ -24,14 +24,14 @@ enum LogArchiveReadPhase: Int {
     case importingData = 3
 }
 
-enum LogArchiveError: Error {
+enum LogArchiveError: Error, LocalizedError {
     case createTmpDirFailed(Error)
     case unarchiveFailed(Error)
     case extractLogArchiveFailed(Error)
-    case parseLogArchiveFailed(Error)
+    case parseLogArchiveFailed(String)
+    case deleteLogArchiveFailed(Error)
     case readCsvFailed(Error)
     case logArchiveDirEmpty
-    case parsingFailed
     case wrongCellPrefixText
     case wrongCellSuffixText
     case wrongCellJsonType
@@ -41,8 +41,80 @@ enum LogArchiveError: Error {
     case noBinaryPacketData
     case binaryPacketDataPrivate
     case binaryPacketDataDecodingError
-    case timestampNoInt
     case importError(Error)
+    
+    var errorDescription: String? {
+        switch self {
+        case .createTmpDirFailed(_):
+            return "Cannot create temporary directory."
+        case .unarchiveFailed(_):
+            return "Cannot unarchive the sysdiagnose."
+        case .extractLogArchiveFailed(_):
+            return "Cannot extract the logarchive from the sysdiagnose."
+        case .deleteLogArchiveFailed(_):
+            return "Cannot delete the logarchive."
+        case .readCsvFailed(_):
+            return "Cannot read the resulting csv file of the parsed logarchive."
+        case .logArchiveDirEmpty:
+            return "The logarchive directory is empty."
+        case .parseLogArchiveFailed(_):
+            return "The parsing of the logarchive failed."
+        case .wrongCellPrefixText:
+            return "A cell info has the wrong prefix."
+        case .wrongCellSuffixText:
+            return "A cell info has the wrong suffix."
+        case .wrongCellJsonType:
+            return "A cell info is not properly encoded JSON."
+        case .cellJsonConversionError(_, _):
+            return "Cannot parse a cell info as JSON."
+        case .cellCCTParseError(_, _):
+            return "Cannot extract data from a parsed cell info."
+        case .noPacketProtocol:
+            return "Missing the protocol for a baseband packet."
+        case .noBinaryPacketData:
+            return "Missing the binary data for a baseband packet."
+        case .binaryPacketDataPrivate:
+            return "The binary data of a packet is private."
+        case .binaryPacketDataDecodingError:
+            return "Cannot decode the data of a packet."
+        case .importError(_):
+            return "Failed to import the read cells & packets."
+        }
+    }
+    
+    var failureReason: String? {
+        switch self {
+        case let .createTmpDirFailed(error):
+            return error.localizedDescription
+        case let .unarchiveFailed(error):
+            return error.localizedDescription
+        case let .extractLogArchiveFailed(error):
+            return error.localizedDescription
+        case let .deleteLogArchiveFailed(error):
+            return error.localizedDescription
+        case let .readCsvFailed(error):
+            return error.localizedDescription
+        case let .parseLogArchiveFailed(errorStr):
+            return errorStr
+        case let .cellJsonConversionError(jsonStr, error):
+            return "\(error.localizedDescription)\n\nJSON:\n\(jsonStr)"
+        case let .cellCCTParseError(jsonStr, error):
+            return "\(error.localizedDescription)\n\nJSON:\n\(jsonStr)"
+        case let .importError(error):
+            return error.localizedDescription
+        default:
+            return nil
+        }
+    }
+    
+    var recoverySuggestion: String? {
+        switch self {
+        case .parseLogArchiveFailed(_):
+            return "Please restart the app and try again."
+        default:
+            return nil
+        }
+    }
 }
 
 typealias LogProgressFunc = (LogArchiveReadPhase, Int, Int) -> Void
@@ -131,25 +203,25 @@ struct LogArchiveReader {
             throw LogArchiveError.extractLogArchiveFailed(error)
         }
         
-        let csvFile: URL
+        var currentFileCount = 0
+        Self.logParseProgress = {
+            progress(.parsingLogs, currentFileCount, fileCountTraceV3)
+            currentFileCount += 1
+        }
+        
+        // Rust parses everything into the CSV file when we only need a few things from it.
+        // macOS `log` command natively implements filters that make it faster.
+        // Can we do the same? -> Yes, we already doing this in Rust.
+        // The function `output` in the file `src/csv_parser.rs` filters log entries based on their subsystem and content.
+        // Therefore, we have to modify the function if we want to analyze log entries of different subsystems.
+        let csvFile = try parseLogArchive(tmpDir: tmpDir, logArchiveDir: logArchive, speedup: speedup, rust: rust)
+        
+        Self.logParseProgress = nil
+        
         do {
-            var currentFileCount = 0
-            Self.logParseProgress = {
-                progress(.parsingLogs, currentFileCount, fileCountTraceV3)
-                currentFileCount += 1
-            }
-            
-            // Rust parses everything into the CSV file when we only need a few things from it.
-            // macOS `log` command natively implements filters that make it faster.
-            // Can we do the same? -> Yes, we already doing this in Rust.
-            // The function `output` in the file `src/csv_parser.rs` filters log entries based on their subsystem and content.
-            // Therefore, we have to modify the function if we want to analyze log entries of different subsystems.
-            csvFile = try parseLogArchive(tmpDir: tmpDir, logArchiveDir: logArchive, speedup: speedup, rust: rust)
-            
-            Self.logParseProgress = nil
             try fileManager.removeItem(at: logArchive)
         } catch {
-            throw LogArchiveError.parseLogArchiveFailed(error)
+            throw LogArchiveError.deleteLogArchiveFailed(error)
         }
         
         do {
@@ -299,13 +371,14 @@ struct LogArchiveReader {
         
         // Call the native macos-unifiedlogs via swift-bridge
         // It the returns the total number of parsed log lines
-        let parsedFiles = rust.parse_system_log(logArchiveDir.path, outFile.path, speedup)
+        let (parsedFiles, rustErrorString) = rust.parse_system_log(logArchiveDir.path, outFile.path, speedup)
         
         // An error occurred while parsing the files.
         // See src/lib.rs for more information.
         if parsedFiles == UInt32.max {
-            Self.logger.warning("An error occurred while parsing the log archive.")
-            throw LogArchiveError.parsingFailed
+            let swiftErrorString = rustErrorString.toString()
+            Self.logger.warning("A Rust error occurred while parsing the log archive: \(swiftErrorString)")
+            throw LogArchiveError.parseLogArchiveFailed(swiftErrorString)
         }
 
         return outFile

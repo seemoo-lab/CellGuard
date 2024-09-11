@@ -80,7 +80,7 @@ struct ImportView: View {
     
     @State var importInProgress: Bool = false
     @State var importFinished: Bool = false
-    @State var importError: String? = nil
+    @State var importError: Error? = nil
     
     @State var importProgress = Float(-1)
     
@@ -199,7 +199,7 @@ struct ImportView: View {
                     
                     if importFinished {
                         if let importError = importError {
-                            Text(importError)
+                            ImportErrorView(importError)
                         }
                     }
                 }
@@ -300,7 +300,7 @@ struct ImportView: View {
             // save how many cells we imported for later
             UserDefaults.standard.set(counts.cells?.count ?? 0, forKey: UserDefaultsKeys.importedCellNumber.rawValue)
         } catch {
-            importError = error.localizedDescription + "\nPlease restart the app and try again."
+            importError = error
             Self.logger.info("Import failed due to \(error)")
             
         }
@@ -309,7 +309,10 @@ struct ImportView: View {
     }
     
     private func footerInfoText() -> String {
-        // TODO: The app might crash when importing sysdiagnoses due to low memory
+        if importError != nil {
+            return ""
+        }
+        
         if importFinished {
             return "Increased the packet and location retention durations to infinite. Make sure to lower them after all imported cells have been verified."
         } else {
@@ -443,6 +446,48 @@ private struct ImportStatusRow: View {
             return AnyView(EmptyView())
         }
     }
+}
+
+private struct ImportErrorView: View {
+    
+    let error: Error
+    
+    init(_ error: Error) {
+        self.error = error
+    }
+    
+    var body: some View {
+        if let error = error as? LocalizedError {
+            if let recoverySuggestion = error.recoverySuggestion {
+                Text(error.localizedDescription + " " + recoverySuggestion)
+            } else {
+                Text(error.localizedDescription)
+            }
+            
+            if let failureReason = error.failureReason {
+                NavigationLink {
+                    ScrollView {
+                        Text(failureReason)
+                            .font(.body)
+                            .padding()
+                    }
+                    .navigationTitle("Failure Reason")
+                } label: {
+                    Text("Failure Reason")
+                }
+            }
+            
+            // TODO: Enable issues & create template & link to template
+            Link(destination: URL(string: "http://github.com/seemoo-lab/CellGuard")!) {
+                KeyValueListRow(key: "Report on GitHub") {
+                    Image(systemName: "link")
+                }
+            }
+        } else {
+            Text(error.localizedDescription)
+        }
+    }
+    
 }
 
 struct ImportView_Previews: PreviewProvider {

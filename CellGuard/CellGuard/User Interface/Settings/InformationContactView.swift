@@ -38,7 +38,6 @@ struct InformationContactView: View {
                     }
                 }
                 
-                // TODO: Create GitHub project
                 Link(destination: URL(string: "http://github.com/seemoo-lab/CellGuard")!) {
                     KeyValueListRow(key: "Report Issues") {
                         Image(systemName: "link")
