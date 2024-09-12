@@ -25,12 +25,13 @@ struct MapTabView: View {
     
     @State private var navigationActive = false
     @State private var navigationTarget: NSManagedObjectID? = nil
+    @State private var infoSheetShown = false
     
     var body: some View {
         NavigationView {
-            VStack {
+            ZStack {
+                // Cell Details
                 // https://www.hackingwithswift.com/quick-start/swiftui/how-to-use-programmatic-navigation-in-swiftui
-                // TODO: I guess this isn't liked? Better use ZStack?
                 NavigationLink(isActive: $navigationActive) {
                     if let target = navigationTarget,
                        let cell = managedContext.object(with: target) as? CellALS {
@@ -41,15 +42,87 @@ struct MapTabView: View {
                 } label: {
                     EmptyView()
                 }
-                // TODO: Add button to an info page for the map explaining which cells are shown, how we get their position and what their color means.
+                .frame(width: 0, height: 0)
+                .hidden()
+                
+                // Map
                 MultiCellMap(alsCells: alsCells) { cellID in
                     navigationTarget = cellID
                     navigationActive = true
                 }
                 .ignoresSafeArea()
+                
+                // Info Button
+                HStack {
+                    Spacer()
+                    MapInfoButton {
+                        infoSheetShown = true
+                    }
+                }
+                .frame(maxHeight: .infinity, alignment: .bottom)
+                // It's quite important to set the right button style, otherwise the whole map is the tap area
+                // See: https://stackoverflow.com/a/70400079
+                .buttonStyle(.borderless)
+
+            }
+            .sheet(isPresented: $infoSheetShown) {
+                MapInfoSheet()
             }
         }
     }
+}
+
+private struct MapInfoButton: View {
+    
+    @Environment(\.colorScheme) var colorScheme
+    
+    private let onTap: () -> ()
+    
+    init(onTap: @escaping () -> Void) {
+        self.onTap = onTap
+    }
+    
+    var body: some View {
+        Button {
+            onTap()
+        } label: {
+            Image(systemName: "info.circle")
+        }
+        .padding(EdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10))
+        .roundedThinMaterialBackground(color: colorScheme)
+        .padding(EdgeInsets(top: 6, leading: 6, bottom: 6, trailing: 6))
+    }
+    
+}
+
+private struct MapInfoSheet: View {
+    
+    var body: some View {
+        ScrollView {
+            // TODO: Add text & improve text layout
+            Text("Cell Reception Map")
+                .font(.title)
+                .padding()
+            
+            Text("TODO: Explain the map's purpose (including the location of the icons), locations from ALS, link to cellmapper.net")
+                .padding()
+            
+            Text("Color Scheme")
+                .font(.title2)
+                .padding()
+            
+            Text("TODO: Explain the color scheme of the cells")
+                .padding()
+            
+            Text("Filter")
+                .font(.title2)
+                .padding()
+            
+            Text("TODO: Explain that the map only shows cells you've connected to but that we'll add an option in future to change the filter settings to view all cells received from ALS in the future")
+                .padding()
+        }
+    }
+    
 }
 
 

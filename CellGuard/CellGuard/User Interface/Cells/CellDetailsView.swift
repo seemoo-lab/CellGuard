@@ -108,10 +108,10 @@ private struct TweakCellDetailsMap: View {
                 // Small map shown here
                 SingleCellMap(alsCells: alsCells, tweakCells: tweakCells)
                 
-                // Button to open
+                // Button to open the expanded map
                 HStack {
                     Spacer()
-                    TweakCellDetailsExpandMapButton() {
+                    TweakCellDetailsExpandMapButton {
                         expand = true
                     }
                 }
@@ -122,19 +122,6 @@ private struct TweakCellDetailsMap: View {
             }
             .frame(height: 200)
             .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
-        }
-    }
-    
-}
-
-private extension View {
-    
-    func roundedThinMaterialBackground(color: ColorScheme) -> some View {
-        if #available(iOS 15, *) {
-            return background(.thinMaterial, in: RoundedRectangle(cornerRadius: 10))
-        } else {
-            return background(RoundedRectangle(cornerRadius: 10)
-                .fill((color == .light ? Color.white : Color.black).opacity(0.5)))
         }
     }
     
