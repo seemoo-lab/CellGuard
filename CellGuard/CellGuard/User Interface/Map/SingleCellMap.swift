@@ -15,6 +15,25 @@ struct SingleCellMap: UIViewRepresentable {
     let alsCells: any BidirectionalCollection<CellALS>
     let tweakCells: any BidirectionalCollection<CellTweak>
     
+    /// Finds an the first location based on the passed cells and user locations
+    private func findApproximateRegion() -> CLLocationCoordinate2D {
+        if let alsCell = alsCells.first, let location = alsCell.location {
+            return CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude)
+        }
+        
+        for tweakCell in tweakCells {
+            if let location = tweakCell.location {
+                return CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude)
+            }
+        }
+        
+        // Default location
+        return CLLocationCoordinate2D(
+            latitude: 49.8726737,
+            longitude: 8.6516291
+        )
+    }
+    
     func makeUIView(context: Context) -> MKMapView {
         let mapView = MKMapView(frame: .zero)
         
@@ -27,38 +46,18 @@ struct SingleCellMap: UIViewRepresentable {
         
         // Limit the maximum zoom range of the camera to 50km as all locations should be within this range
         mapView.cameraZoomRange = MKMapView.CameraZoomRange(maxCenterCoordinateDistance: 50_000)
-        
-        mapView.setRegion(middleRegion(), animated: false)
+        mapView.setRegion(MKCoordinateRegion(center: findApproximateRegion(), latitudinalMeters: 1000, longitudinalMeters: 1000), animated: false)
         
         CommonCellMap.registerAnnotations(mapView)
         
         mapView.delegate = context.coordinator
-        
         return mapView
     }
     
-    private func middleRegion() -> MKCoordinateRegion {
-        MKCoordinateRegion(
-            center: middleLocation(),
-            span: MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02)
-        )
-    }
-    
-    private func middleLocation() -> CLLocationCoordinate2D {
-        if let alsCell = alsCells.first,
-           let location = alsCell.location {
-            return CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude)
-        }
-        
-        let firstTweakCellLocation = tweakCells.compactMap { $0.location }.first
-        if let location = firstTweakCellLocation {
-            return CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude)
-        }
-        
-        return CLLocationCoordinate2D(
-            latitude: 49.8726737,
-            longitude: 8.6516291
-        )
+    /// Updates the view region based on the annotations
+    private func updateViewRegion(_ mapView: MKMapView, animated: Bool) {
+        let ownAnnotations = mapView.annotations.filter { $0 is DatabaseAnnotation || $0 is LocationClusterAnnotation || $0 is CellClusterAnnotation }
+        mapView.showAnnotations(ownAnnotations, animated: animated)
     }
     
     func updateUIView(_ uiView: MKMapView, context: Context) {
@@ -67,13 +66,11 @@ struct SingleCellMap: UIViewRepresentable {
             return
         }
         
-        let (added, _) = CommonCellMap.updateCellAnnotations(data: alsCells, uiView: uiView)
+        _ = CommonCellMap.updateCellAnnotations(data: alsCells, uiView: uiView)
         _ = CommonCellMap.updateLocationAnnotations(data: tweakCells, uiView: uiView)
         
         // Update the shown map region if the cell annotation changes
-        if added > 0 {
-            uiView.setRegion(middleRegion(), animated: true)
-        }
+        updateViewRegion(uiView, animated: false)
         
         // TODO: Enable reach overlay if performance has been improved
         // CommonCellMap.updateCellReachOverlay(data: alsCells, uiView: uiView)        
