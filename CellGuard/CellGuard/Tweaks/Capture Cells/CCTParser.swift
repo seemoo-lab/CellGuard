@@ -240,6 +240,7 @@ struct CCTParser {
         cell.mcc = info["MCC"] as? Int32 ?? 0
         cell.network = info["MNC"] as? Int32 ?? 0
         cell.area = info["TAC"] as? Int32 ?? 0
+        // See: https://dev.seemoo.tu-darmstadt.de/apple/cell-guard/-/issues/98
         cell.cellId = info["CellId"] as? Int64 ?? 0
         
         // Although the correct name is EARFCN, here Apple still uses the name UARFCN from UMTS
@@ -252,6 +253,7 @@ struct CCTParser {
         cell.physicalCellId = info["PID"] as? Int32 ?? 0
         
         // If a deployment type > 0 is set, the cell supports 5G NSA
+        // SA+NSA = 3
         cell.deploymentType = info["DeploymentType"] as? Int32 ?? 0
         
         // kCTCellMonitorDeploymentType = 3 -> 5G NSA
@@ -260,6 +262,11 @@ struct CCTParser {
         // https://www.howardforums.com/showthread.php/1920794-5G-Nationwide-Speed-Test-Thread/page17
         // Apparently independent of the value if the field field is set, the cell supports 5G NSA
         // But we're only using it, if a neighboring NR cell appears in the data
+        
+        // Throughput
+        // CSGIndication = 0 -> https://www.sharetechnote.com/html/Handbook_LTE_CSG_OAM.html
+        // CsgId -> Closed Subscriber Group
+        // PMax -> Maximum output power of the basestation
         
         return cell
     }
