@@ -57,32 +57,6 @@ struct CellTechnologyFormatter {
         }
     }
     
-    public func icon() -> Image {
-        return Image(systemName: "\(iconName()).square.fill")
-    }
-    
-    private func iconName() -> String {
-        switch (technology) {
-        case .CDMA: return "c"
-        case .GSM: return "g"
-        case .UMTS: return "u"
-        case .SCDMA: return "s"
-        case .LTE: return "l"
-        case .NR: return "n"
-        }
-    }
-    
-    func uiColor() -> Color {
-        switch (technology) {
-        case .CDMA: return .orange
-        case .GSM: return .green
-        case .UMTS: return .green
-        case .SCDMA: return .pink
-        case .LTE: return .blue
-        case .NR: return .red
-        }
-    }
-    
     public static func from(technology: String?) -> CellTechnologyFormatter {
         // Return a default formatter if no technology is given
         guard let technology = technology?.uppercased() else {
@@ -98,14 +72,28 @@ struct CellTechnologyFormatter {
         }
     }
     
-    public static func mapColor(technology: ALSTechnology) -> UIColor {
+    public static func mapColor(_ technology: ALSTechnology) -> UIColor {
         switch (technology) {
-        case .CDMA: return .systemOrange
-        case .GSM: return .systemGreen
-        case .UMTS: return .systemGreen
-        case .SCDMA: return .systemPink
+        case .GSM: return .systemPink
+        case .CDMA: return .systemPurple
+            
+        case .UMTS: return .systemOrange
+        case .SCDMA: return .systemYellow
+        
         case .LTE: return .systemBlue
-        case .NR: return .systemRed
+            
+        case .NR: return .systemGreen
+        }
+    }
+    
+    public static func userInfo(_ technology: ALSTechnology) -> String {
+        switch technology {
+        case .GSM: return "2G"
+        case .CDMA: return "2G & 3G"
+        case .UMTS: return "3G"
+        case .SCDMA: return "3G"
+        case .LTE: return "4G"
+        case .NR: return "5G"
         }
     }
     

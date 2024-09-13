@@ -46,6 +46,6 @@ class CellAnnotationView: MKMarkerAnnotationView {
     }
     
     func updateColor(technology: ALSTechnology) {
-        markerTintColor = CellTechnologyFormatter.mapColor(technology: technology)
+        markerTintColor = CellTechnologyFormatter.mapColor(technology)
     }
 }
