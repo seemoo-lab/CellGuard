@@ -89,9 +89,9 @@ private struct VerificationStateInternalView: View {
                 CellDetailsRow("Stages", verificationPipeline.stages.count)
                 CellDetailsRow("Points", "\(verificationState.score) / \(verificationPipeline.pointsMax)")
                 if verificationState.finished {
-                    if verificationState.score >= primaryVerificationPipeline.pointsSuspicious {
+                    if verificationState.score >= verificationPipeline.pointsSuspicious {
                         CellDetailsRow("Verdict", "Trusted", icon: "lock.shield")
-                    } else if verificationState.score >= primaryVerificationPipeline.pointsUntrusted {
+                    } else if verificationState.score >= verificationPipeline.pointsUntrusted {
                         CellDetailsRow("Verdict", "Anomalous", icon: "shield")
                     } else {
                         CellDetailsRow("Verdict", "Suspicious", icon: "exclamationmark.shield")
