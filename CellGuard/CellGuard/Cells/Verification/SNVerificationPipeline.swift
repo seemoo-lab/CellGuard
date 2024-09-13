@@ -281,9 +281,9 @@ private struct CheckDistanceOfCell: VerificationStage {
     var points: Int16 = 1
     var waitForPackets: Bool = false
     
-    private let persistence = PersistenceController.shared
     // Hint: Only perform disk operations once if you to save time during the stage's execution
-    private let countryBorders = loadGeoJson()
+    // If we use a static variable, the file is lazily loaded, i.e. only if required (see https://stackoverflow.com/a/34667272)
+    private static var countryBorders = Self.loadGeoJson()
     
     private static func loadGeoJson() -> [String: [[CLLocationCoordinate2D]]]? {
         guard let path = Bundle.main.path(forResource: "countries", ofType: "geojson") else {
@@ -388,12 +388,12 @@ private struct CheckDistanceOfCell: VerificationStage {
             return .fail()
         }
         
-        guard let countryBorders = countryBorders else {
+        guard let countryBorders = Self.countryBorders else {
             logger.warning("Skipping stage as borders failed to load")
             return .success()
         }
         
-        guard let (distance, _, _) = persistence.calculateDistance(tweakCell: queryCellId) else {
+        guard let (distance, _, _) = PersistenceController.shared.calculateDistance(tweakCell: queryCellId) else {
             // If we can't get the distance, we delay the verification
             logger.warning("Can't calculate distance")
             return .success()
