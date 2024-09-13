@@ -120,6 +120,13 @@ struct StudyPacketFilter {
             }
         }
         
+        // PDS
+        if service == 0x06 {
+            // For now we're don't collect any packets from the service as they might contain location data,
+            // are quite frequent on jailbroken devices, and are relatively big.
+            return false
+        }
+        
         // VS
         if service == 0x09 {
             // Dial Call
