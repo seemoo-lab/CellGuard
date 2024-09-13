@@ -77,6 +77,8 @@
 		CF4445EC2C29700D00D0ABED /* StudyWeeklyScoresView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF4445EB2C29700D00D0ABED /* StudyWeeklyScoresView.swift */; };
 		CF4445ED2C29700D00D0ABED /* StudyWeeklyScoresView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF4445EB2C29700D00D0ABED /* StudyWeeklyScoresView.swift */; };
 		CF446754298D2A040083EE63 /* CellLocationDistance.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF446753298D2A040083EE63 /* CellLocationDistance.swift */; };
+		CF462B472C94315A00BA1BF4 /* MapInfoSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF462B462C94315A00BA1BF4 /* MapInfoSheet.swift */; };
+		CF462B482C94315A00BA1BF4 /* MapInfoSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF462B462C94315A00BA1BF4 /* MapInfoSheet.swift */; };
 		CF4E53932A31CE2500AE2059 /* ari-definitions.json in Resources */ = {isa = PBXBuildFile; fileRef = CF4E53912A31CE2500AE2059 /* ari-definitions.json */; };
 		CF4E53942A31CE2500AE2059 /* qmi-definitions.json in Resources */ = {isa = PBXBuildFile; fileRef = CF4E53922A31CE2500AE2059 /* qmi-definitions.json */; };
 		CF4E53962A31CE3F00AE2059 /* QMIDefinitions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF4E53952A31CE3F00AE2059 /* QMIDefinitions.swift */; };
@@ -420,6 +422,7 @@
 		CF320F5A29622B6D009BAD18 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		CF4445EB2C29700D00D0ABED /* StudyWeeklyScoresView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudyWeeklyScoresView.swift; sourceTree = "<group>"; };
 		CF446753298D2A040083EE63 /* CellLocationDistance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellLocationDistance.swift; sourceTree = "<group>"; };
+		CF462B462C94315A00BA1BF4 /* MapInfoSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapInfoSheet.swift; sourceTree = "<group>"; };
 		CF4E53912A31CE2500AE2059 /* ari-definitions.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "ari-definitions.json"; sourceTree = "<group>"; };
 		CF4E53922A31CE2500AE2059 /* qmi-definitions.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "qmi-definitions.json"; sourceTree = "<group>"; };
 		CF4E53952A31CE3F00AE2059 /* QMIDefinitions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QMIDefinitions.swift; sourceTree = "<group>"; };
@@ -1052,6 +1055,8 @@
 			isa = PBXGroup;
 			children = (
 				CF0FDCB629699E5100A6FFE2 /* MapTabView.swift */,
+				CF462B462C94315A00BA1BF4 /* MapInfoSheet.swift */,
+				CF1FAFB22986B11200106930 /* CellReachOverlay.swift */,
 				CFDF5D82297F0736000708A8 /* CommonCellMap.swift */,
 				CFDF5D80297F05F1000708A8 /* CellMapDelegate.swift */,
 				CFDF5D7E297F05A0000708A8 /* SingleCellMap.swift */,
@@ -1064,7 +1069,6 @@
 				CFDF5D76297EF1E8000708A8 /* LocationAnnotation.swift */,
 				CFDF5D78297EF1EF000708A8 /* LocationAnnotationView.swift */,
 				CFDF5D7C297EF76C000708A8 /* LocationClusterAnnotation.swift */,
-				CF1FAFB22986B11200106930 /* CellReachOverlay.swift */,
 			);
 			path = Map;
 			sourceTree = "<group>";
@@ -1479,6 +1483,7 @@
 				CFB6CF7F2BD122FA00EAB7B4 /* QMIContentParser.swift in Sources */,
 				CF2FF68E2BF296EE006E2DF4 /* RiskInfoView.swift in Sources */,
 				CFB6CF802BD122FA00EAB7B4 /* CellGuardSceneDelegate.swift in Sources */,
+				CF462B482C94315A00BA1BF4 /* MapInfoSheet.swift in Sources */,
 				CFD5657B2BDFA82C00925FAA /* VerificationPipeline.swift in Sources */,
 				CFB6CF812BD122FA00EAB7B4 /* CellGuardApp.swift in Sources */,
 				45ECF55E2BFACB7D00DD92CF /* UserStudyView.swift in Sources */,
@@ -1629,6 +1634,7 @@
 				CFD8DD262A715E8300954A25 /* QMIContentParser.swift in Sources */,
 				CF2FF68D2BF296EE006E2DF4 /* RiskInfoView.swift in Sources */,
 				CF5CBB9529689FFE001CE9BE /* CellGuardSceneDelegate.swift in Sources */,
+				CF462B472C94315A00BA1BF4 /* MapInfoSheet.swift in Sources */,
 				CFD5657A2BDFA82C00925FAA /* VerificationPipeline.swift in Sources */,
 				CFD023372961A10D00AA5A1C /* CellGuardApp.swift in Sources */,
 				45ECF55D2BFACB7D00DD92CF /* UserStudyView.swift in Sources */,

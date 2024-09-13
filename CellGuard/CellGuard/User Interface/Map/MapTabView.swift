@@ -95,36 +95,6 @@ private struct MapInfoButton: View {
     
 }
 
-private struct MapInfoSheet: View {
-    
-    var body: some View {
-        ScrollView {
-            // TODO: Add text & improve text layout
-            Text("Cell Reception Map")
-                .font(.title)
-                .padding()
-            
-            Text("TODO: Explain the map's purpose (including the location of the icons), locations from ALS, link to cellmapper.net")
-                .padding()
-            
-            Text("Color Scheme")
-                .font(.title2)
-                .padding()
-            
-            Text("TODO: Explain the color scheme of the cells")
-                .padding()
-            
-            Text("Filter")
-                .font(.title2)
-                .padding()
-            
-            Text("TODO: Explain that the map only shows cells you've connected to but that we'll add an option in future to change the filter settings to view all cells received from ALS in the future")
-                .padding()
-        }
-    }
-    
-}
-
 
 struct MapView_Previews: PreviewProvider {
     static var previews: some View {
