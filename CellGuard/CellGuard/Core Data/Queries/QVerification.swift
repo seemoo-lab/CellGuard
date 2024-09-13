@@ -30,7 +30,16 @@ extension PersistenceController {
             request.sortDescriptors = [NSSortDescriptor(key: "cell.collected", ascending: false)]
             request.relationshipKeyPathsForPrefetching = ["cell"]
             
-            guard let verificationState = (try request.execute()).first else {
+            // Try to get the verification state for a cell
+            var verificationState = (try request.execute()).first
+            
+            // Try to create the verification state for a cell
+            if verificationState == nil {
+                verificationState = try fetchNextCellWithoutVerification(context: context, pipelineId: pipelineId, afterPipelineId: afterPipelineId)
+            }
+            
+            // Return nil if we haven't found a cell & verification state
+            guard let verificationState = verificationState else {
                 return nil
             }
             
@@ -41,6 +50,38 @@ extension PersistenceController {
             
             return (verificationState.stage, verificationState.score, verificationState.objectID, cell.objectID, Self.queryCell(from: cell))
         }
+    }
+    
+    private func fetchNextCellWithoutVerification(context: NSManagedObjectContext, pipelineId: Int16, afterPipelineId: Int16?) throws -> VerificationState? {
+        let request = CellTweak.fetchRequest()
+        var predicates: [NSPredicate] = []
+        
+        // Find a cell which has no verification state for this pipeline so far.
+        // This can occur if the pipeline is activated only after the cell was imported.
+        predicates.append(NSPredicate(format: "SUBQUERY(verifications, $ver, $ver.pipeline == %@).@count == 0", Int(pipelineId) as NSNumber))
+        
+        // Append a predicate to ensure the other pipeline already finished (if attribute set)
+        if let afterPipelineId = afterPipelineId {
+            predicates.append(NSPredicate(format: "SUBQUERY(verifications, $ver, $ver.finished == YES AND $ver.pipeline == %@).@count > 0", Int(afterPipelineId) as NSNumber))
+        }
+        
+        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
+        request.sortDescriptors = [NSSortDescriptor(key: "collected", ascending: false)]
+        
+        // No results found
+        guard let cell = try request.execute().first else {
+            return nil
+        }
+        
+        // Create a new verification state for the cell and pipeline
+        let state = VerificationState(context: context)
+        state.pipeline = pipelineId
+        state.delayUntil = Date()
+        cell.addToVerifications(state)
+        
+        // Save the state and return it
+        try context.save()
+        return state
     }
     
     func storeVerificationResults(statusId: NSManagedObjectID, stage: Int16, score: Int16, finished: Bool, delayUntil: Date?, logsMetadata: [VerificationStageResultLogMetadata]) throws {

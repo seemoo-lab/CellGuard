@@ -5,9 +5,15 @@
 //  Created by Lukas Arnold on 07.06.24.
 //
 
+import OSLog
 import SwiftUI
 
 struct AdvancedSettingsView: View {
+    
+    private static let logger = Logger(
+        subsystem: Bundle.main.bundleIdentifier!,
+        category: String(describing: AdvancedSettingsView.self)
+    )
     
     @AppStorage(UserDefaultsKeys.showTrackingMarker.rawValue) var showTrackingMarker: Bool = false
     @AppStorage(UserDefaultsKeys.appMode.rawValue) var appMode: DataCollectionMode = .none
@@ -58,7 +64,35 @@ struct AdvancedSettingsView: View {
                     Text("Clear Weekly Scores")
                 }
             }
-            #endif            
+            #endif
+            
+            Section(header: Text("Verification Pipelines"), footer: Text("Each verification pipeline checks your collected data for unique suspicious patterns. You cannot disable the primary pipeline.")) {
+                ForEach(activeVerificationPipelines, id: \.id) { pipeline in
+                    let primary = pipeline.id == primaryVerificationPipeline.id
+                    
+                    Toggle("\(pipeline.name)\(primary ? " (Primary)" : "")", isOn: .init(get: {
+                        primary ? true : UserDefaults.standard.userEnabledVerificationPipelineIds().contains(pipeline.id)
+                    }, set: { newVal in
+                        // Get enabled pipelines
+                        var enabledPipelines = UserDefaults.standard.userEnabledVerificationPipelineIds()
+                        
+                        // Add or remove the pipeline in question
+                        if newVal {
+                            enabledPipelines.append(pipeline.id)
+                            Self.logger.info("User enabled pipeline \(pipeline.name) with id \(pipeline.id)")
+                        } else {
+                            if let index = enabledPipelines.firstIndex(of: pipeline.id) {
+                                enabledPipelines.remove(at: index)
+                                Self.logger.info("User disabled pipeline \(pipeline.name) with id \(pipeline.id)")
+                            }
+                        }
+                        
+                        // Update user defaults with the new array
+                        UserDefaults.standard.setValue(enabledPipelines, forKey: UserDefaultsKeys.activePipelines.rawValue)
+                    }))
+                    .disabled(primary)
+                }
+            }
             
             Section(header: Text("Local Database")) {
                 NavigationLink {

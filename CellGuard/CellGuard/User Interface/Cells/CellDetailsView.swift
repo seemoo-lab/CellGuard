@@ -263,7 +263,7 @@ private struct TweakCellMeasurementList: View {
             ToolbarItem(placement: .topBarTrailing) {
                 Menu {
                     Picker("Pipeline", selection: $pipelineId) {
-                        ForEach(activeVerificationPipelines, id: \.id) {
+                        ForEach(UserDefaults.standard.userEnabledVerificationPipelines(), id: \.id) {
                             Text($0.name)
                         }
                     }
@@ -299,7 +299,16 @@ private struct TweakCellMeasurementNavLink: View {
                 label(score: state.finished ? state.score : nil, study: measurement.study != nil)
             }
         } else {
-            label(score: 0, study: false)
+            // Maybe we could also use the progress label here?
+            labelUnknown()
+        }
+    }
+    
+    private func labelUnknown() -> some View {
+        HStack {
+            date
+            Spacer()
+            Image(systemName: "questionmark.diamond")
         }
     }
     

@@ -181,6 +181,14 @@ extension VerificationPipeline {
             if PortStatus.importActive.load(ordering: .relaxed) {
                 // Sleep for one second
                 try? await Task.sleep(nanoseconds: NSEC_PER_SEC)
+                continue
+            }
+            
+            // Don't run the pipeline if it is disabled
+            if id != primaryVerificationPipeline.id && !UserDefaults.standard.userEnabledVerificationPipelineIds().contains(id) {
+                // Sleep for 30 seconds
+                try? await Task.sleep(nanoseconds: 30 * NSEC_PER_SEC)
+                continue
             }
             
             // Timeout for async task: https://stackoverflow.com/a/75039407
