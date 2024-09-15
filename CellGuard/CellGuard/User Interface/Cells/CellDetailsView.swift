@@ -176,6 +176,7 @@ private struct CellDetailsCell: View {
                 CellDetailsRow(techFormatter.network(), cell.network)
                 CellDetailsRow(techFormatter.area(), cell.area)
                 CellDetailsRow(techFormatter.cell(), cell.cell)
+                CellDetailsIdentification(cell: cell)
             }
             
             if let measurement = cell as? CellTweak, let alsCell = measurement.appleDatabase {

@@ -39,11 +39,18 @@ struct CellTechnologyFormatter {
     }
     
     public func cell() -> String {
-        if technology == .CDMA {
+        switch technology {
+        case .CDMA:
             return "BSID"
+        case .UMTS:
+            return "LCID"
+        case .LTE:
+            return "ECI"
+        case .NR:
+            return "NCI"
+        default:
+            return "Cell ID"
         }
-        
-        return "Cell ID"
     }
     
     public func frequency() -> String {
