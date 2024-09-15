@@ -179,10 +179,11 @@ struct LogArchiveReader {
         
         progress(.extractingTar, 0, 0)
         var logArchive: URL
+        var installedProfileDir: URL
         var speedup = speedup
         var fileCountTraceV3 = 0
         do {
-            logArchive = try extractLogArchive(tmpDir: tmpDir, tmpTarFile: tmpTarFile, speedup: speedup)
+            (logArchive, installedProfileDir) = try extractFromTar(tmpDir: tmpDir, tmpTarFile: tmpTarFile, speedup: speedup)
             fileCountTraceV3 = try countLogArchiveFiles(logArchiveDir: logArchive, speedup: speedup)
             
             // If the speed-up is enabled, check if the log archive has Persist or HighVolume tracev3 files.
@@ -191,17 +192,23 @@ struct LogArchiveReader {
                 Self.logger.debug("Disables Persist & HighVolume speed-up as there is none the relevant directories")
                 speedup = false
                 // Redo the extraction as we need all tracev3 files for parsing
-                logArchive = try extractLogArchive(tmpDir: tmpDir, tmpTarFile: tmpTarFile, speedup: speedup)
+                (logArchive, installedProfileDir) = try extractFromTar(tmpDir: tmpDir, tmpTarFile: tmpTarFile, speedup: speedup)
                 fileCountTraceV3 = try countLogArchiveFiles(logArchiveDir: logArchive, speedup: speedup)
                 // Disable the speed-up for future invocations as future sysdiagnoses recorded with the device will also not support the speed-up.
                 // The user can always re-enable the speed-up in the settings.
                 UserDefaults.standard.setValue(false, forKey: UserDefaultsKeys.logArchiveSpeedup.rawValue)
             }
             
+            // Clean up tar file
             try fileManager.removeItem(at: tmpTarFile)
+            // Clean up the app's inbox
+            cleanupInbox()
         } catch {
             throw LogArchiveError.extractLogArchiveFailed(error)
         }
+        
+        // TODO: Also scan for expiry events?
+        let foundProfile = try scanForBasebandProfile(installedProfileDir: installedProfileDir)
         
         var currentFileCount = 0
         Self.logParseProgress = {
@@ -220,6 +227,7 @@ struct LogArchiveReader {
         
         do {
             try fileManager.removeItem(at: logArchive)
+            try fileManager.removeItem(at: installedProfileDir)
         } catch {
             throw LogArchiveError.deleteLogArchiveFailed(error)
         }
@@ -228,7 +236,7 @@ struct LogArchiveReader {
             let totalCsvLines = try countCSVLines(csvFile: csvFile)
             Self.logger.debug("Total CSV Lines: \(totalCsvLines)")
             var currentCsvLine = 0
-            let out = try readCSV(csvFile: csvFile) {
+            let out = try readCSV(csvFile: csvFile, profile: foundProfile) {
                 currentCsvLine += 1
                 progress(.importingData, currentCsvLine, totalCsvLines)
             }
@@ -270,7 +278,37 @@ struct LogArchiveReader {
         return tmpTarFile
     }
     
-    private func extractLogArchive(tmpDir: URL, tmpTarFile: URL, speedup: Bool) throws -> URL {
+    private func shouldExtractFile(nameComponents: [String.SubSequence], speedup: Bool) -> Bool {
+        // There should be at least one filename present
+        guard let last = nameComponents.last else {
+            return false
+        }
+        
+        if nameComponents.contains("system_logs.logarchive") {
+            // Only extract HighVolume/*.travev3 & Persist/*.tracev3 files if the speedup is enabled
+            if speedup && last.hasSuffix(".tracev3") {
+                if nameComponents.contains("HighVolume") || nameComponents.contains("Persist") {
+                    return true
+                } else {
+                    Self.logger.debug("Skipping extraction from tar due to speed up: \(nameComponents.joined(separator: "/"))")
+                    return false
+                }
+            }
+            
+            // Extract all (other) files part of the logarchive
+            return true
+        } else if nameComponents.contains("MCState") {
+            // Extract profile-[...].stub files
+            if last.hasPrefix("profile-") && last.hasSuffix(".stub") {
+                return true
+            }
+        }
+        
+        // Skip extraction of all other sysdiagnose files
+        return false
+    }
+    
+    private func extractFromTar(tmpDir: URL, tmpTarFile: URL, speedup: Bool) throws -> (logArchiveDir: URL, installedProfileDir: URL) {
         Self.logger.debug("Extracting tar contents")
         let fileHandle = try FileHandle(forReadingFrom: tmpTarFile)
         defer { try? fileHandle.close() }
@@ -281,26 +319,22 @@ struct LogArchiveReader {
         var cont = true
         while (cont) {
             try reader.process { entry in
+                // Stop the reader if we've read all entries
                 guard let entry = entry else {
                     cont = false
                     return
                 }
                 
+                // Determine which files should be extracted to disk
                 let nameComponents = entry.info.name.split(separator: "/")
-                guard let logArchiveIndex = nameComponents.lastIndex(of: "system_logs.logarchive") else {
+                if !shouldExtractFile(nameComponents: nameComponents, speedup: speedup) {
                     return
                 }
                 
-                let path = nameComponents[logArchiveIndex...nameComponents.count-1]
-                    .reduce(tmpDir) { $0.appendingPathComponent(String($1)) }
+                // Remove the first directory layer from file structure, e.g. sysdiagnose_2024.09.15_11-45-25+0200_iPhone-OS_iPhone_21G93
+                let path = nameComponents[1...nameComponents.count-1].reduce(tmpDir) { $0.appendingPathComponent(String($1)) }
                 
-                // Only extract HighVolume/*.travev3 & Persist/*.tracev3 files if the speedup is enabled as other tracev3 files are not read.
-                if speedup && path.lastPathComponent.hasSuffix(".tracev3") &&
-                    !(path.pathComponents.contains("HighVolume") || path.pathComponents.contains("Persist")) {
-                    Self.logger.debug("Skipping extraction from tar due to speed up: \(path)")
-                    return
-                }
-                
+                // Write file from tar archive to temporary directory
                 try fileManager.createDirectory(at: path.deletingLastPathComponent(), withIntermediateDirectories: true)
                 try entry.data?.write(to: path)
                 Self.logger.debug("Extracting from tar: \(path)")
@@ -315,6 +349,16 @@ struct LogArchiveReader {
             throw LogArchiveError.logArchiveDirEmpty
         }
         
+        let installedProfileDir = tmpDir
+            .appendingPathComponent("logs", conformingTo: .directory)
+            .appendingPathComponent("MCState", conformingTo: .directory)
+            .appendingPathComponent("Shared", conformingTo: .directory)
+        Self.logger.debug("Installed Profiles Directory: \(installedProfileDir)")
+        
+        return (logArchiveDir, installedProfileDir)
+    }
+    
+    private func cleanupInbox() {
         // After unarchiving, shared sysdiagnose files are still in the app's folder .../Documents/Inbox/
         // Delete as mentioned in https://stackoverflow.com/questions/16213226/do-you-need-to-delete-imported-files-from-documents-inbox
         var dirPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
@@ -324,14 +368,12 @@ struct LogArchiveReader {
                 let fullPath = (dirPath as NSString).appendingPathComponent(path)
                 do {
                     try fileManager.removeItem(atPath: fullPath)
-                    print("Inbox file deleted!")
+                    Self.logger.debug("Inbox file deleted: \(fullPath)")
                 } catch let error as NSError {
-                    print("Error deleting files from inbox: \(error.localizedDescription)")
+                    Self.logger.warning("Error deleting files from inbox: \(error.localizedDescription)")
                 }
             }
         }
-        
-        return logArchiveDir
     }
         
     private func countLogArchiveFiles(logArchiveDir: URL, speedup: Bool) throws -> Int {
@@ -363,6 +405,23 @@ struct LogArchiveReader {
         return count
     }
     
+    private func scanForBasebandProfile(installedProfileDir: URL) throws -> ProfileStubData? {
+        let scanner = ProfileScanner(directory: installedProfileDir)
+        
+        let profile = try scanner.findBasebandLoggingProfile()
+        
+        // Save the install and expiry dates or set to nil if no profile was installed
+        UserDefaults.standard.set(profile?.installDate, forKey: UserDefaultsKeys.basebandProfileInstall.rawValue)
+        UserDefaults.standard.set(profile?.removalDate, forKey: UserDefaultsKeys.basebandProfileRemoval.rawValue)
+
+        if let profile = profile, let removalDate = profile.removalDate {
+            // Schedule a reminder notification (if a profile was installed)
+            CGNotificationManager.shared.queueProfileExpiryNotification(removalDate: removalDate)
+        }
+        
+        return profile
+    }
+    
     private func parseLogArchive(tmpDir: URL, logArchiveDir: URL, speedup: Bool, rust: RustApp) throws -> URL {
         Self.logger.debug("Parsing extracted log archive using macos-unifiedlogs")
         
@@ -392,7 +451,7 @@ struct LogArchiveReader {
         return count
     }
     
-    private func readCSV(csvFile: URL, progress: () -> Void) throws -> ImportResult {
+    private func readCSV(csvFile: URL, profile: ProfileStubData?, progress: () -> Void) throws -> ImportResult {
         if let fileAttributes = try? fileManager.attributesOfItem(atPath: csvFile.path) {
             Self.logger.debug("\(fileAttributes))")
         }
@@ -498,33 +557,14 @@ struct LogArchiveReader {
             throw LogArchiveError.importError(error)
         }
                 
+        // Warn the user if the profile is not installed
         var notices: [ImportNotice] = []
-        
-        // We haven't found any usable packet, so no profile is installed at all or maybe it expired some time ago
-        if packets.count == 0 {
+        if profile == nil {
             notices.append(.profileNotInstalled)
-        } else if packetsPrivate.count > 0 {
-            // We have found some usable packets but also some private packets, so in the duration of the sysdiagnose, the profile status has changed
-            if let packetPrivateDatesLast = packetPrivateDates.last, 
-                let packetDatesLast = packetDates.last,
-                packetPrivateDatesLast > packetDatesLast {
-                // The profile expired
-                notices.append(.profileExpired)
-            } else if let packetPrivateDateLast = packetPrivateDates.last,
-                      let packetDateLast = packetDates.last,
-                        packetPrivateDateLast < packetDateLast {
-                // The profile was freshly installed as there are no private packets at end.
-                // We can't check for packetPrivateDates.last < packetDates.first as the private and non-private packets are mixed for a short moment when the profile is installed.
-                // We can increase the accuracy of this check if we also check for the log message "Profile “com.apple.basebandlogging” installed".
-                notices.append(.profileNewlyInstalled)
-            } else {
-                // There some private packets in between, just tell the user to check the profile.
-                notices.append(.profileUnknownStatus)
-            }
         }
         
+        // TODO: Recently installed and recently expired (check MCProfileEvents.plist)
         // TODO: Check for log truncation
-        // TODO: Check for profile install or uninstall events
         
         return ImportResult(
             cells: ImportCount(count: filteredCells.count, first: filteredCells.first?.timestamp, last: filteredCells.last?.timestamp),

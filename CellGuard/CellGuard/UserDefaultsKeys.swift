@@ -16,8 +16,9 @@ enum UserDefaultsKeys: String {
     case appMode
     case logArchiveSpeedup
     case study
-    case importedCellNumber
     case activePipelines
+    case basebandProfileInstall
+    case basebandProfileRemoval
 }
 
 enum DataCollectionMode: String, CaseIterable, Identifiable {
@@ -62,7 +63,7 @@ extension UserDefaults {
         if let date = date {
             set(date.timeIntervalSince1970, forKey: key)
         } else {
-            setNilValueForKey(key)
+            removeObject(forKey: key)
         }
     }
     

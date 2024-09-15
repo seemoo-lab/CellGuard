@@ -94,7 +94,7 @@ struct SummaryTabView: View {
 private struct CombinedRiskCellView: View {
     
     @FetchRequest private var tweakCells: FetchedResults<CellTweak>
-    @AppStorage(UserDefaultsKeys.importedCellNumber.rawValue) var lastImportedCells: Double = 0
+    @AppStorage(UserDefaultsKeys.basebandProfileRemoval.rawValue) private var profileRemovalDate: Double = 0
     
     init() {
         let latestTweakCellRequest = NSFetchRequest<CellTweak>()
@@ -116,9 +116,10 @@ private struct CombinedRiskCellView: View {
             NoneModeCard()
             
             // manual mode: show debug profile import instructions, if:
-            //  - last import had <5 cells
-            //  - tweak cells is empty
-            if tweakCells.isEmpty || lastImportedCells < 5 {
+            //  - tweak cells are empty (e.g. upon first startup)
+            //  - the last import had no profile installed
+            //  - the profile is expired
+            if tweakCells.isEmpty || profileRemovalDate < Date().timeIntervalSince1970 {
                 DebugProfileCard()
             }
             

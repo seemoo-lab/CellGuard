@@ -59,7 +59,7 @@ class CGNotificationManager: ObservableObject {
     
     // TODO: Clear notification upon starting CellGuard
     
-    func queueNotifications() {
+    func queueCellNotification() {
         guard let counts = PersistenceController.shared.fetchNotificationCellCounts() else {
             Self.logger.warning("Couldn't fetch the count of untrusted and suspicious measurements not yet sent as notifications")
             return
@@ -112,6 +112,40 @@ class CGNotificationManager: ObservableObject {
         UNUserNotificationCenter.current().add(request) { error in
             if let error = error {
                 Self.logger.warning("Failed to schedule keep open notification: \(error)")
+            }
+        }
+    }
+    
+    func queueProfileExpiryNotification(removalDate: Date) {
+        let notificationCenter = UNUserNotificationCenter.current()
+        
+        // Remove existing notification
+        let identifier = "profile-expiry"
+        notificationCenter.removePendingNotificationRequests(withIdentifiers: [identifier])
+        
+        // Set the notification content
+        let content = UNMutableNotificationContent()
+        content.title = "Baseband profile expires tomorrow"
+        content.sound = nil
+        content.body = "The baseband debug profile expires in one day, reinstall it to continue collecting data."
+        
+        // TODO: Deep link to profile install view
+        
+        // The notification should appear one day before the profile expiry
+        let calendar = Calendar.current
+        guard let dayBefore = calendar.date(byAdding: .day, value: -1, to: removalDate) else {
+            Self.logger.warning("Failed to calculate day before profile expiry \(removalDate)")
+            return
+        }
+        let dayBeforeComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute, .timeZone], from: dayBefore)
+        let trigger = UNCalendarNotificationTrigger(dateMatching: dayBeforeComponents, repeats: false)
+        
+        // Schedule a new notification
+        let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
+        
+        notificationCenter.add(request) { error in
+            if let error = error {
+                Self.logger.warning("Failed to schedule profile expiry notification: \(error)")
             }
         }
     }

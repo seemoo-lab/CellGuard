@@ -175,7 +175,7 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
                         try? await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
                         continue
                     }
-                    CGNotificationManager.shared.queueNotifications()
+                    CGNotificationManager.shared.queueCellNotification()
                     try? await Task.sleep(nanoseconds: 2 * 60 * NSEC_PER_SEC)
                 }
             }

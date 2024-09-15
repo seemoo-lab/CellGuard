@@ -21,13 +21,13 @@ enum ImportNotice: Identifiable {
         case .profileNewlyInstalled:
             return "The baseband profile was installed recently, thus only a limited amount of data is available."
         case .profileNotInstalled:
-            return "Please make sure the baseband profile is installed on this iPhone, otherwise CellGuard cannot collect data. The profile expires after 21 days."
+            return "Make sure the baseband profile is installed on this iPhone, otherwise CellGuard cannot collect data. The profile expires after 21 days."
         case .profileExpired:
             return "The baseband profile recently expired. Please re-install it to continue recording data."
         case .profileUnknownStatus:
             return "Please verify that you've installed the baseband profile. If not installed, you cannot import data."
         case .logTruncatedDueToFullDisk:
-            return "Please make sure you have enough free storage on your iPhone, otherwise logs are truncated more frequently."
+            return "Make sure you have enough free storage on your iPhone, otherwise logs are truncated more frequently."
         }
     }
 }

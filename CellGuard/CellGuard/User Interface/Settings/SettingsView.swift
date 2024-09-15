@@ -22,6 +22,8 @@ struct SettingsView: View {
     @AppStorage(UserDefaultsKeys.introductionShown.rawValue) var introductionShown: Bool = true
     @AppStorage(UserDefaultsKeys.appMode.rawValue) var appMode: DataCollectionMode = .none
     @AppStorage(UserDefaultsKeys.study.rawValue) var studyParticipationTimestamp: Double = 0
+    @AppStorage(UserDefaultsKeys.basebandProfileInstall.rawValue) var basebandProfileInstall: Double = 0
+    @AppStorage(UserDefaultsKeys.basebandProfileRemoval.rawValue) var basebandProfileRemoval: Double = 0
     
     @State private var showQuitStudyAlert = false
 
@@ -39,12 +41,18 @@ struct SettingsView: View {
             
             // Only show the baseband profile setting in the manual mode
             if appMode == .manual {
-                // TODO: Add expected date of expiry (read from sysdiagnose) & allow the user to manually set the date
                 Section(header: Text("Baseband Profile"), footer: Text("Keep the baseband debug profile on your device up-to-date to collect logs for CellGuard.")) {
                     NavigationLink {
                         DebugProfileDetailedView()
                     } label: {
                         Text("Install Profile")
+                    }
+                    
+                    if basebandProfileInstall > 0 {
+                        KeyValueListRow(key: "Installed", value: mediumDateTimeFormatter.string(for: Date(timeIntervalSince1970: basebandProfileInstall)) ?? "n/a")
+                    }
+                    if basebandProfileRemoval > 0 {
+                        KeyValueListRow(key: "Expires", value: mediumDateTimeFormatter.string(for: Date(timeIntervalSince1970: basebandProfileRemoval)) ?? "n/a")
                     }
                 }
             }
