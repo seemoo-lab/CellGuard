@@ -311,10 +311,15 @@ struct ImportView: View {
         }
         
         if importFinished {
+            // TODO: Do not increase retention if data type was not imported or if data is younger than the retention deadline
             return "Increased the packet and location retention durations to infinite. Make sure to lower them after all imported cells have been verified."
         } else {
-            return "Importing data can result in incorrect analysis of previously collected data. Make sure to backup collected data beforehand."
+            if fileType != .sysdiagnose {
+                return "Importing data can result in incorrect analysis of previously collected data. Make sure to backup collected data beforehand."
+            }
         }
+        
+        return ""
     }
     
     private func updateFileProperties() {
