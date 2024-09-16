@@ -39,7 +39,7 @@
 		CF0A5678298A7A910012B2A8 /* VerificationProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0A5677298A7A910012B2A8 /* VerificationProgressView.swift */; };
 		CF0FDCB529698E1500A6FFE2 /* SummaryTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0FDCB429698E1500A6FFE2 /* SummaryTabView.swift */; };
 		CF0FDCB729699E5100A6FFE2 /* MapTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0FDCB629699E5100A6FFE2 /* MapTabView.swift */; };
-		CF0FDCBB29699E8A00A6FFE2 /* CompositeTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0FDCBA29699E8A00A6FFE2 /* CompositeTabView.swift */; };
+		CF0FDCBB29699E8A00A6FFE2 /* HomeTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0FDCBA29699E8A00A6FFE2 /* HomeTabView.swift */; };
 		CF0FDCBD2969A21000A6FFE2 /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0FDCBC2969A21000A6FFE2 /* WelcomeView.swift */; };
 		CF0FDCC02969A3E500A6FFE2 /* LargeButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0FDCBF2969A3E500A6FFE2 /* LargeButton.swift */; };
 		CF0FDCC22969AC1100A6FFE2 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0FDCC12969AC1100A6FFE2 /* SettingsView.swift */; };
@@ -263,7 +263,7 @@
 		CFB6CF802BD122FA00EAB7B4 /* CellGuardSceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5CBB9429689FFE001CE9BE /* CellGuardSceneDelegate.swift */; };
 		CFB6CF812BD122FA00EAB7B4 /* CellGuardApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD023362961A10D00AA5A1C /* CellGuardApp.swift */; };
 		CFB6CF822BD122FA00EAB7B4 /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0FDCBC2969A21000A6FFE2 /* WelcomeView.swift */; };
-		CFB6CF832BD122FA00EAB7B4 /* CompositeTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0FDCBA29699E8A00A6FFE2 /* CompositeTabView.swift */; };
+		CFB6CF832BD122FA00EAB7B4 /* HomeTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0FDCBA29699E8A00A6FFE2 /* HomeTabView.swift */; };
 		CFB6CF842BD122FA00EAB7B4 /* QMIParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2002E72A2F2BE2000922E6 /* QMIParser.swift */; };
 		CFB6CF852BD122FA00EAB7B4 /* CellDetailsRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF86C7962A6ACDAA002EC9B6 /* CellDetailsRow.swift */; };
 		CFB6CF862BD122FA00EAB7B4 /* cellguard.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5756122B2F232A00C7C60A /* cellguard.swift */; };
@@ -394,7 +394,7 @@
 		CF0A5677298A7A910012B2A8 /* VerificationProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerificationProgressView.swift; sourceTree = "<group>"; };
 		CF0FDCB429698E1500A6FFE2 /* SummaryTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SummaryTabView.swift; sourceTree = "<group>"; };
 		CF0FDCB629699E5100A6FFE2 /* MapTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapTabView.swift; sourceTree = "<group>"; };
-		CF0FDCBA29699E8A00A6FFE2 /* CompositeTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompositeTabView.swift; sourceTree = "<group>"; };
+		CF0FDCBA29699E8A00A6FFE2 /* HomeTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeTabView.swift; sourceTree = "<group>"; };
 		CF0FDCBC2969A21000A6FFE2 /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
 		CF0FDCBF2969A3E500A6FFE2 /* LargeButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LargeButton.swift; sourceTree = "<group>"; };
 		CF0FDCC12969AC1100A6FFE2 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
@@ -849,7 +849,7 @@
 				CFDF5D6D297EEED4000708A8 /* Map */,
 				CF4EE5DF296C51A20069BA5A /* Settings */,
 				CF2A1C1E2975CDBB00E8B61C /* Summary */,
-				CF0FDCBA29699E8A00A6FFE2 /* CompositeTabView.swift */,
+				CF0FDCBA29699E8A00A6FFE2 /* HomeTabView.swift */,
 				CFE4A7A82B35991C00A37C7A /* LaunchScreen.storyboard */,
 			);
 			path = "User Interface";
@@ -1498,7 +1498,7 @@
 				CF1AF56E2C96E95F004B519B /* ProfileScanner.swift in Sources */,
 				45ECF55E2BFACB7D00DD92CF /* UserStudyView.swift in Sources */,
 				CFB6CF822BD122FA00EAB7B4 /* WelcomeView.swift in Sources */,
-				CFB6CF832BD122FA00EAB7B4 /* CompositeTabView.swift in Sources */,
+				CFB6CF832BD122FA00EAB7B4 /* HomeTabView.swift in Sources */,
 				CF2FF6912BF2A3D3006E2DF4 /* QStudy.swift in Sources */,
 				CFB6CF842BD122FA00EAB7B4 /* QMIParser.swift in Sources */,
 				CFB6CF852BD122FA00EAB7B4 /* CellDetailsRow.swift in Sources */,
@@ -1651,7 +1651,7 @@
 				CF1AF56D2C96E95F004B519B /* ProfileScanner.swift in Sources */,
 				45ECF55D2BFACB7D00DD92CF /* UserStudyView.swift in Sources */,
 				CF0FDCBD2969A21000A6FFE2 /* WelcomeView.swift in Sources */,
-				CF0FDCBB29699E8A00A6FFE2 /* CompositeTabView.swift in Sources */,
+				CF0FDCBB29699E8A00A6FFE2 /* HomeTabView.swift in Sources */,
 				CF2FF6902BF2A3D3006E2DF4 /* QStudy.swift in Sources */,
 				CF2002E82A2F2BE2000922E6 /* QMIParser.swift in Sources */,
 				CF86C7972A6ACDAA002EC9B6 /* CellDetailsRow.swift in Sources */,

@@ -16,7 +16,7 @@ struct CellGuardApp: App {
 
     var body: some Scene {
         WindowGroup {
-            CompositeTabView()
+            HomeTabView()
                 .environment(\.managedObjectContext, PersistenceController.shared.container.viewContext)
                 .onChange(of: scenePhase) { backgroundState.update(from: $0) }
                 .onAppear { backgroundState.update(from: scenePhase) }
