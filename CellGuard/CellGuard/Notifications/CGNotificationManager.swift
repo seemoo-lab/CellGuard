@@ -119,26 +119,37 @@ class CGNotificationManager: ObservableObject {
     func queueProfileExpiryNotification(removalDate: Date) {
         let notificationCenter = UNUserNotificationCenter.current()
         
-        // Remove existing notification
+        // Unique identifier for the notification
+        // A previously scheduled notification will be automatically replaced
         let identifier = "profile-expiry"
-        notificationCenter.removePendingNotificationRequests(withIdentifiers: [identifier])
         
         // Set the notification content
-        let content = UNMutableNotificationContent()
-        content.title = "Baseband profile expires tomorrow"
-        content.sound = nil
-        content.body = "The baseband debug profile expires in one day, reinstall it to continue collecting data."
-        
         // TODO: Deep link to profile install view
+        let content = UNMutableNotificationContent()
+        content.sound = nil
         
         // The notification should appear one day before the profile expiry
+        let trigger: UNCalendarNotificationTrigger?
         let calendar = Calendar.current
         guard let dayBefore = calendar.date(byAdding: .day, value: -1, to: removalDate) else {
             Self.logger.warning("Failed to calculate day before profile expiry \(removalDate)")
             return
         }
-        let dayBeforeComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute, .timeZone], from: dayBefore)
-        let trigger = UNCalendarNotificationTrigger(dateMatching: dayBeforeComponents, repeats: false)
+        
+        if dayBefore > Date() {
+            // If there is still more than one day left, queue the notification
+            content.title = "Baseband profile expires tomorrow"
+            content.body = "The baseband debug profile expires in one day, reinstall it to continue collecting data."
+            
+            let dayBeforeComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute, .timeZone], from: dayBefore)
+            trigger = UNCalendarNotificationTrigger(dateMatching: dayBeforeComponents, repeats: false)
+        } else {
+            // If not, send it instantly
+            content.title = "Baseband profile expires soon"
+            content.body = "The baseband debug profile expires soon, reinstall it to continue collecting data."
+            
+            trigger = nil
+        }
         
         // Schedule a new notification
         let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
