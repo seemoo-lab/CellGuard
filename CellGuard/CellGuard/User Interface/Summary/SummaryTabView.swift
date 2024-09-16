@@ -118,8 +118,8 @@ private struct CombinedRiskCellView: View {
             // manual mode: show debug profile import instructions, if:
             //  - tweak cells are empty (e.g. upon first startup)
             //  - the last import had no profile installed
-            //  - the profile is expired
-            if tweakCells.isEmpty || profileRemovalDate < Date().timeIntervalSince1970 {
+            //  - the profile is expired or will expire within less than 24h
+            if tweakCells.isEmpty || (profileRemovalDate - 24 * 60 * 60) < Date().timeIntervalSince1970 {
                 DebugProfileCard()
             }
             
