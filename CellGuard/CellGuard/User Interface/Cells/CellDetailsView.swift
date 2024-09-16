@@ -164,17 +164,23 @@ private struct CellDetailsCell: View {
         let (countryName, networkName) = OperatorDefinitions.shared.translate(country: cell.country, network: cell.network)
         
         Group {
-            Section(header: Text("Cell Identification")) {
-                CellDetailsRow("Technology", cell.technology ?? "Unknown")
+            // TODO: Split up
+            // -> Country & Network, Region, Cell & Tower
+            Section(header: Text("Country & Network")) {
+                CellDetailsRow(techFormatter.country(), cell.country)
                 if let countryName = countryName {
                     CellDetailsRow("Country", countryName)
                 }
+                CellDetailsRow(techFormatter.network(), cell.network)
                 if let networkName = networkName {
                     CellDetailsRow("Network", networkName)
                 }
-                CellDetailsRow(techFormatter.country(), cell.country)
-                CellDetailsRow(techFormatter.network(), cell.network)
+            }
+            Section(header: Text("Technology & Region")) {
+                CellDetailsRow("Technology", cell.technology ?? "Unknown")
                 CellDetailsRow(techFormatter.area(), cell.area)
+            }
+            Section(header: Text("Cell & Tower")) {
                 CellDetailsRow(techFormatter.cell(), cell.cell)
                 CellDetailsIdentification(cell: cell)
             }
