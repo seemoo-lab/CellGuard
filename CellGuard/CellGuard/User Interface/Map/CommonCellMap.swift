@@ -50,8 +50,7 @@ struct CommonCellMap {
         // Map the new data from the database into a dictionary of ID <-> Object
         let newIDMap = Dictionary(
             uniqueKeysWithValues: data
-                .map{ $0 as? D }
-                .compactMap { $0 }
+                .map{ $0 as D }
                 .map { ($0.objectID, $0) }
         )
         
@@ -96,8 +95,7 @@ struct CommonCellMap {
         // Map the new data from the database into a dictionary of ID <-> Object
         let newIDMap = Dictionary(
             uniqueKeysWithValues: data
-                .map{ $0 as? D }
-                .compactMap { $0 }
+                .map{ $0 as D }
                 .map { ($0.objectID, $0) }
         )
         

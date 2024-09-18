@@ -245,7 +245,7 @@ private struct VerificationStateStudyViewSheet: View {
                                     CellIdWithFeedback(cell: cell, feedbackComment: comment, feedbackLevel: riskLevel)
                                 ])
                             } catch {
-                                Self.logger.warning("Could not upload user feedback for cell: \(error)\n\(cell)")
+                                await Self.logger.warning("Could not upload user feedback for cell: \(error)\n\(cell)")
                             }
                             
                             await MainActor.run {

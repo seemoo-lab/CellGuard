@@ -208,7 +208,7 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
                     let days = UserDefaults.standard.object(forKey: UserDefaultsKeys.packetRetention.rawValue) as? Double ?? 3.0
                     
                     // Don't delete packets if the retention time frame is set to infinite
-                    if days < DeleteView.packetRetentionInfinite {
+                    if await days < DeleteView.packetRetentionInfinite {
                         PersistenceController.shared.deletePacketsOlderThan(days: Int(days))
                     }
                     
@@ -231,7 +231,7 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
                     let days = UserDefaults.standard.object(forKey: UserDefaultsKeys.locationRetention.rawValue) as? Double ?? 7.0
                     
                     // Don't delete locations if the retention time frame is set to infinite
-                    if days < DeleteView.locationRetentionInfinite {
+                    if await days < DeleteView.locationRetentionInfinite {
                         PersistenceController.shared.deleteLocationsOlderThan(days: Int(days))
                     }
                     
