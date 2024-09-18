@@ -1201,7 +1201,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1420;
-				LastUpgradeCheck = 1500;
+				LastUpgradeCheck = 1600;
 				TargetAttributes = {
 					CFD023322961A10D00AA5A1C = {
 						CreatedOnToolsVersion = 14.2;
@@ -2003,7 +2003,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CFEECE622C0F795C00D6D13F /* Config.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -2027,7 +2026,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CFEECE622C0F795C00D6D13F /* Config.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -2051,7 +2049,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CFEECE622C0F795C00D6D13F /* Config.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -2073,7 +2070,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CFEECE622C0F795C00D6D13F /* Config.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
