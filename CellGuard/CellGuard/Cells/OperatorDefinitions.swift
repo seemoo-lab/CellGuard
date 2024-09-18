@@ -17,21 +17,24 @@ struct OperatorDefinitions {
     
     static let shared: OperatorDefinitions = {
         // Get the URL of the qmi-definitions.json file in the bundle
-        guard let url = Bundle.main.url(forResource: "operator-definitions", withExtension: "json") else {
-            logger.warning("Failed to get the URL for operator-definitions.json")
+        guard let url = Bundle.main.url(forResource: "operator-definitions.json", withExtension: "gz") else {
+            logger.warning("Failed to get the URL for operator-definitions.json.gz")
             return OperatorDefinitions(operators: [])
         }
         
         // Convert the file's content into Swift objects
         do {
+            // Gunzip the compressed file
+            let data = try Data(contentsOf: url).gunzipped()
+            
             // https://www.avanderlee.com/swift/json-parsing-decoding/
             let decoder = JSONDecoder()
             decoder.keyDecodingStrategy = .convertFromSnakeCase
-            let operators = try decoder.decode([NetworkOperator].self, from: try Data(contentsOf: url))
+            let operators = try decoder.decode([NetworkOperator].self, from: data)
             
             return OperatorDefinitions(operators: operators)
         } catch {
-            logger.warning("Failed to decode the JSON file operator-definitions.json: \(error)")
+            logger.warning("Failed to decode the JSON file operator-definitions.json.gz: \(error)")
             return OperatorDefinitions(operators: [])
         }
     }()

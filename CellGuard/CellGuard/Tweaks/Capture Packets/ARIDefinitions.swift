@@ -17,21 +17,24 @@ struct ARIDefinitions {
     
     static let shared: ARIDefinitions = {
         // Get the URL of the qmi-definitions.json file in the bundle
-        guard let url = Bundle.main.url(forResource: "ari-definitions", withExtension: "json") else {
-            logger.warning("Failed to get the URL for ari-definitions.json")
+        guard let url = Bundle.main.url(forResource: "ari-definitions.json", withExtension: "gz") else {
+            logger.warning("Failed to get the URL for ari-definitions.json.gz")
             return ARIDefinitions(groupList: [])
         }
         
         // Convert the file's content into Swift objects
         do {
+            // Gunzip the compressed file
+            let data = try Data(contentsOf: url).gunzipped()
+            
             // https://www.avanderlee.com/swift/json-parsing-decoding/
             let decoder = JSONDecoder()
             decoder.keyDecodingStrategy = .convertFromSnakeCase
-            let services = try decoder.decode([ARIDefinitionGroup].self, from: try Data(contentsOf: url))
+            let services = try decoder.decode([ARIDefinitionGroup].self, from: data)
             
             return ARIDefinitions(groupList: services)
         } catch {
-            logger.warning("Failed to decode the JSON file ari-definitions.json: \(error)")
+            logger.warning("Failed to decode the JSON file ari-definitions.json.gz: \(error)")
             return ARIDefinitions(groupList: [])
         }
     }()

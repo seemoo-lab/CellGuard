@@ -17,21 +17,24 @@ struct QMIDefinitions {
     
     static let shared: QMIDefinitions = {
         // Get the URL of the qmi-definitions.json file in the bundle
-        guard let url = Bundle.main.url(forResource: "qmi-definitions", withExtension: "json") else {
-            logger.warning("Failed to get the URL for qmi-definitions.json")
+        guard let url = Bundle.main.url(forResource: "qmi-definitions.json", withExtension: "gz") else {
+            logger.warning("Failed to get the URL for qmi-definitions.json.gz")
             return QMIDefinitions(serviceList: [])
         }
         
         // Convert the file's content into Swift objects
         do {
+            // Gunzip the compressed file
+            let data = try Data(contentsOf: url).gunzipped()
+            
             // https://www.avanderlee.com/swift/json-parsing-decoding/
             let decoder = JSONDecoder()
             decoder.keyDecodingStrategy = .convertFromSnakeCase
-            let services = try decoder.decode([QMIDefinitionService].self, from: try Data(contentsOf: url))
+            let services = try decoder.decode([QMIDefinitionService].self, from: data)
             
             return QMIDefinitions(serviceList: services)
         } catch {
-            logger.warning("Failed to decode the JSON file qmi-definitions.json: \(error)")
+            logger.warning("Failed to decode the JSON file qmi-definitions.json.gz: \(error)")
             return QMIDefinitions(serviceList: [])
         }
     }()

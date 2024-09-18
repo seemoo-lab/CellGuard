@@ -286,17 +286,17 @@ private struct CheckDistanceOfCell: VerificationStage {
     private static var countryBorders = Self.loadGeoJson()
     
     private static func loadGeoJson() -> [String: [[CLLocationCoordinate2D]]]? {
-        guard let path = Bundle.main.path(forResource: "countries", ofType: "geojson") else {
-            pipelineLogger.warning("Can't find GeoJSON")
+        guard let path = Bundle.main.path(forResource: "countries.geojson", ofType: "gz") else {
+            pipelineLogger.warning("Can't find countries.geojson.gz")
             return nil
         }
         
         let geoJson: Any
         do {
-            let data = try Data(contentsOf: URL(fileURLWithPath: path))
+            let data = try Data(contentsOf: URL(fileURLWithPath: path)).gunzipped()
             geoJson = try JSONSerialization.jsonObject(with: data, options: [])
         } catch {
-            pipelineLogger.warning("Failed to load / parse GeoJSON: \(error)")
+            pipelineLogger.warning("Failed to load / parse countries.geojson.gz: \(error)")
             return nil
         }
         

@@ -115,7 +115,9 @@ cargo update
 
 # Update generated license file, might require some manual edits
 # See: https://github.com/sstadick/cargo-bundle-licenses?tab=readme-ov-file#usage
+gunzip CellGuard/cargo-licenses.json
 cargo bundle-licenses --format json --output CellGuard/cargo-licenses.json --previous CellGuard/cargo-licenses.json
+gzip CellGuard/cargo-licenses.json
 ```
 
 ## Privacy Manifest
@@ -127,3 +129,16 @@ Read more:
 - https://developer.apple.com/documentation/bundleresources/privacy_manifest_files
 - https://developer.apple.com/app-store/user-privacy-and-data-use/
 - https://developer.apple.com/app-store/app-privacy-details/
+
+## JSON files
+
+We include minimized and gzipped JSON files in CellGuard to reduce the app's final size.
+
+You can create a new optimized JSON files as follows:
+```sh
+# Minimize JSON file (optional)
+jq -r tostring file.json > file-min.json
+mv file-min.json file.json
+# Gzip JSON file 
+gzip file.json
+```

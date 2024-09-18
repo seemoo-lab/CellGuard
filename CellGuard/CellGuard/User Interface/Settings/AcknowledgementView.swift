@@ -58,9 +58,9 @@ struct AcknowledgementView: View {
         let jsonDecoder = JSONDecoder()
         jsonDecoder.keyDecodingStrategy = .convertFromSnakeCase
         
-        guard let url = Bundle.main.url(forResource: "cargo-licenses", withExtension: "json"),
-           let data = try? Data(contentsOf: url),
-           let json = try? jsonDecoder.decode(CargoLicenseFile.self, from: data) else {
+        guard let url = Bundle.main.url(forResource: "cargo-licenses.json", withExtension: "gz"),
+              let data = try? Data(contentsOf: url).gunzipped(),
+              let json = try? jsonDecoder.decode(CargoLicenseFile.self, from: data) else {
             return
         }
         
