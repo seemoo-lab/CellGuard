@@ -1101,10 +1101,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = CFB6CFA12BD122FA00EAB7B4 /* Build configuration list for PBXNativeTarget "CellGuard Jailbreak" */;
 			buildPhases = (
-				CFB6CFA02BD122FA00EAB7B4 /* Run Script */,
+				CFB6CFA02BD122FA00EAB7B4 /* Build Rust */,
 				CFB6CF1E2BD122FA00EAB7B4 /* Sources */,
 				CFB6CF8A2BD122FA00EAB7B4 /* Frameworks */,
 				CFB6CF952BD122FA00EAB7B4 /* Resources */,
+				CF895A5F2C9B4D69001F40EA /* Add Git Hash */,
 			);
 			buildRules = (
 			);
@@ -1131,10 +1132,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = CFD0235C2961A10E00AA5A1C /* Build configuration list for PBXNativeTarget "CellGuard AppStore" */;
 			buildPhases = (
-				CF57560B2B2F213A00C7C60A /* Run Script */,
+				CF57560B2B2F213A00C7C60A /* Build Rust */,
 				CFD0232F2961A10D00AA5A1C /* Sources */,
 				CFD023302961A10D00AA5A1C /* Frameworks */,
 				CFD023312961A10D00AA5A1C /* Resources */,
+				CF895A602C9B4E80001F40EA /* Add Git Hash */,
 			);
 			buildRules = (
 			);
@@ -1304,7 +1306,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		CF57560B2B2F213A00C7C60A /* Run Script */ = {
+		CF57560B2B2F213A00C7C60A /* Build Rust */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -1319,7 +1321,7 @@
 				"$(PROJECT_DIR)/../src/lib.rs",
 				"$(PROJECT_DIR)/../src/csv_parser.rs",
 			);
-			name = "Run Script";
+			name = "Build Rust";
 			outputFileListPaths = (
 			);
 			outputPaths = (
@@ -1330,7 +1332,45 @@
 			shellPath = /bin/sh;
 			shellScript = "./build-rust.sh\n";
 		};
-		CFB6CFA02BD122FA00EAB7B4 /* Run Script */ = {
+		CF895A5F2C9B4D69001F40EA /* Add Git Hash */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Add Git Hash";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# https://tarikdahic.com/posts/fetch-and-display-the-latest-git-commit-hash-in-your-ios-apps/\n# https://stackoverflow.com/a/26539917\nGIT=`xcrun -find git`\nGIT_REV=`${GIT} rev-parse --short HEAD`\n/usr/libexec/PlistBuddy -c \"Set :GIT_COMMIT_HASH ${GIT_REV}\" \"${TARGET_BUILD_DIR}\"/\"${INFOPLIST_PATH}\"\n";
+		};
+		CF895A602C9B4E80001F40EA /* Add Git Hash */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Add Git Hash";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# https://tarikdahic.com/posts/fetch-and-display-the-latest-git-commit-hash-in-your-ios-apps/\n# https://stackoverflow.com/a/26539917\nGIT=`xcrun -find git`\nGIT_REV=`${GIT} rev-parse --short HEAD`\n/usr/libexec/PlistBuddy -c \"Set :GIT_COMMIT_HASH ${GIT_REV}\" \"${TARGET_BUILD_DIR}\"/\"${INFOPLIST_PATH}\"\n";
+		};
+		CFB6CFA02BD122FA00EAB7B4 /* Build Rust */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -1345,7 +1385,7 @@
 				"$(PROJECT_DIR)/../src/lib.rs",
 				"$(PROJECT_DIR)/../src/csv_parser.rs",
 			);
-			name = "Run Script";
+			name = "Build Rust";
 			outputFileListPaths = (
 			);
 			outputPaths = (

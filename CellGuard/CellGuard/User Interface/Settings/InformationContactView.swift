@@ -19,11 +19,16 @@ struct InformationContactView: View {
         return "\(version) (\(build))"
     }
     
+    var commitHash: String {
+        // https://tarikdahic.com/posts/fetch-and-display-the-latest-git-commit-hash-in-your-ios-apps/
+        return Bundle.main.object(forInfoDictionaryKey: "GIT_COMMIT_HASH") as? String ?? "???"
+    }
+    
     var body: some View {
         List {
             // TODO: Add more in-app contact options?
             
-            Section(header: Text("About CellGuard")) {
+            Section(header: Text("About CellGuard"), footer: Text("Build with Git commit \(commitHash)")) {
                 KeyValueListRow(key: "Version", value: versionBuild)
                 
                 Link(destination: CellGuardURLs.baseUrl) {
