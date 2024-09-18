@@ -13,6 +13,11 @@ struct CellGuardApp: App {
     @Environment(\.scenePhase) var scenePhase
     
     @StateObject var backgroundState = BackgroundState.shared
+    
+    init() {
+        // Initialize the persistence controller on the main queue
+        let _ = PersistenceController.shared
+    }
 
     var body: some Scene {
         WindowGroup {

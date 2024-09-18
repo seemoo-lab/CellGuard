@@ -110,6 +110,9 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
     
     private func startTasks() {
         Task.detached(priority: .background) {
+            // Delay the initialization by 250ms
+            try? await Task.sleep(nanoseconds: UInt64(250 * MSEC_PER_SEC))
+            
             #if JAILBREAK
             let cellCollector = CCTCollector(client: CCTClient(queue: .global(qos: .background)))
             let collectCellsTask: () async -> () = {
@@ -265,6 +268,8 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
         // It's important that we specify a priority, otherwise this task ends up blocking the UI
         // See: https://docs.swift.org/swift-book/documentation/the-swift-programming-language/concurrency/#Unstructured-Concurrency
         Task.detached(priority: .background) {
+            // Delay the initialization by 500ms
+            try? await Task.sleep(nanoseconds: UInt64(500 * MSEC_PER_SEC))
             
             for pipeline in activeVerificationPipelines {
                 Task {

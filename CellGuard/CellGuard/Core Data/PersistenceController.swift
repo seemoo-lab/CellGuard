@@ -116,33 +116,31 @@ class PersistenceController {
         description.setOption(true as NSNumber, forKey: NSPersistentStoreRemoteChangeNotificationPostOptionKey)
         // Enable persistent history tracking which keeps track of changes in the Core Data store
         description.setOption(true as NSNumber, forKey: NSPersistentHistoryTrackingKey)
+        logger.info("Got description for persistent store")
         
-        // Request more time from iOS to perform CoreData migrations to prevent crash.
-        // We observed this kind of crash on the next start after the app crashed for other reasons.
-        // See: https://stackoverflow.com/a/77517090
-        ProcessInfo.processInfo.performExpiringActivity(withReason: "Load persistent stores") { expired in
-            guard !expired else {
-                // The app is about to be suspended, we should stop the work somehow
-                self.logger.warning("App will be suspended before the database could has been loaded :(")
-                return
+        // Load data from the stores into the container and abort on error
+        self.container.loadPersistentStores { storeDescription, error in
+            if let error = error as NSError? {
+                fatalError("Unresolved error \(error), \(error.userInfo)")
             }
-            
-            // Load data from the stores into the container and abort on error
-            self.container.loadPersistentStores { storeDescription, error in
-                if let error = error as NSError? {
-                    fatalError("Unresolved error \(error), \(error.userInfo)")
-                }
-            }
-            
-            // We refresh the UI by consuming store changes via persistent history tracking
-            self.container.viewContext.automaticallyMergesChangesFromParent = false
-            self.container.viewContext.name = "viewContext"
-            // If the data is already stored (identified by constraints), we only update the existing properties
-            self.container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
-            // We do not use the undo manager therefore we save resources and disable it
-            self.container.viewContext.undoManager = nil
-            self.container.viewContext.shouldDeleteInaccessibleFaults = true
         }
+        logger.info("Finished loading persistent stores")
+
+        // It's very important that these modification to the viewContext are performed on the main queue,
+        // i.e. that the PersistenceController is initialized on the main queue.
+        // Otherwise, both (initializing & main) queues / threads block each other and the app never launches!
+        // See: https://developer.apple.com/documentation/coredata/nspersistentcontainer/1640622-viewcontext
+        // See: https://www.hackingwithswift.com/quick-start/swiftui/how-to-run-code-when-your-app-launches
+        
+        // We refresh the UI by consuming store changes via persistent history tracking
+        self.container.viewContext.automaticallyMergesChangesFromParent = false
+        self.container.viewContext.name = "viewContext"
+        // If the data is already stored (identified by constraints), we only update the existing properties
+        self.container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+        // We do not use the undo manager therefore we save resources and disable it
+        self.container.viewContext.undoManager = nil
+        self.container.viewContext.shouldDeleteInaccessibleFaults = true
+        logger.info("Set view context properties")
         
         // Read the last token from UserDefaults to speed up the start of the app and prevent unnecessary merges
         do {
@@ -150,9 +148,11 @@ class PersistenceController {
         } catch {
             self.logger.warning("Can't fetch last history token from user defaults: \(error)")
         }
+        logger.info("Queried last history token")
         
         // Use a serial dispatch queue for persistent store change notifications
         let queue = DispatchQueue(label: "Persistent Store Remote Change", qos: .utility)
+        logger.info("Created dispatch queue")
         
         // We listen for remote store change notification which are sent from other queues.
         notificationToken = NotificationCenter.default.addObserver(forName: .NSPersistentStoreRemoteChange, object: nil, queue: nil) { note in
@@ -163,6 +163,8 @@ class PersistenceController {
                 self.fetchPersistentHistory()
             }
         }
+        
+        logger.info("Finished adding observer")
     }
     
     deinit {
