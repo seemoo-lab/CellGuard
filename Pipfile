@@ -9,7 +9,7 @@ luaparser = "*"
 beautifulsoup4 = "*"
 requests = "*"
 pandas = "*"
-matplotlib= "*"
+matplotlib = "*"
 mpld3 = "*"
 
 [dev-packages]
