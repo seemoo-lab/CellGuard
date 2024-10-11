@@ -3,7 +3,7 @@ import os.path
 import re
 import subprocess
 import zipfile
-from distutils import spawn
+from shutil import which
 from pathlib import Path
 
 from yaspin import yaspin
@@ -96,7 +96,7 @@ def create_ipa(archive_path: Path, ipa_path: Path):
 
 def airdrop(ipa_path: Path):
     # https://github.com/vldmrkl/airdrop-cli
-    if spawn.find_executable("airdrop") is None:
+    if which("airdrop") is None:
         print("Please install 'airdrop' from https://github.com/vldmrkl/airdrop-cli")
         return
 
