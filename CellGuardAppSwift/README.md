@@ -2,23 +2,23 @@
 
 Monitor and visualize cellular base stations collected by the accompanying tweak.
 
-iOS Versions: 14.0 - 17.5.1
+iOS Versions: 14.0 - 18.0
 
 ## Setup
 
-- Clone this repo:
+Clone this repo and navigate to this directory:
 ```sh
-$ git clone https://dev.seemoo.tu-darmstadt.de/apple/cell-guard.git
-$ cd cell-guard/CellGuard
+$ git clone git@github.com:seemoo-lab/CellGuard.git
+$ cd CellGuard/CellGuardAppSwift
 ```
 
-- Rename and populate the developer team ID file:
+Rename and populate the developer team ID file:
 ```sh
-$ cp CellGuard/Config/Developer.xcconfig.template CellGuard/Config/Developer.template
-$ nano CellGuard/Config/Developer.template
+$ cp CellGuard/Config/Developer.xcconfig.template CellGuard/Config/Developer.xcconfig
+$ nano CellGuard/Config/Developer.xcconfig
 ```
 
-- Open the project in Xcode:
+Open the project in Xcode:
 ```sh
 $ open CellGuard.xcodeproj
 ```
@@ -63,8 +63,8 @@ A .ipa file can be installed using [TrollStore](https://github.com/opa334/TrollS
 2. Select as build configuration *CellGuard > Any iOS Device (arm64)*
 3. Click *Product -> Archive*
 4. Wait for the *Archives* window to open
-5. Right click the latest archive and select *Show in Finder*
-6. In Finder right click on the *.xcarchive* file and select *Show package content*
+5. Right-click the latest archive and select *Show in Finder*
+6. In Finder right-click on the *.xcarchive* file and select *Show package content*
 7. Navigate to *Products -> Applications -> CellGuard.app*
 8. Copy the *CellGuard.app* file to a new folder outside named *Payload*
 9. Compress the *Payload* folder
@@ -78,7 +78,12 @@ References:
 
 The [`build-ipa.py`](./build_ipa.py) script automates all of these steps:
 ```sh
+# Install dependencies
+pipenv sync
+# Build .ipa 
 pipenv run python3 build_ipa.py
+# Build .tipa (TrollStore-friendly IPA)
+pipenv run python3 build_ipa.py -tipa
 ```
 
 ### .deb
