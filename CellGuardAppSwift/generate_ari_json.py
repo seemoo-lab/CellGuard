@@ -159,7 +159,7 @@ def main():
     """ The main function composing all the work. """
     if len(sys.argv) != 2:
         sys.stderr.write("Please clone the aristoteles repository from "
-                         "https://github.com/seemoo-lab/aristoteles/tree/master and run this script again.")
+                         "https://github.com/seemoo-lab/aristoteles/tree/master and run this script again.\n")
         sys.stderr.write("Usage: generate_ari_json.py <path/libari_dylib.lua>\n")
         sys.exit(1)
 
