@@ -1,7 +1,7 @@
 const XCODE_CONFIGURATION_ENV: &'static str = "CONFIGURATION";
 
 fn main() {
-    let out_dir = "CellGuard/Generated";
+    let out_dir = "../CellGuardAppSwift/Generated";
 
     let bridges = vec!["src/lib.rs"];
     for path in &bridges {

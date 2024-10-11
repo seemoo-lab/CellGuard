@@ -33,11 +33,11 @@ fi
   if [[ $CONFIGURATION == "Release" ]]; then
       echo "BUIlDING FOR RELEASE ($TARGETS)"
 
-      cargo lipo --release --manifest-path ../Cargo.toml  --targets $TARGETS
+      cargo lipo --release --manifest-path ../CellGuardAppRust/Cargo.toml --targets $TARGETS
   else
       echo "BUIlDING FOR DEBUG ($TARGETS)"
 
-      cargo lipo --manifest-path ../Cargo.toml  --targets $TARGETS
+      cargo lipo --manifest-path ../CellGuardAppRust/Cargo.toml --targets $TARGETS
   fi
 
 # else
