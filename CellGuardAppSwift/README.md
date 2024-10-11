@@ -14,8 +14,8 @@ $ cd CellGuard/CellGuardAppSwift
 
 Rename and populate the developer team ID file:
 ```sh
-$ cp CellGuard/Config/Developer.xcconfig.template CellGuard/Config/Developer.xcconfig
-$ nano CellGuard/Config/Developer.xcconfig
+$ cp Config/Developer.xcconfig.template Config/Developer.xcconfig
+$ open Config/Developer.xcconfig
 ```
 
 Open the project in Xcode:

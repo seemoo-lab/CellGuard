@@ -88,7 +88,7 @@ iOSInjectionProject/
 ### SwiftPM ###
 Packages
 xcuserdata
-*.xcodeproj
+# *.xcodeproj
 
 
 # End of https://www.toptal.com/developers/gitignore/api/swift,swiftpm
