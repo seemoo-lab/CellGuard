@@ -1,4 +1,4 @@
-# CellGuard (App)
+# CellGuard (Swift App)
 
 Monitor and visualize cellular base stations collected by the accompanying tweak.
 

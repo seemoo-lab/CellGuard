@@ -21,7 +21,7 @@ You can contribute to the app's development by
 
 ## Structure
 
-The repository consists of six directories
+The repository consists of five directories
 - [AnalyzeCells](./AnalyzeCells): A Python script to evaluate datasets exported from CellGuard
 - [CaptureCellsTweak](./CaptureCellsTweak): A tweak injected into iOS collecting cells an iPhone connects to
 - [CapturePacketsTweak](./CapturePacketsTweak): A tweak injected into iOS collecting binary QMI and ARI packets
