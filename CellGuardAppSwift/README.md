@@ -23,6 +23,8 @@ Open the project in Xcode:
 $ open CellGuard.xcodeproj
 ```
 
+Initially, the first XCode build will fail, but the second ones should be successful as all required files have been generated. 
+
 ## Build
 The app can either be distributed as a .deb package for jailbroken devices with Cydia or as an .ipa file which can be installed using TrollStore.
 
