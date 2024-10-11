@@ -7,8 +7,6 @@ The CellGuard app for iOS can uncover cellular attacks targeting your iPhone.
 It observes baseband packets and analyzes them for suspicious activities, hinting at rogue base stations. 
 Let's catch them all!
 
-<img src="CellGuardAppSwift/Icons/README-Screenshots.webp" alt="CellGuard Screenshots" width="830">
-
 Read more about CellGuard and download the app at [our website](https://cellguard.seemoo.de).
 
 Explore the iOS-baseband-interface with our [BaseTrace](https://github.com/seemoo-lab/BaseTrace) framework.
@@ -33,3 +31,7 @@ The repository consists of six directories
 ## Publications
 
 - [Lukas Arnold, Matthias Hollick, Jiska Classen (2024): **Catch You Cause I Can: Busting Rogue Base Stations using CellGuard and the Apple Cell Location Database**](https://doi.org/10.1145/3678890.3678898)
+
+## Screenshots
+
+<img src="CellGuardAppSwift/Icons/README-Screenshots.webp" alt="CellGuard Screenshots" width="600">
