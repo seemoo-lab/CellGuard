@@ -3,7 +3,7 @@
 An iOS tweak which captures the packets iOS and your iPhone's baseband exchange and provides a TCP interface on port 33067 to query them.
 It supports iPhones with Qualcomm (QMI) and Intel (ARI) modems.
 
-iOS Versions: 14.0 - 16.4
+iOS Versions: 14.0 - 18.0
 
 TCP Port: 33067
 
@@ -32,7 +32,7 @@ Transfer the resulting package `.deb` to your device and install it using its pa
 If you're running the [Dopamine](https://ellekit.space/dopamine/) jailbreak, don't forget to install [ElleKit](https://ellekit.space) beforehand.
 
 ### Development
-1. Install [Theos](https://theos.dev/docs/) and setup its respective environment variables
+1. Install [Theos](https://theos.dev/docs/) and set up its respective environment variables
 2. Proxy the SSH port of your iPhone
 ```bash
 iproxy 2222 22
