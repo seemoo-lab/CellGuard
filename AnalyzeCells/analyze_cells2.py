@@ -118,12 +118,12 @@ def process_packets(dirs: list[Path], start: Optional[datetime], end: Optional[d
 
 def load_user_cells(dirs: list[Path], start: Optional[datetime], end: Optional[datetime]) -> pd.DataFrame:
     # https://stackoverflow.com/a/63002444/4106848
-    columns = ['collected', 'status', 'score', 'technology', 'country', 'network', 'area', 'cell']
+    columns = ['collected', 'verificationFinished', 'verificationScore', 'technology', 'country', 'network', 'area', 'cell']
     dfs = [pd.read_csv(d.joinpath('user-cells.csv'), usecols=lambda x: x in columns) for d in dirs]
     df = filter_start_end(pd.concat(dfs), start, end)
 
     # Only consider cells whose verification is complete
-    return df[df['status'] == 'verified']
+    return df[df['verificationFinished'] == True]
 
 
 def cell_score_category(score: int) -> str:
@@ -137,7 +137,11 @@ def cell_score_category(score: int) -> str:
 
 def process_user_cells(df: pd.DataFrame) -> tuple[int, int, int, int]:
     cell_count = len(df.index)
-    score_series = df['score'].apply(cell_score_category)
+    if cell_count == 0:
+        print('User Cells: None')
+        return 0, 0, 0, 0
+
+    score_series = df['verificationScore'].apply(cell_score_category)
     category_count: dict[str, int] = score_series.groupby(score_series).count().to_dict()
 
     print('User Cells:')
@@ -154,7 +158,7 @@ def process_user_cells(df: pd.DataFrame) -> tuple[int, int, int, int]:
         unique_df = df.groupby(['technology', 'country', 'network', 'area', 'cell']).min()
         unique_cell_count = len(unique_df.index)
 
-        unique_score_series = unique_df['score'].apply(cell_score_category)
+        unique_score_series = unique_df['verificationScore'].apply(cell_score_category)
         unique_category_count: dict[str, int] = unique_score_series.groupby(unique_score_series).count().to_dict()
 
         unique_untrusted = unique_category_count.get("Untrusted", 0)
