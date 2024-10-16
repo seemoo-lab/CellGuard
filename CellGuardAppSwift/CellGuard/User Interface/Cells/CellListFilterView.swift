@@ -211,7 +211,7 @@ private struct CellListFilterSettingsView: View {
             }
             
             Section(header: Text("Study")) {
-                Picker("Stauts", selection: $settings.study) {
+                Picker("Status", selection: $settings.study) {
                     Text("All").tag(CellListFilterStudyOptions.all)
                     Text("Submitted").tag(CellListFilterStudyOptions.submitted)
                 }
