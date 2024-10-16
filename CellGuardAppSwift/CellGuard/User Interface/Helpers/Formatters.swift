@@ -22,6 +22,17 @@ let percentNumberFormatter: NumberFormatter = {
     return formatter
 }()
 
+private let mncNumberFormatter: NumberFormatter = {
+    let formatter = NumberFormatter()
+    formatter.minimumIntegerDigits = 2
+    formatter.usesSignificantDigits = false
+    return formatter
+}()
+
+func formatMNC(_ mcc: Int32) -> String {
+    return mncNumberFormatter.string(from: mcc as NSNumber) ?? "??"
+}
+
 let mediumDateFormatter: DateFormatter = {
     let formatter = DateFormatter()
     formatter.dateStyle = .medium

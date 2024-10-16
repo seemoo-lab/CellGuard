@@ -53,7 +53,7 @@ struct CellInformationCard: View {
             
             HStack {
                 CellInformationItem(title: techFormatter.country(), number: cell.country)
-                CellInformationItem(title: techFormatter.network(), number: cell.network)
+                CellInformationItem(title: techFormatter.network(), text: formatMNC(cell.network))
                 CellInformationItem(title: techFormatter.area(), number: cell.area)
                 CellInformationItem(title: techFormatter.cell(), number: cell.cell)
             }
@@ -91,6 +91,11 @@ private struct CellInformationItem: View {
     
     let title: String
     let text: String?
+    
+    init(title: String, text: String) {
+        self.title = title
+        self.text = text
+    }
     
     init(title: String, number: Int32) {
         self.title = title

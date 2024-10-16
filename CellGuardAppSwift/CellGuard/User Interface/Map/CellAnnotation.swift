@@ -26,7 +26,7 @@ class CellAnnotation: NSObject, MKAnnotation, DatabaseAnnotation {
             longitude: cell.location?.longitude ?? 0
         )
         let (_, operatorName) = OperatorDefinitions.shared.translate(country: cell.country, network: cell.network)
-        title = operatorName ?? "Network \(cell.network)"
+        title = operatorName ?? "Network \(formatMNC(cell.network))"
         subtitle = "Area: \(cell.area) - Cell: \(cell.cell)"
     }
     

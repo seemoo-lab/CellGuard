@@ -301,7 +301,7 @@ private struct ListPacketCell: View {
                 
         VStack {
             HStack {
-                Text(networkName ?? "\(cell.network)")
+                Text(networkName ?? formatMNC(cell.network))
                     .bold()
                 + Text(" (\(countryName ?? "\(cell.country)"))")
                 + Text(" \(cell.technology ?? "")")
