@@ -34,7 +34,7 @@ struct VerificationStateLogEntryView: View {
         Group {
             Section(header: Text("Stage: \(stage?.name ?? "ID \(logEntry.stageId)") (\(logEntry.stageNumber))"), footer: Text(stage?.description ?? "")) {
                 CellDetailsRow("Status", "Completed")
-                CellDetailsRow("Points", "\(logEntry.pointsAwarded) / \(logEntry.pointsMax)")
+                CellDetailsRow("Points", "\(logEntry.pointsAwarded) / \(logEntry.pointsMax)", color: pointsColor)
                 CellDetailsRow("Duration", "\(doubleString(logEntry.duration, maxDigits: 4))s")
                 if let relatedALSCell = logEntry.relatedCellALS {
                     NavigationLink {
@@ -75,6 +75,20 @@ struct VerificationStateLogEntryView: View {
                 }
             }
         }
+    }
+    
+    var pointsColor: Color? {
+        if logEntry.pointsMax == 0 {
+            return nil
+        }
+        
+        if logEntry.pointsAwarded == 0 {
+            return .red
+        } else if logEntry.pointsAwarded < logEntry.pointsMax {
+            return .orange
+        }
+        
+        return nil
     }
 }
 

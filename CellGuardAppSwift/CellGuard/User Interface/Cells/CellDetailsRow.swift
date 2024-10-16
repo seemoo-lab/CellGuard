@@ -11,6 +11,7 @@ struct CellDetailsRow: View {
     
     let description: String
     let icon: String?
+    let color: Color?
     let value: String
     
     init(_ description: String, _ value: Int) {
@@ -29,10 +30,11 @@ struct CellDetailsRow: View {
         self.init(description, plainNumberFormatter.string(from: value) ?? "-")
     }
     
-    init(_ description: String, _ value: String, icon: String? = nil) {
+    init(_ description: String, _ value: String, icon: String? = nil, color: Color? = nil) {
         self.description = description
         self.value = value
         self.icon = icon
+        self.color = color
     }
     
     var body: some View {
@@ -42,6 +44,9 @@ struct CellDetailsRow: View {
                 if let icon = self.icon {
                     Image(systemName: icon)
                 }
+            }
+            .if(color != nil) { view in
+                view.foregroundColor(color)
             }
         }
     }
