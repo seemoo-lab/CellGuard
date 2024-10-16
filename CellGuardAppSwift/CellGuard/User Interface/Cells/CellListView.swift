@@ -297,7 +297,7 @@ private struct ListPacketCell: View {
         let calendar = Calendar.current
         let sameDay = calendar.startOfDay(for: measurements.start) == calendar.startOfDay(for: measurements.end)
         
-        let count = GroupedMeasurements.countByStatus(measurements.measurements)
+        let (pending, points, pointsMax) = GroupedMeasurements.countByStatus(measurements.measurements)
                 
         VStack {
             HStack {
@@ -313,21 +313,17 @@ private struct ListPacketCell: View {
             HStack {
                 Text(verbatim: "\(cell.area) / \(cell.cell)")
                 Group {
-                    if count.pending > 0 {
+                    if pending {
                         Image(systemName: "arrow.clockwise.circle")
-                        Text("\(count.pending) ")
-                    }
-                    if count.untrusted > 0 {
-                        Image(systemName: "exclamationmark.shield")
-                        Text("\(count.untrusted) ")
-                    }
-                    if count.suspicious > 0 {
-                        Image(systemName: "shield")
-                        Text("\(count.suspicious) ")
-                    }
-                    if count.trusted > 0 {
-                        Image(systemName: "lock.shield")
-                        Text("\(count.trusted) ")
+                    } else {
+                        if points >= primaryVerificationPipeline.pointsSuspicious {
+                            Image(systemName: "lock.shield")
+                        } else if points >= primaryVerificationPipeline.pointsUntrusted {
+                            Image(systemName: "shield")
+                        } else {
+                            Image(systemName: "exclamationmark.shield")
+                        }
+                        Text("\(points) / \(pointsMax)")
                     }
                 }
                 .font(.system(size: 14))

@@ -224,7 +224,7 @@ private struct TweakCellDetailsMeasurementCount: View {
     }
     
     var body: some View {
-        let count = GroupedMeasurements.countByStatus(verifyStates)
+        let count = countByStatus(verifyStates)
         
         Section(header: Text("Measurements")) {
             // We query the measurements in descending order, so that's we have to replace last with first and so on
@@ -247,6 +247,31 @@ private struct TweakCellDetailsMeasurementCount: View {
         }
     
     }
+    
+    func countByStatus(_ verificationStates: any RandomAccessCollection<VerificationState>) -> (pending: Int, trusted: Int, suspicious: Int, untrusted: Int) {
+        var pending = 0
+        
+        var untrusted = 0
+        var suspicious = 0
+        var trusted = 0
+        
+        for state in verificationStates {
+            if state.finished {
+                if state.score < primaryVerificationPipeline.pointsUntrusted {
+                    untrusted += 1
+                } else if state.score < primaryVerificationPipeline.pointsSuspicious {
+                    suspicious += 1
+                } else {
+                    trusted += 1
+                }
+            } else {
+                pending += 1
+            }
+        }
+        
+        return (pending, trusted, suspicious, untrusted)
+    }
+
 }
 
 private struct TweakCellMeasurementList: View {

@@ -53,10 +53,9 @@ struct GroupedMeasurements: Identifiable {
         // See: https://www.baeldung.com/java-hashcode#standard-hashcode-implementations
         // We have to ignore the arithmetic overflow.
         // See: https://stackoverflow.com/a/35974079
-        hash = 31 &* hash &+ stats.pending
-        hash = 31 &* hash &+ stats.untrusted
-        hash = 31 &* hash &+ stats.suspicious
-        hash = 31 &* hash &+ stats.trusted
+        hash = 31 &* hash &+ (stats.pending ? 1 : 0)
+        hash = 31 &* hash &+ Int(stats.score)
+        hash = 31 &* hash &+ Int(stats.pointsMax)
         // Use the hash code as the list's id
         self.id = hash
     }
@@ -67,32 +66,32 @@ struct GroupedMeasurements: Identifiable {
         )
     }
     
-    static func countByStatus(_ measurements: any RandomAccessCollection<CellTweak>) -> (pending: Int, trusted: Int, suspicious: Int, untrusted: Int) {
+    static func countByStatus(_ measurements: any RandomAccessCollection<CellTweak>) -> (pending: Bool, score: Int16, pointsMax: Int16) {
         return countByStatus(measurements.compactMap { $0.primaryVerification })
     }
     
-    static func countByStatus(_ verificationStates: any RandomAccessCollection<VerificationState>) -> (pending: Int, trusted: Int, suspicious: Int, untrusted: Int) {
-        var pending = 0
-        
-        var untrusted = 0
-        var suspicious = 0
-        var trusted = 0
+    private static func countByStatus(_ verificationStates: any RandomAccessCollection<VerificationState>) -> (pending: Bool, score: Int16, pointsMax: Int16) {
+        var lowestScore: Int16?
+        var pending = false
         
         for state in verificationStates {
-            if state.finished {
-                if state.score < primaryVerificationPipeline.pointsUntrusted {
-                    untrusted += 1
-                } else if state.score < primaryVerificationPipeline.pointsSuspicious {
-                    suspicious += 1
-                } else {
-                    trusted += 1
-                }
+            if !state.finished {
+                pending = true
             } else {
-                pending += 1
+                if let lowestScoreNN = lowestScore, state.score < lowestScoreNN {
+                    lowestScore = state.score
+                } else {
+                    lowestScore = state.score
+                }
             }
         }
         
-        return (pending, trusted, suspicious, untrusted)
+        // Ignore the pending status if there is an anomalous or suspicious cell
+        if let lowestScore = lowestScore, lowestScore < primaryVerificationPipeline.pointsSuspicious {
+            pending = false
+        }
+        
+        return (pending, lowestScore ?? primaryVerificationPipeline.pointsMax, primaryVerificationPipeline.pointsMax)
     }
     
 }
