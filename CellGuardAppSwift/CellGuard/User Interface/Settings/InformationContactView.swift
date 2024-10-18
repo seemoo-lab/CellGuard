@@ -43,8 +43,14 @@ struct InformationContactView: View {
                     }
                 }
                 
-                Link(destination: URL(string: "http://github.com/seemoo-lab/CellGuard")!) {
+                Link(destination: CellGuardURLs.reportIssues) {
                     KeyValueListRow(key: "Report Issues") {
+                        Image(systemName: "link")
+                    }
+                }
+                
+                Link(destination: CellGuardURLs.github) {
+                    KeyValueListRow(key: "Source Code") {
                         Image(systemName: "link")
                     }
                 }
