@@ -27,11 +27,11 @@ struct CellDetailsIdentification: View {
         case .GSM:
             CellIdentificationGSM(cellId: cellId)
         case .UMTS:
-            CellIdentificationUMTS(cellId: cellId)
+            CellIdentificationUMTS(lcid: cellId)
         case .LTE:
-            CellIdentificationLTE(cellId: cellId)
+            CellIdentificationLTE(eci: cellId)
         case .NR:
-            CellIdentificationNR(cellId: cellId)
+            CellIdentificationNR(nci: cellId)
         default:
             EmptyView()
         }
@@ -39,95 +39,99 @@ struct CellDetailsIdentification: View {
     
 }
 
-// https://cidresolver.truong.fi
-
 private struct CellIdentificationGSM: View {
     let cellId: Int64
     
     var body: some View {
-        // https://www.erlang.com/topic/1-686/#post-36217
-        // https://en.wikipedia.org/wiki/GSM_Cell_ID
         Group {
+            let (bts, sector) = CellIdentification.gsm(cellId: cellId)
+            
             // Base Transceiver Station -> First five numbers
-            KeyValueListRow(key: "BTS ID", value: String(cellId / 10))
+            KeyValueListRow(key: "BTS ID", value: String(bts))
             
             // Sector ID -> Last number
             // 0 = omnidirectional antenna
             // 1, 2, 3 = bisector or trisector antennas
-            let sectorId = cellId % 10
-            KeyValueListRow(key: "Sector ID", value: String(sectorId))
+            KeyValueListRow(key: "Sector ID", value: String(sector))
             
-            KeyValueListRow(key: "Antennas", value: sectorId == 0 ? "Omnidirectional" : "Bi- or tridirectional")
+            KeyValueListRow(key: "Antennas", value: sector == 0 ? "Omnidirectional" : "Bi- or tridirectional")
         }
     }
 }
 
 private struct CellIdentificationUMTS: View {
-    let cellId: Int64
+    let lcid: Int64
     
     var body: some View {
-        // https://wiki.opencellid.org/wiki/Public:CellID
-        // https://en.wikipedia.org/wiki/GSM_Cell_ID#:~:text=In%20UMTS%2C%20there%20is%20a,is%20just%20the%20Cell%20ID
         Group {
             // UTRAN Cell ID (LCID) -> 28 Bits
+            let (rnc, cellId) = CellIdentification.umts(lcid: lcid)
             
             // Radio Network Controller (RNC) -> 12 Bits
-            KeyValueListRow(key: "RNC ID", value: String(cellId / (1 << 16)))
+            KeyValueListRow(key: "RNC ID", value: String(rnc))
             // Cell ID (CID) -> 16 Bits
-            KeyValueListRow(key: "Cell ID", value: String(cellId % (1 << 16)))
+            KeyValueListRow(key: "Cell ID", value: String(cellId))
         }
     }
 }
 
 private struct CellIdentificationLTE: View {
-    let cellId: Int64
+    let eci: Int64
     
     var body: some View {
-        // https://5g-tools.com/4g-lte-cell-id-eci-calculator/
-        // https://telcomaglobal.com/p/formula-cell-id-eci-lte-networks
-        // https://www.cellmapper.net/enbid?net=LTE
         Group {
             // E-UTRAN Cell Identity (ECI) -> 28 Bits
+            let (eNodeB, sector) = CellIdentification.lte(eci: eci)
             
             // eNodeB ID (Base Station) -> 20 Bits
-            KeyValueListRow(key: "eNodeB ID", value: String(cellId / (1 << 8)))
+            KeyValueListRow(key: "eNodeB ID", value: String(eNodeB))
             // Sector ID -> 8 Bits
-            KeyValueListRow(key: "Sector ID", value: String(cellId % (1 << 8)))
+            KeyValueListRow(key: "Sector ID", value: String(sector))
         }
     }
 }
 
 private struct CellIdentificationNR: View {
-    let cellId: Int64
+    let nci: Int64
     
-    @State private var sectorIdLengthSlider: Double = 14
+    // A sensible default value which hopefully works for most networks
+    @State private var showSectorIdLengthSlider = false
+    @State private var sectorIdLengthSlider: Double = 8
     
-    init(cellId: Int64) {
-        self.cellId = cellId
+    init(nci: Int64) {
+        self.nci = nci
     }
     
     var body: some View {
         // https://5g-tools.com/5g-nr-cell-identity-nci-calculator/
         Group {
             // NR Cell Identity (NCI) -> 36 Bits
+            let (gNodeB, sector) = CellIdentification.nr(nci: nci, sectorIdLength: Int(sectorIdLengthSlider))
             
             // gNodeB ID (Base Station) -> 22..32 Bits (customizable)
             let sectorIdLength = Int(sectorIdLengthSlider)
-            let gNodeBID: Int64 = cellId / (1 << sectorIdLength)
-            KeyValueListRow(key: "gNodeB ID (\(32 - (sectorIdLength - 4)) Bits)", value: String(gNodeBID))
+            KeyValueListRow(key: "gNodeB ID (\(32 - (sectorIdLength - 4)) Bits)", value: String(gNodeB))
             
             // Sector ID -> 4..14 Bits
-            let sectorId = cellId % (1 << sectorIdLength)
-            KeyValueListRow(key: "Sector ID (\(sectorIdLength) Bits)", value: String(sectorId))
+            KeyValueListRow(key: "Sector ID (\(sectorIdLength) Bits)", value: String(sector))
             
-            Slider(
-                value: $sectorIdLengthSlider,
-                in: 4...14,
-                step: 1,
-                label: {
-                    Text("Sector ID Bits")
-                }
-            )
+            if showSectorIdLengthSlider {
+                Slider(
+                    value: $sectorIdLengthSlider,
+                    in: 4...14,
+                    step: 1,
+                    label: {
+                        Text("Sector ID Bits")
+                    }
+                )
+            }
+        }
+        .contextMenu {
+            Button {
+                showSectorIdLengthSlider = !showSectorIdLengthSlider
+            } label: {
+                Label("Change bit distribution", systemImage: "gear")
+            }
         }
     }
 }
@@ -139,13 +143,13 @@ private struct CellIdentificationNR: View {
         }
         Section(header: Text("UMTS")) {
             // TODO: Find correct UMTS cell id
-            CellIdentificationUMTS(cellId: 0)
+            CellIdentificationUMTS(lcid: 0)
         }
         Section(header: Text("LTE")) {
-            CellIdentificationLTE(cellId: 27177984)
+            CellIdentificationLTE(eci: 27177984)
         }
         Section(header: Text("NR")) {
-            CellIdentificationNR(cellId: 21255312128)
+            CellIdentificationNR(nci: 21248033539)
         }
     }
 }
