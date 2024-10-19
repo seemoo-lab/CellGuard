@@ -120,4 +120,10 @@ struct CommonCellMap {
         }
     }
     
+    /// Updates the view region based on the annotations
+    static func updateViewRegion(_ mapView: MKMapView, animated: Bool) {
+        let ownAnnotations = mapView.annotations.filter { $0 is DatabaseAnnotation || $0 is LocationClusterAnnotation || $0 is CellClusterAnnotation }
+        mapView.showAnnotations(ownAnnotations, animated: animated)
+    }
+    
 }

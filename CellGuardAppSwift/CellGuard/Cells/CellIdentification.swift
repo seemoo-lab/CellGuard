@@ -54,7 +54,7 @@ struct CellIdentification {
         return (eNodeB, sector)
     }
     
-    public static  func nr(nci: Int64, sectorIdLength: Int) -> (gNodeB: Int64, sector: Int64) {
+    public static func nr(nci: Int64, sectorIdLength: Int) -> (gNodeB: Int64, sector: Int64) {
         // https://5g-tools.com/5g-nr-cell-identity-nci-calculator/
 
         // NR Cell Identity (NCI) -> 36 Bits

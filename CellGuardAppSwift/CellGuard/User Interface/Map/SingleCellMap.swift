@@ -51,13 +51,13 @@ struct SingleCellMap: UIViewRepresentable {
         CommonCellMap.registerAnnotations(mapView)
         
         mapView.delegate = context.coordinator
+        
+        // Set initial position of map view based on annotations
+        _ = CommonCellMap.updateCellAnnotations(data: alsCells, uiView: mapView)
+        _ = CommonCellMap.updateLocationAnnotations(data: tweakCells, uiView: mapView)
+        CommonCellMap.updateViewRegion(mapView, animated: false)
+        
         return mapView
-    }
-    
-    /// Updates the view region based on the annotations
-    private func updateViewRegion(_ mapView: MKMapView, animated: Bool) {
-        let ownAnnotations = mapView.annotations.filter { $0 is DatabaseAnnotation || $0 is LocationClusterAnnotation || $0 is CellClusterAnnotation }
-        mapView.showAnnotations(ownAnnotations, animated: animated)
     }
     
     func updateUIView(_ uiView: MKMapView, context: Context) {
@@ -68,9 +68,6 @@ struct SingleCellMap: UIViewRepresentable {
         
         _ = CommonCellMap.updateCellAnnotations(data: alsCells, uiView: uiView)
         _ = CommonCellMap.updateLocationAnnotations(data: tweakCells, uiView: uiView)
-        
-        // Update the shown map region if the cell annotation changes
-        updateViewRegion(uiView, animated: false)
         
         // TODO: Enable reach overlay if performance has been improved
         // CommonCellMap.updateCellReachOverlay(data: alsCells, uiView: uiView)        

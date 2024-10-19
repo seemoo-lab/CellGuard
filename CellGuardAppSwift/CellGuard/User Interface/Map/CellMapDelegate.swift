@@ -18,9 +18,11 @@ class CellMapDelegate: NSObject, MKMapViewDelegate {
     )
     
     let onTap: ((NSManagedObjectID) -> Void)?
+    let clustering: Bool
     
-    init(onTap: ((NSManagedObjectID) -> Void)? = nil) {
+    init(onTap: ((NSManagedObjectID) -> Void)? = nil, clustering: Bool = false) {
         self.onTap = onTap
+        self.clustering = clustering
         super.init()
     }
     
@@ -39,6 +41,11 @@ class CellMapDelegate: NSObject, MKMapViewDelegate {
                 // updating its properties in the prepareForDisplay() method is too late.
                 view.calloutAccessory = onTap != nil
                 view.updateColor(technology: annotation.technology)
+                
+                // Set clustering identifier to nil to prevent clustering
+                if !clustering {
+                    view.clusteringIdentifier = nil
+                }
             }
             return view
         } else if annotation is LocationAnnotation {

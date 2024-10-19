@@ -82,7 +82,6 @@ private struct TweakCellDetailsMap: View {
     
     @FetchRequest private var alsCells: FetchedResults<CellALS>
     @FetchRequest private var verifyStates: FetchedResults<VerificationState>
-    @State var expand = false
     
     init(alsCells: FetchRequest<CellALS>, verifyStates: FetchRequest<VerificationState>) {
         self._alsCells = alsCells
@@ -93,59 +92,10 @@ private struct TweakCellDetailsMap: View {
         let tweakCells = verifyStates.compactMap { $0.cell }
         
         if SingleCellMap.hasAnyLocation(alsCells, tweakCells) {
-            ZStack {
-                // Navigation link for fullscreen view
-                NavigationLink(isActive: $expand) {
-                    SingleCellMap(alsCells: alsCells, tweakCells: tweakCells)
-                        .ignoresSafeArea()
-                } label: {
-                    EmptyView()
-                }
-                .frame(width: 0, height: 0)
-                .hidden()
-                .background(Color.blue)
-                
-                // Small map shown here
+            ExpandableMap {
                 SingleCellMap(alsCells: alsCells, tweakCells: tweakCells)
-                
-                // Button to open the expanded map
-                HStack {
-                    Spacer()
-                    TweakCellDetailsExpandMapButton {
-                        expand = true
-                    }
-                }
-                .frame(maxHeight: .infinity, alignment: .bottom)
-                // It's quite important to set the right button style, otherwise the whole map is the tap area
-                // See: https://stackoverflow.com/a/70400079
-                .buttonStyle(.borderless)
             }
-            .frame(height: 200)
-            .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
         }
-    }
-    
-}
-
-private struct TweakCellDetailsExpandMapButton: View {
-    
-    @Environment(\.colorScheme) var colorScheme
-    
-    private let onTap: () -> ()
-    
-    init(onTap: @escaping () -> Void) {
-        self.onTap = onTap
-    }
-    
-    var body: some View {
-        Button {
-            onTap()
-        } label: {
-            Image(systemName: "arrow.up.left.and.arrow.down.right")
-        }
-        .padding(EdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8))
-        .roundedThinMaterialBackground(color: colorScheme)
-        .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5))
     }
     
 }

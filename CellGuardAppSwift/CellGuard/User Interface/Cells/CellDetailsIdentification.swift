@@ -10,28 +10,28 @@ import SwiftUI
 struct CellDetailsIdentification: View {
     
     let technology: ALSTechnology?
-    let cellId: Int64
+    let cell: Cell
     
     init(cell: Cell) {
         self.technology = ALSTechnology(rawValue: cell.technology?.uppercased() ?? "")
-        self.cellId = cell.cell
-    }
-    
-    init(technology: ALSTechnology, cellId: Int64) {
-        self.technology = technology
-        self.cellId = cellId
+        self.cell = cell
     }
     
     var body: some View {
+        let country = cell.country
+        let network = cell.network
+        let area = cell.area
+        let cellId = cell.cell
+        
         switch technology {
         case .GSM:
-            CellIdentificationGSM(cellId: cellId)
+            CellIdentificationGSM(country: country, network: network, area: area, cellId: cellId)
         case .UMTS:
-            CellIdentificationUMTS(lcid: cellId)
+            CellIdentificationUMTS(country: country, network: network, area: area, lcid: cellId)
         case .LTE:
-            CellIdentificationLTE(eci: cellId)
+            CellIdentificationLTE(country: country, network: network, area: area, eci: cellId)
         case .NR:
-            CellIdentificationNR(nci: cellId)
+            CellIdentificationNR(country: country, network: network, area: area, nci: cellId)
         default:
             EmptyView()
         }
@@ -40,6 +40,9 @@ struct CellDetailsIdentification: View {
 }
 
 private struct CellIdentificationGSM: View {
+    let country: Int32
+    let network: Int32
+    let area: Int32
     let cellId: Int64
     
     var body: some View {
@@ -55,11 +58,23 @@ private struct CellIdentificationGSM: View {
             KeyValueListRow(key: "Sector ID", value: String(sector))
             
             KeyValueListRow(key: "Antennas", value: sector == 0 ? "Omnidirectional" : "Bi- or tridirectional")
+            
+            NavigationLink {
+                CellDetailsTower(
+                    technology: .GSM, country: country, network: network, area: area, baseStation: bts,
+                    dissect: CellIdentification.umts
+                )
+            } label: {
+                Text("Show Details")
+            }
         }
     }
 }
 
 private struct CellIdentificationUMTS: View {
+    let country: Int32
+    let network: Int32
+    let area: Int32
     let lcid: Int64
     
     var body: some View {
@@ -69,13 +84,26 @@ private struct CellIdentificationUMTS: View {
             
             // Radio Network Controller (RNC) -> 12 Bits
             KeyValueListRow(key: "RNC ID", value: String(rnc))
+            
             // Cell ID (CID) -> 16 Bits
             KeyValueListRow(key: "Cell ID", value: String(cellId))
+            
+            NavigationLink {
+                CellDetailsTower(
+                    technology: .UMTS, country: country, network: network, area: area, baseStation: rnc,
+                    dissect: CellIdentification.umts
+                )
+            } label: {
+                Text("Show Details")
+            }
         }
     }
 }
 
 private struct CellIdentificationLTE: View {
+    let country: Int32
+    let network: Int32
+    let area: Int32
     let eci: Int64
     
     var body: some View {
@@ -85,20 +113,36 @@ private struct CellIdentificationLTE: View {
             
             // eNodeB ID (Base Station) -> 20 Bits
             KeyValueListRow(key: "eNodeB ID", value: String(eNodeB))
+            
             // Sector ID -> 8 Bits
             KeyValueListRow(key: "Sector ID", value: String(sector))
+            
+            NavigationLink {
+                CellDetailsTower(
+                    technology: .LTE, country: country, network: network, area: area, baseStation: eNodeB,
+                    dissect: CellIdentification.lte
+                )
+            } label: {
+                Text("Show Details")
+            }
         }
     }
 }
 
 private struct CellIdentificationNR: View {
+    let country: Int32
+    let network: Int32
+    let area: Int32
     let nci: Int64
     
     // A sensible default value which hopefully works for most networks
     @State private var showSectorIdLengthSlider = false
     @State private var sectorIdLengthSlider: Double = 8
     
-    init(nci: Int64) {
+    init(country: Int32, network: Int32, area: Int32, nci: Int64) {
+        self.country = country
+        self.network = network
+        self.area = area
         self.nci = nci
     }
     
@@ -125,6 +169,16 @@ private struct CellIdentificationNR: View {
                     }
                 )
             }
+            
+            NavigationLink {
+                CellDetailsTower(
+                    technology: .LTE, country: country, network: network, area: area, baseStation: gNodeB,
+                    dissect: { CellIdentification.nr(nci: $0, sectorIdLength: sectorIdLength) },
+                    bitCount: sectorIdLength
+                )
+            } label: {
+                Text("Show Details")
+            }
         }
         .contextMenu {
             Button {
@@ -139,17 +193,17 @@ private struct CellIdentificationNR: View {
 #Preview {
     List {
         Section(header: Text("GSM")) {
-            CellIdentificationGSM(cellId: 20336)
+            CellIdentificationGSM(country:0, network: 0, area: 0, cellId: 20336)
         }
         Section(header: Text("UMTS")) {
             // TODO: Find correct UMTS cell id
-            CellIdentificationUMTS(lcid: 0)
+            CellIdentificationUMTS(country:0, network: 0, area: 0, lcid: 0)
         }
         Section(header: Text("LTE")) {
-            CellIdentificationLTE(eci: 27177984)
+            CellIdentificationLTE(country:0, network: 0, area: 0, eci: 27177984)
         }
         Section(header: Text("NR")) {
-            CellIdentificationNR(nci: 21248033539)
+            CellIdentificationNR(country:0, network: 0, area: 0, nci: 21248033539)
         }
     }
 }

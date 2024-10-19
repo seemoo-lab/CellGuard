@@ -19,10 +19,17 @@ import MapKit
 
 struct MultiCellMap: UIViewRepresentable {
     
-    let alsCells: FetchedResults<CellALS>
-    let onTap: (NSManagedObjectID) -> Void
+    let alsCells: any BidirectionalCollection<CellALS>
+    let onTap: ((NSManagedObjectID) -> Void)?
+    let clustering: Bool
     
     @ObservedObject private var locationManager = LocationDataManager.shared
+    
+    init(alsCells: any BidirectionalCollection<CellALS>, onTap: ((NSManagedObjectID) -> Void)? = nil, clustering: Bool = false) {
+        self.alsCells = alsCells
+        self.onTap = onTap
+        self.clustering = clustering
+    }
     
     func makeUIView(context: Context) -> MKMapView {
         let mapView = MKMapView(frame: .zero)
@@ -47,6 +54,10 @@ struct MultiCellMap: UIViewRepresentable {
         
         // TODO: Add user tracking button
         // See: https://developer.apple.com/documentation/mapkit/mkusertrackingbutton
+        
+        // Set initial position of map view based on annotations
+        _ = CommonCellMap.updateCellAnnotations(data: alsCells, uiView: mapView)
+        CommonCellMap.updateViewRegion(mapView, animated: false)
         
         return mapView
     }
