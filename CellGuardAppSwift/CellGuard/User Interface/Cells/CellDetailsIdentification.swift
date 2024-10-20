@@ -62,7 +62,7 @@ private struct CellIdentificationGSM: View {
             NavigationLink {
                 CellDetailsTower(
                     technology: .GSM, country: country, network: network, area: area, baseStation: bts,
-                    dissect: CellIdentification.umts
+                    dissect: CellIdentification.gsm
                 )
             } label: {
                 Text("Show Details")
@@ -172,7 +172,7 @@ private struct CellIdentificationNR: View {
             
             NavigationLink {
                 CellDetailsTower(
-                    technology: .LTE, country: country, network: network, area: area, baseStation: gNodeB,
+                    technology: .NR, country: country, network: network, area: area, baseStation: gNodeB,
                     dissect: { CellIdentification.nr(nci: $0, sectorIdLength: sectorIdLength) },
                     bitCount: sectorIdLength
                 )
