@@ -21,7 +21,7 @@ struct CellDetailsView: View {
         self._showAll = State(initialValue: true)
     }
     
-    init(tweakCell: CellTweak, predicate: NSPredicate) {
+    init(tweakCell: CellTweak, predicate: NSPredicate? = nil) {
         self.cell = tweakCell
         self.predicate = predicate
         self._showAll = State(initialValue: false)

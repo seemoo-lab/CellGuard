@@ -108,8 +108,13 @@ private struct CombinedRiskCellView: View {
         ScrollView {
             CalculatedRiskView()
             
-            if !tweakCells.isEmpty {
-                CellInformationCard(cell: tweakCells[0])
+            if let tweakCell = tweakCells.first {
+                NavigationLink {
+                    CellDetailsView(tweakCell: tweakCell)
+                } label: {
+                    CellInformationCard(cell: tweakCell)
+                }
+                .buttonStyle(.plain)
             }
             
             // none mode: show warning, might not be intended
