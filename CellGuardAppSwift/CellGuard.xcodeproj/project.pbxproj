@@ -457,7 +457,6 @@
 		CF54CCC42A33680200961E4D /* PacketCommonDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacketCommonDetails.swift; sourceTree = "<group>"; };
 		CF54CCC62A33699A00961E4D /* PacketARIDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacketARIDetailsView.swift; sourceTree = "<group>"; };
 		CF5672952A29E59000B6EA7C /* TweakInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TweakInfoView.swift; sourceTree = "<group>"; };
-		CF57560D2B2F22BE00C7C60A /* libcellguard.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcellguard.a; path = ../target/universal/debug/libcellguard.a; sourceTree = "<group>"; };
 		CF5756122B2F232A00C7C60A /* cellguard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = cellguard.swift; sourceTree = "<group>"; };
 		CF5756132B2F232A00C7C60A /* cellguard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cellguard.h; sourceTree = "<group>"; };
 		CF5756172B2F259100C7C60A /* BridgingHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BridgingHeader.h; sourceTree = "<group>"; };
@@ -809,7 +808,6 @@
 			children = (
 				CFCBA9132CB929140054249E /* debug */,
 				CFCBA9112CB929030054249E /* libcellguard.a */,
-				CF57560D2B2F22BE00C7C60A /* libcellguard.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
