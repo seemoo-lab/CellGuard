@@ -52,7 +52,7 @@ class PersistenceController {
     
     /// A shared persistence provider to use within the main app bundle.
     static let shared = PersistenceController()
-
+    
     /// A persistence provider to use with canvas previews.
     static let preview = PersistenceController(inMemory: true)
     
@@ -67,7 +67,7 @@ class PersistenceController {
     
     /// A persistent container to set up the Core Data stack
     let container: NSPersistentContainer
-
+    
     let logger = Logger(
         subsystem: Bundle.main.bundleIdentifier!,
         category: String(describing: PersistenceController.self)
@@ -94,7 +94,7 @@ class PersistenceController {
         }
     }
     private let lastTokenUserDefaultsKey = "persistence-last-token"
-
+    
     private init(inMemory: Bool = false) {
         self.inMemory = inMemory
         
@@ -125,7 +125,7 @@ class PersistenceController {
             }
         }
         logger.info("Finished loading persistent stores")
-
+        
         // It's very important that these modification to the viewContext are performed on the main queue,
         // i.e. that the PersistenceController is initialized on the main queue.
         // Otherwise, both (initializing & main) queues / threads block each other and the app never launches!
@@ -222,7 +222,7 @@ class PersistenceController {
         }
         
         if let collectedError = collectedError {
-            logger.debug("Failed to execute database operation (\(name ?? ""), \(author ?? "")): \(collectedError)")
+            logger.debug("Failed to execute database operation (\(name ?? "no name"), \(author ?? "no author")): \(collectedError)")
             throw collectedError
         }
         
@@ -231,40 +231,51 @@ class PersistenceController {
     
     /// Fetches persistent history transaction starting from the `lastToken` and merges it into the view context.
     func fetchPersistentHistoryTransactionsAndChanges() throws {
-        let taskContext = newTaskContext()
-        taskContext.name = "persistentHistoryContext"
         logger.debug("Start fetching persistent history changes from the store...")
         
-        var taskError: Error? = nil
-        
-        taskContext.performAndWait {
+        try performAndWait(name: "persistentHistoryContext") { context in
+            // Request transactions that happened since the lastToken
+            let changeRequest = NSPersistentHistoryChangeRequest.fetchHistory(after: lastToken)
+            let historyResult: NSPersistentHistoryResult?
             do {
-                // Request transactions that happened since the lastToken
-                let changeRequest: NSPersistentHistoryChangeRequest
-                // The locking implemented in the variable's accessor is important as this is an async task and the variable is set from the view task
-                changeRequest = NSPersistentHistoryChangeRequest.fetchHistory(after: lastToken)
-                let historyResult = try taskContext.execute(changeRequest) as? NSPersistentHistoryResult
-                if let history = historyResult?.result as? [NSPersistentHistoryTransaction],
-                   !history.isEmpty {
-                    // If successful, merge them into the view context
-                    self.mergePersistentHistoryChanges(from: history)
+                // The locking implemented for the accessor of lastToken is important as this is an async task and the variable is set from the view task
+                historyResult = try context.execute(changeRequest) as? NSPersistentHistoryResult
+            } catch let error as NSError {
+                // In rare circumstances, a history token expires, i.e. refers to already purged history, see:
+                // https://developer.apple.com/documentation/coredata/1535452-validation_error_codes/nspersistenthistorytokenexpirederror
+                // https://developer.apple.com/documentation/coredata/consuming_relevant_store_changes
+                if error.code == NSPersistentHistoryTokenExpiredError {
+                    logger.info("Recovering from an expired history token...")
+                    
+                    // In those cases, reset the history token
+                    lastToken = nil
+                    UserDefaults.standard.removeObject(forKey: lastTokenUserDefaultsKey)
+                    
+                    // and fetch the history from the beginning (and hope that it works)
+                    let backupChangeRequest = NSPersistentHistoryChangeRequest.fetchHistory(after: nil as NSPersistentHistoryToken?)
+                    historyResult = try context.execute(backupChangeRequest) as? NSPersistentHistoryResult
+                    
+                    logger.info("Recovery from expired history token successful")
                 } else {
-                    // This is normal at the first start of the app and doesn't require an exception
-                    logger.debug("No persistent history transactions found.")
-                    // throw PersistenceError.persistentHistoryChangeError
-                    // But we have to release the lock
+                    // If we don't know the error we just re-throw it
+                    throw error
                 }
-            } catch {
-                taskError = error
             }
-        }
-        
-        if let error = taskError {
-            throw error
+            
+            if let history = historyResult?.result as? [NSPersistentHistoryTransaction],
+               !history.isEmpty {
+                // If successful, merge them into the view context
+                self.mergePersistentHistoryChanges(from: history)
+            } else {
+                // This is normal at the first start of the app and doesn't require an exception
+                logger.debug("No persistent history transactions found.")
+                // throw PersistenceError.persistentHistoryChangeError
+                // But we have to release the lock
+            }
         }
     }
     
-    /// Merge transaction part of the`history`parameter into the view context.
+    /// Merge transaction part of the`history` parameter into the view context.
     private func mergePersistentHistoryChanges(from history: [NSPersistentHistoryTransaction]) {
         logger.debug("Received \(history.count) persistent history transactions.")
         
@@ -293,18 +304,16 @@ class PersistenceController {
     func cleanPersistentHistoryChanges() {
         // See: https://www.avanderlee.com/swift/persistent-history-tracking-core-data/
         
-        // TODO: Improve error logging
-        
-        let taskContext = newTaskContext()
-        taskContext.performAndWait {
+        try? performAndWait(name: "cleanPersistentHistoryChanges") { context in
             guard let token = self.lastToken else {
                 logger.debug("No persistent history to delete as we've got no token")
                 return
             }
-
+            
             let deleteHistoryRequest = NSPersistentHistoryChangeRequest.deleteHistory(before: token)
             logger.debug("Deleting persistent history before the token \(token)")
-            _ = try? taskContext.execute(deleteHistoryRequest)
+            let result = try context.execute(deleteHistoryRequest)
+            logger.debug("Result of deletion: \(result)")
         }
     }
     
