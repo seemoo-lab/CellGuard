@@ -115,6 +115,12 @@
 		CF5EF92A2979B8D800C4F50A /* LocationSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5EF9292979B8D800C4F50A /* LocationSource.swift */; };
 		CF6EC8AD2A6C4C88004CF0AB /* PreviewInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF6EC8AC2A6C4C88004CF0AB /* PreviewInfo.swift */; };
 		CF6EC8B12A6D9F99004CF0AB /* CellListFilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF6EC8B02A6D9F99004CF0AB /* CellListFilterView.swift */; };
+		CF7064F02CC5107600BF8AF9 /* TowerCellMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF7064EF2CC5107600BF8AF9 /* TowerCellMap.swift */; };
+		CF7064F12CC5107600BF8AF9 /* TowerCellMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF7064EF2CC5107600BF8AF9 /* TowerCellMap.swift */; };
+		CF7064F32CC5137600BF8AF9 /* TowerAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF7064F22CC5137600BF8AF9 /* TowerAnnotation.swift */; };
+		CF7064F42CC5137600BF8AF9 /* TowerAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF7064F22CC5137600BF8AF9 /* TowerAnnotation.swift */; };
+		CF7064F62CC513B500BF8AF9 /* TowerAnnotationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF7064F52CC513B500BF8AF9 /* TowerAnnotationView.swift */; };
+		CF7064F72CC513B500BF8AF9 /* TowerAnnotationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF7064F52CC513B500BF8AF9 /* TowerAnnotationView.swift */; };
 		CF70A97D2BE682F900989FB5 /* QVerification.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1CD4742BE16C1C009A3582 /* QVerification.swift */; };
 		CF70A97F2BE6AD8600989FB5 /* QCellALS.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF70A97E2BE6AD8600989FB5 /* QCellALS.swift */; };
 		CF70A9802BE6AD8600989FB5 /* QCellALS.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF70A97E2BE6AD8600989FB5 /* QCellALS.swift */; };
@@ -468,6 +474,9 @@
 		CF5EF9292979B8D800C4F50A /* LocationSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationSource.swift; sourceTree = "<group>"; };
 		CF6EC8AC2A6C4C88004CF0AB /* PreviewInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewInfo.swift; sourceTree = "<group>"; };
 		CF6EC8B02A6D9F99004CF0AB /* CellListFilterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellListFilterView.swift; sourceTree = "<group>"; };
+		CF7064EF2CC5107600BF8AF9 /* TowerCellMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TowerCellMap.swift; sourceTree = "<group>"; };
+		CF7064F22CC5137600BF8AF9 /* TowerAnnotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TowerAnnotation.swift; sourceTree = "<group>"; };
+		CF7064F52CC513B500BF8AF9 /* TowerAnnotationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TowerAnnotationView.swift; sourceTree = "<group>"; };
 		CF70A97E2BE6AD8600989FB5 /* QCellALS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QCellALS.swift; sourceTree = "<group>"; };
 		CF70A9812BE6AD8D00989FB5 /* QRiskStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRiskStatus.swift; sourceTree = "<group>"; };
 		CF70A9842BE6AFB800989FB5 /* QPackets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QPackets.swift; sourceTree = "<group>"; };
@@ -870,6 +879,23 @@
 			path = "User Interface";
 			sourceTree = "<group>";
 		};
+		CF7064F82CC5145400BF8AF9 /* Annotations */ = {
+			isa = PBXGroup;
+			children = (
+				CFDF5D70297EF0C6000708A8 /* CellAnnotation.swift */,
+				CFDF5D72297EF0E4000708A8 /* CellAnnotationView.swift */,
+				CFDF5D7A297EF71F000708A8 /* CellClusterAnnotation.swift */,
+				CFDF5D74297EF127000708A8 /* CellClusterAnnotationView.swift */,
+				CF7064F22CC5137600BF8AF9 /* TowerAnnotation.swift */,
+				CF7064F52CC513B500BF8AF9 /* TowerAnnotationView.swift */,
+				CFDF5D84297F09D3000708A8 /* DatabaseAnnotation.swift */,
+				CFDF5D76297EF1E8000708A8 /* LocationAnnotation.swift */,
+				CFDF5D78297EF1EF000708A8 /* LocationAnnotationView.swift */,
+				CFDF5D7C297EF76C000708A8 /* LocationClusterAnnotation.swift */,
+			);
+			path = Annotations;
+			sourceTree = "<group>";
+		};
 		CF7BE25D2A67EBCB007FF930 /* Verification */ = {
 			isa = PBXGroup;
 			children = (
@@ -1093,15 +1119,9 @@
 				CFDF5D80297F05F1000708A8 /* CellMapDelegate.swift */,
 				CFDF5D7E297F05A0000708A8 /* SingleCellMap.swift */,
 				CFDF5D6E297EF05D000708A8 /* MultiCellMap.swift */,
-				CFDF5D70297EF0C6000708A8 /* CellAnnotation.swift */,
-				CFDF5D72297EF0E4000708A8 /* CellAnnotationView.swift */,
-				CFDF5D7A297EF71F000708A8 /* CellClusterAnnotation.swift */,
-				CFDF5D74297EF127000708A8 /* CellClusterAnnotationView.swift */,
-				CFDF5D84297F09D3000708A8 /* DatabaseAnnotation.swift */,
-				CFDF5D76297EF1E8000708A8 /* LocationAnnotation.swift */,
-				CFDF5D78297EF1EF000708A8 /* LocationAnnotationView.swift */,
-				CFDF5D7C297EF76C000708A8 /* LocationClusterAnnotation.swift */,
+				CF7064EF2CC5107600BF8AF9 /* TowerCellMap.swift */,
 				CF0157C82CC419DD003ACAC4 /* ExpandableMap.swift */,
+				CF7064F82CC5145400BF8AF9 /* Annotations */,
 			);
 			path = Map;
 			sourceTree = "<group>";
@@ -1473,6 +1493,7 @@
 				CFB6CF3D2BD122FA00EAB7B4 /* TweakClient.swift in Sources */,
 				CFB6CF3E2BD122FA00EAB7B4 /* CommonCellMap.swift in Sources */,
 				CFB6CF3F2BD122FA00EAB7B4 /* CircularProgressView.swift in Sources */,
+				CF7064F32CC5137600BF8AF9 /* TowerAnnotation.swift in Sources */,
 				CFB6CF402BD122FA00EAB7B4 /* CellClusterAnnotationView.swift in Sources */,
 				CFB6CF412BD122FA00EAB7B4 /* CellStatusIcon.swift in Sources */,
 				CFB6CF422BD122FA00EAB7B4 /* Cell.swift in Sources */,
@@ -1488,6 +1509,7 @@
 				CFB6CF4A2BD122FA00EAB7B4 /* CellGuard.xcdatamodeld in Sources */,
 				45ECF5732BFC00D100DD92CF /* DebugProfileCard.swift in Sources */,
 				CFAE881B2C28B9C100092B15 /* StudyClient.swift in Sources */,
+				CF7064F72CC513B500BF8AF9 /* TowerAnnotationView.swift in Sources */,
 				CFB6CF4B2BD122FA00EAB7B4 /* SingleCellMap.swift in Sources */,
 				CFB6CF4C2BD122FA00EAB7B4 /* LocationSource.swift in Sources */,
 				CFB6CF4D2BD122FA00EAB7B4 /* PacketTabView.swift in Sources */,
@@ -1556,6 +1578,7 @@
 				CFB6CF7B2BD122FA00EAB7B4 /* CPTCollector.swift in Sources */,
 				CFB6CF7D2BD122FA00EAB7B4 /* TrackedUserLocation.swift in Sources */,
 				CFB6CF7E2BD122FA00EAB7B4 /* LocationDataManager.swift in Sources */,
+				CF7064F12CC5107600BF8AF9 /* TowerCellMap.swift in Sources */,
 				CFB6CF7F2BD122FA00EAB7B4 /* QMIContentParser.swift in Sources */,
 				CF2FF68E2BF296EE006E2DF4 /* RiskInfoView.swift in Sources */,
 				CF0157C32CC3FFD1003ACAC4 /* CellIdentification.swift in Sources */,
@@ -1629,6 +1652,7 @@
 				CF320F5529620B16009BAD18 /* CCTParser.swift in Sources */,
 				CF2002F02A2F996A000922E6 /* TweakClient.swift in Sources */,
 				CFDF5D83297F0736000708A8 /* CommonCellMap.swift in Sources */,
+				CF7064F42CC5137600BF8AF9 /* TowerAnnotation.swift in Sources */,
 				CFE988DF2AA88A2B0039EDF9 /* CircularProgressView.swift in Sources */,
 				CFDF5D75297EF127000708A8 /* CellClusterAnnotationView.swift in Sources */,
 				CFB51834297AEFA80006C690 /* CellStatusIcon.swift in Sources */,
@@ -1644,6 +1668,7 @@
 				CFD023432961A10D00AA5A1C /* CellGuard.xcdatamodeld in Sources */,
 				45ECF5722BFC00D100DD92CF /* DebugProfileCard.swift in Sources */,
 				CFAE881A2C28B9C100092B15 /* StudyClient.swift in Sources */,
+				CF7064F62CC513B500BF8AF9 /* TowerAnnotationView.swift in Sources */,
 				CFDF5D7F297F05A0000708A8 /* SingleCellMap.swift in Sources */,
 				CF5EF92A2979B8D800C4F50A /* LocationSource.swift in Sources */,
 				CF4E53A22A321B3000AE2059 /* PacketTabView.swift in Sources */,
@@ -1712,6 +1737,7 @@
 				CF54CCBC2A33093800961E4D /* CPTCollector.swift in Sources */,
 				CF0FDCCD296B480B00A6FFE2 /* TrackedUserLocation.swift in Sources */,
 				CFB8B2882963417B00503189 /* LocationDataManager.swift in Sources */,
+				CF7064F02CC5107600BF8AF9 /* TowerCellMap.swift in Sources */,
 				CFD8DD262A715E8300954A25 /* QMIContentParser.swift in Sources */,
 				CF2FF68D2BF296EE006E2DF4 /* RiskInfoView.swift in Sources */,
 				CF0157C42CC3FFD1003ACAC4 /* CellIdentification.swift in Sources */,

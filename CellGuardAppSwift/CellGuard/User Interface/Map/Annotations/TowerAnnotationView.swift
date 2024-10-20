@@ -8,18 +8,9 @@
 import Foundation
 import MapKit
 
-class CellAnnotationView: MKMarkerAnnotationView {
+class TowerAnnotationView: MKMarkerAnnotationView {
     
-    static let ReuseID = "cellAnnotation"
-    
-    var calloutAccessory: Bool {
-        get {
-            rightCalloutAccessoryView != nil
-        }
-        set (newVal) {
-            rightCalloutAccessoryView = newVal ? UIButton(type: .detailDisclosure) : nil
-        }
-    }
+    static let ReuseID = "towerAnnotation"
     
     override init(annotation: MKAnnotation?, reuseIdentifier: String?) {
         super.init(annotation: annotation, reuseIdentifier: reuseIdentifier)
@@ -27,14 +18,14 @@ class CellAnnotationView: MKMarkerAnnotationView {
     }
     
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(code:) has not been implemented")
+        fatalError("init(coder:) has not been implemented")
     }
     
     override func prepareForReuse() {
         super.prepareForReuse()
         
         // It's crucial that we set those properties here, otherwise the cells disappear after zooming in and out
-        clusteringIdentifier = "cell"
+        
         animatesWhenAdded = false
         canShowCallout = true
         displayPriority = .required

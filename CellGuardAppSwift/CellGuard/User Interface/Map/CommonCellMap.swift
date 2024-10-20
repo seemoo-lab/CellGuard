@@ -27,6 +27,9 @@ struct CommonCellMap {
         mapView.register(
             LocationAnnotationView.self,
             forAnnotationViewWithReuseIdentifier: LocationAnnotationView.ReuseID)
+        mapView.register(
+            TowerAnnotationView.self,
+            forAnnotationViewWithReuseIdentifier: TowerAnnotationView.ReuseID)
         
         // Cluster annotations
         mapView.register(
@@ -37,7 +40,7 @@ struct CommonCellMap {
             forAnnotationViewWithReuseIdentifier: CellClusterAnnotationView.ReuseID)
     }
     
-    private static func updateAnnotations<D: NSManagedObject, A: DatabaseAnnotation>(
+    static func updateAnnotations<D: NSManagedObject, A: DatabaseAnnotation>(
         data: any BidirectionalCollection<D>, uiView: MKMapView, create: (D) -> A?
     ) -> (Int, Int) {
         // Pick all annotations of the given type

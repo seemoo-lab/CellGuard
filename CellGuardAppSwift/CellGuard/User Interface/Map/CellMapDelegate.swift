@@ -20,7 +20,7 @@ class CellMapDelegate: NSObject, MKMapViewDelegate {
     let onTap: ((NSManagedObjectID) -> Void)?
     let clustering: Bool
     
-    init(onTap: ((NSManagedObjectID) -> Void)? = nil, clustering: Bool = false) {
+    init(onTap: ((NSManagedObjectID) -> Void)? = nil, clustering: Bool = true) {
         self.onTap = onTap
         self.clustering = clustering
         super.init()
@@ -50,6 +50,13 @@ class CellMapDelegate: NSObject, MKMapViewDelegate {
             return view
         } else if annotation is LocationAnnotation {
             return mapView.dequeueReusableAnnotationView(withIdentifier: LocationAnnotationView.ReuseID, for: annotation)
+        } else if let annotation = annotation as? TowerAnnotation {
+            let view = mapView.dequeueReusableAnnotationView(withIdentifier: TowerAnnotationView.ReuseID, for: annotation)
+            if let view = view as? TowerAnnotationView {
+                // Same reasoning as for CellAnnotation
+                view.updateColor(technology: annotation.technology)
+            }
+            return view
         } else if annotation is LocationClusterAnnotation {
             // I assume we have to use a separate identifier for the cluster view, otherwise we get a crash
             // See: https://forums.developer.apple.com/forums/thread/89427

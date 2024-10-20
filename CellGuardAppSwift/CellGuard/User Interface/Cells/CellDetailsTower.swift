@@ -97,7 +97,7 @@ private struct CellDetailsTowerMap: View {
     var body: some View {
         // TODO: Show sector id instead of provider name / network
         ExpandableMap {
-            MultiCellMap(alsCells: cells.filter { dissect($0.cell).0 == baseStation }, clustering: false)
+            TowerCellMap(alsCells: cells.filter { dissect($0.cell).0 == baseStation }, dissect: dissect)
         }
     }
     

@@ -19,7 +19,7 @@ class CellClusterAnnotationView: MKMarkerAnnotationView {
     }
 
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(code:) has not been implemented")
+        fatalError("init(coder:) has not been implemented")
     }
     
     override func prepareForReuse() {

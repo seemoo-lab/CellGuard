@@ -62,7 +62,7 @@ struct SummaryTabView: View {
                         Button {
                             showingCellList = true
                         } label: {
-                            Label("Cells", systemImage: "antenna.radiowaves.left.and.right")
+                            Label("Cells", systemImage: "wave.3.left")
                         }
                         #if STATS_VIEW
                         // Disable stats for the beta test as it is not finished.
