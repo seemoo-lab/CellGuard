@@ -77,6 +77,7 @@ struct CellDetailsTower: View {
             }
             CellDetailsList(technology: technology, baseStation: baseStation, dissect: dissect, fetchRequest: fetchRequest)
         }
+        .listStyle(.insetGrouped)
         .navigationTitle("\(technology.rawValue) Cell Tower")
     }
 }
