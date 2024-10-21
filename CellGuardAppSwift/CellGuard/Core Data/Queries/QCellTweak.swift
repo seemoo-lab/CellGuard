@@ -50,10 +50,11 @@ extension PersistenceController {
                     continue
                 }
                 
-                // Create a default verification state for each pipeline
-                for pipeline in activeVerificationPipelines {
+                // Create a default verification state for each user-enabled pipeline
+                // If the user enables another pipeline afterward, it automatically creates its verification states as needed
+                for pipelineId in UserDefaults.standard.userEnabledVerificationPipelineIds() {
                     let state = VerificationState(context: context)
-                    state.pipeline = pipeline.id
+                    state.pipeline = pipelineId
                     state.delayUntil = Date()
                     
                     cell.addToVerifications(state)
