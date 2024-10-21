@@ -30,8 +30,17 @@ extension PersistenceController {
             fetchRequest.sortDescriptors = [NSSortDescriptor(key: "cell.collected", ascending: true)]
             fetchRequest.relationshipKeyPathsForPrefetching = ["cell"]
             
+            let enabledPipelines = UserDefaults.standard.userEnabledVerificationPipelineIds()
             var cellsToBeUploaded = try fetchRequest.execute()
-                .filter { $0.cell?.verifications?.allSatisfy { ($0 as? VerificationState)?.finished ?? false } ?? false }
+                .filter { $0.cell?.verifications?.allSatisfy {
+                    // Only user-enabled pipelines must have finished their processing to quality for study
+                    // (Other pipelines can't finish their work as they are not running)
+                    if let verificationState = $0 as? VerificationState,
+                        enabledPipelines.contains(verificationState.pipeline) {
+                        return verificationState.finished
+                    }
+                    return true
+                } ?? false }
                 .compactMap { $0.cell }
                 .filter { $0.collected != nil }
             if cellsToBeUploaded.isEmpty {
