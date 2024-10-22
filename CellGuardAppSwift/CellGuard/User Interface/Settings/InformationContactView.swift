@@ -10,11 +10,13 @@ import SwiftUI
 struct InformationContactView: View {
     
     @AppStorage(UserDefaultsKeys.study.rawValue) var studyParticipationTimestamp: Double = 0
-        
+    
+    @State var showGitCommit = false
+    
     var versionBuild: String {
         // https://stackoverflow.com/a/28153897
         let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "???"
-        let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String  ?? "???"
+        let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "???"
         
         return "\(version) (\(build))"
     }
@@ -28,8 +30,16 @@ struct InformationContactView: View {
         List {
             // TODO: Add more in-app contact options?
             
-            Section(header: Text("About CellGuard"), footer: Text("Build with Git commit \(commitHash)")) {
-                KeyValueListRow(key: "Version", value: versionBuild)
+            Section(header: Text("About CellGuard")) {
+                KeyValueListRow(
+                    key: showGitCommit ? "Git Commit" : "Version",
+                    value: showGitCommit ? commitHash : versionBuild
+                )
+                .onTapGesture {
+                    withAnimation {
+                        showGitCommit = !showGitCommit
+                    }
+                }
                 
                 Link(destination: CellGuardURLs.baseUrl) {
                     KeyValueListRow(key: "Website") {
