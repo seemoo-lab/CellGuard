@@ -51,7 +51,21 @@ struct TowerCellMap: UIViewRepresentable {
         // Update cells annotation with custom title
         let (added, removed) = CommonCellMap.updateAnnotations(data: alsCells, uiView: uiView) { alsCell in
             let (_, section) = dissect(alsCell.cell)
-            return CellAnnotation(cell: alsCell, title: "\(section)")
+            
+            // Show frequency as subtitle (if available)
+            let subtitle: String?
+            if alsCell.frequency > 0 {
+                let formatter = CellTechnologyFormatter.from(technology: alsCell.technology)
+                subtitle = "\(formatter.frequency()): \(alsCell.frequency)"
+            } else {
+                subtitle = nil
+            }
+            
+            return CellAnnotation(
+                cell: alsCell,
+                title: "\(section)",
+                subtitle: subtitle
+            )
         }
         
         // Update center location (only if cells have been added or removed)
