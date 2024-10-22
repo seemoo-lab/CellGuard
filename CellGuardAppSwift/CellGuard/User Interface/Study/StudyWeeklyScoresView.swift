@@ -18,7 +18,7 @@ struct StudyWeeklyScoresView: View {
     var body: some View {
         if !scores.isEmpty {
             let weeklyScores = Dictionary(grouping: scores, by: { $0.week })
-                .sorted(by: { $0.key ?? Date.distantPast < $1.key ?? Date.distantPast})
+                .sorted(by: { $0.key ?? Date.distantPast > $1.key ?? Date.distantPast})
             
             List(weeklyScores, id: \.key) { (week, scores) in
                 StudyWeeklyView(week: week, scores: scores)
