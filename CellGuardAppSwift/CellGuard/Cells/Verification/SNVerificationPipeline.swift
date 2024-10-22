@@ -77,6 +77,7 @@ private func getCountryCode(latitude: Double, longitude: Double) async -> Countr
         let placemarks = try await CLGeocoder().reverseGeocodeLocation(location.toCL())
         for placemark in placemarks {
             if let isoCountryCode = placemark.isoCountryCode {
+                // TODO: Something is crashing here (I guess)
                 countryCodeCache[location] = isoCountryCode
                 return .found(isoCountryCode)
             }
