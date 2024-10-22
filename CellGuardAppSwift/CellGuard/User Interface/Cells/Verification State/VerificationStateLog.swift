@@ -230,7 +230,7 @@ private struct VerificationStageLogRelatedPacketsView: View {
                 // but we've encountered multiple NR packets that do not contain any signal info.
                 var texts: [String] = []
                 
-                if let nr = parsedSignalInfo.nr {
+                if let nr = parsedSignalInfo.nr, nr.rsrp != nil && nr.rsrq != nil && nr.snr != nil {
                     texts.append("NR: rsrp = \(formatSignalStrength(nr.rsrp, unit: "dBm")), rsrq = \(formatSignalStrength(nr.rsrq, unit: "dB")), snr = \(formatSignalStrength(nr.snr, unit: "dB"))")
                 } else if let lte = parsedSignalInfo.lte {
                     texts.append("LTE: rssi = \(formatSignalStrength(lte.rssi, unit: "dBm")), rsrp = \(formatSignalStrength(lte.rsrp, unit: "dBm")), rsrq = \(formatSignalStrength(lte.rsrq, unit: "dB")), snr = \(formatSignalStrength(lte.snr, unit: "dB"))")
@@ -248,8 +248,8 @@ private struct VerificationStageLogRelatedPacketsView: View {
                 && PacketConstants.ariSignalGroup == ariPacket.group
                 && PacketConstants.ariSignalType == ariPacket.type,
                let data = ariPacket.data,
-            let parsedPacket = try? ParsedARIPacket(data: data),
-            let parsedSignalInfo = try? ParsedARIRadioSignalIndication(ariPacket: parsedPacket) {
+               let parsedPacket = try? ParsedARIPacket(data: data),
+               let parsedSignalInfo = try? ParsedARIRadioSignalIndication(ariPacket: parsedPacket) {
                 let ssr = (Double(parsedSignalInfo.signalStrength) / Double(parsedSignalInfo.signalStrengthMax)) * 100
                 let sqr = (Double(parsedSignalInfo.signalQuality) / Double(parsedSignalInfo.signalQualityMax)) * 100
                 return Text("ssr = \(doubleString(ssr))%, sqr = \(doubleString(sqr))%")

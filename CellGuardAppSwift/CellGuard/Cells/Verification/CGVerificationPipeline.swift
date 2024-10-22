@@ -343,7 +343,7 @@ private struct SignalStrengthVerificationStage: VerificationStage {
             }
             let gsmInfo = qmiSignalInfo.compactMap {$0.gsm}
             let lteInfo = qmiSignalInfo.filter {$0.nr?.rsrp == NRSignalStrengthQMI.missing}.compactMap {$0.lte}
-            let nrInfo = qmiSignalInfo.compactMap {$0.nr}.filter {$0.rsrp != NRSignalStrengthQMI.missing}
+            let nrInfo = qmiSignalInfo.compactMap {$0.nr}.filter {$0.rsrp != nil}
             
             if nrInfo.count > 0 {
                 let rsrpAvg = average(nrInfo.compactMap {$0.rsrp})
