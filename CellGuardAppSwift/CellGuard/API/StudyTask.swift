@@ -24,8 +24,6 @@ struct StudyTask {
         return calendar
     }()
     
-    // TODO: Create task in CellGuardAppDelegate.swift
-    
     func run() async throws {
         guard let participationSince = UserDefaults.standard.date(forKey: UserDefaultsKeys.study.rawValue) else {
             return
