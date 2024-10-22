@@ -72,7 +72,7 @@ struct CellDetailsTower: View {
                 CellDetailsRow("Technology", technology.rawValue)
                 CellDetailsRow(techFormatter.area(), area)
             }
-            Section(header: Text("Tower")) {
+            Section(header: Text("Tower"), footer: Text("The tower's approximate position is the center of its cell's locations. Connect to more cells to improve the position's accuracy.")) {
                 CellDetailsRow(baseStationIDSingle, baseStation)
             }
             CellDetailsList(technology: technology, baseStation: baseStation, dissect: dissect, fetchRequest: fetchRequest)
