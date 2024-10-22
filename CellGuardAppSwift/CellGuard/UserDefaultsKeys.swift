@@ -76,29 +76,31 @@ extension UserDefaults {
         }
     }
     
-    func userEnabledVerificationPipelineIds() -> [Int16] {
+    func userEnabledVerificationPipelineIds() -> Set<Int16> {
         let primaryId = primaryVerificationPipeline.id
         
         // If none are set, just enable the primary pipeline
-        guard let pipelineIds = array(forKey: UserDefaultsKeys.activePipelines.rawValue) as? [Int16] else {
-            return [primaryId]
+        guard let pipelineIdsArray = array(forKey: UserDefaultsKeys.activePipelines.rawValue) as? [Int16] else {
+            return Set([primaryId])
         }
+        
+        // Convert to set
+        var pipelineIds = Set(pipelineIdsArray)
         
         // Add primary pipeline if missing
-        var localIds = pipelineIds
-        if !localIds.contains(primaryId) {
-            localIds.append(primaryId)
-        }
+        pipelineIds.insert(primaryId)
         
-        // Sort the pipelines by their id
-        return localIds.sorted { $0 < $1 }
+        // Remove non-active pipelines
+        pipelineIds.formIntersection(activeVerificationPipelines.map { $0.id })
+        
+        return pipelineIds
     }
     
     func userEnabledVerificationPipelines() -> [any VerificationPipeline] {
         // Map all pipeline ids to their pipeline
         return userEnabledVerificationPipelineIds().compactMap { pipelineId in
             activeVerificationPipelines.first { $0.id == pipelineId }
-        }
+        }.sorted { $0.id < $1.id }
     }
     
 }

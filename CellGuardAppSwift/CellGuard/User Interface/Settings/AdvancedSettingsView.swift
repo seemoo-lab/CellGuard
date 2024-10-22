@@ -78,7 +78,7 @@ struct AdvancedSettingsView: View {
                         
                         // Add or remove the pipeline in question
                         if newVal {
-                            enabledPipelines.append(pipeline.id)
+                            enabledPipelines.insert(pipeline.id)
                             Self.logger.info("User enabled pipeline \(pipeline.name) with id \(pipeline.id)")
                         } else {
                             if let index = enabledPipelines.firstIndex(of: pipeline.id) {
@@ -87,8 +87,8 @@ struct AdvancedSettingsView: View {
                             }
                         }
                         
-                        // Update user defaults with the new array
-                        UserDefaults.standard.setValue(enabledPipelines, forKey: UserDefaultsKeys.activePipelines.rawValue)
+                        // Update user defaults with the new array (convert set to array beforehand)
+                        UserDefaults.standard.setValue(enabledPipelines.sorted(), forKey: UserDefaultsKeys.activePipelines.rawValue)
                     }))
                     .disabled(primary)
                 }
