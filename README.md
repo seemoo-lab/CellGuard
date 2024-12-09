@@ -16,7 +16,7 @@ Explore the iOS-baseband-interface with our [BaseTrace](https://github.com/seemo
 You can contribute to the app's development by 
 * Testing CellGuard on own iPhone with [TestFlight](https://cellguard.seemoo.de/docs/install/)
 * Providing feedback using [Discussions](https://github.com/seemoo-lab/CellGuard/discussions)
-* Reporting issues & crashes using [TestFlight](https://cellguard.seemoo.de/docs/report-issues/) or [Issues](https://github.com/seemoo-lab/CellGuard/issues)
+* Reporting issues & crashes using [TestFlight](https://cellguard.seemoo.de/docs/report-issues/) or [Issues](https://github.com/seemoo-lab/CellGuard)
 * Submitting new features & bug fixes using [Pull Requests](https://github.com/seemoo-lab/CellGuard/pulls)
 
 ## Structure
