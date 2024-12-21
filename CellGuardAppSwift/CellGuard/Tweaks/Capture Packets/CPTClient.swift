@@ -27,11 +27,13 @@ struct CPTPacket: CustomStringConvertible {
     let direction: CPTDirection
     let data: Data
     let timestamp: Date
+    let simSlotID: UInt8?
     
-    init(direction: CPTDirection, data: Data, timestamp: Date, knownProtocol: CPTProtocol? = nil) throws {
+    init(direction: CPTDirection, data: Data, timestamp: Date, simSlotID: UInt8? = nil, knownProtocol: CPTProtocol? = nil) throws {
         self.direction = direction
         self.data = data
         self.timestamp = timestamp
+        self.simSlotID = simSlotID
         
         if let p = knownProtocol {
             self.proto = p

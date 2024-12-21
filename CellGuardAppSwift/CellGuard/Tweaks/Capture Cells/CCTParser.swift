@@ -13,6 +13,7 @@ enum CCTParserError: Error {
     case noCells(CellSample)
     case noServingCell(CellSample)
     case invalidTimestamp(CellInfo)
+    case invalidSimSlotID(CellInfo)
     case missingRat(ParsedPacket)
     case missingRatOld(CellInfo)
     case unknownRat(String)
@@ -52,6 +53,7 @@ struct CCTCellProperties {
     var deploymentType: Int32?
     
     var timestamp: Date?
+    var simSlotID: UInt8?
     
     // applyTo does not set the packetQmi or packetAri because NSBatchInsertRequest does not set relationships.
     func applyTo(tweakCell: CellTweak) {
@@ -69,6 +71,7 @@ struct CCTCellProperties {
         tweakCell.physicalCell = self.physicalCellId ?? 0
         
         tweakCell.collected = self.timestamp
+        tweakCell.simSlotID = self.simSlotID != nil ? Int16(self.simSlotID!) : 0
     }
 
     func isEqualExceptTime(other: CCTCellProperties?) -> Bool {

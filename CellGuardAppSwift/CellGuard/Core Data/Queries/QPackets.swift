@@ -31,6 +31,7 @@ extension PersistenceController {
                     dbPacket.collected = tweakPacket.timestamp
                     dbPacket.direction = tweakPacket.direction.rawValue
                     // dbPacket.proto = tweakPacket.proto.rawValue
+                    dbPacket.simSlotID = tweakPacket.simSlotID != nil ? Int16(tweakPacket.simSlotID!) : 0
                     
                     dbPacket.service = Int16(parsedPacket.qmuxHeader.serviceId)
                     dbPacket.message = Int32(parsedPacket.messageHeader.messageId)

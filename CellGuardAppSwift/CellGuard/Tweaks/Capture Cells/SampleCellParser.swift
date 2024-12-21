@@ -16,11 +16,15 @@ extension CCTParser {
         if sample.isEmpty {
             throw CCTParserError.emptySample(sample)
         }
+        guard let metaInfos = sample.last else {
+            throw CCTParserError.emptySample(sample)
+        }
         
-        guard let doubleTimestamp = sample.last?["timestamp"] as? Double else {
-            throw CCTParserError.invalidTimestamp(sample.last!)
+        guard let doubleTimestamp = metaInfos["timestamp"] as? Double else {
+            throw CCTParserError.invalidTimestamp(metaInfos)
         }
         let timestamp = Date(timeIntervalSince1970: doubleTimestamp)
+        let simSlotID = metaInfos["simSlotID"] as? UInt8
         let cells = try sample.dropLast(1).map() { try parseCell($0) }
         
         if cells.isEmpty {
@@ -32,6 +36,7 @@ extension CCTParser {
         }
         
         servingCell.timestamp = timestamp
+        servingCell.simSlotID = simSlotID
         
         return servingCell
     }
