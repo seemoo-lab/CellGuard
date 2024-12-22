@@ -45,6 +45,7 @@ private struct PacketQMIDetailsList: View {
         Group {
             Section(header: Text("Packet")) {
                 PacketDetailsRow("Protocol", packet.proto)
+                PacketDetailsRow("SIM Slot", String(packet.simSlotID))
                 PacketDetailsRow("Direction", packet.direction ?? "???")
                 PacketDetailsRow("Timestamp", date: packet.collected)
                 PacketDetailsRow("Size", bytes: data.count)

@@ -92,25 +92,43 @@ struct SummaryTabView: View {
 }
 
 private struct CombinedRiskCellView: View {
-    @FetchRequest private var tweakCells: FetchedResults<CellTweak>
+    @FetchRequest private var tweakCellsSlot1: FetchedResults<CellTweak>
+    @FetchRequest private var tweakCellsSlot2: FetchedResults<CellTweak>
     
     init() {
         let latestTweakCellRequest = NSFetchRequest<CellTweak>()
         latestTweakCellRequest.entity = CellTweak.entity()
         latestTweakCellRequest.fetchLimit = 1
+        latestTweakCellRequest.predicate = NSPredicate(format: "simSlotID = 1")
         latestTweakCellRequest.sortDescriptors = [NSSortDescriptor(keyPath: \CellTweak.collected, ascending: false)]
-        _tweakCells = FetchRequest(fetchRequest: latestTweakCellRequest)
+        
+        let dualSimCellRequest = NSFetchRequest<CellTweak>()
+        dualSimCellRequest.entity = CellTweak.entity()
+        dualSimCellRequest.fetchLimit = 1
+        dualSimCellRequest.predicate = NSPredicate(format: "simSlotID = 2")
+        dualSimCellRequest.sortDescriptors = [NSSortDescriptor(keyPath: \CellTweak.collected, ascending: false)]
+        
+        _tweakCellsSlot1 = FetchRequest(fetchRequest: latestTweakCellRequest)
+        _tweakCellsSlot2 = FetchRequest(fetchRequest: dualSimCellRequest)
     }
     
     var body: some View {
         ScrollView {
             CalculatedRiskView()
             
-            if let tweakCell = tweakCells.first {
+            if let tweakCell = tweakCellsSlot1.first {
                 NavigationLink {
                     CellDetailsView(tweakCell: tweakCell)
                 } label: {
-                    CellInformationCard(cell: tweakCell)
+                    CellInformationCard(cell: tweakCell, dualSim: !tweakCellsSlot2.isEmpty)
+                }
+                .buttonStyle(.plain)
+            }
+            if let tweakCell = tweakCellsSlot2.first {
+                NavigationLink {
+                    CellDetailsView(tweakCell: tweakCell)
+                } label: {
+                    CellInformationCard(cell: tweakCell, dualSim: !tweakCellsSlot1.isEmpty)
                 }
                 .buttonStyle(.plain)
             }
