@@ -120,7 +120,7 @@ extension PersistenceController {
         }
     }
     
-    func fetchCellLifespan(of tweakCellID: NSManagedObjectID) throws -> (start: Date, end: Date, after: NSManagedObjectID)? {
+    func fetchCellLifespan(of tweakCellID: NSManagedObjectID) throws -> (start: Date, end: Date, after: NSManagedObjectID, simSlotID: UInt8)? {
         return try? performAndWait(name: "fetchContext", author: "fetchCellLifespan") { context in
             guard let tweakCell = context.object(with: tweakCellID) as? CellTweak else {
                 logger.warning("Can't convert NSManagedObjectID \(tweakCellID) to CellTweak")
@@ -131,11 +131,11 @@ extension PersistenceController {
                 logger.warning("CellTweak \(tweakCell) has not collected timestamp")
                 return nil
             }
-            
+
             let request = NSFetchRequest<CellTweak>()
             request.entity = CellTweak.entity()
             request.fetchLimit = 1
-            request.predicate = NSPredicate(format: "collected > %@", startTimestamp as NSDate)
+            request.predicate = NSPredicate(format: "collected > %@ and simSlotID = %@", startTimestamp as NSDate, tweakCell.simSlotID as NSNumber)
             request.sortDescriptors = [NSSortDescriptor(keyPath: \CellTweak.collected, ascending: true)]
             request.returnsObjectsAsFaults = false
             
@@ -149,7 +149,7 @@ extension PersistenceController {
                 return nil
             }
             
-            return (start: startTimestamp, end: endTimestamp, after: tweakCell.objectID)
+            return (start: startTimestamp, end: endTimestamp, after: tweakCell.objectID, simSlotID: UInt8(tweakCell.simSlotID))
         }
     }
     

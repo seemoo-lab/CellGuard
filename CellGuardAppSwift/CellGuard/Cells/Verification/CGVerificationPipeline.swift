@@ -225,7 +225,7 @@ private struct RejectPacketVerificationStage: VerificationStage {
         let appMode = UserDefaults.standard.dataCollectionMode()
         
         // Delay the verification 20s if no newer cell exists, i.e., we are still connected to this cell
-        guard let (start, end, _) = try persistence.fetchCellLifespan(of: queryCellId) else {
+        guard let (start, end, _, simSlotID) = try persistence.fetchCellLifespan(of: queryCellId) else {
             // We won't receive new packets in the analysis mode
             if appMode == DataCollectionMode.none {
                 return .success()
@@ -250,7 +250,7 @@ private struct RejectPacketVerificationStage: VerificationStage {
         // The packet's Reject Cause TLV could be interesting (0x03)
         // For a list of possibles causes, see: https://gitlab.freedesktop.org/mobile-broadband/libqmi/-/blob/main/src/libqmi-glib/qmi-enums-nas.h#L1663
         // This fetch request is just slow and I guess we can't do anything about it as there is a large number of packets
-        qmiPackets = try persistence.fetchIndexedQMIPackets(start: start, end: end, reject: true)
+        qmiPackets = try persistence.fetchIndexedQMIPackets(start: start, end: end, simSlotID: simSlotID, reject: true)
         
         // Maybe IBINetRegistrationInfoIndCb -> [3] IBINetRegistrationRejectCause
         // There are also numerous IBI_NET_REGISTRATION_REJECT strings in libARI.dylib
@@ -307,7 +307,7 @@ private struct SignalStrengthVerificationStage: VerificationStage {
         let dataCollectionMode = UserDefaults.standard.dataCollectionMode()
         
         // Delay the verification 20s if no newer cell exists, i.e., we are still connected to this cell
-        guard let (start, end, _) = try persistence.fetchCellLifespan(of: queryCellId) else {
+        guard let (start, end, _, simSlotID) = try persistence.fetchCellLifespan(of: queryCellId) else {
             // We won't receive new packets in the analysis mode
             if dataCollectionMode == DataCollectionMode.none {
                 return .success()
@@ -327,7 +327,7 @@ private struct SignalStrengthVerificationStage: VerificationStage {
         // TODO: Sometimes awarded to the wrong cell(?)
                 
         // QMI: Signal Info Indication
-        let fetchedQmiPackets = try persistence.fetchIndexedQMIPackets(start: start, end: end, signal: true)
+        let fetchedQmiPackets = try persistence.fetchIndexedQMIPackets(start: start, end: end, simSlotID: simSlotID, signal: true)
         let qmiSignalInfo = fetchedQmiPackets
             .compactMap { (_, packet) -> ParsedQMISignalInfoIndication? in
                 do {
