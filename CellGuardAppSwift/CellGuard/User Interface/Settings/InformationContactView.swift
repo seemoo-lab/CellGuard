@@ -69,6 +69,7 @@ struct InformationContactView: View {
             Section(header: Text("Developers"), footer: Text("CellGuard is a research project by the Secure Mobile Networking Lab at TU Darmstadt (SEEMOO) and the Cybersecurity - Mobile & Wireless group at the Hasso Plattner Institute (HPI).")) {
                 KeyValueListRow(key: "Lukas Arnold", value: "SEEMOO")
                 KeyValueListRow(key: "Jiska Classen", value: "HPI")
+                KeyValueListRow(key: "Maximilian Paß", value: "HPI")
             }
             
             Section(header: Text("Acknowledgements")) {
