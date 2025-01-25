@@ -92,9 +92,9 @@ struct SummaryTabView: View {
 }
 
 private struct CombinedRiskCellView: View {
+    @StateObject private var profileData = ProfileData.shared
     
     @FetchRequest private var tweakCells: FetchedResults<CellTweak>
-    @AppStorage(UserDefaultsKeys.basebandProfileRemoval.rawValue) private var profileRemovalDate: Double = 0
     
     init() {
         let latestTweakCellRequest = NSFetchRequest<CellTweak>()
@@ -120,12 +120,16 @@ private struct CombinedRiskCellView: View {
             // none mode: show warning, might not be intended
             NoneModeCard()
             
-            // manual mode: show debug profile import instructions, if:
-            //  - tweak cells are empty (e.g. upon first startup)
-            //  - the last import had no profile installed
-            //  - the profile is expired or will expire within less than 24h
-            if tweakCells.isEmpty || (profileRemovalDate - 24 * 60 * 60) < Date().timeIntervalSince1970 {
+            // manual mode: show debug profile import instructions
+            switch profileData.installState {
+            case .notPresent:
                 DebugProfileCard()
+            case .expiringSoon:
+                // TODO: add different text to UI that uses the profileData.installDate to tell user when the profile expires
+                DebugProfileCard()
+            case .installed:
+                // don't show anything if profile is installed
+                EmptyView()
             }
             
             // manual mode: show sys diagnose taking instructions

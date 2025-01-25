@@ -207,9 +207,6 @@ struct LogArchiveReader {
             throw LogArchiveError.extractLogArchiveFailed(error)
         }
         
-        // TODO: Also scan for expiry events?
-        let foundProfile = try scanForBasebandProfile(installedProfileDir: installedProfileDir)
-        
         var currentFileCount = 0
         Self.logParseProgress = {
             progress(.parsingLogs, currentFileCount, fileCountTraceV3)
@@ -236,7 +233,8 @@ struct LogArchiveReader {
             let totalCsvLines = try countCSVLines(csvFile: csvFile)
             Self.logger.debug("Total CSV Lines: \(totalCsvLines)")
             var currentCsvLine = 0
-            let out = try readCSV(csvFile: csvFile, profile: foundProfile) {
+            let out = try readCSV(csvFile: csvFile)
+            {
                 currentCsvLine += 1
                 progress(.importingData, currentCsvLine, totalCsvLines)
             }
@@ -405,23 +403,6 @@ struct LogArchiveReader {
         return count
     }
     
-    private func scanForBasebandProfile(installedProfileDir: URL) throws -> ProfileStubData? {
-        let scanner = ProfileScanner(directory: installedProfileDir)
-        
-        let profile = try scanner.findBasebandLoggingProfile()
-        
-        // Save the install and expiry dates or set to nil if no profile was installed
-        UserDefaults.standard.set(profile?.installDate, forKey: UserDefaultsKeys.basebandProfileInstall.rawValue)
-        UserDefaults.standard.set(profile?.removalDate, forKey: UserDefaultsKeys.basebandProfileRemoval.rawValue)
-
-        if let profile = profile, let removalDate = profile.removalDate {
-            // Schedule a reminder notification (if a profile was installed)
-            CGNotificationManager.shared.queueProfileExpiryNotification(removalDate: removalDate)
-        }
-        
-        return profile
-    }
-    
     private func parseLogArchive(tmpDir: URL, logArchiveDir: URL, speedup: Bool, rust: RustApp) throws -> URL {
         Self.logger.debug("Parsing extracted log archive using macos-unifiedlogs")
         
@@ -451,7 +432,7 @@ struct LogArchiveReader {
         return count
     }
     
-    private func readCSV(csvFile: URL, profile: ProfileStubData?, progress: () -> Void) throws -> ImportResult {
+    private func readCSV(csvFile: URL, progress: () -> Void) throws -> ImportResult {
         if let fileAttributes = try? fileManager.attributesOfItem(atPath: csvFile.path) {
             Self.logger.debug("\(fileAttributes))")
         }
@@ -556,12 +537,6 @@ struct LogArchiveReader {
         } catch {
             throw LogArchiveError.importError(error)
         }
-                
-        // Warn the user if the profile is not installed
-        var notices: [ImportNotice] = []
-        if profile == nil {
-            notices.append(.profileNotInstalled)
-        }
         
         // TODO: Recently installed and recently expired (check MCProfileEvents.plist)
         // TODO: Check for log truncation
@@ -571,7 +546,7 @@ struct LogArchiveReader {
             alsCells: nil,
             locations: nil,
             packets: ImportCount(count: packets.count, first: packetDates.first, last: packetDates.last),
-            notices: notices
+            notices: []  // TODO: currently no more notices, as we don't check profile here
         )
     }
     

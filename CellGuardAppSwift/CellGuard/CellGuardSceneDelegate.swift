@@ -29,6 +29,11 @@ class CellGuardSceneDelegate: NSObject, UIWindowSceneDelegate, ObservableObject 
         // Clear all notification when the users opens our app
         // See: https://stackoverflow.com/a/38497700
         CGNotificationManager.shared.clearNotifications()
+        
+        // Check if profile is installed to correctly show UI
+        Task {
+            await ProfileTask().run()
+        }
     }
     
     func sceneDidEnterBackground(_ scene: UIScene) {
