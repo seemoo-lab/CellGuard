@@ -134,6 +134,10 @@ struct ParsedQMIPacket: ParsedPacket {
         return Data(bytes)
     }
     
+    func findTlvValue(type: UInt8) -> QMITLV? {
+        return self.tlvs.filter({ $0.type == type }).first
+    }
+    
 }
 
 struct QMIQMuxHeader {

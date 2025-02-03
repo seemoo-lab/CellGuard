@@ -543,7 +543,6 @@ struct LogArchiveReader {
         )
     }
     
-    
     private func readCSVPacketQMI(library: String, timestamp: Date, message: String) throws -> CPTPacket {
         
         // speed up regex by being more precise about its start
@@ -569,7 +568,6 @@ struct LogArchiveReader {
         
         return try CPTPacket(direction: direction, data: packetData, timestamp: timestamp, knownProtocol: .qmi)
     }
-    
     
     private func readCSVPacketARI(library: String, timestamp: Date, message: String) throws -> CPTPacket {
         

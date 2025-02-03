@@ -32,3 +32,17 @@ enum ALSTechnology: String, CaseIterable, Identifiable {
     
     var id: Self { self }
 }
+
+enum ALSTechnologyVersion: String {
+    case cdma1x
+    case cdmaEvdo
+    case umts
+    case tdscdma
+    case gsm
+    case lteV1
+    case lteV2
+    case lteV3
+    case lteV4
+    case nrV2
+    case nrV3
+}

@@ -77,6 +77,13 @@ private struct VerificationStateInternalView: View {
                     Text(jsonPretty)
                         .font(Font(UIFont.monospacedSystemFont(ofSize: UIFont.smallSystemFontSize, weight: .regular)))
                 }
+            } else if let rawQMIData = measurement.rawQMI {
+                Section(header: Text("iOS-Internal Data")) {
+                    Text(rawQMIData.map { String($0, radix: 16, uppercase: true) }
+                        .map { $0.count < 2 ? "0\($0)" : $0 }
+                        .joined(separator: " ")
+                    ).font(Font(UIFont.monospacedSystemFont(ofSize: UIFont.smallSystemFontSize, weight: .regular)))
+                }
             }
              
             if verificationState.finished && verificationPipeline.id == primaryVerificationPipeline.id {
