@@ -84,6 +84,9 @@ struct ParsedARIPacket: ParsedPacket {
         return Data(bytes)
     }
     
+    func findTlvValue(type: UInt8) -> ARITLV? {
+        return self.tlvs.filter({ $0.type == type }).first
+    }
 }
 
 struct ARIHeader {
@@ -237,6 +240,10 @@ struct ARITLV {
             print("ARI TLV data to UInt32 conversion failed: \(error)")
             return nil
         }
+    }
+    
+    func hasEmptyData() -> Bool {
+        return length == 0 || data.allSatisfy { $0 == 0 }
     }
     
     fileprivate func write(buffer: inout ByteBuffer, scratch: inout ByteBuffer) {

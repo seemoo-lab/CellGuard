@@ -55,6 +55,7 @@ struct CPTCollector {
                         packetCells = try? CCTParser().parseQMICell(packet.data, timestamp: packet.timestamp)
                     } else if let ariPacket = parsedPacket as? ParsedARIPacket {
                         ariPackets.append((packet, ariPacket))
+                        packetCells = try? CCTParser().parseARICell(packet.data, timestamp: packet.timestamp)
                     } else {
                         Self.logger.warning("Can't parse packet: Missing implementation for packet protocol \(packet.proto.rawValue)")
                     }

@@ -21,7 +21,9 @@ enum CCTParserError: Error {
     case missingCellType(CellInfo)
     case unknownCellType(String)
     case invalidQMIService
+    case invalidARIGroup
     case invalidQMIMessage
+    case invalidARIMessage
     case invalidQMIDirection
     case noQMILTECellInformation(ParsedQMIPacket)
     case unexpectedTLVLength
@@ -54,7 +56,7 @@ struct CCTCellProperties {
     var timestamp: Date?
     
     var json: String?
-    var rawQMI: Data?
+    var rawPacket: Data?
     
     func applyTo(tweakCell: CellTweak) {
         tweakCell.country = self.mcc ?? 0
@@ -73,12 +75,13 @@ struct CCTCellProperties {
         
         tweakCell.collected = self.timestamp
         tweakCell.json = self.json
-        tweakCell.rawQMI = self.rawQMI
+        tweakCell.rawPacket = self.rawPacket
     }
 
 }
 
 struct CCTParser {
+
     func parse(_ sample: CellSample) throws -> CCTCellProperties {
         if sample.isEmpty {
             throw CCTParserError.emptySample(sample)
@@ -327,23 +330,25 @@ struct CCTParser {
             case .cdma1x, .cdmaEvdo:
                 // https://en.wikipedia.org/wiki/CDMA2000
                 // CDMA2000 1x Evolution-Data Optimized
-                cell = try? parseCDMA(tlv, version: technology)
+                cell = try? parseCDMA_QMI(tlv, version: technology)
             case .umts, .tdscdma:
                 // Special version of UMTS WCDMA in China
                 // https://www.electronics-notes.com/articles/connectivity/3g-umts/td-scdma.php
-                cell = try? parseUTMS(tlv, version: technology)
+                cell = try? parseUTMS_QMI(tlv, version: technology)
             case .gsm:
-                cell = try? parseGSM(tlv)
+                cell = try? parseGSM_QMI(tlv)
             case .lteV1, .lteV2, .lteV3, .lteV4:
-                cell = try? parseLTE(tlv, version: technology)
+                cell = try? parseLTE_QMI(tlv, version: technology)
             case .nrV2, .nrV3:
-                cell = try? parseNR(tlv, version: technology)
+                cell = try? parseNR_QMI(tlv, version: technology)
+            default:
+                throw CCTParserError.unknownRAT(technology.rawValue)
             }
             
             if var cell = cell {
                 cell.preciseTechnology = technology.rawValue
                 cell.timestamp = timestamp
-                cell.rawQMI = data
+                cell.rawPacket = data
                 
                 // We only want to store at most one cell for each ALSTechnology.
                 if let index = cells.firstIndex(where: { $0.technology == cell.technology }) {
@@ -361,7 +366,68 @@ struct CCTParser {
         return cells
     }
     
-    private func parseGSM(_ tlv: QMITLV) throws -> CCTCellProperties {
+    func parseARICell(_ data: Data, timestamp: Date) throws -> [CCTCellProperties] {
+        // Source: https://github.com/seemoo-lab/aristoteles/blob/master/types/structure/libari_dylib.lua
+        
+        let parsedPacket = try ParsedARIPacket(data: data)
+        if parsedPacket.header.group != PacketConstants.ariGroupNetCell {
+            throw CCTParserError.invalidARIGroup
+        }
+        if !PacketConstants.ariTypesGetCellInfo.contains(parsedPacket.header.type) {
+            throw CCTParserError.invalidARIMessage
+        }
+        
+        var cells: [CCTCellProperties] = []
+        for technology in PacketConstants.ariTechnologies {
+            let ariKey = ARIKey(type: parsedPacket.header.type, technology: technology)
+            guard let tlvType = PacketConstants.ariTLVTypes[ariKey] else {
+                continue
+            }
+            guard let tlv = parsedPacket.findTlvValue(type: tlvType) else {
+                continue
+            }
+            if tlv.hasEmptyData() {
+                continue
+            }
+            
+            var cell: CCTCellProperties?
+            switch technology {
+            case .cdma1x, .cdmaEvdo:
+                cell = try? parseCDMA_ARI(tlv, version: technology)
+            case .umts, .tdscdma:
+                cell = try? parseUMTS_ARI(tlv, version: technology)
+            case .gsm:
+                cell = try? parseGSM_ARI(tlv)
+            case .lte, .lteV1T, .lteR15:
+                cell = try? parseLTE_ARI(tlv, version: technology)
+            case .nr:
+                cell = try? parseNR_ARI(tlv, version: technology)
+            default:
+                throw CCTParserError.unknownRAT(technology.rawValue)
+            }
+            
+            if var cell = cell {
+                cell.preciseTechnology = technology.rawValue
+                cell.timestamp = timestamp
+                cell.rawPacket = data
+                
+                // We only want to store at most one cell for each ALSTechnology.
+                if let index = cells.firstIndex(where: { $0.technology == cell.technology }) {
+                    cells[index] = cell
+                } else {
+                    cells.append(cell)
+                }
+            }
+        }
+        
+        if cells.isEmpty {
+            throw CCTParserError.missingRAT(data)
+        }
+        
+        return cells
+    }
+    
+    private func parseGSM_QMI(_ tlv: QMITLV) throws -> CCTCellProperties {
         var cell = CCTCellProperties()
         cell.technology = .GSM
         
@@ -384,8 +450,30 @@ struct CCTParser {
         
         return cell
     }
+
+    private func parseGSM_ARI(_ tlv: ARITLV) throws -> CCTCellProperties {
+        var cell = CCTCellProperties()
+        cell.technology = .GSM
+        
+        if tlv.length != 24 {
+            throw CCTParserError.unexpectedTLVLength
+        }
+        
+        let data = BinaryData(data: tlv.data, bigEndian: false)
+        let _: UInt16 = try data.get(0) // index
+        cell.mcc = Int32((try? data.get(2) as UInt16) ?? 0)
+        cell.network = Int32((try? data.get(4) as UInt16) ?? 0)
+        cell.band = Int32((try? data.get(6) as UInt16) ?? 0)
+        cell.area = Int32((try? data.get(8) as UInt16) ?? 0)
+        cell.cellId = Int64((try? data.get(10) as UInt16) ?? 0)
+        cell.frequency = Int32((try? data.get(12) as UInt16) ?? 0)
+        let _: UInt32 = try data.get(14) // latitude
+        let _: UInt32 = try data.get(18) // longitude
+        
+        return cell
+    }
     
-    private func parseUTMS(_ tlv: QMITLV, version: ALSTechnologyVersion) throws -> CCTCellProperties {
+    private func parseUTMS_QMI(_ tlv: QMITLV, version: ALSTechnologyVersion) throws -> CCTCellProperties {
         var cell = CCTCellProperties()
         cell.technology = .UMTS
         
@@ -420,7 +508,32 @@ struct CCTParser {
         return cell
     }
     
-    private func parseCDMA(_ tlv: QMITLV, version: ALSTechnologyVersion) throws -> CCTCellProperties {
+    private func parseUMTS_ARI(_ tlv: ARITLV, version: ALSTechnologyVersion) throws -> CCTCellProperties {
+        var cell = CCTCellProperties()
+        cell.technology = .UMTS
+        
+        if tlv.length != 28 {
+            throw CCTParserError.unexpectedTLVLength
+        }
+        
+        // Just a guess, we have not been able to validate this!
+        let data = BinaryData(data: tlv.data, bigEndian: false)
+        let _: UInt16 = try data.get(0) // index
+        cell.mcc = Int32((try? data.get(2) as UInt16) ?? 0)
+        cell.network = Int32((try? data.get(4) as UInt16) ?? 0)
+        cell.band = Int32((try? data.get(6) as UInt16) ?? 0)
+        cell.area = Int32((try? data.get(8) as UInt16) ?? 0)
+        let _: UInt16 = try data.get(10) as UInt16 // unknown
+        cell.cellId = Int64((try? data.get(12) as UInt32) ?? 0) // RNC-ID + Node-B cell id
+        cell.frequency = Int32((try? data.get(16) as UInt16) ?? 0)
+        let _: UInt16 = try data.get(18) // primary synchronization code (PSC)
+        let _: UInt32 = try data.get(20) // latitude
+        let _: UInt32 = try data.get(24) // longitude
+        
+        return cell
+    }
+    
+    private func parseCDMA_QMI(_ tlv: QMITLV, version: ALSTechnologyVersion) throws -> CCTCellProperties {
         // CDMA has been shutdown is most countries:
         // - https://www.verizon.com/about/news/3g-cdma-network-shut-date-set-december-31-2022
         // - https://www.digi.com/blog/post/2g-3g-4g-lte-network-shutdown-updates
@@ -473,8 +586,46 @@ struct CCTParser {
         return cell
     }
     
+    private func parseCDMA_ARI(_ tlv: ARITLV, version: ALSTechnologyVersion) throws -> CCTCellProperties {
+        var cell = CCTCellProperties()
+        cell.technology = .CDMA
+        
+        if (version == .cdma1x && tlv.length != 48) || (version == .cdmaEvdo && tlv.length != 52) {
+            throw CCTParserError.unexpectedTLVLength
+        }
+        
+        // Just a guess, we have not been able to validate this!
+        let data = BinaryData(data: tlv.data, bigEndian: false)
+        let _: UInt16 = try data.get(0) // index
+        cell.mcc = Int32((try? data.get(2) as UInt16) ?? 0)
+        
+        if version == .cdma1x {
+            let _ = Int32((try? data.get(4) as UInt16) ?? 0) // mnc
+            cell.frequency = Int32((try? data.get(6) as UInt16) ?? 0)
+            cell.band = Int32((try? data.get(8) as UInt16) ?? 0)
+            cell.network = Int32((try? data.get(10) as UInt16) ?? 0)
+            let _: UInt16 = try data.get(12) // nid
+            cell.cellId = Int64((try? data.get(14) as UInt16) ?? 0)
+            let _: UInt32 = try data.get(16) // latitude
+            let _: UInt32 = try data.get(20) // longitude
+            let _: UInt16 = try data.get(24) // zoneID
+            cell.area = Int32((try? data.get(26) as UInt16) ?? 0)
+            let _: UInt8 = try data.get(28) // ltmOffset
+            let _: UInt8 = try data.get(29) // dayLightSavings
+        } else if version == .cdmaEvdo {
+            cell.frequency = Int32((try? data.get(4) as UInt16) ?? 0)
+            cell.band = Int32((try? data.get(6) as UInt16) ?? 0)
+            let _ = try data.getUTF8(8, length: 16) // sectorID
+            let _: UInt32 = try data.get(24) // latitude
+            let _: UInt32 = try data.get(28) // longitude
+            cell.area = Int32((try? data.get(32) as UInt16) ?? 0)
+        }
+        
+        return cell
+    }
     
-    private func parseLTE(_ tlv: QMITLV, version: ALSTechnologyVersion) throws -> CCTCellProperties {
+    
+    private func parseLTE_QMI(_ tlv: QMITLV, version: ALSTechnologyVersion) throws -> CCTCellProperties {
         var cell = CCTCellProperties()
         cell.technology = .LTE
         
@@ -501,6 +652,7 @@ struct CCTParser {
             cell.area = Int32((try? data.get(8) as UInt16) ?? 0)
             offset += 2
         } else if version == .lteV3 || version == .lteV4 {
+            // According to the specification, the TAC uses just 16 bit. Therefore, this conversion causes no overflow.
             cell.area = Int32((try? data.get(8) as UInt32) ?? 0)
             offset += 4
         }
@@ -559,9 +711,55 @@ struct CCTParser {
         
         return cell
     }
+
+    private func parseLTE_ARI(_ tlv: ARITLV, version: ALSTechnologyVersion) throws -> CCTCellProperties {
+        var cell = CCTCellProperties()
+        cell.technology = .LTE
+        
+        if (version == .lte && tlv.length != 32) || (version == .lteV1T && tlv.length != 36) ||
+            (version == .lteR15 && tlv.length != 36) {
+            throw CCTParserError.unexpectedTLVLength
+        }
+        
+        var offset = 0
+        let data = BinaryData(data: tlv.data, bigEndian: false)
+        
+        let _: UInt16 = try data.get(0) // index
+        cell.mcc = Int32((try? data.get(2) as UInt16) ?? 0)
+        cell.network = Int32((try? data.get(4) as UInt16) ?? 0)
+        cell.band = Int32((try? data.get(6) as UInt16) ?? 0)
+        // According to the specification, the TAC uses just 16 bit. Therefore, this conversion causes no overflow.
+        cell.area = Int32((try? data.get(8) as UInt32) ?? 0)
+        // See: https://dev.seemoo.tu-darmstadt.de/apple/cell-guard/-/issues/98
+        cell.cellId = Int64((try? data.get(12) as UInt32) ?? 0)
+        
+        offset = 16
+        if version == .lte {
+            cell.frequency = Int32((try? data.get(offset) as UInt16) ?? 0)
+            offset += 2
+            cell.physicalCellId = Int32((try? data.get(offset) as UInt16) ?? 0)
+            offset += 2
+        } else if version == .lteV1T || version == .lteR15 {
+            // With a max value of 262143, the conversion causes no overflow.
+            cell.frequency = Int32((try? data.get(offset) as UInt32) ?? 0)
+            offset += 4
+            cell.physicalCellId = Int32((try? data.get(offset) as UInt32) ?? 0)
+            offset += 4
+        }
+        
+        let _: UInt32 = try data.get(offset) // latitude
+        offset += 4
+        let _: UInt32 = try data.get(offset) // longitude
+        offset += 4
+        cell.bandwidth = Int32((try? data.get(offset) as UInt16) ?? 0)
+        offset += 2
+        cell.deploymentType = Int32((try? data.get(offset) as UInt16) ?? 0)
+        offset += 2
+        
+        return cell
+    }
     
-    
-    private func parseNR(_ tlv: QMITLV, version: ALSTechnologyVersion) throws -> CCTCellProperties {
+    private func parseNR_QMI(_ tlv: QMITLV, version: ALSTechnologyVersion) throws -> CCTCellProperties {
         var cell = CCTCellProperties()
         cell.technology = .NR
         
@@ -578,6 +776,7 @@ struct CCTParser {
         cell.band = Int32((try? data.get(7) as UInt16) ?? 0) + 1 // The offset by one provides alignment with the iOS libraries
         // According to the specification, the TAC uses just 24 bit. Therefore, this conversion causes no overflow.
         cell.area = Int32((try? data.get(9) as UInt32) ?? 0)
+        // According to the specification, the cell ID uses just 36 bit. Therefore, this conversion causes no overflow.
         // With a max value of 3279165, this conversion causes no overflow.
         cell.cellId = Int64((try? data.get(13) as UInt64) ?? 0)
         cell.frequency = Int32((try? data.get(21) as UInt32) ?? 0)
@@ -597,5 +796,37 @@ struct CCTParser {
         
         return cell
     }
-    
+
+    private func parseNR_ARI(_ tlv: ARITLV, version: ALSTechnologyVersion) throws -> CCTCellProperties {
+        var cell = CCTCellProperties()
+        cell.technology = .NR
+        
+        if tlv.length != 52 {
+            throw CCTParserError.unexpectedTLVLength
+        }
+
+        // Just a guess, we have not been able to validate this!
+        let data = BinaryData(data: tlv.data, bigEndian: false)
+        let _: UInt16 = try data.get(0) // index
+        cell.mcc = Int32((try? data.get(2) as UInt16) ?? 0)
+        cell.network = Int32((try? data.get(4) as UInt16) ?? 0)
+        cell.band = Int32((try? data.get(6) as UInt16) ?? 0)
+        // According to the specification, the TAC uses just 36 bit. Therefore, this conversion causes no overflow.
+        cell.area = Int32((try? data.get(8) as UInt32) ?? 0)
+        // According to the specification, the cell ID uses just 36 bit. Therefore, this conversion causes no overflow.
+        cell.cellId = Int64((try? data.get(12) as UInt64) ?? 0)
+        // With a max value of 3279165, this conversion causes no overflow.
+        cell.frequency = Int32((try? data.get(20) as UInt32) ?? 0)
+        cell.physicalCellId = Int32((try? data.get(24) as UInt16) ?? 0)
+        let _: UInt32 = try data.get(26) // latitude
+        let _: UInt32 = try data.get(30) // longitude
+        cell.bandwidth = Int32((try? data.get(34) as UInt16) ?? 0)
+        let _: UInt16 = try data.get(36) // scs
+        let _: UInt32 = try data.get(38) // gscn
+        let _: UInt16 = try data.get(42) // bwpSupport
+        let _: UInt32 = try data.get(44) // throughput
+        let _: UInt16 = try data.get(48) // pMax
+        
+        return cell
+    }
 }

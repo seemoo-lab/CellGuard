@@ -570,7 +570,7 @@ struct LogArchiveReader {
     }
     
     private func readCSVPacketARI(library: String, timestamp: Date, message: String) throws -> CPTPacket {
-        
+
         let binRegex = Regex("(ind|req|rsp): Bin=\\[(.*)]")
         guard let binMatch = binRegex.firstMatch(in: message) else {
             throw LogArchiveError.noBinaryPacketData

@@ -43,6 +43,10 @@ enum ALSTechnologyVersion: String {
     case lteV2
     case lteV3
     case lteV4
+    case lte
+    case lteV1T
+    case lteR15
+    case nr
     case nrV2
     case nrV3
 }
