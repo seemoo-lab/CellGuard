@@ -10,7 +10,7 @@ import BinarySwift
 
 extension CCTParser {
     
-    func parseQmiCell(_ data: Data, timestamp: Date) throws -> [CCTCellProperties] {
+    func parseQmiCell(_ data: Data, timestamp: Date, simSlot: UInt8) throws -> [CCTCellProperties] {
         // Location for symbols:
         // - Own sample collection using the tweak
         // - IPSW: /System/Library/Frameworks/CoreTelephony.framework/CoreTelephony (dyld_cache)
@@ -59,6 +59,7 @@ extension CCTParser {
                !cell.isMissingKeyProperties() {
                 cell.preciseTechnology = technology.rawValue
                 cell.timestamp = timestamp
+                cell.simSlotID = simSlot
                 
                 // We keep only the most recent cell technology info version, e.g. we use the `lteV4` cell infos, if available, instead of the
                 // `.lteV1`, `.lteV2`, or `lteV3` cell infos. The order is defined by the PacketConstants.qmiCellInfoTechnologies.

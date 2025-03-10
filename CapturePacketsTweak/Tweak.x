@@ -40,41 +40,24 @@ CPTManager* cptManager;
 
 // https://theos.dev/docs/logos-syntax#hookf
 
-%group TX
-
-// libPCITransport.dylib
-// pci::transport::th::writeAsync(unsigned char const*, unsigned int, void (*)(void*))
-// Handles all outgoing ARI & QMI packets
-// Source: https://dev.seemoo.tu-darmstadt.de/apple/iphone-qmi-wireshark/-/tree/main/agent
-
-%hookf(int, WriteAsync, void *instance, unsigned char *data, unsigned int length, void *callback) {
-	// Copy the data buffer into a NSData object
-	// See: https://developer.apple.com/documentation/foundation/nsdata/1547231-datawithbytes?language=objc
-	NSData *objData = [NSData dataWithBytes:data length:length];
-	// NSLog(@"Hey, we're hooking ARI & QMI send stuff %@", objData);
-	[cptManager addData:objData :@"OUT"];
-
-	// Call the original implementation of this function
-	return %orig;
-}
-
-%end
-
 %group QMI
 
 // libATCommandStudioDynamic.dylib
-// QMux::State::handleReadData(unsigned char const*, unsigned int)
-// Handles all incoming QMI packets
-// Source: https://dev.seemoo.tu-darmstadt.de/apple/iphone-qmi-wireshark/-/tree/main/agent
+// sLogBinaryToOsLog(os_log_s*, qmi::LogLevel, qmi::MessageType, qmi::ServiceType, unsigned short, qmi::SimSlot, void const*, unsigned long)
+// Handles all incoming and outgoing QMI packets
 
-%hookf(int, HandleReadData, void *instance, unsigned char *data, unsigned int length) {
+%hookf(void, SLog, void* os_log, int logLevel, unsigned int messageType, unsigned long serviceType, int param1, int simSlot, const void* data, int length) {
+
 	// Copy the data buffer into a NSData object
 	// See: https://developer.apple.com/documentation/foundation/nsdata/1547231-datawithbytes?language=objc
 	NSData *objData = [NSData dataWithBytes:data length:length];
-	// NSLog(@"Hey, we're hooking QMI read stuff %@", objData);
-	[cptManager addData:objData :@"IN"];
 
-	// Call the original implementation of this function
+	// messageType 0: "Req", 1: "Resp", 2: "Ind"
+	NSString* direction = messageType == 0 ? @"OUT" : @"IN";
+	
+	// NSLog(@"Hey, we're hooking ARI & QMI send stuff %@", objData);
+	[cptManager addData:objData :direction :simSlot];
+
 	return %orig;
 }
 
@@ -92,7 +75,7 @@ CPTManager* cptManager;
 	// See: https://developer.apple.com/documentation/foundation/nsdata/1547231-datawithbytes?language=objc
 	NSData *objData = [NSData dataWithBytes:data length:length];
 	// NSLog(@"Hey, we're hooking ARI read stuff %@", objData);
-	[cptManager addData:objData :@"IN"];
+	[cptManager addData:objData :@"IN" :0];
 
 	// Call the original implementation of this function
 	return %orig;
@@ -111,13 +94,9 @@ CPTManager* cptManager;
 		// See: https://github.com/theos/logos/issues/67#issuecomment-682242010
 		// See: http://www.cydiasubstrate.com/api/c/MSGetImageByName/
 		MSImageRef libATCommandStudioDynamicImage = MSGetImageByName("/usr/lib/libATCommandStudioDynamic.dylib");
-		MSImageRef libPCITransportImage = MSGetImageByName("/usr/lib/libPCITransport.dylib");
 
-		// The two underscores in front of the function names are important for MSFindSymbol to work
-		// See: http://www.cydiasubstrate.com/api/c/MSFindSymbol/
-		%init(TX, WriteAsync = MSFindSymbol(libPCITransportImage, "__ZN3pci9transport2th10writeAsyncEPKhjPFvPvE"));
 		// We can always hook this function and on ARI iPhone it is never called.
-		%init(QMI, HandleReadData = MSFindSymbol(libATCommandStudioDynamicImage, "__ZN4QMux5State14handleReadDataEPKhj"));
+		%init(QMI, SLog = MSFindSymbol(libATCommandStudioDynamicImage, "__ZL17sLogBinaryToOsLogP8os_log_sN3qmi8LogLevelENS1_11MessageTypeENS1_11ServiceTypeEtNS1_7SimSlotEPKvm"));
 		NSLog(@"Our CapturePackets tweak hooks QMI packets");
 
 		// libARIServer is not directly loaded into the CommCenter process.

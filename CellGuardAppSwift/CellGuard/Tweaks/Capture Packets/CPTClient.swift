@@ -122,10 +122,10 @@ struct CPTClient {
         let lines = string.split(whereSeparator: \.isNewline)
         for line in lines {
             // Each packet has some additional information.
-            // Our tweak separates the four fields in each line using commas.
+            // Our tweak separates the five fields in each line using commas.
             let lineComponents = line.split(separator: ",").map { String($0) }
-            if lineComponents.count != 3 {
-                Self.logger.warning("Invalid CPTPacket '\(line)': Has not exactly four components")
+            if lineComponents.count != 4 {
+                Self.logger.warning("Invalid CPTPacket '\(line)': Has not exactly five components")
                 continue
             }
 
@@ -134,20 +134,25 @@ struct CPTClient {
                 Self.logger.warning("Invalid CPTPacket '\(line)': Unknown direction")
                 continue
             }
+            // The simSlot specifies the slot of the SIM associated with the QMI packet.
+            guard let simSlot = UInt8(lineComponents[1]) else {
+                Self.logger.warning("Invalid CPTPacket '\(line)': Can't convert third component to UInt8")
+                continue
+            }
             // The actual packet data encoded with base64
-            guard let data = Data(base64Encoded: lineComponents[1], options: .ignoreUnknownCharacters) else {
-                Self.logger.warning("Invalid CPTPacket '\(line)': Can't read base64 data from the third component")
+            guard let data = Data(base64Encoded: lineComponents[2], options: .ignoreUnknownCharacters) else {
+                Self.logger.warning("Invalid CPTPacket '\(line)': Can't read base64 data from the fourth component")
                 continue
             }
             // The timestamp when the packet was recorded
-            guard let unixTimestamp = Double(lineComponents[2]) else {
-                Self.logger.warning("Invalid CPTPacket '\(line)': Can't convert fourth component to Double")
+            guard let unixTimestamp = Double(lineComponents[3]) else {
+                Self.logger.warning("Invalid CPTPacket '\(line)': Can't convert fifth component to Double")
                 continue
             }
             let timestamp = Date(timeIntervalSince1970: unixTimestamp)
             
             do {
-                packets.append(try CPTPacket(direction: direction, data: data, timestamp: timestamp))
+                packets.append(try CPTPacket(direction: direction, data: data, timestamp: timestamp, simSlotID: simSlot))
             } catch {
                 Self.logger.warning("Invalid CPTPacket '\(line)': \(error)")
             }

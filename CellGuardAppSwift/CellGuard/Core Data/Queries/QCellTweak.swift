@@ -27,8 +27,8 @@ extension PersistenceController {
                     continue
                 }
                 
-                if let _ = packet as? PacketQMI,
-                   let packetCells = try? cellParser.parseQmiCell(packetData, timestamp: collectedTimestamp) {
+                if let qmiPacket = packet as? PacketQMI,
+                   let packetCells = try? cellParser.parseQmiCell(packetData, timestamp: collectedTimestamp, simSlot: UInt8(qmiPacket.simSlotID)) {
                     cells += packetCells.map { (packet, $0) }
                 } else if let _ = packet as? PacketARI,
                           let packetCells = try? cellParser.parseAriCell(packetData, timestamp: collectedTimestamp) {
