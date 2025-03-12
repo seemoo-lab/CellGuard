@@ -20,7 +20,12 @@ mod ffi {
         #[swift_bridge(init)]
         fn new() -> RustApp;
 
-        fn parse_system_log(&self, input: &str, output: &str, high_volume_speedup: bool) -> (u32, String);
+        fn parse_system_log(
+            &self,
+            input: &str,
+            output: &str,
+            high_volume_speedup: bool,
+        ) -> (u32, String);
     }
 
     extern "Swift" {
@@ -51,25 +56,30 @@ impl RustApp {
             BACKTRACE.set(Some(trace));
         }));
 
-        let result = std::panic::catch_unwind(||  {
+        let result = std::panic::catch_unwind(|| {
             return csv_parser::parse_log_archive(Path::new(input), Path::new(output), speedup);
         });
 
         match result {
-            Ok(i) => {(i, "".to_owned())}
+            Ok(i) => (i, "".to_owned()),
             Err(err) => {
                 // Get cause of the panic
                 // https://doc.rust-lang.org/std/macro.panic.html
                 let panic_message = match err.downcast::<String>() {
-                    Ok(string) => {*string}
-                    Err(panic) => {format!("Unknown type: {:?}", panic)}
+                    Ok(string) => *string,
+                    Err(panic) => {
+                        format!("Unknown type: {:?}", panic)
+                    }
                 };
 
                 // Get the backtrace
                 let trace = BACKTRACE.take().unwrap();
 
                 // Create error string
-                (u32::MAX, format!("{}\n\n{}", panic_message, trace.to_string()).to_string())
+                (
+                    u32::MAX,
+                    format!("{}\n\n{}", panic_message, trace.to_string()).to_string(),
+                )
             }
         }
     }

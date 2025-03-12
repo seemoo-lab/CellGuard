@@ -1,23 +1,18 @@
-// Copyright 2022 Mandiant, Inc. All Rights Reserved
-// Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
-// http://www.apache.org/licenses/LICENSE-2.0
-// Unless required by applicable law or agreed to in writing, software distributed under the License
-// is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and limitations under the License.
-
+use crate::ffi;
 use csv::Writer;
 use macos_unifiedlogs::dsc::SharedCacheStrings;
-use macos_unifiedlogs::parser::{build_log, collect_shared_strings, collect_strings, collect_timesync};
+use macos_unifiedlogs::filesystem::LogarchiveProvider;
+use macos_unifiedlogs::iterator::UnifiedLogIterator;
+use macos_unifiedlogs::parser::{
+    build_log, collect_shared_strings, collect_strings, collect_timesync,
+};
 use macos_unifiedlogs::timesync::TimesyncBoot;
+use macos_unifiedlogs::traits::FileProvider;
 use macos_unifiedlogs::unified_log::{LogData, UnifiedLogData};
 use macos_unifiedlogs::uuidtext::UUIDText;
 use std::fs::{File, OpenOptions};
 use std::io::Read;
-use std::path::{Path};
-use macos_unifiedlogs::filesystem::LogarchiveProvider;
-use macos_unifiedlogs::iterator::UnifiedLogIterator;
-use macos_unifiedlogs::traits::FileProvider;
-use crate::ffi;
+use std::path::Path;
 
 // Parse a provided directory path. Currently, expect the path to follow macOS log collect structure.
 pub fn parse_log_archive(path: &Path, output_path: &Path, high_volume_speedup: bool) -> u32 {
@@ -61,7 +56,8 @@ fn parse_trace_logarchive(
     let csv_file = OpenOptions::new()
         .append(true)
         .create(true)
-        .open(output_path).unwrap();
+        .open(output_path)
+        .unwrap();
     // Open the CSV writer
     let mut csv_writer = csv::Writer::from_writer(csv_file);
     // Write the CSV header
@@ -86,8 +82,11 @@ fn parse_trace_logarchive(
     for mut source in provider.tracev3_files() {
         // Check if we should skip the file when the speedup is enabled
         let path = source.source_path();
-        if speedup && path.contains("Special") || path.contains("Signpost") || path.ends_with("logdata.LiveData.tracev3") {
-            continue
+        if speedup && path.contains("Special")
+            || path.contains("Signpost")
+            || path.ends_with("logdata.LiveData.tracev3")
+        {
+            continue;
         }
 
         println!("Parsing: {}", path);
@@ -151,7 +150,7 @@ fn iterate_chunks(
 
     if let Err(e) = reader.read_to_end(&mut buf) {
         println!("Failed to read tracev3 file: {:?}", e);
-        return 0
+        return 0;
     }
 
     let log_iterator = UnifiedLogIterator {
@@ -171,7 +170,7 @@ fn iterate_chunks(
             strings_data,
             shared_strings,
             timesync_data,
-            exclude_missing
+            exclude_missing,
         );
 
         for log_entry in results {
@@ -204,16 +203,10 @@ fn filter_cellular(log_data: &LogData) -> bool {
         // "/usr/sbin/WirelessRadioManagerd"
     ];
     // Remove reference to "com.apple.CommCenter" once we only use the packet-based cell extraction.
-    const SUBSYSTEMS: [&str; 2] = [
-        "com.apple.telephony.bb",
-        "com.apple.CommCenter"
-    ];
+    const SUBSYSTEMS: [&str; 2] = ["com.apple.telephony.bb", "com.apple.CommCenter"];
     // Remove reference to kCTCellMonitorCellRadioAccessTechnology once we only use
     // the packet-based cell extraction.
-    const CONTENTS: [&str; 2] = [
-        "kCTCellMonitorCellRadioAccessTechnology",
-        "Bin="
-    ];
+    const CONTENTS: [&str; 2] = ["kCTCellMonitorCellRadioAccessTechnology", "Bin="];
 
     if !PROCESSES.contains(&log_data.process.as_str()) {
         return false;
