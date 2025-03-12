@@ -2,6 +2,7 @@ extern crate alloc;
 
 use std::backtrace::Backtrace;
 use std::cell::Cell;
+use std::path::Path;
 
 // Smuggle backtrace for panic
 // See: https://stackoverflow.com/a/73711057
@@ -38,7 +39,7 @@ impl RustApp {
         // println! panics if io::stdout() changes or is not available anymore.
         // This is the case if XCode installs CellGuard to a device then losses the debug
         // connection, but the app remains active and Rust code is invoked.
-        // TODO: Report this bug to swift-bridge
+        // See: https://github.com/chinedufn/swift-bridge/issues/291
 
         // With this temporary fix, we're catching the panic to prevent the crash.
         // See: https://doc.rust-lang.org/std/panic/fn.catch_unwind.html
@@ -51,7 +52,7 @@ impl RustApp {
         }));
 
         let result = std::panic::catch_unwind(||  {
-            return csv_parser::parse_log_archive(input, output, speedup);
+            return csv_parser::parse_log_archive(Path::new(input), Path::new(output), speedup);
         });
 
         match result {
