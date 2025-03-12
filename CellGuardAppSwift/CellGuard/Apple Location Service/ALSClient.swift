@@ -284,7 +284,7 @@ struct ALSClient {
         
         do {
             let httpData = try await sendHttpRequest(protoData: data)
-            let protoResponse = try AlsProto_ALSLocationResponse(serializedData: httpData)
+            let protoResponse = try AlsProto_ALSLocationResponse(serializedBytes: httpData)
             var cells: [ALSQueryCell] = []
             cells.append(contentsOf: protoResponse.gsmCells.map {ALSQueryCell(fromGsmProto: $0)})
             cells.append(contentsOf: protoResponse.scdmaCells.map {ALSQueryCell(fromScdmaProto: $0)})
