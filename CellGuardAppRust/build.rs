@@ -1,4 +1,4 @@
-const XCODE_CONFIGURATION_ENV: &'static str = "CONFIGURATION";
+const XCODE_CONFIGURATION_ENV: &str = "CONFIGURATION";
 
 fn main() {
     let out_dir = "../CellGuardAppSwift/Generated";

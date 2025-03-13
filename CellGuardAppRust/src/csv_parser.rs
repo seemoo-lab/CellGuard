@@ -59,7 +59,7 @@ fn parse_trace_logarchive(
         .open(output_path)
         .unwrap();
     // Open the CSV writer
-    let mut csv_writer = csv::Writer::from_writer(csv_file);
+    let mut csv_writer = Writer::from_writer(csv_file);
     // Write the CSV header
     output_header(&mut csv_writer).unwrap();
 
@@ -227,7 +227,7 @@ fn filter_cellular(log_data: &LogData) -> bool {
 
 // Create CSV header row
 pub fn output_header(writer: &mut Writer<File>) -> csv::Result<()> {
-    writer.write_record(&[
+    writer.write_record([
         "Timestamp",
         // "Event Type",
         // "Log Type",
