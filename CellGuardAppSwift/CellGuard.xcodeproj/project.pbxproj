@@ -34,6 +34,8 @@
 		45ECF5732BFC00D100DD92CF /* DebugProfileCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45ECF5712BFC00D100DD92CF /* DebugProfileCard.swift */; };
 		45ECF5752BFC025300DD92CF /* DebugProfileDetailedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45ECF5742BFC025300DD92CF /* DebugProfileDetailedView.swift */; };
 		45ECF5762BFC025300DD92CF /* DebugProfileDetailedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45ECF5742BFC025300DD92CF /* DebugProfileDetailedView.swift */; };
+		45ED01B62D445ABA0023A090 /* ProfileTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45ED01B52D445AB40023A090 /* ProfileTask.swift */; };
+		45ED01B72D445ABA0023A090 /* ProfileTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45ED01B52D445AB40023A090 /* ProfileTask.swift */; };
 		CF0157C32CC3FFD1003ACAC4 /* CellIdentification.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0157C22CC3FFD1003ACAC4 /* CellIdentification.swift */; };
 		CF0157C42CC3FFD1003ACAC4 /* CellIdentification.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0157C22CC3FFD1003ACAC4 /* CellIdentification.swift */; };
 		CF0157C92CC419DD003ACAC4 /* ExpandableMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0157C82CC419DD003ACAC4 /* ExpandableMap.swift */; };
@@ -50,8 +52,6 @@
 		CF0FDCCB296B466100A6FFE2 /* PersistenceError.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0FDCCA296B466100A6FFE2 /* PersistenceError.swift */; };
 		CF0FDCCD296B480B00A6FFE2 /* TrackedUserLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0FDCCC296B480B00A6FFE2 /* TrackedUserLocation.swift */; };
 		CF15E1FA2AA33EA200D440AD /* ImportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF15E1F92AA33EA200D440AD /* ImportView.swift */; };
-		CF1AF56D2C96E95F004B519B /* ProfileScanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1AF56C2C96E95F004B519B /* ProfileScanner.swift */; };
-		CF1AF56E2C96E95F004B519B /* ProfileScanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1AF56C2C96E95F004B519B /* ProfileScanner.swift */; };
 		CF1AF5732C97344A004B519B /* CellDetailsIdentification.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1AF5722C97344A004B519B /* CellDetailsIdentification.swift */; };
 		CF1AF5742C97344A004B519B /* CellDetailsIdentification.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1AF5722C97344A004B519B /* CellDetailsIdentification.swift */; };
 		CF1CD4752BE16C1C009A3582 /* QVerification.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1CD4742BE16C1C009A3582 /* QVerification.swift */; };
@@ -401,6 +401,7 @@
 		45ECF56E2BFBFDFB00DD92CF /* NoneModeCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoneModeCard.swift; sourceTree = "<group>"; };
 		45ECF5712BFC00D100DD92CF /* DebugProfileCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugProfileCard.swift; sourceTree = "<group>"; };
 		45ECF5742BFC025300DD92CF /* DebugProfileDetailedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugProfileDetailedView.swift; sourceTree = "<group>"; };
+		45ED01B52D445AB40023A090 /* ProfileTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileTask.swift; sourceTree = "<group>"; };
 		CF0157C22CC3FFD1003ACAC4 /* CellIdentification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellIdentification.swift; sourceTree = "<group>"; };
 		CF0157C82CC419DD003ACAC4 /* ExpandableMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpandableMap.swift; sourceTree = "<group>"; };
 		CF07EFA42A3B4B56005B53ED /* OperatorDefinitions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperatorDefinitions.swift; sourceTree = "<group>"; };
@@ -415,7 +416,6 @@
 		CF0FDCCA296B466100A6FFE2 /* PersistenceError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceError.swift; sourceTree = "<group>"; };
 		CF0FDCCC296B480B00A6FFE2 /* TrackedUserLocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackedUserLocation.swift; sourceTree = "<group>"; };
 		CF15E1F92AA33EA200D440AD /* ImportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportView.swift; sourceTree = "<group>"; };
-		CF1AF56C2C96E95F004B519B /* ProfileScanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileScanner.swift; sourceTree = "<group>"; };
 		CF1AF5722C97344A004B519B /* CellDetailsIdentification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellDetailsIdentification.swift; sourceTree = "<group>"; };
 		CF1CD4742BE16C1C009A3582 /* QVerification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QVerification.swift; sourceTree = "<group>"; };
 		CF1DF87C2C175970008F6F40 /* StudyContributionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudyContributionsView.swift; sourceTree = "<group>"; };
@@ -835,8 +835,8 @@
 		CF57561B2B2F261F00C7C60A /* System Diagnoses */ = {
 			isa = PBXGroup;
 			children = (
+				45ED01B52D445AB40023A090 /* ProfileTask.swift */,
 				CF57561C2B2F263500C7C60A /* LogArchiveReader.swift */,
-				CF1AF56C2C96E95F004B519B /* ProfileScanner.swift */,
 			);
 			path = "System Diagnoses";
 			sourceTree = "<group>";
@@ -1502,6 +1502,7 @@
 				45ECF5702BFBFDFB00DD92CF /* NoneModeCard.swift in Sources */,
 				CFB6CF462BD122FA00EAB7B4 /* TweakInfoView.swift in Sources */,
 				CFB6CF472BD122FA00EAB7B4 /* PacketQMIDetailsView.swift in Sources */,
+				45ED01B72D445ABA0023A090 /* ProfileTask.swift in Sources */,
 				CFB6CF482BD122FA00EAB7B4 /* CoreLocationALS.pb.swift in Sources */,
 				45ECF56A2BFBE44800DD92CF /* SysdiagInstructionsDetailedView.swift in Sources */,
 				CFB6CF4A2BD122FA00EAB7B4 /* CellGuard.xcdatamodeld in Sources */,
@@ -1584,7 +1585,6 @@
 				CF462B482C94315A00BA1BF4 /* MapInfoSheet.swift in Sources */,
 				CFD5657B2BDFA82C00925FAA /* VerificationPipeline.swift in Sources */,
 				CFB6CF812BD122FA00EAB7B4 /* CellGuardApp.swift in Sources */,
-				CF1AF56E2C96E95F004B519B /* ProfileScanner.swift in Sources */,
 				45ECF55E2BFACB7D00DD92CF /* UserStudyView.swift in Sources */,
 				CFB6CF822BD122FA00EAB7B4 /* WelcomeView.swift in Sources */,
 				CFB6CF832BD122FA00EAB7B4 /* HomeTabView.swift in Sources */,
@@ -1661,6 +1661,7 @@
 				45ECF56F2BFBFDFB00DD92CF /* NoneModeCard.swift in Sources */,
 				CF5672962A29E59000B6EA7C /* TweakInfoView.swift in Sources */,
 				CF54CCC12A331E7100961E4D /* PacketQMIDetailsView.swift in Sources */,
+				45ED01B62D445ABA0023A090 /* ProfileTask.swift in Sources */,
 				CF53DB42297473E8005DCD10 /* CoreLocationALS.pb.swift in Sources */,
 				45ECF5692BFBE44800DD92CF /* SysdiagInstructionsDetailedView.swift in Sources */,
 				CFD023432961A10D00AA5A1C /* CellGuard.xcdatamodeld in Sources */,
@@ -1743,7 +1744,6 @@
 				CF462B472C94315A00BA1BF4 /* MapInfoSheet.swift in Sources */,
 				CFD5657A2BDFA82C00925FAA /* VerificationPipeline.swift in Sources */,
 				CFD023372961A10D00AA5A1C /* CellGuardApp.swift in Sources */,
-				CF1AF56D2C96E95F004B519B /* ProfileScanner.swift in Sources */,
 				45ECF55D2BFACB7D00DD92CF /* UserStudyView.swift in Sources */,
 				CF0FDCBD2969A21000A6FFE2 /* WelcomeView.swift in Sources */,
 				CF0FDCBB29699E8A00A6FFE2 /* HomeTabView.swift in Sources */,

@@ -19,11 +19,11 @@ enum SettingsCloseReason {
 
 struct SettingsView: View {
     
+    @StateObject private var profileData = ProfileData.shared
+    
     @AppStorage(UserDefaultsKeys.introductionShown.rawValue) var introductionShown: Bool = true
     @AppStorage(UserDefaultsKeys.appMode.rawValue) var appMode: DataCollectionMode = .none
     @AppStorage(UserDefaultsKeys.study.rawValue) var studyParticipationTimestamp: Double = 0
-    @AppStorage(UserDefaultsKeys.basebandProfileInstall.rawValue) var basebandProfileInstall: Double = 0
-    @AppStorage(UserDefaultsKeys.basebandProfileRemoval.rawValue) var basebandProfileRemoval: Double = 0
     
     @State private var showQuitStudyAlert = false
 
@@ -48,11 +48,14 @@ struct SettingsView: View {
                         Text("Install Profile")
                     }
                     
-                    if basebandProfileInstall > 0 {
-                        KeyValueListRow(key: "Installed", value: mediumDateTimeFormatter.string(for: Date(timeIntervalSince1970: basebandProfileInstall)) ?? "n/a")
+                    if let installData = profileData.installDate {
+                        KeyValueListRow(key: "Installed", value: mediumDateTimeFormatter.string(for: installData) ?? "n/a")
                     }
-                    if basebandProfileRemoval > 0 {
-                        KeyValueListRow(key: "Expires", value: mediumDateTimeFormatter.string(for: Date(timeIntervalSince1970: basebandProfileRemoval)) ?? "n/a")
+                    if let removalDate = profileData.removalDate {
+                        KeyValueListRow(key: "Expires") {
+                            Text(mediumDateTimeFormatter.string(for: removalDate) ?? "n/a")
+                                .foregroundColor(profileData.installState == .expiringSoon ? .orange : .gray)
+                        }
                     }
                 }
             }

@@ -179,11 +179,10 @@ struct LogArchiveReader {
         
         progress(.extractingTar, 0, 0)
         var logArchive: URL
-        var installedProfileDir: URL
         var speedup = speedup
         var fileCountTraceV3 = 0
         do {
-            (logArchive, installedProfileDir) = try extractFromTar(tmpDir: tmpDir, tmpTarFile: tmpTarFile, speedup: speedup)
+            logArchive = try extractFromTar(tmpDir: tmpDir, tmpTarFile: tmpTarFile, speedup: speedup)
             fileCountTraceV3 = try countLogArchiveFiles(logArchiveDir: logArchive, speedup: speedup)
             
             // If the speed-up is enabled, check if the log archive has Persist or HighVolume tracev3 files.
@@ -192,7 +191,7 @@ struct LogArchiveReader {
                 Self.logger.debug("Disables Persist & HighVolume speed-up as there is none the relevant directories")
                 speedup = false
                 // Redo the extraction as we need all tracev3 files for parsing
-                (logArchive, installedProfileDir) = try extractFromTar(tmpDir: tmpDir, tmpTarFile: tmpTarFile, speedup: speedup)
+                logArchive = try extractFromTar(tmpDir: tmpDir, tmpTarFile: tmpTarFile, speedup: speedup)
                 fileCountTraceV3 = try countLogArchiveFiles(logArchiveDir: logArchive, speedup: speedup)
                 // Disable the speed-up for future invocations as future sysdiagnoses recorded with the device will also not support the speed-up.
                 // The user can always re-enable the speed-up in the settings.
@@ -206,9 +205,6 @@ struct LogArchiveReader {
         } catch {
             throw LogArchiveError.extractLogArchiveFailed(error)
         }
-        
-        // TODO: Also scan for expiry events?
-        let foundProfile = try scanForBasebandProfile(installedProfileDir: installedProfileDir)
         
         var currentFileCount = 0
         Self.logParseProgress = {
@@ -227,7 +223,6 @@ struct LogArchiveReader {
         
         do {
             try fileManager.removeItem(at: logArchive)
-            try fileManager.removeItem(at: installedProfileDir)
         } catch {
             throw LogArchiveError.deleteLogArchiveFailed(error)
         }
@@ -236,7 +231,7 @@ struct LogArchiveReader {
             let totalCsvLines = try countCSVLines(csvFile: csvFile)
             Self.logger.debug("Total CSV Lines: \(totalCsvLines)")
             var currentCsvLine = 0
-            let out = try readCSV(csvFile: csvFile, profile: foundProfile) {
+            let out = try readCSV(csvFile: csvFile) {
                 currentCsvLine += 1
                 progress(.importingData, currentCsvLine, totalCsvLines)
             }
@@ -297,18 +292,13 @@ struct LogArchiveReader {
             
             // Extract all (other) files part of the logarchive
             return true
-        } else if nameComponents.contains("MCState") {
-            // Extract profile-[...].stub files
-            if last.hasPrefix("profile-") && last.hasSuffix(".stub") {
-                return true
-            }
         }
         
         // Skip extraction of all other sysdiagnose files
         return false
     }
     
-    private func extractFromTar(tmpDir: URL, tmpTarFile: URL, speedup: Bool) throws -> (logArchiveDir: URL, installedProfileDir: URL) {
+    private func extractFromTar(tmpDir: URL, tmpTarFile: URL, speedup: Bool) throws -> URL {
         Self.logger.debug("Extracting tar contents")
         let fileHandle = try FileHandle(forReadingFrom: tmpTarFile)
         defer { try? fileHandle.close() }
@@ -349,13 +339,7 @@ struct LogArchiveReader {
             throw LogArchiveError.logArchiveDirEmpty
         }
         
-        let installedProfileDir = tmpDir
-            .appendingPathComponent("logs", conformingTo: .directory)
-            .appendingPathComponent("MCState", conformingTo: .directory)
-            .appendingPathComponent("Shared", conformingTo: .directory)
-        Self.logger.debug("Installed Profiles Directory: \(installedProfileDir)")
-        
-        return (logArchiveDir, installedProfileDir)
+        return logArchiveDir
     }
     
     private func cleanupInbox() {
@@ -375,7 +359,7 @@ struct LogArchiveReader {
             }
         }
     }
-        
+    
     private func countLogArchiveFiles(logArchiveDir: URL, speedup: Bool) throws -> Int {
         // See: https://stackoverflow.com/a/41979314
         let resourceKeys : [URLResourceKey] = [.isDirectoryKey]
@@ -405,23 +389,6 @@ struct LogArchiveReader {
         return count
     }
     
-    private func scanForBasebandProfile(installedProfileDir: URL) throws -> ProfileStubData? {
-        let scanner = ProfileScanner(directory: installedProfileDir)
-        
-        let profile = try scanner.findBasebandLoggingProfile()
-        
-        // Save the install and expiry dates or set to nil if no profile was installed
-        UserDefaults.standard.set(profile?.installDate, forKey: UserDefaultsKeys.basebandProfileInstall.rawValue)
-        UserDefaults.standard.set(profile?.removalDate, forKey: UserDefaultsKeys.basebandProfileRemoval.rawValue)
-
-        if let profile = profile, let removalDate = profile.removalDate {
-            // Schedule a reminder notification (if a profile was installed)
-            CGNotificationManager.shared.queueProfileExpiryNotification(removalDate: removalDate)
-        }
-        
-        return profile
-    }
-    
     private func parseLogArchive(tmpDir: URL, logArchiveDir: URL, speedup: Bool, rust: RustApp) throws -> URL {
         Self.logger.debug("Parsing extracted log archive using macos-unifiedlogs")
         
@@ -439,7 +406,7 @@ struct LogArchiveReader {
             Self.logger.warning("A Rust error occurred while parsing the log archive: \(swiftErrorString)")
             throw LogArchiveError.parseLogArchiveFailed(swiftErrorString)
         }
-
+        
         return outFile
     }
     
@@ -451,7 +418,7 @@ struct LogArchiveReader {
         return count
     }
     
-    private func readCSV(csvFile: URL, profile: ProfileStubData?, progress: () -> Void) throws -> ImportResult {
+    private func readCSV(csvFile: URL, progress: () -> Void) throws -> ImportResult {
         if let fileAttributes = try? fileManager.attributesOfItem(atPath: csvFile.path) {
             Self.logger.debug("\(fileAttributes))")
         }
@@ -543,7 +510,7 @@ struct LogArchiveReader {
             }
             .map { $0.0 }
         Self.logger.debug("Filtered \(cells.count - filteredCells.count) similar cells, resulting in \(cells.count) cells.")
-
+        
         
         do {
             let controller = PersistenceController.basedOnEnvironment()
@@ -556,12 +523,6 @@ struct LogArchiveReader {
         } catch {
             throw LogArchiveError.importError(error)
         }
-                
-        // Warn the user if the profile is not installed
-        var notices: [ImportNotice] = []
-        if profile == nil {
-            notices.append(.profileNotInstalled)
-        }
         
         // TODO: Recently installed and recently expired (check MCProfileEvents.plist)
         // TODO: Check for log truncation
@@ -571,7 +532,7 @@ struct LogArchiveReader {
             alsCells: nil,
             locations: nil,
             packets: ImportCount(count: packets.count, first: packetDates.first, last: packetDates.last),
-            notices: notices
+            notices: []  // TODO: currently no more notices, as we don't check profile here
         )
     }
     

@@ -258,6 +258,16 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
                 }
             }
             
+            let task = ProfileTask()
+            // Check if when debug profile will expire
+            Task {
+                //try? await Task.sleep(nanoseconds: 15 * NSEC_PER_SEC)
+                while (true) {
+                    await task.run()
+                    try? await Task.sleep(nanoseconds: 60 * NSEC_PER_SEC)
+                }
+            }
+            
             await Self.logger.debug("Started all maintenance background tasks")
             
             // TODO: Add task to regularly delete old ALS cells (>= 90 days) to force a refresh
