@@ -1,0 +1,15 @@
+# Configuration for SwiftLint
+# https://github.com/realm/SwiftLint?tab=readme-ov-file#configuration
+
+excluded:
+  - CellGuard/Apple Location Service/CoreLocationALS.pb.swift
+  - Generated
+
+# If true, SwiftLint will treat all errors as warnings.
+lenient: true
+
+disabled_rules:
+  - cyclomatic_complexity
+  - type_body_length
+  - function_body_length
+  - large_tuple
