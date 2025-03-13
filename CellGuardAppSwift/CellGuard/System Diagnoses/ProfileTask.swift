@@ -55,7 +55,7 @@ class ProfileData: ObservableObject {
         // Notify the user one day before the profile's expiry or instantly if it is less than 24h until expiry.
         // This notification will only appear once for the given removal date.
         CGNotificationManager.shared.queueProfileExpiryNotification(removalDate: removalDate)
-                
+        
         self.installDate = installDate
         self.removalDate = removalDate
     }

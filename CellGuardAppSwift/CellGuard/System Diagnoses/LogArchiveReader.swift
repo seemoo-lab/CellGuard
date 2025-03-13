@@ -231,8 +231,7 @@ struct LogArchiveReader {
             let totalCsvLines = try countCSVLines(csvFile: csvFile)
             Self.logger.debug("Total CSV Lines: \(totalCsvLines)")
             var currentCsvLine = 0
-            let out = try readCSV(csvFile: csvFile)
-            {
+            let out = try readCSV(csvFile: csvFile) {
                 currentCsvLine += 1
                 progress(.importingData, currentCsvLine, totalCsvLines)
             }
@@ -360,7 +359,7 @@ struct LogArchiveReader {
             }
         }
     }
-        
+    
     private func countLogArchiveFiles(logArchiveDir: URL, speedup: Bool) throws -> Int {
         // See: https://stackoverflow.com/a/41979314
         let resourceKeys : [URLResourceKey] = [.isDirectoryKey]
@@ -407,7 +406,7 @@ struct LogArchiveReader {
             Self.logger.warning("A Rust error occurred while parsing the log archive: \(swiftErrorString)")
             throw LogArchiveError.parseLogArchiveFailed(swiftErrorString)
         }
-
+        
         return outFile
     }
     
@@ -511,7 +510,7 @@ struct LogArchiveReader {
             }
             .map { $0.0 }
         Self.logger.debug("Filtered \(cells.count - filteredCells.count) similar cells, resulting in \(cells.count) cells.")
-
+        
         
         do {
             let controller = PersistenceController.basedOnEnvironment()
