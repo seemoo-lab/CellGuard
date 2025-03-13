@@ -195,6 +195,25 @@ class CGNotificationManager: ObservableObject {
         }
     }
 
+    func queueSysdiagNotification(fileName: String, captured: Date) {
+        // Set the notification content
+        let content = UNMutableNotificationContent()
+        content.sound = nil
+
+        content.title = "System Diagnose ready"
+        content.body = "Your system diagnose from \(mediumTimeFormatter.string(for: captured) ?? "n/a") is ready to be imported."
+        content.userInfo = ["type": "sysdiag", "fileName": fileName]
+
+        // Schedule a new notification
+        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
+
+        UNUserNotificationCenter.current().add(request) { error in
+            if let error = error {
+                Self.logger.warning("Failed to schedule profile install notification: \(error)")
+            }
+        }
+    }
+
     func clearNotifications() {
         UNUserNotificationCenter.current().removeAllDeliveredNotifications()
     }

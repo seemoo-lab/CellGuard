@@ -364,6 +364,8 @@
 		CFEA68EA2C13857200F781BC /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = CFEA68E82C13856300F781BC /* PrivacyInfo.xcprivacy */; };
 		CFEA68EC2C13B0B600F781BC /* InformationContactView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFEA68EB2C13B0B600F781BC /* InformationContactView.swift */; };
 		CFEA68ED2C13B0B600F781BC /* InformationContactView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFEA68EB2C13B0B600F781BC /* InformationContactView.swift */; };
+		CFEAB13A2D833C4500525C0C /* SysdiagTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFEAB1392D833C4500525C0C /* SysdiagTask.swift */; };
+		CFEAB13B2D833C4500525C0C /* SysdiagTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFEAB1392D833C4500525C0C /* SysdiagTask.swift */; };
 		CFEC5E762BD1808E004978FA /* CellGuardURLs.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFEC5E752BD1808E004978FA /* CellGuardURLs.swift */; };
 		CFEC5E772BD1816B004978FA /* CellGuardURLs.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFEC5E752BD1808E004978FA /* CellGuardURLs.swift */; };
 		CFF05F6D2A39AA3900DE6FB2 /* DeleteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFF05F6C2A39AA3900DE6FB2 /* DeleteView.swift */; };
@@ -580,6 +582,7 @@
 		CFEA68E52C131F9400F781BC /* AppleURLs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleURLs.swift; sourceTree = "<group>"; };
 		CFEA68E82C13856300F781BC /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		CFEA68EB2C13B0B600F781BC /* InformationContactView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InformationContactView.swift; sourceTree = "<group>"; };
+		CFEAB1392D833C4500525C0C /* SysdiagTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SysdiagTask.swift; sourceTree = "<group>"; };
 		CFEC5E732BD17782004978FA /* TestPlan.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = TestPlan.xctestplan; sourceTree = "<group>"; };
 		CFEC5E752BD1808E004978FA /* CellGuardURLs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellGuardURLs.swift; sourceTree = "<group>"; };
 		CFEECE622C0F795C00D6D13F /* Config.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Config.xcconfig; path = Config/Config.xcconfig; sourceTree = "<group>"; };
@@ -860,6 +863,7 @@
 			children = (
 				45ED01B52D445AB40023A090 /* ProfileTask.swift */,
 				CF57561C2B2F263500C7C60A /* LogArchiveReader.swift */,
+				CFEAB1392D833C4500525C0C /* SysdiagTask.swift */,
 			);
 			path = "System Diagnoses";
 			sourceTree = "<group>";
@@ -1621,6 +1625,7 @@
 				CFB6CF812BD122FA00EAB7B4 /* CellGuardApp.swift in Sources */,
 				45ECF55E2BFACB7D00DD92CF /* UserStudyView.swift in Sources */,
 				CFB6CF822BD122FA00EAB7B4 /* WelcomeView.swift in Sources */,
+				CFEAB13B2D833C4500525C0C /* SysdiagTask.swift in Sources */,
 				CFB6CF832BD122FA00EAB7B4 /* HomeTabView.swift in Sources */,
 				CF2FF6912BF2A3D3006E2DF4 /* QStudy.swift in Sources */,
 				CFB6CF842BD122FA00EAB7B4 /* QMIParser.swift in Sources */,
@@ -1785,6 +1790,7 @@
 				CFD023372961A10D00AA5A1C /* CellGuardApp.swift in Sources */,
 				45ECF55D2BFACB7D00DD92CF /* UserStudyView.swift in Sources */,
 				CF0FDCBD2969A21000A6FFE2 /* WelcomeView.swift in Sources */,
+				CFEAB13A2D833C4500525C0C /* SysdiagTask.swift in Sources */,
 				CF0FDCBB29699E8A00A6FFE2 /* HomeTabView.swift in Sources */,
 				CF2FF6902BF2A3D3006E2DF4 /* QStudy.swift in Sources */,
 				CF2002E82A2F2BE2000922E6 /* QMIParser.swift in Sources */,
