@@ -18,10 +18,10 @@ lint_swift:
   stage: lint
   image: "ghcr.io/realm/swiftlint:latest"
   script:
-    - swiftlint --reporter gitlab --working-directory CellGuardAppSwift --output swift-lint.xml
+    - swiftlint --working-directory CellGuardAppSwift --reporter codeclimate --output swift-lint.json
   artifacts:
     reports:
-      junit: CellGuardAppSwift/swift-lint.xml
+      codequality: CellGuardAppSwift/swift-lint.json
 
 # Lint the Rust code with Rustfmt and clippy
 # We cache the environment - see https://stackoverflow.com/a/74888341
