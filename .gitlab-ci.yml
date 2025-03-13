@@ -1,6 +1,6 @@
 stages:
   - lint
-  - build
+#  - build
 
 # We're using the official swift-format tool for linting, but it crashes :/
 # See: https://github.com/swiftlang/swift-format
@@ -46,22 +46,24 @@ lint_rust:
     - cargo clippy --manifest-path CellGuardAppRust/Cargo.toml
 
 # Build the Rust code
-compile_rust:
-  stage: build
-  image: "rust:latest"
-  variables:
-    # Move cargo data into the project directory so it can be cached
-    CARGO_HOME: ${CI_PROJECT_DIR}/.cargo
-  cache:
-    # Share cache between all Rust build jobs on one branch/tag
-    key: ${CI_COMMIT_REF_SLUG}-rust-build
-    paths:
-      - .cargo/bin
-      - .cargo/registry/index
-      - .cargo/registry/cache
-      - target/debug/deps
-      - target/debug/build
-  script:
-    - rustup target add aarch64-apple-ios x86_64-apple-ios
-    - cargo install cargo-lipo cargo-bundle-licenses
-    - PROJECT_DIR=CellGuardAppSwift ./CellGuardAppSwift/build-rust.sh
+# We can only run this stage with a macOS runner :/
+# [ERROR cargo_lipo] Running on non-macOS, `cargo lipo` will likely not work. Use `--allow-run-on-non-macos` to override this check.
+#compile_rust:
+#  stage: build
+#  image: "rust:latest"
+#  variables:
+#    # Move cargo data into the project directory so it can be cached
+#    CARGO_HOME: ${CI_PROJECT_DIR}/.cargo
+#  cache:
+#    # Share cache between all Rust build jobs on one branch/tag
+#    key: ${CI_COMMIT_REF_SLUG}-rust-build
+#    paths:
+#      - .cargo/bin
+#      - .cargo/registry/index
+#      - .cargo/registry/cache
+#      - target/debug/deps
+#      - target/debug/build
+#  script:
+#    - rustup target add aarch64-apple-ios x86_64-apple-ios
+#    - cargo install cargo-lipo cargo-bundle-licenses
+#    - PROJECT_DIR=CellGuardAppSwift ./CellGuardAppSwift/build-rust.sh
