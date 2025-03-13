@@ -12,4 +12,19 @@ disabled_rules:
   - cyclomatic_complexity
   - type_body_length
   - function_body_length
+  - file_length
   - large_tuple
+  - todo
+  - function_parameter_count
+  # Required for CoreData
+  - compiler_protocol_init
+  # todo: slowly split lines over 120 characters
+  - line_length
+
+identifier_name:
+  # todo: slowly adapt identifiers with three characters at minimum
+  min_length: 1
+  excluded: # excluded via string array
+    - id
+    - URL
+    - GlobalAPIKey
