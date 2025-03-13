@@ -17,8 +17,7 @@ enum UserDefaultsKeys: String {
     case logArchiveSpeedup
     case study
     case activePipelines
-    case basebandProfileInstall
-    case basebandProfileRemoval
+    case profileExpiryNotification
 }
 
 enum DataCollectionMode: String, CaseIterable, Identifiable {

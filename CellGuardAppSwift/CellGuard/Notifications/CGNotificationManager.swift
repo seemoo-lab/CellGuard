@@ -144,6 +144,12 @@ class CGNotificationManager: ObservableObject {
             let dayBeforeComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute, .timeZone], from: dayBefore)
             trigger = UNCalendarNotificationTrigger(dateMatching: dayBeforeComponents, repeats: false)
         } else {
+            // Do not queue another notification if there was already a (scheduled) notification
+            let pastNotifyRemovalDate = UserDefaults.standard.date(forKey: UserDefaultsKeys.profileExpiryNotification.rawValue)
+            if let pastNotifyRemovalDate = pastNotifyRemovalDate, pastNotifyRemovalDate == removalDate {
+                return
+            }
+            
             // If not, send it instantly
             content.title = "Baseband profile expires soon"
             content.body = "The baseband debug profile expires soon, reinstall it to continue collecting data."
@@ -151,12 +157,39 @@ class CGNotificationManager: ObservableObject {
             trigger = nil
         }
         
+        // Store that a notification is queue or was sent
+        UserDefaults.standard.set(removalDate, forKey: UserDefaultsKeys.profileExpiryNotification.rawValue)
+        
         // Schedule a new notification
         let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
         
         notificationCenter.add(request) { error in
             if let error = error {
                 Self.logger.warning("Failed to schedule profile expiry notification: \(error)")
+            }
+        }
+    }
+    
+    func queueProfileInstallNotification(update: Bool) {
+        let notificationCenter = UNUserNotificationCenter.current()
+        
+        // Unique identifier for the notification
+        // A previously scheduled notification will be automatically replaced
+        let identifier = "profile-install"
+        
+        // Set the notification content
+        let content = UNMutableNotificationContent()
+        content.sound = nil
+        
+        content.title = "Baseband profile " + (update ? "updated" : "installed")
+        content.body = "The baseband debug profile was successfully " + (update ? "updated" : "installed") + "."
+        
+        // Schedule a new notification
+        let request = UNNotificationRequest(identifier: identifier, content: content, trigger: nil)
+        
+        notificationCenter.add(request) { error in
+            if let error = error {
+                Self.logger.warning("Failed to schedule profile install notification: \(error)")
             }
         }
     }
