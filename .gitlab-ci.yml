@@ -10,7 +10,7 @@ lint_swift:
   image: "swift:latest"
   script:
     # For now, we omit the "--strict" option which would fail the job even for warnings
-    - swift format lint -p -r CellGuardAppSwift
+    - swift format lint -r CellGuardAppSwift
 
 # Lint the Rust code with Rustfmt and clippy
 # We cache the environment - see https://stackoverflow.com/a/74888341
