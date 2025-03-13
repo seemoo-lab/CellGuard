@@ -33,7 +33,10 @@ final class CCTParserTests: XCTestCase {
         
         // Convert the string from JSON into objects
         let jsonFriendlyStr = "[\(cctString.split(whereSeparator: \.isNewline).joined(separator: ", "))]"
-        let jsonData = try JSONSerialization.jsonObject(with: jsonFriendlyStr.data(using: .utf8)!) as! [CellSample]
+        guard let jsonData = try JSONSerialization.jsonObject(with: jsonFriendlyStr.data(using: .utf8)!) as? [CellSample] else {
+            XCTFail("JSON Data does not match expected format")
+            return
+        }
 
         // Test whether the parser can successfully read all entities
         let parser = CCTParser()
