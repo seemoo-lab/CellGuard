@@ -21,7 +21,7 @@ lint_swift:
     - swiftlint --reporter gitlab --working-directory CellGuardAppSwift --output swift-lint.xml
   artifacts:
     reports:
-      junit: swift-lint.xml
+      junit: CellGuardAppSwift/swift-lint.xml
 
 # Lint the Rust code with Rustfmt and clippy
 # We cache the environment - see https://stackoverflow.com/a/74888341
