@@ -92,8 +92,6 @@ struct SummaryTabView: View {
 }
 
 private struct CombinedRiskCellView: View {
-    @StateObject private var profileData = ProfileData.shared
-    
     @FetchRequest private var tweakCells: FetchedResults<CellTweak>
     
     init() {
@@ -121,16 +119,7 @@ private struct CombinedRiskCellView: View {
             NoneModeCard()
             
             // manual mode: show debug profile import instructions
-            switch profileData.installState {
-            case .notPresent:
-                DebugProfileCard()
-            case .expiringSoon:
-                // TODO: add different text to UI that uses the profileData.installDate to tell user when the profile expires
-                DebugProfileCard()
-            case .installed:
-                // don't show anything if profile is installed
-                EmptyView()
-            }
+            DebugProfileCard()
             
             // manual mode: show sys diagnose taking instructions
             SysdiagInstructionsCard()

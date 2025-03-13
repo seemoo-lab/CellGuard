@@ -11,6 +11,7 @@ struct DebugProfileCard: View {
     
     @State private var showDebugProfileInstructions = false
     @AppStorage(UserDefaultsKeys.appMode.rawValue) var appMode: DataCollectionMode = .none
+    @StateObject private var profileData = ProfileData.shared
     
     var body: some View {
         
@@ -20,7 +21,7 @@ struct DebugProfileCard: View {
             EmptyView()
         }
         
-        if appMode == .manual {
+        if appMode == .manual && [.notPresent, .expiringSoon].contains(profileData.installState) {
             Button {
                // open instructions
                 showDebugProfileInstructions = true
@@ -37,11 +38,12 @@ struct DebugProfileCard: View {
 private struct DebugProfileCardView: View {
     
     @Environment(\.colorScheme) private var colorScheme
+    @StateObject private var profileData = ProfileData.shared
     
     var body: some View {
         VStack {
             HStack() {
-                Text("Install Debug Profile")
+                Text((profileData.installState == .expiringSoon ? "Update" : "Install") + " Debug Profile")
                     .font(.title2)
                     .bold()
                 Spacer()
@@ -56,9 +58,17 @@ private struct DebugProfileCardView: View {
                     .frame(maxWidth: 40, alignment: .center)
                     .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 10))
                 
-                Text("Expose baseband management packets to sysdiagnoses.")
-                    .multilineTextAlignment(.leading)
-                    .padding()
+                if profileData.installState == .expiringSoon, let removalDate = profileData.removalDate {
+                    let hours = Int(removalDate.timeIntervalSinceNow / 3600) % 60
+                    
+                    (Text("Expose baseband management packets to sysdiagnoses. The profile expires in ") + Text("\(hours)h").foregroundColor(.orange) + Text("."))
+                        .multilineTextAlignment(.leading)
+                        .padding()
+                } else {
+                    Text("Expose baseband management packets to sysdiagnoses.")
+                        .multilineTextAlignment(.leading)
+                        .padding()
+                }
             }
             
         }
