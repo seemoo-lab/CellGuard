@@ -179,11 +179,10 @@ struct LogArchiveReader {
         
         progress(.extractingTar, 0, 0)
         var logArchive: URL
-        var installedProfileDir: URL
         var speedup = speedup
         var fileCountTraceV3 = 0
         do {
-            (logArchive, installedProfileDir) = try extractFromTar(tmpDir: tmpDir, tmpTarFile: tmpTarFile, speedup: speedup)
+            logArchive = try extractFromTar(tmpDir: tmpDir, tmpTarFile: tmpTarFile, speedup: speedup)
             fileCountTraceV3 = try countLogArchiveFiles(logArchiveDir: logArchive, speedup: speedup)
             
             // If the speed-up is enabled, check if the log archive has Persist or HighVolume tracev3 files.
@@ -192,7 +191,7 @@ struct LogArchiveReader {
                 Self.logger.debug("Disables Persist & HighVolume speed-up as there is none the relevant directories")
                 speedup = false
                 // Redo the extraction as we need all tracev3 files for parsing
-                (logArchive, installedProfileDir) = try extractFromTar(tmpDir: tmpDir, tmpTarFile: tmpTarFile, speedup: speedup)
+                logArchive = try extractFromTar(tmpDir: tmpDir, tmpTarFile: tmpTarFile, speedup: speedup)
                 fileCountTraceV3 = try countLogArchiveFiles(logArchiveDir: logArchive, speedup: speedup)
                 // Disable the speed-up for future invocations as future sysdiagnoses recorded with the device will also not support the speed-up.
                 // The user can always re-enable the speed-up in the settings.
@@ -224,7 +223,6 @@ struct LogArchiveReader {
         
         do {
             try fileManager.removeItem(at: logArchive)
-            try fileManager.removeItem(at: installedProfileDir)
         } catch {
             throw LogArchiveError.deleteLogArchiveFailed(error)
         }
@@ -295,18 +293,13 @@ struct LogArchiveReader {
             
             // Extract all (other) files part of the logarchive
             return true
-        } else if nameComponents.contains("MCState") {
-            // Extract profile-[...].stub files
-            if last.hasPrefix("profile-") && last.hasSuffix(".stub") {
-                return true
-            }
         }
         
         // Skip extraction of all other sysdiagnose files
         return false
     }
     
-    private func extractFromTar(tmpDir: URL, tmpTarFile: URL, speedup: Bool) throws -> (logArchiveDir: URL, installedProfileDir: URL) {
+    private func extractFromTar(tmpDir: URL, tmpTarFile: URL, speedup: Bool) throws -> URL {
         Self.logger.debug("Extracting tar contents")
         let fileHandle = try FileHandle(forReadingFrom: tmpTarFile)
         defer { try? fileHandle.close() }
@@ -347,13 +340,7 @@ struct LogArchiveReader {
             throw LogArchiveError.logArchiveDirEmpty
         }
         
-        let installedProfileDir = tmpDir
-            .appendingPathComponent("logs", conformingTo: .directory)
-            .appendingPathComponent("MCState", conformingTo: .directory)
-            .appendingPathComponent("Shared", conformingTo: .directory)
-        Self.logger.debug("Installed Profiles Directory: \(installedProfileDir)")
-        
-        return (logArchiveDir, installedProfileDir)
+        return logArchiveDir
     }
     
     private func cleanupInbox() {
