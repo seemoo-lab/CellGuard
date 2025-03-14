@@ -2,7 +2,7 @@
 
 Monitor and visualize cellular base stations collected by the accompanying tweak.
 
-iOS Versions: 14.0 - 18.0
+iOS Versions: 14.0 - 18.3
 
 ## Setup
 
@@ -18,6 +18,11 @@ $ cp Config/Developer.xcconfig.template Config/Developer.xcconfig
 $ open Config/Developer.xcconfig
 ```
 
+Complete the [initial set up](../CellGuardAppRust/README.md) for the native library written in Rust and compile the libraries once:
+```sh
+PROJECT_DIR=. ./build-rust.sh
+```
+
 Open the project in Xcode:
 ```sh
 $ open CellGuard.xcodeproj
@@ -28,27 +33,16 @@ Initially, the first XCode build will fail, but the second ones should be succes
 ## Build
 The app can either be distributed as a .deb package for jailbroken devices with Cydia or as an .ipa file which can be installed using TrollStore.
 
-You'll need a Rust toolchain on your system to build the app's native libraries.
-```sh
-# Install Rust using rustup (https://www.rust-lang.org/tools/install)
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-# Install additional iOS targets (64 bit for real device & simulator):
-rustup target add aarch64-apple-ios x86_64-apple-ios
-# Install cargo-lipo
-cargo install cargo-lipo cargo-bundle-licenses
-```
-
-The first time after cloning, you have to compile the libraries yourself by executing the following command:
+Upon changes, XCode will rebuild the native libraries automatically.
+However, if this does not work you can resort to building them manually:
 ```sh
 PROJECT_DIR=. ./build-rust.sh
 ```
-For release builds required for TestFlight uploads, also run the following command:
+If you're using XCode to build an app archive for TestFlight distribution, you should switch the *Build Configuration* setting to *Release* in the *Archive* section.
+You can also manually build the library in release mode:
 ```sh
 PROJECT_DIR=. CONFIGURATION=Release ./build-rust.sh
 ```
-If you're using XCode to build an app archive for TestFlight distribution, you should switch the *Build Configuration* setting to *Release* in the *Archive* section.
-
-Upon changes, XCode will rebuild the libraries automatically.
 
 ### XCode
 
@@ -111,33 +105,25 @@ To read more on how to build jailbroken apps, see
 
 Thus, we recommend the other way of installing the app.
 
-## Update Dependencies
+## Development
 
-### Rust
+### Code Format
 
-To update the Rust dependencies run the following commands in the top-level directory.
-```sh
-# Update Rust dependencies with cargo package manager
-cargo update
+We use [SwiftLint](https://github.com/realm/SwiftLint) to ensure a consistent code format.
+The linter [integrates](https://github.com/realm/SwiftLint?tab=readme-ov-file#xcode-projects) with XCode, but you might have to trust its plugin upon the first build you perform.
+The file [`.swiftlint.yml`](./.swiftlint.yml) defines linter's rules.
 
-# Update generated license file, might require some manual edits
-# See: https://github.com/sstadick/cargo-bundle-licenses?tab=readme-ov-file#usage
-gunzip CellGuard/cargo-licenses.json
-cargo bundle-licenses --format json --output CellGuard/cargo-licenses.json --previous CellGuard/cargo-licenses.json
-gzip CellGuard/cargo-licenses.json
-```
+### Privacy Manifest
 
-## Privacy Manifest
-
-Apple requires apps to include a [privacy manifest](./PrivacyInfo.xcprivacy).
-Remember to expand the manifest if you use new APIs or collect new types of data.
+**Apple requires apps to include a [privacy manifest](./PrivacyInfo.xcprivacy).
+Remember to expand the manifest if you use new APIs or collect new types of data.**
 
 Read more:
 - https://developer.apple.com/documentation/bundleresources/privacy_manifest_files
 - https://developer.apple.com/app-store/user-privacy-and-data-use/
 - https://developer.apple.com/app-store/app-privacy-details/
 
-## JSON files
+### JSON files
 
 We include minimized and gzipped JSON files in CellGuard to reduce the app's final size.
 
