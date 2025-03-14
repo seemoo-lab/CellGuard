@@ -5,16 +5,20 @@ stages:
 # We're using the official swift-format tool for linting, but it crashes :/
 # See: https://github.com/swiftlang/swift-format
 # Bug Report: https://github.com/swiftlang/swift-format/issues/960
-#lint_swift:
-#  stage: lint
-#  image: "swift:latest"
-#  script:
-#    # For now, we omit the "--strict" option which would fail the job even for warnings
-#    - swift format lint -r CellGuardAppSwift
+lint_swiftformat:
+  stage: lint
+  image: "swift:latest"
+  script:
+    # For now, we omit the "--strict" option which would fail the job even for warnings
+    - cd CellGuardAppSwift
+    - swift format lint -r --configuration .swift-format.json CellGuard
+    - swift format lint -r --configuration .swift-format.json CellGuardTests
+    - swift format lint -r --configuration .swift-format.json CellGuardUITests
+    - echo "We only use this linter to check for syntactic errors, please refer to SwiftLint for code style."
 
 # Use community-based SwiftLint project
 # See: https://github.com/realm/SwiftLint?tab=readme-ov-file
-lint_swift:
+lint_swiftlint:
   stage: lint
   image: "ghcr.io/realm/swiftlint:latest"
   script:
