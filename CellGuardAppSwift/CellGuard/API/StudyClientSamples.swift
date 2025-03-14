@@ -74,7 +74,7 @@ private struct CreateCellDTO: Content {
     var userLatitude: Double
     var userLongitude: Double
     var collectedAt: Date?
-    var json: String?
+    var rawPacket: Data?
     
     var feedback: CreateUserFeedbackDTO?
     var packets: [CreateCellPacketDTO]
@@ -173,6 +173,14 @@ extension StudyClient {
                     .map { createDTO(fromVerificationLog: $0) } ?? []
             } ?? []
         
+        // Replace packet data with PII to strip it (AS IS APPROVED BY ETHICS BOARD)
+        var piiFreeData: Data = Data()
+        if let data = cell.packetQmi?.data {
+            piiFreeData = try StudyPacketFilter.strip(qmi: data)
+        } else if let data = cell.packetAri?.data {
+            piiFreeData = try StudyPacketFilter.strip(ari: data)
+        }
+        
         // Return the combined cell DTO
         return CreateCellDTO(
             technology: CellTechnology(rawValue: cell.technology?.lowercased() ?? "") ?? .cdma,
@@ -191,7 +199,7 @@ extension StudyClient {
             userLongitude: cell.location?.longitude.truncate(places: 2) ?? 0,
             
             collectedAt: cell.collected,
-            json: cell.json,
+            rawPacket: piiFreeData,
             
             feedback: createDTO(fromFeedback: feedback),
             packets: packets,

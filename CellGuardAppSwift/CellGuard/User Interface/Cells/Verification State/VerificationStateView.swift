@@ -65,26 +65,15 @@ private struct VerificationStateInternalView: View {
                 CellDetailsRow("Band", measurement.band)
                 CellDetailsRow("Bandwidth", measurement.bandwidth)
                 CellDetailsRow("Physical Cell ID", measurement.physicalCell)
-                if let neighborTechnology = measurement.neighborTechnology {
-                    CellDetailsRow("Neighbor", neighborTechnology)
+                
+                if let qmiPacket = measurement.packetQmi {
+                    NavigationLink { PacketQMIDetailsView(packet: qmiPacket) } label: { PacketCell(packet: qmiPacket) }
+                } else if let ariPacket = measurement.packetAri {
+                    NavigationLink { PacketARIDetailsView(packet: ariPacket) } label: { PacketCell(packet: ariPacket) }
                 }
             }
             
             // TODO: Should we show the cell's identification (MNC, MCC, ...) which is shown two pages up?
-            
-            if let json = measurement.json, let jsonPretty = try? self.formatJSON(json: json) {
-                Section(header: Text("iOS-Internal Data")) {
-                    Text(jsonPretty)
-                        .font(Font(UIFont.monospacedSystemFont(ofSize: UIFont.smallSystemFontSize, weight: .regular)))
-                }
-            } else if let rawQMIData = measurement.rawPacket {
-                Section(header: Text("iOS-Internal Data")) {
-                    Text(rawQMIData.map { String($0, radix: 16, uppercase: true) }
-                        .map { $0.count < 2 ? "0\($0)" : $0 }
-                        .joined(separator: " ")
-                    ).font(Font(UIFont.monospacedSystemFont(ofSize: UIFont.smallSystemFontSize, weight: .regular)))
-                }
-            }
              
             if verificationState.finished && verificationPipeline.id == primaryVerificationPipeline.id {
                 VerificationStateStudyView(verificationPipeline: verificationPipeline, verificationState: verificationState, measurement: measurement)

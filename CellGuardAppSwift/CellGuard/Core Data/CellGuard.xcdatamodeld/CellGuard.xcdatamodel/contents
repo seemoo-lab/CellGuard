@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23605" systemVersion="24D60" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23605" systemVersion="24D70" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="CellALS" representedClassName="CellALS" syncable="YES" codeGenerationType="category">
         <attribute name="area" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="cell" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
@@ -31,15 +31,14 @@
         <attribute name="country" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="frequency" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="imported" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="json" optional="YES" attributeType="String"/>
-        <attribute name="neighborTechnology" optional="YES" attributeType="String"/>
         <attribute name="network" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="physicalCell" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="preciseTechnology" optional="YES" attributeType="String"/>
-        <attribute name="rawPacket" optional="YES" attributeType="Binary"/>
         <attribute name="technology" optional="YES" attributeType="String"/>
         <relationship name="appleDatabase" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CellALS" inverseName="observedCells" inverseEntity="CellALS"/>
         <relationship name="location" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="LocationUser" inverseName="cells" inverseEntity="LocationUser"/>
+        <relationship name="packetAri" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PacketARI" inverseName="cells" inverseEntity="PacketARI"/>
+        <relationship name="packetQmi" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PacketQMI" inverseName="cells" inverseEntity="PacketQMI"/>
         <relationship name="study" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="StudyCell" inverseName="cell" inverseEntity="StudyCell"/>
         <relationship name="verifications" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="VerificationState" inverseName="cell" inverseEntity="VerificationState"/>
         <fetchIndex name="byTweakCellCollected">
@@ -99,6 +98,7 @@
         <attribute name="group" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="imported" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="type" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="cells" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CellTweak" inverseName="packetAri" inverseEntity="CellTweak"/>
         <relationship name="index" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="PacketIndexARI" inverseName="packet" inverseEntity="PacketIndexARI"/>
         <relationship name="verificationLogs" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="VerificationLog" inverseName="relatedPacketARI" inverseEntity="VerificationLog"/>
         <uniquenessConstraints>
@@ -146,6 +146,7 @@
         <attribute name="indication" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="message" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="service" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="cells" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CellTweak" inverseName="packetQmi" inverseEntity="CellTweak"/>
         <relationship name="index" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="PacketIndexQMI" inverseName="packet" inverseEntity="PacketIndexQMI"/>
         <relationship name="verificationLogs" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="VerificationLog" inverseName="relatedPacketQMI" inverseEntity="VerificationLog"/>
         <uniquenessConstraints>

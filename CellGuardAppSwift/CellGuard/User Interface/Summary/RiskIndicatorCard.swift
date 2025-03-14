@@ -25,7 +25,7 @@ enum RiskMediumCause: Equatable {
         case .Permissions:
             return "Ensure you granted all required permissions!"
         case .TweakCells:
-            return "Waiting for data from the CaptureCellsTweak"
+            return "Waiting for cell data from the CapturePacketTweak"
         case .TweakPackets:
             return "Waiting for data from the CapturePacketTweak"
         case .Location:

@@ -275,11 +275,11 @@ struct PersistenceCSVExporter {
             url: url,
             category: .connectedCells,
             progress: progress,
-            header: ["collected", "json", "technology", "country", "network", "area", "cell", "verificationFinished", "verificationScore"],
+            header: ["collected", "rawPacket", "technology", "country", "network", "area", "cell", "verificationFinished", "verificationScore"],
             writers: [DatabaseFileElementWriter(CellTweak.fetchRequest) { csv, result in
                 try csv.write(row: [
                     csvDate(result.collected),
-                    csvString(result.json),
+                    csvString(result.packetQmi?.data?.base64EncodedString() ?? result.packetAri?.data?.base64EncodedString()),
                     csvString(result.technology),
                     csvInt(result.country),
                     csvInt(result.network),

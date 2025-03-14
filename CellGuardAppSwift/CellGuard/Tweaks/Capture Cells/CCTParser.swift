@@ -9,24 +9,27 @@ import Foundation
 import CoreData
 import BinarySwift
 
+typealias CellInfo = [String: Any]
+typealias CellSample = [CellInfo]
+
 enum CCTParserError: Error {
     case emptySample(CellSample)
     case noCells(CellSample)
     case noServingCell(CellSample)
     case invalidTimestamp(CellInfo)
-    case missingRAT(Data)
-    case missingRATOld(CellInfo)
-    case unknownRAT(String)
-    case notImplementedRAT(String)
+    case missingRat(Data)
+    case missingRatOld(CellInfo)
+    case unknownRat(String)
+    case notImplementedRat(String)
     case missingCellType(CellInfo)
     case unknownCellType(String)
-    case invalidQMIService
-    case invalidARIGroup
-    case invalidQMIMessage
-    case invalidARIMessage
-    case invalidQMIDirection
-    case noQMILTECellInformation(ParsedQMIPacket)
-    case unexpectedTLVLength
+    case invalidQmiService
+    case invalidAriGroup
+    case invalidQmiMessage
+    case invalidAriMessage
+    case invalidQmiDirection
+    case noQmiLteCellInformation(ParsedQMIPacket)
+    case unexpectedTlvLength
 }
 
 enum CCTCellType: String {
@@ -50,14 +53,14 @@ struct CCTCellProperties {
     var frequency: Int32?
     var band: Int32?
     var bandwidth: Int32?
-    var neighborRadio: String?
     var deploymentType: Int32?
     
     var timestamp: Date?
     
-    var json: String?
-    var rawPacket: Data?
+    var packetQmi: PacketQMI?
+    var packetAri: PacketARI?
     
+    // applyTo does not set the packetQmi or packetAri because NSBatchInsertRequest does not set relationships.
     func applyTo(tweakCell: CellTweak) {
         tweakCell.country = self.mcc ?? 0
         tweakCell.network = self.network ?? 0
@@ -71,11 +74,8 @@ struct CCTCellProperties {
         tweakCell.band = self.band ?? 0
         tweakCell.bandwidth = self.bandwidth ?? 0
         tweakCell.physicalCell = self.physicalCellId ?? 0
-        tweakCell.neighborTechnology = neighborRadio
         
         tweakCell.collected = self.timestamp
-        tweakCell.json = self.json
-        tweakCell.rawPacket = self.rawPacket
     }
 
 }
@@ -97,19 +97,10 @@ struct CCTParser {
             throw CCTParserError.noCells(sample)
         }
 
-        let servingCell = cells.first(where: { $0.type == CCTCellType.Serving})?.cell
-        let neighborCell = cells.first(where: { $0.type == CCTCellType.Neighbor})?.cell
-
-        guard var servingCell = servingCell else {
+        guard var servingCell = cells.first(where: { $0.type == CCTCellType.Serving})?.cell else {
             throw CCTParserError.noServingCell(sample)
         }
 
-        if let neighborCell = neighborCell {
-            servingCell.neighborRadio = neighborCell.preciseTechnology
-        }
-
-        // We're using JSONSerialization because the JSONDecoder requires specific type information that we can't provide
-        servingCell.json = String(data: try JSONSerialization.data(withJSONObject: sample), encoding: .utf8)
         servingCell.timestamp = timestamp
 
         return servingCell
@@ -123,46 +114,46 @@ struct CCTParser {
         
         let rat = info["CellRadioAccessTechnology"]
         guard let rat = rat as? String else {
-            throw CCTParserError.missingRATOld(info)
+            throw CCTParserError.missingRatOld(info)
         }
         
         var cell: CCTCellProperties
         switch (rat) {
         case "RadioAccessTechnologyGSM":
-            cell = try parseGSM(info)
+            cell = try parseGsm(info)
             cell.technology = .GSM
         case "RadioAccessTechnologyUMTS":
-            cell = try parseUTMS(info)
+            cell = try parseUtms(info)
             cell.technology = .UMTS
         case "RadioAccessTechnologyUTRAN":
             // UMTS Terrestrial Radio Access Network
             // https://en.wikipedia.org/wiki/UMTS_Terrestrial_Radio_Access_Network
-            cell = try parseUTMS(info)
+            cell = try parseUtms(info)
             cell.technology = .UMTS
         case "RadioAccessTechnologyCDMA1x":
             // https://en.wikipedia.org/wiki/CDMA2000
-            cell = try parseCDMA(info)
+            cell = try parseCdma(info)
             cell.technology = .CDMA
         case "RadioAccessTechnologyCDMAEVDO":
             // CDMA2000 1x Evolution-Data Optimized
-            cell = try parseCDMA(info)
+            cell = try parseCdma(info)
             cell.technology = .CDMA
         case "RadioAccessTechnologyCDMAHybrid":
-            cell = try parseCDMA(info)
+            cell = try parseCdma(info)
             cell.technology = .CDMA
         case "RadioAccessTechnologyLTE":
-            cell = try parseLTE(info)
+            cell = try parseLte(info)
             cell.technology = .LTE
         case "RadioAccessTechnologyTDSCDMA":
             // Special version of UMTS WCDMA in China
             // https://www.electronics-notes.com/articles/connectivity/3g-umts/td-scdma.php
-            cell = try parseUTMS(info)
+            cell = try parseUtms(info)
             cell.technology = .SCDMA
         case "RadioAccessTechnologyNR":
-            cell = try parseNR(info)
+            cell = try parseNr(info)
             cell.technology = .NR
         default:
-            throw CCTParserError.unknownRAT(rat)
+            throw CCTParserError.unknownRat(rat)
         }
         
         let cellType = info["CellType"]
@@ -178,7 +169,7 @@ struct CCTParser {
         return (cell, cellType)
     }
     
-    private func parseGSM(_ info: CellInfo) throws -> CCTCellProperties {
+    private func parseGsm(_ info: CellInfo) throws -> CCTCellProperties {
         var cell = CCTCellProperties()
         cell.technology = .GSM
         
@@ -193,7 +184,7 @@ struct CCTParser {
         return cell
     }
     
-    private func parseUTMS(_ info: CellInfo) throws -> CCTCellProperties {
+    private func parseUtms(_ info: CellInfo) throws -> CCTCellProperties {
         var cell = CCTCellProperties()
         
         // UMTS has been phased out in many countries
@@ -216,7 +207,7 @@ struct CCTParser {
         return cell
     }
     
-    private func parseCDMA(_ info: CellInfo) throws -> CCTCellProperties {
+    private func parseCdma(_ info: CellInfo) throws -> CCTCellProperties {
         // CDMA has been shutdown is most countries:
         // - https://www.verizon.com/about/news/3g-cdma-network-shut-date-set-december-31-2022
         // - https://www.digi.com/blog/post/2g-3g-4g-lte-network-shutdown-updates
@@ -245,7 +236,7 @@ struct CCTParser {
     }
     
     
-    private func parseLTE(_ info: CellInfo) throws -> CCTCellProperties {
+    private func parseLte(_ info: CellInfo) throws -> CCTCellProperties {
         var cell = CCTCellProperties()
         
         cell.mcc = info["MCC"] as? Int32 ?? 0
@@ -282,7 +273,7 @@ struct CCTParser {
         return cell
     }
     
-    private func parseNR(_ info: CellInfo) throws -> CCTCellProperties {
+    private func parseNr(_ info: CellInfo) throws -> CCTCellProperties {
         var cell = CCTCellProperties()
         
         // Just a guess, based on the strings of CommCenter (extracted with Ghidra)
@@ -301,7 +292,7 @@ struct CCTParser {
         return cell
     }
     
-    func parseQMICell(_ data: Data, timestamp: Date) throws -> [CCTCellProperties] {
+    func parseQmiCell(_ data: Data, timestamp: Date) throws -> [CCTCellProperties] {
         // Location for symbols:
         // - Own sample collection using the tweak
         // - IPSW: /System/Library/Frameworks/CoreTelephony.framework/CoreTelephony (dyld_cache)
@@ -309,13 +300,13 @@ struct CCTParser {
         
         let parsedPacket = try ParsedQMIPacket(nsData: data)
         if parsedPacket.qmuxHeader.serviceId != PacketConstants.qmiCellInfoService {
-            throw CCTParserError.invalidQMIService
+            throw CCTParserError.invalidQmiService
         }
         if parsedPacket.messageHeader.messageId != PacketConstants.qmiCellInfoMessage {
-            throw CCTParserError.invalidQMIMessage
+            throw CCTParserError.invalidQmiMessage
         }
         if !parsedPacket.transactionHeader.indication && !parsedPacket.transactionHeader.response {
-            throw CCTParserError.invalidQMIDirection
+            throw CCTParserError.invalidQmiDirection
         }
         
         var cells: [CCTCellProperties] = []
@@ -330,25 +321,24 @@ struct CCTParser {
             case .cdma1x, .cdmaEvdo:
                 // https://en.wikipedia.org/wiki/CDMA2000
                 // CDMA2000 1x Evolution-Data Optimized
-                cell = try? parseCDMA_QMI(tlv, version: technology)
+                cell = try? parseCdmaQmi(tlv, version: technology)
             case .umts, .tdscdma:
                 // Special version of UMTS WCDMA in China
                 // https://www.electronics-notes.com/articles/connectivity/3g-umts/td-scdma.php
-                cell = try? parseUTMS_QMI(tlv, version: technology)
+                cell = try? parseUmtsQmi(tlv, version: technology)
             case .gsm:
-                cell = try? parseGSM_QMI(tlv)
+                cell = try? parseGsmQmi(tlv)
             case .lteV1, .lteV2, .lteV3, .lteV4:
-                cell = try? parseLTE_QMI(tlv, version: technology)
+                cell = try? parseLteQmi(tlv, version: technology)
             case .nrV2, .nrV3:
-                cell = try? parseNR_QMI(tlv, version: technology)
+                cell = try? parseNrQmi(tlv, version: technology)
             default:
-                throw CCTParserError.unknownRAT(technology.rawValue)
+                throw CCTParserError.unknownRat(technology.rawValue)
             }
             
             if var cell = cell {
                 cell.preciseTechnology = technology.rawValue
                 cell.timestamp = timestamp
-                cell.rawPacket = data
                 
                 // We only want to store at most one cell for each ALSTechnology.
                 if let index = cells.firstIndex(where: { $0.technology == cell.technology }) {
@@ -360,21 +350,21 @@ struct CCTParser {
         }
         
         if cells.isEmpty {
-            throw CCTParserError.missingRAT(data)
+            throw CCTParserError.missingRat(data)
         }
 
         return cells
     }
     
-    func parseARICell(_ data: Data, timestamp: Date) throws -> [CCTCellProperties] {
+    func parseAriCell(_ data: Data, timestamp: Date) throws -> [CCTCellProperties] {
         // Source: https://github.com/seemoo-lab/aristoteles/blob/master/types/structure/libari_dylib.lua
         
         let parsedPacket = try ParsedARIPacket(data: data)
         if parsedPacket.header.group != PacketConstants.ariGroupNetCell {
-            throw CCTParserError.invalidARIGroup
+            throw CCTParserError.invalidAriGroup
         }
         if !PacketConstants.ariTypesGetCellInfo.contains(parsedPacket.header.type) {
-            throw CCTParserError.invalidARIMessage
+            throw CCTParserError.invalidAriMessage
         }
         
         var cells: [CCTCellProperties] = []
@@ -393,23 +383,22 @@ struct CCTParser {
             var cell: CCTCellProperties?
             switch technology {
             case .cdma1x, .cdmaEvdo:
-                cell = try? parseCDMA_ARI(tlv, version: technology)
+                cell = try? parseCdmaAri(tlv, version: technology)
             case .umts, .tdscdma:
-                cell = try? parseUMTS_ARI(tlv, version: technology)
+                cell = try? parseUmtsAri(tlv, version: technology)
             case .gsm:
-                cell = try? parseGSM_ARI(tlv)
+                cell = try? parseGsmAri(tlv)
             case .lte, .lteV1T, .lteR15:
-                cell = try? parseLTE_ARI(tlv, version: technology)
+                cell = try? parseLteAri(tlv, version: technology)
             case .nr:
-                cell = try? parseNR_ARI(tlv, version: technology)
+                cell = try? parseNrAri(tlv, version: technology)
             default:
-                throw CCTParserError.unknownRAT(technology.rawValue)
+                throw CCTParserError.unknownRat(technology.rawValue)
             }
             
             if var cell = cell {
                 cell.preciseTechnology = technology.rawValue
                 cell.timestamp = timestamp
-                cell.rawPacket = data
                 
                 // We only want to store at most one cell for each ALSTechnology.
                 if let index = cells.firstIndex(where: { $0.technology == cell.technology }) {
@@ -421,18 +410,18 @@ struct CCTParser {
         }
         
         if cells.isEmpty {
-            throw CCTParserError.missingRAT(data)
+            throw CCTParserError.missingRat(data)
         }
         
         return cells
     }
     
-    private func parseGSM_QMI(_ tlv: QMITLV) throws -> CCTCellProperties {
+    private func parseGsmQmi(_ tlv: QmiTlv) throws -> CCTCellProperties {
         var cell = CCTCellProperties()
         cell.technology = .GSM
         
         if tlv.length != 22 {
-            throw CCTParserError.unexpectedTLVLength
+            throw CCTParserError.unexpectedTlvLength
         }
         
         // See: https://dev.seemoo.tu-darmstadt.de/apple/iphone-qmi-wireshark/-/blob/main/dissector/qmi_dissector_template.lua
@@ -451,12 +440,12 @@ struct CCTParser {
         return cell
     }
 
-    private func parseGSM_ARI(_ tlv: ARITLV) throws -> CCTCellProperties {
+    private func parseGsmAri(_ tlv: AriTlv) throws -> CCTCellProperties {
         var cell = CCTCellProperties()
         cell.technology = .GSM
         
         if tlv.length != 24 {
-            throw CCTParserError.unexpectedTLVLength
+            throw CCTParserError.unexpectedTlvLength
         }
         
         let data = BinaryData(data: tlv.data, bigEndian: false)
@@ -473,7 +462,7 @@ struct CCTParser {
         return cell
     }
     
-    private func parseUTMS_QMI(_ tlv: QMITLV, version: ALSTechnologyVersion) throws -> CCTCellProperties {
+    private func parseUmtsQmi(_ tlv: QmiTlv, version: ALSTechnologyVersion) throws -> CCTCellProperties {
         var cell = CCTCellProperties()
         cell.technology = .UMTS
         
@@ -488,7 +477,7 @@ struct CCTParser {
         
         
         if tlv.length != 26 {
-            throw CCTParserError.unexpectedTLVLength
+            throw CCTParserError.unexpectedTlvLength
         }
         
         // See: https://dev.seemoo.tu-darmstadt.de/apple/iphone-qmi-wireshark/-/blob/main/dissector/qmi_dissector_template.lua
@@ -508,12 +497,12 @@ struct CCTParser {
         return cell
     }
     
-    private func parseUMTS_ARI(_ tlv: ARITLV, version: ALSTechnologyVersion) throws -> CCTCellProperties {
+    private func parseUmtsAri(_ tlv: AriTlv, version: ALSTechnologyVersion) throws -> CCTCellProperties {
         var cell = CCTCellProperties()
         cell.technology = .UMTS
         
         if tlv.length != 28 {
-            throw CCTParserError.unexpectedTLVLength
+            throw CCTParserError.unexpectedTlvLength
         }
         
         // Just a guess, we have not been able to validate this!
@@ -533,7 +522,7 @@ struct CCTParser {
         return cell
     }
     
-    private func parseCDMA_QMI(_ tlv: QMITLV, version: ALSTechnologyVersion) throws -> CCTCellProperties {
+    private func parseCdmaQmi(_ tlv: QmiTlv, version: ALSTechnologyVersion) throws -> CCTCellProperties {
         // CDMA has been shutdown is most countries:
         // - https://www.verizon.com/about/news/3g-cdma-network-shut-date-set-december-31-2022
         // - https://www.digi.com/blog/post/2g-3g-4g-lte-network-shutdown-updates
@@ -552,7 +541,7 @@ struct CCTParser {
         cell.technology = .CDMA
         
         if (version == .cdma1x && tlv.length != 30) || (version == .cdmaEvdo && tlv.length != 34) {
-            throw CCTParserError.unexpectedTLVLength
+            throw CCTParserError.unexpectedTlvLength
         }
         
         // See: https://dev.seemoo.tu-darmstadt.de/apple/iphone-qmi-wireshark/-/blob/main/dissector/qmi_dissector_template.lua
@@ -586,12 +575,12 @@ struct CCTParser {
         return cell
     }
     
-    private func parseCDMA_ARI(_ tlv: ARITLV, version: ALSTechnologyVersion) throws -> CCTCellProperties {
+    private func parseCdmaAri(_ tlv: AriTlv, version: ALSTechnologyVersion) throws -> CCTCellProperties {
         var cell = CCTCellProperties()
         cell.technology = .CDMA
         
         if (version == .cdma1x && tlv.length != 48) || (version == .cdmaEvdo && tlv.length != 52) {
-            throw CCTParserError.unexpectedTLVLength
+            throw CCTParserError.unexpectedTlvLength
         }
         
         // Just a guess, we have not been able to validate this!
@@ -625,7 +614,7 @@ struct CCTParser {
     }
     
     
-    private func parseLTE_QMI(_ tlv: QMITLV, version: ALSTechnologyVersion) throws -> CCTCellProperties {
+    private func parseLteQmi(_ tlv: QmiTlv, version: ALSTechnologyVersion) throws -> CCTCellProperties {
         var cell = CCTCellProperties()
         cell.technology = .LTE
         
@@ -633,7 +622,7 @@ struct CCTParser {
         // However, we have not seen such CellInformation messages so far.
         if (version == .lteV1 && tlv.length != 27) || (version == .lteV2 && tlv.length != 29) ||
             (version == .lteV3 && tlv.length != 32) || (version == .lteV4 && tlv.length != 49) {
-            throw CCTParserError.unexpectedTLVLength
+            throw CCTParserError.unexpectedTlvLength
         }
         
         // See: https://dev.seemoo.tu-darmstadt.de/apple/iphone-qmi-wireshark/-/blob/main/dissector/qmi_dissector_template.lua
@@ -712,13 +701,13 @@ struct CCTParser {
         return cell
     }
 
-    private func parseLTE_ARI(_ tlv: ARITLV, version: ALSTechnologyVersion) throws -> CCTCellProperties {
+    private func parseLteAri(_ tlv: AriTlv, version: ALSTechnologyVersion) throws -> CCTCellProperties {
         var cell = CCTCellProperties()
         cell.technology = .LTE
         
         if (version == .lte && tlv.length != 32) || (version == .lteV1T && tlv.length != 36) ||
             (version == .lteR15 && tlv.length != 36) {
-            throw CCTParserError.unexpectedTLVLength
+            throw CCTParserError.unexpectedTlvLength
         }
         
         var offset = 0
@@ -759,12 +748,12 @@ struct CCTParser {
         return cell
     }
     
-    private func parseNR_QMI(_ tlv: QMITLV, version: ALSTechnologyVersion) throws -> CCTCellProperties {
+    private func parseNrQmi(_ tlv: QmiTlv, version: ALSTechnologyVersion) throws -> CCTCellProperties {
         var cell = CCTCellProperties()
         cell.technology = .NR
         
         if (version == .nrV2 && tlv.length != 42) || (version == .nrV3 && tlv.length != 57) {
-            throw CCTParserError.unexpectedTLVLength
+            throw CCTParserError.unexpectedTlvLength
         }
         
         // See: https://dev.seemoo.tu-darmstadt.de/apple/iphone-qmi-wireshark/-/blob/main/dissector/qmi_dissector_template.lua
@@ -797,12 +786,12 @@ struct CCTParser {
         return cell
     }
 
-    private func parseNR_ARI(_ tlv: ARITLV, version: ALSTechnologyVersion) throws -> CCTCellProperties {
+    private func parseNrAri(_ tlv: AriTlv, version: ALSTechnologyVersion) throws -> CCTCellProperties {
         var cell = CCTCellProperties()
         cell.technology = .NR
         
         if tlv.length != 52 {
-            throw CCTParserError.unexpectedTLVLength
+            throw CCTParserError.unexpectedTlvLength
         }
 
         // Just a guess, we have not been able to validate this!

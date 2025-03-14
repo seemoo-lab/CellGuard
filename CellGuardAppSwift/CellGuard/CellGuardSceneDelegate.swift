@@ -74,14 +74,6 @@ class CellGuardSceneDelegate: NSObject, UIWindowSceneDelegate, ObservableObject 
         #if JAILBREAK
         if UserDefaults.standard.dataCollectionMode() == .automatic {
             do {
-                let refreshTask = BGAppRefreshTaskRequest(identifier: CellGuardAppDelegate.cellRefreshTaskIdentifier)
-                refreshTask.earliestBeginDate = Date(timeIntervalSinceNow: 60 * 60)
-                try BGTaskScheduler.shared.submit(refreshTask)
-            } catch {
-                Self.logger.warning("Could not schedule the app cell refresh task: \(Self.toDescription(taskSchedulerError: error as? BGTaskScheduler.Error)) -> \(error)")
-            }
-            
-            do {
                 let refreshTask = BGAppRefreshTaskRequest(identifier: CellGuardAppDelegate.packetRefreshTaskIdentifier)
                 refreshTask.earliestBeginDate = Date(timeIntervalSinceNow: 60 * 60)
                 try BGTaskScheduler.shared.submit(refreshTask)

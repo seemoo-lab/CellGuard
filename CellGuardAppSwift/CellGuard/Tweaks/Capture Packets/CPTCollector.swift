@@ -28,7 +28,7 @@ struct CPTCollector {
             client.queryPackets { result in
                 do {
                     let packets = try result.get()
-                    let (qmiPackets, ariPackets, cells) = try Self.store(packets)
+                    let (qmiPackets, ariPackets, cells) = try Self.store(packets, cellFilter: { _ in true })
                     Self.logger.debug("Imported \(qmiPackets) QMI, \(ariPackets) ARI packets, and \(cells) Cells")
                     completion.resume(returning: (qmiPackets, ariPackets, cells))
                 } catch {
@@ -40,30 +40,20 @@ struct CPTCollector {
         }
     }
     
-    public static func store(_ packets: [CPTPacket]) throws -> (Int, Int, Int) {
+    public static func store(_ packets: [CPTPacket], cellFilter: (CCTCellProperties) -> Bool) throws -> (Int, Int, Int) {
         do {
             var qmiPackets: [(CPTPacket, ParsedQMIPacket)] = []
             var ariPackets: [(CPTPacket, ParsedARIPacket)] = []
-            var cells: [CCTCellProperties] = []
             
             for packet in packets {
                 do {
                     let parsedPacket = try packet.parse()
-                    var packetCells: [CCTCellProperties]?
                     if let qmiPacket = parsedPacket as? ParsedQMIPacket {
                         qmiPackets.append((packet, qmiPacket))
-                        packetCells = try? CCTParser().parseQMICell(packet.data, timestamp: packet.timestamp)
                     } else if let ariPacket = parsedPacket as? ParsedARIPacket {
                         ariPackets.append((packet, ariPacket))
-                        packetCells = try? CCTParser().parseARICell(packet.data, timestamp: packet.timestamp)
                     } else {
                         Self.logger.warning("Can't parse packet: Missing implementation for packet protocol \(packet.proto.rawValue)")
-                    }
-                    
-                    if let packetCells = packetCells {
-                        for cell in packetCells {
-                            // cells.append(cell)
-                        }
                     }
                 } catch {
                     print(packet.description)
@@ -74,11 +64,10 @@ struct CPTCollector {
                 }
             }
             
-            try PersistenceController.shared.importQMIPackets(from: qmiPackets)
-            try PersistenceController.shared.importARIPackets(from: ariPackets)
-            try PersistenceController.shared.importCollectedCells(from: cells)
+            let (qmiDBObjects, importedCellsQmi) = try PersistenceController.shared.importQMIPackets(from: qmiPackets, cellFilter: cellFilter)
+            let (ariDBObjects, importedCellsAri) = try PersistenceController.shared.importARIPackets(from: ariPackets, cellFilter: cellFilter)
             
-            return (qmiPackets.count, ariPackets.count, cells.count)
+            return (qmiPackets.count, ariPackets.count, importedCellsQmi + importedCellsAri)
         } catch {
             Self.logger.warning("Can't import packets: \(error)")
             throw error

@@ -11,9 +11,9 @@ import Foundation
 extension PersistenceController {
     
     /// Uses `NSBatchInsertRequest` (BIR) to import QMI packets into the Core Data store on a private queue.
-    func importQMIPackets(from packets: [(CPTPacket, ParsedQMIPacket)]) throws {
+    func importQMIPackets(from packets: [(CPTPacket, ParsedQMIPacket)], cellFilter: (CCTCellProperties) -> Bool) throws -> (Int, Int) {
         if packets.isEmpty {
-            return
+            return (0, 0)
         }
         
         let objectIds: [NSManagedObjectID] = try performAndWait(name: "importContext", author: "importQMIPackets") { context in
@@ -53,12 +53,26 @@ extension PersistenceController {
             return batchInsertResult.result as? [NSManagedObjectID]
         } ?? []
         
+        var importedCells = 0
         try performAndWait(name: "importContext", author: "importQMIPackets") { context in
             var added = false
+            let cellParser = CCTParser()
             
-            for id in objectIds {
-                guard let qmiPacket = context.object(with: id) as? PacketQMI else {
-                    continue
+            let qmiPackets = objectIds
+                .compactMap { context.object(with: $0) as? PacketQMI }
+                .sorted { $0.collected ?? Date.distantPast < $1.collected ?? Date.distantPast }
+            
+            for qmiPacket in qmiPackets {
+                if let packetData = qmiPacket.data,
+                   let packetTimestamp = qmiPacket.collected,
+                   let packetCells = try? cellParser.parseQmiCell(packetData, timestamp: packetTimestamp) {
+                    qmiPacket.cells = NSSet(array: packetCells.filter(cellFilter).map { (cellProperties: CCTCellProperties) in
+                        var cell = CellTweak(entity: CellTweak.entity(), insertInto: context)
+                        cellProperties.applyTo(tweakCell: cell)
+                        return cell
+                    })
+                    added = true
+                    importedCells += qmiPacket.cells?.count ?? 0
                 }
                 
                 if qmiPacket.indication == PacketConstants.qmiRejectIndication
@@ -92,13 +106,14 @@ extension PersistenceController {
             throw PersistenceError.batchInsertError
         } */
         
-        logger.debug("Successfully inserted \(packets.count) tweak QMI packets.")
+        logger.debug("Successfully inserted \(packets.count) tweak QMI packets and \(importedCells) Cells.")
+        return (packets.count, importedCells)
     }
     
     /// Uses `NSBatchInsertRequest` (BIR) to import ARI packets into the Core Data store on a private queue.
-    func importARIPackets(from packets: [(CPTPacket, ParsedARIPacket)]) throws {
+    func importARIPackets(from packets: [(CPTPacket, ParsedARIPacket)], cellFilter: (CCTCellProperties) -> Bool) throws -> (Int, Int) {
         if packets.isEmpty {
-            return
+            return (0, 0)
         }
         
         let objectIds: [NSManagedObjectID] = try performAndWait(name: "importContext", author: "importARIPackets") { context in
@@ -137,13 +152,27 @@ extension PersistenceController {
             return batchInsertResult.result as? [NSManagedObjectID]
         } ?? []
         
+        var importedCells = 0
         try performAndWait(name: "importContext", author: "importARIPackets") { context in
             var added = false
+            let cellParser = CCTParser()
             
             // TODO: Can we do that in parallel?
-            for id in objectIds {
-                guard let ariPacket = context.object(with: id) as? PacketARI else {
-                    continue
+            let ariPackets = objectIds
+                .compactMap { context.object(with: $0) as? PacketARI }
+                .sorted { $0.collected ?? Date.distantPast < $1.collected ?? Date.distantPast }
+            
+            for ariPacket in ariPackets {                
+                if let packetData = ariPacket.data,
+                   let packetTimestamp = ariPacket.collected,
+                   let packetCells = try? cellParser.parseAriCell(packetData, timestamp: packetTimestamp) {
+                    ariPacket.cells = NSSet(array: packetCells.filter(cellFilter).map { (cellProperties: CCTCellProperties) in
+                        let cell = CellTweak(entity: CellTweak.entity(), insertInto: context)
+                        cellProperties.applyTo(tweakCell: cell)
+                        return cell
+                    })
+                    added = true
+                    importedCells += ariPacket.cells?.count ?? 0
                 }
                 
                 if ariPacket.direction == PacketConstants.ariRejectDirection.rawValue {
@@ -173,7 +202,8 @@ extension PersistenceController {
             throw PersistenceError.batchInsertError
         } */
         
-        logger.debug("Successfully inserted \(packets.count) tweak ARI packets.")
+        logger.debug("Successfully inserted \(packets.count) tweak ARI packets and \(importedCells) Cells.")
+        return (packets.count, importedCells)
     }
     
     func fetchIndexedQMIPackets(start: Date, end: Date, reject: Bool = false, signal: Bool = false) throws -> [NSManagedObjectID: ParsedQMIPacket] {
@@ -319,7 +349,7 @@ extension PersistenceController {
                 logger.debug("Deleting packets older than \(startOfDay)")
                 
                 // Only delete packets not referenced by cells
-                let predicate = NSPredicate(format: "collected < %@ and index = nil", daysAgo as NSDate)
+                let predicate = NSPredicate(format: "collected < %@ AND index = nil AND cells.@count == 0", daysAgo as NSDate)
                 
                 let qmiCount = try deleteData(entity: PacketQMI.entity(), predicate: predicate, context: context)
                 let ariCount = try deleteData(entity: PacketARI.entity(), predicate: predicate, context: context)

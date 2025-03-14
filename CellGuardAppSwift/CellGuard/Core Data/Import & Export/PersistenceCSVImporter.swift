@@ -107,9 +107,8 @@ struct PersistenceCSVImporter {
         Self.logger.debug("Read \(locations?.count ?? 0) locations")
         let alsCells = try readAlsCells(directory: tmpDirectoryURL, infoData: infoData, progress: progress)
         Self.logger.debug("Read \(alsCells?.count ?? 0) ALS cells")
-        let packets = try readPackets(directory: tmpDirectoryURL, infoData: infoData, progress: progress)
+        let (packets, userCells) = try readPackets(directory: tmpDirectoryURL, infoData: infoData, progress: progress)
         Self.logger.debug("Read \(packets?.count ?? 0) packets")
-        let userCells = try readUserCells(directory: tmpDirectoryURL, infoData: infoData, progress: progress)
         Self.logger.debug("Read \(userCells?.count ?? 0) user cells")
         
         return ImportResult(cells: userCells, alsCells: alsCells, locations: locations, packets: packets, notices: [])
@@ -250,30 +249,6 @@ struct PersistenceCSVImporter {
         return jsonDict
     }
     
-    private func readUserCells(directory: URL, infoData: [String: Int], progress: CSVProgressFunc) throws -> ImportCount? {
-        let parser = CCTParser()
-        
-        // Think about also importing the cell's status and score
-        
-        return try importData(directory: directory, category: .connectedCells, infoData: infoData, progress: progress) { (csv: CSVReader) -> CCTCellProperties? in
-            let jsonString = try csvString(csv, "json")
-            
-            guard let jsonData = jsonString.data(using: .utf8) else {
-                throw PersistenceCSVImporterError.fieldNil("json")
-            }
-            
-            guard let cellSample = try JSONSerialization.jsonObject(with: jsonData) as? CellSample else {
-                throw PersistenceCSVImporterError.fieldJSONParsing("json")
-            }
-            
-            return try parser.parse(cellSample)
-        } timestamp: { sample in
-            sample.timestamp
-        } bulkImport: { samples in
-            try PersistenceController.shared.importCollectedCells(from: samples)
-        }
-    }
-    
     private func readAlsCells(directory: URL, infoData: [String: Int], progress: CSVProgressFunc) throws -> ImportCount? {
         return try importData(directory: directory, category: .alsCells, infoData: infoData, progress: progress) { csv in
             // let imported = try csvDate(csv, "imported")
@@ -337,12 +312,13 @@ struct PersistenceCSVImporter {
         }
     }
     
-    private func readPackets(directory: URL, infoData: [String: Int], progress: CSVProgressFunc) throws -> ImportCount? {
+    private func readPackets(directory: URL, infoData: [String: Int], progress: CSVProgressFunc) throws -> (ImportCount?, ImportCount?) {
         // Set the packet retention time frame to infinite, so that older packets to-be-imported don't get deleted
         UserDefaults.standard.setValue(DeleteView.packetRetentionInfinite, forKey: UserDefaultsKeys.packetRetention.rawValue)
         UserDefaults.standard.setValue(DeleteView.locationRetentionInfinite, forKey: UserDefaultsKeys.locationRetention.rawValue)
         
-        return try importData(directory: directory, category: .packets, infoData: infoData, progress: progress) { (csv: CSVReader) -> CPTPacket? in
+        var cellCount = 0
+        let packetImportCount = try importData(directory: directory, category: .packets, infoData: infoData, progress: progress) { (csv: CSVReader) -> CPTPacket? in
             let directionStr = try csvString(csv, "direction")
             let dataStr = try csvString(csv, "data")
             let collected = try csvDate(csv, "collected")
@@ -358,31 +334,13 @@ struct PersistenceCSVImporter {
         } timestamp: { packet in
             packet.timestamp
         } bulkImport: { packets in
-            let qmiPackets = packets.compactMap { packet -> (CPTPacket, ParsedQMIPacket)? in
-                guard let qmiPacket = try? ParsedQMIPacket(nsData: packet.data) else {
-                    return nil
-                }
-                
-                return (packet, qmiPacket)
-            }
-            if qmiPackets.count > 0 {
-                try PersistenceController.shared.importQMIPackets(from: qmiPackets)
-            }
-            
-            let ariPackets = packets.compactMap { packet -> (CPTPacket, ParsedARIPacket)? in
-                guard let qmiPacket = try? ParsedARIPacket(data: packet.data) else {
-                    return nil
-                }
-                
-                return (packet, qmiPacket)
-            }
-            if ariPackets.count > 0 {
-                try PersistenceController.shared.importARIPackets(from: ariPackets)
+            if packets.count > 0 {
+                (_, _, cellCount) = try CPTCollector.store(packets, cellFilter: { _ in true })
             }
         }
+        let cellImportCount = ImportCount(count: cellCount, first: packetImportCount?.first, last: packetImportCount?.last)
+        return (packetImportCount, cellImportCount)
     }
-    
-    
     
     private func csvDate(_ csv: CSVReader, _ key: String) throws -> Date {
         let timestamp = try csvDouble(csv, key)

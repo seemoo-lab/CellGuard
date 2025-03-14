@@ -74,10 +74,10 @@ private struct PacketARIDetailsList: View {
 
 private struct PacketARIDetailsTLVSection: View {
     
-    let tlv: ARITLV
+    let tlv: AriTlv
     let tlvDef: ARIDefinitionTLV?
     
-    init(tlv: ARITLV, typeDef: ARIDefinitionType?) {
+    init(tlv: AriTlv, typeDef: ARIDefinitionType?) {
         self.tlv = tlv
         self.tlvDef = typeDef?.tlvs[tlv.type]
     }

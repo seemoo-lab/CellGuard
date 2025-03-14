@@ -33,7 +33,7 @@ struct ParsedQMIPacket: ParsedPacket {
     let qmuxHeader: QMIQMuxHeader
     let transactionHeader: QMITransactionHeader
     let messageHeader: QMIMessageHeader
-    let tlvs: [QMITLV]
+    let tlvs: [QmiTlv]
     
     init(nsData: Data) throws {
         // QMI packets have 3 headers followed by an arbitrary number of TLVs holding the packet's content.
@@ -71,9 +71,9 @@ struct ParsedQMIPacket: ParsedPacket {
         }
         
         // TLVs (Variable Size)
-        var tmpTLVs: [QMITLV] = []
+        var tmpTLVs: [QmiTlv] = []
         while offset < nsData.count {
-            let tlv = try QMITLV(nsData: nsData.subdata(in: offset..<nsData.count))
+            let tlv = try QmiTlv(nsData: nsData.subdata(in: offset..<nsData.count))
             tmpTLVs.append(tlv)
             
             // The TLV header has a size of 3 bytes
@@ -85,7 +85,7 @@ struct ParsedQMIPacket: ParsedPacket {
     init (
         flag: UInt8, serviceId: UInt8, clientId: UInt8, messageId: UInt16,
         compound: Bool, indication: Bool, response: Bool, transactionId: UInt16,
-        tlvs: [QMITLV]
+        tlvs: [QmiTlv]
     ) throws {
         self.tlvs = tlvs
         
@@ -134,7 +134,7 @@ struct ParsedQMIPacket: ParsedPacket {
         return Data(bytes)
     }
     
-    func findTlvValue(type: UInt8) -> QMITLV? {
+    func findTlvValue(type: UInt8) -> QmiTlv? {
         return self.tlvs.filter({ $0.type == type }).first
     }
     
@@ -317,7 +317,7 @@ struct QMIMessageHeader {
     }
 }
 
-struct QMITLV {
+struct QmiTlv {
     var byteCount: Int {
         return 1 + 2 + Int(length)
     }

@@ -1,9 +1,0 @@
-Package: de.tudarmstadt.seemoo.capturecells
-Name: CaptureCells
-Version: 1.0.5
-Architecture: iphoneos-arm
-Description: Captures the cellular base stations your iPhone connects to and provides a TCP interface to query them
-Maintainer: Lukas Arnold
-Author: Lukas Arnold
-Section: Tweaks
-Depends: mobilesubstrate (>= 0.9.5000) | ellekit (>= 1.0)

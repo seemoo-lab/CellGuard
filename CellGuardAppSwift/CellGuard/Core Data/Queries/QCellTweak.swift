@@ -68,6 +68,16 @@ extension PersistenceController {
         }
     }
     
+    func fetchCellExistsByCellId(id: Int64) -> Bool? {
+        return try? performAndWait(name: "fetchContext", author: "fetchTechnologies") { context in
+            let existFetchRequest = CellTweak.fetchRequest()
+            existFetchRequest.fetchLimit = 1
+            existFetchRequest.predicate = NSPredicate(format: "cell = %@", id as NSNumber)
+            let cell = try context.fetch(existFetchRequest).first
+            return cell != nil
+        }
+    }
+    
     func fetchCellAttribute<T>(cell: NSManagedObjectID, extract: (CellTweak) throws -> T?) -> T? {
         return try? performAndWait(name: "fetchContext", author: "fetchCellAttribute") { context in
             if let tweakCell = context.object(with: cell) as? CellTweak {
