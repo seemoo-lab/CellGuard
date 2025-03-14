@@ -14,21 +14,21 @@ import SwiftUI
  Bösartige Mobilfunk-Basisstationen können beispielsweise Positionen von Smartphones erfassen, ihren Datenverkehr überwachen und verändern, und ein Einfallstor für die Ausnutzung von Sicherheitslücken in Smartphones sein. Wir möchten evaluieren, wie gut CellGuard Menschen vor bösartigen Mobilfunk- Basisstationen schützen kann.
  Sie können die App ohne Teilnahme an der Studie verwenden. Wenn Sie an der Studie teilnehmen, gelten folgende Bedingungen:
  Erfasste Daten
- • Informationen über als potentiell bösartig detektierten Mobilfunk-Basisstationen. 
+ • Informationen über als potentiell bösartig detektierten Mobilfunk-Basisstationen.
  • Wir protokollieren Ihre Position zum Zeitpunkt einer Detektion sowie Informationen, welche die Basisstation identifizieren (Ländercode, Mobilfunkbetreibercode, Mobilfunkzellenidentifikator, Frequenz, Bandbreite, eingesetzte Funktechnologie).
  • Zusätzlich erfassen wir die Mobilfunk- Managementpakete (QMI bzw. ARI) in einem Zeitfenster von +/- 15 Sekunden um den Zeitpunkt der Detektion bzw. den Verbindungsaufbau, bereinigt um personenspezifische Daten.
  Freiwillig geteilte Informationen
  • CellGuard bietet die Möglichkeit, Einstufungen der Basisstationen anzupassen und einen Kommentar zur Einstufung zu hinterlassen. Optional lassen sich diese Einstufungen und Kommentare im Rahmen der Studie teilen.
  Dauer der Studie
- • Solange Sie die App installiert haben und an der Studie teilnehmen wollen. 
+ • Solange Sie die App installiert haben und an der Studie teilnehmen wollen.
  • Sie können die Teilnahme jederzeit in den Einstellungen beenden.
  Löschung der Daten
  Die Erfassung der Basisstationsinformationen erfolgt anonym. Die Informationen werden einzeln pro Basisstation übertragen und können weder miteinander noch mit nutzerspezifischen Identifikationsmerkmalen verknüpft werden.
  Datenverarbeitung
  Alle Daten werden vertraulich behandelt und auf Servern der TU Darmstadt gespeichert. Keine weiteren Personen außerhalb des FG SEEMOO an der TU Darmstadt und der NG Cybersecurity – Mobile & Wireless am Hasso- Plattner-Institut erhalten Zugriff. Eine Identifizierung der einzelnen Teilnehmenden ist nicht möglich. Mit der Teilnahme sind keine Risiken verbunden. Die Datenverarbeitung dieser Studie geschieht nach datenschutzrechtlichen Bestimmungen der Datenschutzgrundverordnung (DSGVO) sowie des Hessischen Datenschutz- und Informationsfreiheitsgesetzes (HDSIG). Die Daten werden ausschließlich für die im Aufklärungsbogen beschriebenen Zwecke verwendet.
  Wenn Sie an der Studie teilnehmen bestätigen Sie, dass Sie älter als 18 Jahre alt sind und diese Einverständniserklärung gelesen haben.
- Kontaktmöglichkeiten: 
- Dr.-Ing. Jiska Classen und Lukas Arnold 
+ Kontaktmöglichkeiten:
+ Dr.-Ing. Jiska Classen und Lukas Arnold
  (verantwortlich für Durchführung und Datenverarbeitung)
  Emails: jiska.classen@hpi.de, larnold@seemoo.tu- darmstadt.de
  Für weitere Fragen zum Datenschutz können kontaktiert werden:
