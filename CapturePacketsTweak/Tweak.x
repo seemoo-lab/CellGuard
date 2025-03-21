@@ -63,7 +63,7 @@ CPTManager* cptManager;
 
 %end
 
-%group ARI
+%group AriIn
 
 // libARIServer.dylib
 // AriHostRt::InboundMsgCB(unsigned char*, unsigned long)
@@ -83,6 +83,27 @@ CPTManager* cptManager;
 
 %end
 
+%group AriOut
+
+// libPCITransport.dylib
+// pci::transport::th::writeAsync(unsigned char const*, unsigned int, void (*)(void*))
+// Handles all outgoing ARI & QMI packets
+// Source: https://dev.seemoo.tu-darmstadt.de/apple/iphone-qmi-wireshark/-/tree/main/agent
+
+%hookf(int, WriteAsync, void *instance, unsigned char *data, unsigned int length, void *callback) {
+	// Copy the data buffer into a NSData object
+	// See: https://developer.apple.com/documentation/foundation/nsdata/1547231-datawithbytes?language=objc
+	NSData *objData = [NSData dataWithBytes:data length:length];
+	// NSLog(@"Hey, we're hooking ARI & QMI send stuff %@", objData);
+	[cptManager addData:objData :@"OUT" :0];
+
+	// Call the original implementation of this function
+	return %orig;
+}
+
+%end
+
+
 %ctor {
 	NSString* programName = [NSString stringWithUTF8String: argv[0]];
 	if ([programName isEqualToString:@"/System/Library/Frameworks/CoreTelephony.framework/Support/CommCenter"]) {
@@ -94,6 +115,7 @@ CPTManager* cptManager;
 		// See: https://github.com/theos/logos/issues/67#issuecomment-682242010
 		// See: http://www.cydiasubstrate.com/api/c/MSGetImageByName/
 		MSImageRef libATCommandStudioDynamicImage = MSGetImageByName("/usr/lib/libATCommandStudioDynamic.dylib");
+		MSImageRef libPCITransportImage = MSGetImageByName("/usr/lib/libPCITransport.dylib");
 
 		// We can always hook this function and on ARI iPhone it is never called.
 		%init(QMI, SLog = MSFindSymbol(libATCommandStudioDynamicImage, "__ZL17sLogBinaryToOsLogP8os_log_sN3qmi8LogLevelENS1_11MessageTypeENS1_11ServiceTypeEtNS1_7SimSlotEPKvm"));
@@ -107,8 +129,13 @@ CPTManager* cptManager;
 			MSImageRef libARIServer = MSGetImageByName("/usr/lib/libARIServer.dylib");
 			// Only initialize the hook for incoming ARI messages as the library is only loaded on ARI iPhones.
 			if (libARIServer != NULL) {
-				%init(ARI, InboundMsgCB = MSFindSymbol(libARIServer, "__ZN9AriHostRt12InboundMsgCBEPhm"));
+				%init(AriIn, InboundMsgCB = MSFindSymbol(libARIServer, "__ZN9AriHostRt12InboundMsgCBEPhm"));
 				// NSLog(@"libARIServer: %p - InboundMsg: %p", libARIServer, MSFindSymbol(libARIServer, "__ZN9AriHostRt12InboundMsgCBEPhm"));
+
+				// The two underscores in front of the function names are important for MSFindSymbol to work
+				// See: http://www.cydiasubstrate.com/api/c/MSFindSymbol/
+				%init(AriOut, WriteAsync = MSFindSymbol(libPCITransportImage, "__ZN3pci9transport2th10writeAsyncEPKhjPFvPvE"));
+
 				NSLog(@"Our CapturePackets tweak also hooks ARI packets");
 			}
 		});

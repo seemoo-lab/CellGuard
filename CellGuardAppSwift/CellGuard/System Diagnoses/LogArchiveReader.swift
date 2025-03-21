@@ -592,6 +592,7 @@ struct LogArchiveReader {
         let direction: CPTDirection
         direction = message.contains("req") ? .outgoing : .ingoing
         
+        // We add the simSlotId when parsing the ARI packet at CPTCollector.store()
         return try CPTPacket(direction: direction, data: packetData, timestamp: timestamp, knownProtocol: .ari)
     }
     

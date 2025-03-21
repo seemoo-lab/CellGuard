@@ -123,6 +123,7 @@ extension PersistenceController {
                     dbPacket.collected = tweakPacket.timestamp
                     dbPacket.direction = tweakPacket.direction.rawValue
                     // dbPacket.proto = tweakPacket.proto.rawValue
+                    dbPacket.simSlotID = tweakPacket.simSlotID != nil ? Int16(tweakPacket.simSlotID!) : 0
                     
                     dbPacket.group = Int16(parsedPacket.header.group)
                     dbPacket.type = Int32(parsedPacket.header.type)

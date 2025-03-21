@@ -27,7 +27,7 @@ struct CPTPacket: CustomStringConvertible {
     let direction: CPTDirection
     let data: Data
     let timestamp: Date
-    let simSlotID: UInt8?
+    var simSlotID: UInt8?
     
     init(direction: CPTDirection, data: Data, timestamp: Date, simSlotID: UInt8? = nil, knownProtocol: CPTProtocol? = nil) throws {
         self.direction = direction

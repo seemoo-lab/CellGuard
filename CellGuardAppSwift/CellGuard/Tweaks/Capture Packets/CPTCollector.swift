@@ -51,6 +51,8 @@ struct CPTCollector {
                     if let qmiPacket = parsedPacket as? ParsedQMIPacket {
                         qmiPackets.append((packet, qmiPacket))
                     } else if let ariPacket = parsedPacket as? ParsedARIPacket {
+                        var packet = packet
+                        packet.simSlotID = ariPacket.simSlotId()
                         ariPackets.append((packet, ariPacket))
                     } else {
                         Self.logger.warning("Can't parse packet: Missing implementation for packet protocol \(packet.proto.rawValue)")
