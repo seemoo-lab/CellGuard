@@ -229,12 +229,19 @@ struct LogArchiveReader {
         
         do {
             let totalCsvLines = try countCSVLines(csvFile: csvFile)
+            let updateFrequency = max(1, totalCsvLines / 100)
             Self.logger.debug("Total CSV Lines: \(totalCsvLines)")
+            
             var currentCsvLine = 0
             let out = try readCSV(csvFile: csvFile) {
                 currentCsvLine += 1
-                progress(.importingData, currentCsvLine, totalCsvLines)
+                
+                // Update the SwiftUI just 100 times to avoid DoS behavior, e.g. EXC_BAD_ACCESS.
+                if currentCsvLine % updateFrequency == 0 {
+                    progress(.importingData, currentCsvLine, totalCsvLines)
+                }
             }
+            
             Self.logger.debug("done :)")
             return out
         } catch {
