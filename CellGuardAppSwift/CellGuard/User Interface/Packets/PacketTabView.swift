@@ -22,6 +22,9 @@ struct PacketTabView: View {
     
     @State private var filter: PacketFilterSettings = PacketFilterSettings()
     @State private var isShowingFilterView = false
+    @State private var pausedBeforeBackground = false
+    @State private var backgroundObserver: NSObjectProtocol? = nil
+    @State private var foregroundObserver: NSObjectProtocol? = nil
     
     var body: some View {
         // TODO: Store filter settings across different app executions?
@@ -79,6 +82,31 @@ struct PacketTabView: View {
                     }
                 }
             }
+            
+            #if JAILBREAK
+            // Pause the FilteredPacketView when entering background.
+            self.backgroundObserver = NotificationCenter.default.addObserver(forName: UIApplication.didEnterBackgroundNotification, object: nil, queue: .main) { _ in
+                self.pausedBeforeBackground = filter.pauseDate != nil
+                if !pausedBeforeBackground {
+                    filter.pauseDate = Date()
+                }
+            }
+            self.foregroundObserver = NotificationCenter.default.addObserver(forName: UIApplication.willEnterForegroundNotification, object: nil, queue: .main) { _ in
+                if !self.pausedBeforeBackground {
+                    filter.pauseDate = nil
+                }
+            }
+            #endif
+        }
+        .onDisappear {
+            #if JAILBREAK
+            if let backgroundObserver = self.backgroundObserver {
+                NotificationCenter.default.removeObserver(backgroundObserver)
+            }
+            if let foregroundObserver = self.foregroundObserver {
+                NotificationCenter.default.removeObserver(foregroundObserver)
+            }
+            #endif
         }
         // Magic that prevents Pickers from closing
         // See: https://stackoverflow.com/a/70307271
