@@ -1,167 +1,167 @@
-import dataclasses
-import json
-from dataclasses import dataclass
-from pathlib import Path
+from enum import Enum
+from os import path
 from typing import Optional
 
 import pandas as pd
-import requests
-from bs4 import BeautifulSoup, Tag
 
 
-# Country and territories: Mobile country code	Country	ISO 3166	Mobile network codes	National MNC authority	Remarks
-# Operator: MCC	MNC	Brand	Operator	Status	Bands (MHz)	References and notes
+class OperatorStatus(Enum):
+    NOT_OPERATIONAL = -1
+    UNKNOWN = 0
+    OPERATIONAL = 1
 
-@dataclass
-class Country:
-    mnc: str
-    name: str
-    iso: str
-    operators_ref: str
-    authority: str
-    remarks: str
+    @staticmethod
+    def from_string(status: str):
+        if status == 'Not operational' or status == 'Not Operational':
+            return OperatorStatus.NOT_OPERATIONAL
+        elif status == 'Reserved':
+            return OperatorStatus.NOT_OPERATIONAL
+        elif status in ['Operational', 'operational', 'Ongoing', 'Implement / Design', 'Operational[citation needed]',
+                        'Upcoming', 'Test Network', 'Allocated', 'Testing', 'Building Network', 'Planned',
+                        'Temporary operational']:
+            return OperatorStatus.OPERATIONAL
+        elif status == 'Unknown' or status == 'UNKNOWN':
+            return OperatorStatus.UNKNOWN
+        else:
+            print(f'Unexpected status string: {status}')
+            return OperatorStatus.UNKNOWN
 
-@dataclass
-class Operator:
-    mcc: str
-    mnc: str
-    brand: str
-    company: str
-    bands: str
-    remarks: str
 
 WIKI_URL = 'https://en.wikipedia.org/wiki/Mobile_country_code'
 WIKI_URL_REGIONS = [
-  'https://en.wikipedia.org/wiki/Mobile_Network_Codes_in_ITU_region_2xx_(Europe)',
-  'https://en.wikipedia.org/wiki/Mobile_Network_Codes_in_ITU_region_3xx_(North_America)',
-  'https://en.wikipedia.org/wiki/Mobile_Network_Codes_in_ITU_region_4xx_(Asia)',
-  'https://en.wikipedia.org/wiki/Mobile_Network_Codes_in_ITU_region_5xx_(Oceania)',
-  'https://en.wikipedia.org/wiki/Mobile_Network_Codes_in_ITU_region_6xx_(Africa)',
-  'https://en.wikipedia.org/wiki/Mobile_Network_Codes_in_ITU_region_7xx_(South_America)'
+    'https://en.wikipedia.org/wiki/Mobile_Network_Codes_in_ITU_region_2xx_(Europe)',
+    'https://en.wikipedia.org/wiki/Mobile_Network_Codes_in_ITU_region_3xx_(North_America)',
+    'https://en.wikipedia.org/wiki/Mobile_Network_Codes_in_ITU_region_4xx_(Asia)',
+    'https://en.wikipedia.org/wiki/Mobile_Network_Codes_in_ITU_region_5xx_(Oceania)',
+    'https://en.wikipedia.org/wiki/Mobile_Network_Codes_in_ITU_region_6xx_(Africa)',
+    'https://en.wikipedia.org/wiki/Mobile_Network_Codes_in_ITU_region_7xx_(South_America)'
 ]
 
-def fetch_countries() -> tuple[list[Country], list[Operator]]:
-    print('Fetching countries from Wikipedia...')
 
-    # r = requests.get(WIKI_URL)
-    # if not r.ok:
-    #     print(f'Request to Wikipedia failed with status code {r.status_code}:\n{r.text}')
-    #     exit(1)
+def fetch_countries() -> tuple[pd.DataFrame, pd.DataFrame]:
+    print('Fetching countries and global operators from Wikipedia...')
 
-    # soup = BeautifulSoup(r.text, 'html.parser')
-    # tables = soup.find_all('table', attrs={'class': 'wikitable'})
-    #
-    # table_test_operators = tables[0]
-    # table_countries_territories = tables[1]
-    # table_international_operators = tables[2]
-    # table_io_operators = tables[3]
-    #
-    # parse_countries(table_countries_territories)
+    # Extract all operator tables from the webpage
+    # https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_csv.html
+    operators = pd.read_html(WIKI_URL, attrs={'class': 'wikitable'}, extract_links='body')
+    operators_df = pd.concat([strip_operator_table(op) for op in operators])
 
-    # https://stackoverflow.com/a/55010551
+    # Extract the country MCC table
+    countries = pd.read_html(WIKI_URL, attrs={'class': 'wikitable sortable mw-collapsible'}, extract_links='body')
+    countries_df = strip_country_table(countries[0])
 
-    # Extract all tables from the wikipage
-    dfs = pd.read_html(WIKI_URL, attrs={'class': 'wikitable'})
-    print(dfs)
-    # The table referenced above is the 7th on the wikipage
-    # df = dfs[6]
-    # The last row is just the date of the last update
-    # df = df.iloc[:-1]
+    return countries_df, operators_df
 
-    # TODO: Clean DFs
-    # TODO: Merge DFs
-    # Output two CSVs (one for countries, one for operators)
 
-    return [], []
+def filter_urls(t: Optional[tuple[str, Optional[str]]]) -> Optional[tuple[str, Optional[str]]]:
+    if t is None:
+        return None
 
-def fetch_regions(url: str) -> list[Operator]:
+    if t[1] is None:
+        return t
+
+    # We only allow Wikipedia URLs that start with /
+    if t[1].startswith('/'):
+        return t
+
+    return t[0], None
+
+
+def filter_index_char(name: Optional[str]) -> Optional[str]:
+    if name is None:
+        return None
+
+    split = name.split(' ', maxsplit=1)
+    if len(split) == 2 and len(split[0]) == 1:
+        return split[1]
+
+    return name
+
+
+def strip_country_table(df: pd.DataFrame) -> pd.DataFrame:
+    column_names = df.columns.values.tolist()
+    assert column_names == [
+        'Mobile country code', 'Country', 'ISO 3166',
+        'Mobile network codes', 'National MNC authority', 'Remarks'
+    ]
+
+    df = df.drop(columns=['National MNC authority', 'Remarks'])
+    df = df.rename(columns={
+        'Mobile country code': 'mcc',
+        'Country': 'name',
+        'ISO 3166': 'iso',
+        'Mobile network codes': 'mnc',
+    })
+    df['mcc'] = df['mcc'].map(lambda x: x[0])
+    df['name'] = df['name'].map(lambda x: filter_index_char(x[0]))
+    df['iso'] = df['iso'].map(lambda x: x[0])
+    df['mnc'] = df['mnc'].map(lambda x: filter_urls(x)[1])
+
+    return df
+
+
+def fetch_regions(url: str) -> pd.DataFrame:
     region = url.split('_')[-1].strip('()')
     print(f'Fetching operators for region {region} from Wikipedia...')
 
-    dfs = pd.read_html(WIKI_URL, attrs={'class': 'wikitable'})
-    print(dfs)
-
-    r = requests.get(url)
-    if not r.ok:
-        print(f'Request to Wikipedia failed with status code {r.status_code}:\n{r.text}')
-        exit(1)
-
-    return []
-
-def parse_operators(df: pd.DataFrame) -> list[Operator]:
+    operators = pd.read_html(url, attrs={'class': 'wikitable'}, extract_links='body')
+    return pd.concat([strip_operator_table(op) for op in operators])
 
 
-    return []
+def filter_mcc_names(mcc: str) -> str:
+    if len(mcc) == 3:
+        return mcc
 
-def parse_countries(df: pd.DataFrame) -> list[Country]:
-    # Verify that we found the correct table
-    headers = table.find_all('th')
-    headers_text = [h.text.strip('\n') for h in headers]
-    assert len(headers) == 6
-    assert headers_text[0] == 'Mobile country code'
-    assert headers_text[1] == 'Country'
-    assert headers_text[2] == 'ISO 3166'
-    assert headers_text[3] == 'Mobile network codes'
-    assert headers_text[4] == 'National MNC authority'
-    assert headers_text[5] == 'Remarks'
-
-    # Skip the first header row
-    rows = table.find_all('tr')[1:]
-    countries = []
-    for row in rows:
-        columns = row.find_all('td')
-        countries.append(Country(
-            mnc=columns[0].string,
-            name=columns[1].string,
-            iso=columns[2].string,
-            operators_ref=columns[3].string,
-            authority=columns[4].string,
-            remarks=columns[5].string,
-        ))
-
-    print(countries)
-
-    return countries
-
-def strip_or_none(text: Optional[str]):
-    return text.strip() if text else text
+    return mcc.split(' ')[-1]
 
 
-def parse_html(html: str) -> list[Operator]:
-    soup = BeautifulSoup(html, 'html.parser')
-    operators = []
-    for row in soup.find_all('tr'):
-        row: Tag
-        data: list[Tag] = row.find_all('td')
+def map_operator_status(status_tuple: Optional[tuple[str, str]]) -> OperatorStatus:
+    if status_tuple is None:
+        return OperatorStatus.UNKNOWN
 
-        if len(data) < 6:
-            row_html_single_line = str(row).replace('\n', '')
-            print(f'Skipping the row: {row_html_single_line}')
-            continue
-
-        operators.append(Operator(
-            mcc=int(data[0].string),
-            mnc=int(data[1].string),
-            country_iso=strip_or_none(data[2].string),
-            country_name=strip_or_none(data[3].string),
-            country_code=int(data[4].string) if data[4].string else None,
-            network_name=strip_or_none(data[5].string),
-        ))
-    return operators
+    return OperatorStatus.from_string(status_tuple[0])
 
 
-def write_to_json(operators: list[Operator]) -> Path:
-    path = Path('CellGuard', 'Cells', 'operator-definitions.json')
-    with open(path, 'w') as file:
-        json.dump([dataclasses.asdict(o) for o in operators], file)
-    return path
+def strip_operator_table(df: pd.DataFrame) -> pd.DataFrame:
+    column_names = df.columns.values.tolist()
+    assert column_names == ['MCC', 'MNC', 'Brand', 'Operator', 'Status', 'Bands (MHz)', 'References and notes']
+
+    df = df.drop(columns=['Bands (MHz)', 'References and notes'])
+    df = df.rename(columns={
+        'MCC': 'mcc',
+        'MNC': 'mnc',
+        'Brand': 'brand',
+        'Operator': 'operator',
+        'Status': 'status',
+    })
+
+    df['mcc'] = df['mcc'].map(lambda x: filter_mcc_names(x[0]))
+    # Sometimes 100 - 190
+    df['mnc'] = df['mnc'].map(lambda x: x[0])
+    df['brand'] = df['brand'].map(filter_urls)
+    df['operator'] = df['operator'].map(filter_urls)
+    df['status'] = df['status'].map(lambda x: map_operator_status(x).value)
+
+    return df
 
 
 def main():
-    fetch_countries()
-    # operators = parse_html(html)
-    # path = write_to_json(operators)
-    # print(f'Wrote {len(operators)} operators to {path}')
+    # Output two CSVs (one for countries, one for operators)
+    countries, operators = fetch_countries()
+
+    for region_url in WIKI_URL_REGIONS:
+        regional_operators = fetch_regions(region_url)
+        operators = pd.concat([operators, regional_operators])
+
+    directory = path.join(path.dirname(__file__), 'CellGuard', 'Cells')
+
+    countries_path = path.join(directory, 'countries.csv')
+    countries.to_csv(countries_path, index=False)
+    print(f'Wrote {len(countries.index)} operators to {countries_path}')
+
+    operators_path = path.join(directory, 'operators.csv')
+    operators.to_csv(operators_path, index=False)
+    print(f'Wrote {len(operators.index)} operators to {operators_path}')
 
 
 if __name__ == '__main__':
