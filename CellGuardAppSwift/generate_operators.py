@@ -1,6 +1,7 @@
 from enum import Enum
 from os import path
 from typing import Optional
+from urllib.parse import urlparse
 
 import pandas as pd
 
@@ -40,31 +41,37 @@ WIKI_URL_REGIONS = [
 
 def fetch_countries() -> tuple[pd.DataFrame, pd.DataFrame]:
     print('Fetching countries and global operators from Wikipedia...')
+    p = urlparse(WIKI_URL).path
 
     # Extract all operator tables from the webpage
     # https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_csv.html
     operators = pd.read_html(WIKI_URL, attrs={'class': 'wikitable'}, extract_links='body')
-    operators_df = pd.concat([strip_operator_table(op) for op in operators])
+    operators_df = pd.concat([strip_operator_table(p, op) for op in operators])
 
     # Extract the country MCC table
     countries = pd.read_html(WIKI_URL, attrs={'class': 'wikitable sortable mw-collapsible'}, extract_links='body')
-    countries_df = strip_country_table(countries[0])
+    countries_df = strip_country_table(p, countries[0])
 
     return countries_df, operators_df
 
 
-def filter_urls(t: Optional[tuple[str, Optional[str]]]) -> Optional[tuple[str, Optional[str]]]:
+def replace_nbsp(s: str) -> str:
+    return s.replace(' ', '')
+
+
+def filter_urls(p: str, t: Optional[tuple[str, Optional[str]]]) -> Optional[tuple[str, Optional[str]]]:
     if t is None:
         return None
 
-    if t[1] is None:
-        return t
+    if t[1] is not None:
+        # We only allow Wikipedia URLs that start with /
+        if t[1].startswith('/'):
+            return replace_nbsp(t[0]), t[1]
+        # Or Wikipedia URLs that link to the page itself
+        elif t[1].startswith('#'):
+            return replace_nbsp(t[0]), p + t[1]
 
-    # We only allow Wikipedia URLs that start with /
-    if t[1].startswith('/'):
-        return t
-
-    return t[0], None
+    return replace_nbsp(t[0]), None
 
 
 def filter_index_char(name: Optional[str]) -> Optional[str]:
@@ -78,7 +85,7 @@ def filter_index_char(name: Optional[str]) -> Optional[str]:
     return name
 
 
-def strip_country_table(df: pd.DataFrame) -> pd.DataFrame:
+def strip_country_table(p: str, df: pd.DataFrame) -> pd.DataFrame:
     column_names = df.columns.values.tolist()
     assert column_names == [
         'Mobile country code', 'Country', 'ISO 3166',
@@ -90,22 +97,23 @@ def strip_country_table(df: pd.DataFrame) -> pd.DataFrame:
         'Mobile country code': 'mcc',
         'Country': 'name',
         'ISO 3166': 'iso',
-        'Mobile network codes': 'mnc',
+        'Mobile network codes': 'mnc_urls',
     })
     df['mcc'] = df['mcc'].map(lambda x: x[0])
     df['name'] = df['name'].map(lambda x: filter_index_char(x[0]))
     df['iso'] = df['iso'].map(lambda x: x[0])
-    df['mnc'] = df['mnc'].map(lambda x: filter_urls(x)[1])
+    df['mnc_urls'] = df['mnc_urls'].map(lambda x: filter_urls(p, x)[1])
 
     return df
 
 
 def fetch_regions(url: str) -> pd.DataFrame:
+    p = urlparse(url).path
     region = url.split('_')[-1].strip('()')
     print(f'Fetching operators for region {region} from Wikipedia...')
 
     operators = pd.read_html(url, attrs={'class': 'wikitable'}, extract_links='body')
-    return pd.concat([strip_operator_table(op) for op in operators])
+    return pd.concat([strip_operator_table(p, op) for op in operators])
 
 
 def filter_mcc_names(mcc: str) -> str:
@@ -122,7 +130,7 @@ def map_operator_status(status_tuple: Optional[tuple[str, str]]) -> OperatorStat
     return OperatorStatus.from_string(status_tuple[0])
 
 
-def strip_operator_table(df: pd.DataFrame) -> pd.DataFrame:
+def strip_operator_table(p: str, df: pd.DataFrame) -> pd.DataFrame:
     column_names = df.columns.values.tolist()
     assert column_names == ['MCC', 'MNC', 'Brand', 'Operator', 'Status', 'Bands (MHz)', 'References and notes']
 
@@ -138,8 +146,9 @@ def strip_operator_table(df: pd.DataFrame) -> pd.DataFrame:
     df['mcc'] = df['mcc'].map(lambda x: filter_mcc_names(x[0]))
     # Sometimes 100 - 190
     df['mnc'] = df['mnc'].map(lambda x: x[0])
-    df['brand'] = df['brand'].map(filter_urls)
-    df['operator'] = df['operator'].map(filter_urls)
+    df[['brand', 'brand_url']] = df.apply(lambda b: filter_urls(p, b['brand']), axis='columns', result_type='expand')
+    df[['operator', 'operator_url']] = df.apply(lambda o: filter_urls(p, o['operator']), axis='columns',
+                                                result_type='expand')
     df['status'] = df['status'].map(lambda x: map_operator_status(x).value)
 
     return df
