@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23605" systemVersion="24D70" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23788" systemVersion="24D81" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="CellALS" representedClassName="CellALS" syncable="YES" codeGenerationType="category">
         <attribute name="area" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="cell" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
@@ -31,6 +31,7 @@
         <attribute name="country" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="frequency" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="imported" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="json" optional="YES" attributeType="String"/>
         <attribute name="network" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="physicalCell" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="preciseTechnology" optional="YES" attributeType="String"/>
@@ -43,6 +44,13 @@
         <relationship name="verifications" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="VerificationState" inverseName="cell" inverseEntity="VerificationState"/>
         <fetchIndex name="byTweakCellCollected">
             <fetchIndexElement property="collected" type="Binary" order="descending"/>
+        </fetchIndex>
+        <fetchIndex name="byTechnologyCountryNetworkAriaCellIdIndex">
+            <fetchIndexElement property="country" type="Binary" order="ascending"/>
+            <fetchIndexElement property="network" type="Binary" order="ascending"/>
+            <fetchIndexElement property="area" type="Binary" order="ascending"/>
+            <fetchIndexElement property="cell" type="Binary" order="ascending"/>
+            <fetchIndexElement property="technology" type="Binary" order="ascending"/>
         </fetchIndex>
         <uniquenessConstraints>
             <uniquenessConstraint>

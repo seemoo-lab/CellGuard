@@ -491,58 +491,28 @@ struct LogArchiveReader {
             progress()
         }
         
-        // Remove cell measurements that aren't different to their predecessor of the last second.
-        // This the same logic which is also implemented in the tweak.
-        // See: https://dev.seemoo.tu-darmstadt.de/apple/cell-guard/-/blob/main/CaptureCellsTweak/CCTManager.m?ref_type=heads#L35
-        
-        // Store the properties of the previous cell in the list
-        var prevCellDate: Date?
-        var prevCellRawPacket: Data?
-        var allCellsCount = 0
-        var filteredCells: [CCTCellProperties] = []
-        func filterCells(cell: CCTCellProperties) -> Bool {
-            allCellsCount += 1
-            if let prevCellDate = prevCellDate,
-               let prevCellRawPacket = prevCellRawPacket,
-               let cellDate = cell.timestamp,
-               let rawPacket = cell.packetQmi?.data ?? cell.packetAri?.data,
-               cellDate.timeIntervalSince(prevCellDate) < 1,
-               rawPacket == prevCellRawPacket {
-                
-                return false
-            }
-            
-            prevCellDate = cell.timestamp
-            prevCellRawPacket = cell.packetQmi?.data ?? cell.packetAri?.data
-            filteredCells.append(cell)
-            
-            return true
-        }
-        
         // Check which of the control cells are not already in the database, before storing them.
         let newControlCells = controlCells.filter { (cell: CCTCellProperties) in
-            if let cellId = cell.cellId {
-                let exists = PersistenceController.shared.fetchCellExistsByCellId(id: cellId) ?? false
-                return !exists
-            }
-            return false
+            let exists = PersistenceController.shared.fetchCellExists(properties: cell) ?? false
+            return !exists
         }
 
+        var filteredCells: [CCTCellProperties] = []
         do {
             if packets.count > 0 {
-                _ = try CPTCollector.store(packets, cellFilter: filterCells)
+                (_, _, filteredCells) = try CPTCollector.store(packets)
             }
         } catch {
             throw LogArchiveError.importError(error)
         }
 
         // Compare filteredCells (packet parser) with the controlCells (log parser).
-        // Compare if both cell lists contain the same technologies.
+        // Compare the technologies of both cell lists. The control cells must not have more technologies.
         let cellTechnologies = Set(filteredCells.compactMap { $0.technology })
         let controlCellTechnologies = Set(newControlCells.compactMap { $0.technology })
         var erroneousCells = cellTechnologies != controlCellTechnologies
         
-        // Compare if all the cells have a matching control cell with the same core data.
+        // Compare if all the cells have a matching control cell with the same values at the important attributes.
         for cell in filteredCells {
             let controlCellIsMissing = controlCells.filter { (controlCell: CCTCellProperties) in
                 return cell.mcc == controlCell.mcc && cell.network == controlCell.network && cell.area == controlCell.area &&
@@ -557,7 +527,7 @@ struct LogArchiveReader {
             notices.append(.cellParserMisalignment)
         }
         
-        Self.logger.debug("Filtered \(allCellsCount - filteredCells.count) similar cells, resulting in \(filteredCells.count) cells.")
+        Self.logger.debug("Imported \(filteredCells.count) cells.")
         
         // TODO: Recently installed and recently expired (check MCProfileEvents.plist)
         // TODO: Check for log truncation

@@ -11,43 +11,67 @@ import Foundation
 extension PersistenceController {
     
     /// Uses `NSBatchInsertRequest` (BIR) to import tweak cell properties into the Core Data store on a private queue.
-    func importCollectedCells(from cells: [CCTCellProperties]) throws {
-        try performAndWait(name: "importContext", author: "importCellTweak") { context in
+    func importCollectedCells(from packetRefs: [NSManagedObjectID], filter: Bool) throws -> [CCTCellProperties] {
+        return try performAndWait(name: "importContext", author: "importCellTweak") { context in
             context.mergePolicy = NSMergePolicy.rollback
             
-            var index = 0
-            let total = cells.count
+            // Fetch the packets
+            let packets = packetRefs.compactMap { context.object(with: $0) as? any Packet }
             
-            let importedDate = Date()
-            
-            let batchInsertRequest = NSBatchInsertRequest(entity: CellTweak.entity(), managedObjectHandler: { cell in
-                guard index < total else { return true }
-                
-                if let cell = cell as? CellTweak {
-                    cells[index].applyTo(tweakCell: cell)
-                    cell.imported = importedDate
+            // Parse the cell properties from the parsed packets
+            let cellParser = CCTParser()
+            var cells: [(any Packet, CCTCellProperties)] = []
+            for packet in packets {
+                guard let collectedTimestamp = packet.collected,
+                      let packetData = packet.data else {
+                    continue
                 }
                 
-                index += 1
-                return false
-            })
-            
-            batchInsertRequest.resultType = .objectIDs
-            let fetchResult = try context.execute(batchInsertRequest)
-            
-            guard let batchInsertResult = fetchResult as? NSBatchInsertResult,
-                  let objectIDs = batchInsertResult.result as? [NSManagedObjectID] else {
-                logger.debug("Failed to execute batch import request for tweak cells.")
-                throw PersistenceError.batchInsertError
+                if let _ = packet as? PacketQMI,
+                   let packetCells = try? cellParser.parseQmiCell(packetData, timestamp: collectedTimestamp) {
+                    cells += packetCells.map { (packet, $0) }
+                } else if let _ = packet as? PacketARI,
+                          let packetCells = try? cellParser.parseAriCell(packetData, timestamp: collectedTimestamp) {
+                    cells += packetCells.map { (packet, $0) }
+                }
             }
             
-            // Create empty verification entries for all new cells
-            // But we have to that in order and cannot use BatchInsertRequests as they don't support relationships.
-            // See: https://fatbobman.com/en/posts/batchprocessingincoredata/#batch-insert
-            // See: https://www.reddit.com/r/swift/comments/y2dit0/any_clean_way_for_batch_inserting_coredata/
-            for objectId in objectIDs {
-                guard let cell = context.object(with: objectId) as? CellTweak else {
-                    continue
+            // Remove cell measurements that aren't different to their predecessor of the last second.
+            // This the same logic which is also implemented in the tweak.
+            // See: https://dev.seemoo.tu-darmstadt.de/apple/cell-guard/-/blob/main/CaptureCellsTweak/CCTManager.m?ref_type=heads#L35
+            if filter {
+                var prevCellDate: Date?
+                var prevCellRawPacket: Data?
+                cells = cells
+                    .sorted { $0.1.timestamp ?? Date.distantPast < $1.1.timestamp ?? Date.distantPast }
+                    .filter { (packet, cellProperties) in
+                        if let prevCellDate = prevCellDate,
+                           let prevCellRawPacket = prevCellRawPacket,
+                           let cellDate = cellProperties.timestamp,
+                           let rawPacket = cellProperties.packetQmi?.data ?? cellProperties.packetAri?.data,
+                           cellDate.timeIntervalSince(prevCellDate) < 1,
+                           rawPacket == prevCellRawPacket {
+                            
+                            return false
+                        }
+                        
+                        prevCellDate = cellProperties.timestamp
+                        prevCellRawPacket = cellProperties.packetQmi?.data ?? cellProperties.packetAri?.data
+                        return true
+                    }
+            }
+            
+            // Import the cells without Batch import to set the packet relationship
+            let importedDate = Date()
+            for (packet, cellProperties) in cells {
+                let cell = CellTweak(context: context)
+                cellProperties.applyTo(tweakCell: cell)
+                
+                // Set reference to packet
+                if let qmiPacket = packet as? PacketQMI {
+                    cell.packetQmi = qmiPacket
+                } else if let ariPacket = packet as? PacketARI {
+                    cell.packetAri = ariPacket
                 }
                 
                 // Create a default verification state for each user-enabled pipeline
@@ -59,20 +83,33 @@ extension PersistenceController {
                     
                     cell.addToVerifications(state)
                 }
+                
+                cell.imported = importedDate
             }
             
             // Save the newly created verification states
             try context.save()
             
             logger.debug("Successfully inserted \(cells.count) tweak cells.")
-        }
+            return cells.compactMap { $0.1 }
+        } ?? []
     }
     
-    func fetchCellExistsByCellId(id: Int64) -> Bool? {
-        return try? performAndWait(name: "fetchContext", author: "fetchTechnologies") { context in
+    func fetchCellExists(properties: CCTCellProperties) -> Bool? {
+        guard let technology = properties.technology,
+              let country = properties.mcc,
+              let network = properties.network,
+              let area = properties.area,
+              let cellId = properties.cellId else {
+            return nil
+        }
+        
+        return try? performAndWait(name: "fetchContext", author: "fetchCell") { context in
             let existFetchRequest = CellTweak.fetchRequest()
             existFetchRequest.fetchLimit = 1
-            existFetchRequest.predicate = NSPredicate(format: "cell = %@", id as NSNumber)
+            existFetchRequest.predicate = NSPredicate(
+                format: "technology = %@ and country = %@ and network = %@ and area = %@ and cell = %@",
+                technology.rawValue as NSString, country as NSNumber, network as NSNumber, area as NSNumber, cellId as NSNumber)
             let cell = try context.fetch(existFetchRequest).first
             return cell != nil
         }

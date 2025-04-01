@@ -28,9 +28,9 @@ struct CPTCollector {
             client.queryPackets { result in
                 do {
                     let packets = try result.get()
-                    let (qmiPackets, ariPackets, cells) = try Self.store(packets, cellFilter: { _ in true })
-                    Self.logger.debug("Imported \(qmiPackets) QMI, \(ariPackets) ARI packets, and \(cells) Cells")
-                    completion.resume(returning: (qmiPackets, ariPackets, cells))
+                    let (qmiPackets, ariPackets, cells) = try Self.store(packets)
+                    Self.logger.debug("Imported \(qmiPackets) QMI, \(ariPackets) ARI packets, and \(cells.count) Cells")
+                    completion.resume(returning: (qmiPackets, ariPackets, cells.count))
                 } catch {
                     // TODO: Count failures and if they exceed a given threshold, output a warning notification
                     Self.logger.warning("Can't request packets from tweak: \(error)")
@@ -40,7 +40,7 @@ struct CPTCollector {
         }
     }
     
-    public static func store(_ packets: [CPTPacket], cellFilter: (CCTCellProperties) -> Bool) throws -> (Int, Int, Int) {
+    public static func store(_ packets: [CPTPacket]) throws -> (Int, Int, [CCTCellProperties]) {
         do {
             var qmiPackets: [(CPTPacket, ParsedQMIPacket)] = []
             var ariPackets: [(CPTPacket, ParsedARIPacket)] = []
@@ -64,10 +64,11 @@ struct CPTCollector {
                 }
             }
             
-            let (qmiDBObjects, importedCellsQmi) = try PersistenceController.shared.importQMIPackets(from: qmiPackets, cellFilter: cellFilter)
-            let (ariDBObjects, importedCellsAri) = try PersistenceController.shared.importARIPackets(from: ariPackets, cellFilter: cellFilter)
+            let (_, qmiCellPackets) = try PersistenceController.shared.importQMIPackets(from: qmiPackets)
+            let (_, ariCellPackets) = try PersistenceController.shared.importARIPackets(from: ariPackets)
+            let importedCells = try PersistenceController.shared.importCollectedCells(from: qmiCellPackets + ariCellPackets, filter: true)
             
-            return (qmiPackets.count, ariPackets.count, importedCellsQmi + importedCellsAri)
+            return (qmiPackets.count, ariPackets.count, importedCells)
         } catch {
             Self.logger.warning("Can't import packets: \(error)")
             throw error

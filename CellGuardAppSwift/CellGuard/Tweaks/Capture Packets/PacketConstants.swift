@@ -22,11 +22,12 @@ struct PacketConstants {
     static let ariSignalGroup = 9
     static let ariSignalType = 772
     
-    static let ariGroupNetCell = 9
+    static let ariCellInfoDirection = CPTDirection.ingoing
+    static let ariCellInfoGroup = 9
     // IBINetGetCellInfoRespCb, IBINetGetCellInfoRespCbV1, IBINetGetCellInfoIndCb, IBINetGetCellInfoIndCbV1
-    static let ariTypesGetCellInfo: [UInt16] = [519, 521, 775, 776]
-    static let ariTechnologies: [ALSTechnologyVersion] = [.cdma1x, .cdmaEvdo, .umts, .gsm, .lte, .lteV1T, .lteR15, .tdscdma, .nr]
-    static let ariTLVTypes: [ARIKey: UInt8] = [
+    static let ariCellInfoTypes: [UInt16] = [519, 521, 775, 776]
+    static let ariCellInfoTechnologies: [ALSTechnologyVersion] = [.cdma1x, .cdmaEvdo, .umts, .gsm, .lte, .lteV1T, .lteR15, .tdscdma, .nr]
+    static let ariCellInfoTLVTypes: [ARIKey: UInt8] = [
         ARIKey(type: 519, technology: .cdma1x): 34,     ARIKey(type: 519, technology: .cdmaEvdo): 37,
         ARIKey(type: 519, technology: .umts): 10,       ARIKey(type: 519, technology: .gsm): 13,
         ARIKey(type: 519, technology: .lte): 16,        ARIKey(type: 519, technology: .lteV1T): 50,
@@ -57,10 +58,11 @@ struct PacketConstants {
     static let qmiSignalService = 0x03
     static let qmiSignalMessage = 0x0051
     
+    static let qmiCellInfoDirection = CPTDirection.ingoing
     static let qmiCellInfoService = 0x03
     static let qmiCellInfoMessage = 0x5556
     static let qmiCellInfoTechnologies: [ALSTechnologyVersion] = [.cdma1x, .cdmaEvdo, .umts, .tdscdma, .gsm, .lteV1, .lteV2, .lteV3, .lteV4, .nrV2, .nrV3]
-    static let qmiTLVTypes: [ALSTechnologyVersion: UInt8] = [
+    static let qmiCellInfoTLVTypes: [ALSTechnologyVersion: UInt8] = [
         .cdma1x: 0xa1, .cdmaEvdo: 0xa2, .umts: 0xb7, .tdscdma: 0xd0, .gsm: 0xb8,
         .lteV1: 0xbb, .lteV2: 0xbc, .lteV3: 0xd2, .lteV4: 0xd3, .nrV2: 0xe2, .nrV3: 0xe4
     ]

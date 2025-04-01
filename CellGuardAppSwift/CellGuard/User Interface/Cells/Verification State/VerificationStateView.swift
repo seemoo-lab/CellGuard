@@ -74,6 +74,13 @@ private struct VerificationStateInternalView: View {
             }
             
             // TODO: Should we show the cell's identification (MNC, MCC, ...) which is shown two pages up?
+            
+            if let json = measurement.json, let jsonPretty = try? self.formatJSON(json: json) {
+                Section(header: Text("iOS-Internal Data")) {
+                    Text(jsonPretty)
+                        .font(Font(UIFont.monospacedSystemFont(ofSize: UIFont.smallSystemFontSize, weight: .regular)))
+                }
+            }
              
             if verificationState.finished && verificationPipeline.id == primaryVerificationPipeline.id {
                 VerificationStateStudyView(verificationPipeline: verificationPipeline, verificationState: verificationState, measurement: measurement)
