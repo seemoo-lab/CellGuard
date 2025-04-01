@@ -54,6 +54,10 @@
 		CF15E1FA2AA33EA200D440AD /* ImportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF15E1F92AA33EA200D440AD /* ImportView.swift */; };
 		CF1AF5732C97344A004B519B /* CellDetailsIdentification.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1AF5722C97344A004B519B /* CellDetailsIdentification.swift */; };
 		CF1AF5742C97344A004B519B /* CellDetailsIdentification.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1AF5722C97344A004B519B /* CellDetailsIdentification.swift */; };
+		CF1AF7B82D9C4F3F00B03E4E /* operators.csv.gz in Resources */ = {isa = PBXBuildFile; fileRef = CF1AF7B72D9C4F3F00B03E4E /* operators.csv.gz */; };
+		CF1AF7B92D9C4F3F00B03E4E /* countries.csv.gz in Resources */ = {isa = PBXBuildFile; fileRef = CF1AF7B62D9C4F3F00B03E4E /* countries.csv.gz */; };
+		CF1AF7BA2D9C4F3F00B03E4E /* operators.csv.gz in Resources */ = {isa = PBXBuildFile; fileRef = CF1AF7B72D9C4F3F00B03E4E /* operators.csv.gz */; };
+		CF1AF7BB2D9C4F3F00B03E4E /* countries.csv.gz in Resources */ = {isa = PBXBuildFile; fileRef = CF1AF7B62D9C4F3F00B03E4E /* countries.csv.gz */; };
 		CF1CD4752BE16C1C009A3582 /* QVerification.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1CD4742BE16C1C009A3582 /* QVerification.swift */; };
 		CF1DF87D2C175970008F6F40 /* StudyContributionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1DF87C2C175970008F6F40 /* StudyContributionsView.swift */; };
 		CF1DF87E2C17599D008F6F40 /* StudyContributionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1DF87C2C175970008F6F40 /* StudyContributionsView.swift */; };
@@ -148,8 +152,6 @@
 		CF86C79D2A6AE0E3002EC9B6 /* VerificationStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF86C79C2A6AE0E3002EC9B6 /* VerificationStateView.swift */; };
 		CF895A512C9B2E5C001F40EA /* countries.geojson.gz in Resources */ = {isa = PBXBuildFile; fileRef = CF895A502C9B2E5C001F40EA /* countries.geojson.gz */; };
 		CF895A522C9B2E5C001F40EA /* countries.geojson.gz in Resources */ = {isa = PBXBuildFile; fileRef = CF895A502C9B2E5C001F40EA /* countries.geojson.gz */; };
-		CF895A542C9B2F72001F40EA /* operator-definitions.json.gz in Resources */ = {isa = PBXBuildFile; fileRef = CF895A532C9B2F72001F40EA /* operator-definitions.json.gz */; };
-		CF895A552C9B2F72001F40EA /* operator-definitions.json.gz in Resources */ = {isa = PBXBuildFile; fileRef = CF895A532C9B2F72001F40EA /* operator-definitions.json.gz */; };
 		CF895A582C9B31DF001F40EA /* ari-definitions.json.gz in Resources */ = {isa = PBXBuildFile; fileRef = CF895A562C9B31DF001F40EA /* ari-definitions.json.gz */; };
 		CF895A592C9B31DF001F40EA /* qmi-definitions.json.gz in Resources */ = {isa = PBXBuildFile; fileRef = CF895A572C9B31DF001F40EA /* qmi-definitions.json.gz */; };
 		CF895A5A2C9B31DF001F40EA /* ari-definitions.json.gz in Resources */ = {isa = PBXBuildFile; fileRef = CF895A562C9B31DF001F40EA /* ari-definitions.json.gz */; };
@@ -417,6 +419,8 @@
 		CF0FDCCC296B480B00A6FFE2 /* TrackedUserLocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackedUserLocation.swift; sourceTree = "<group>"; };
 		CF15E1F92AA33EA200D440AD /* ImportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportView.swift; sourceTree = "<group>"; };
 		CF1AF5722C97344A004B519B /* CellDetailsIdentification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellDetailsIdentification.swift; sourceTree = "<group>"; };
+		CF1AF7B62D9C4F3F00B03E4E /* countries.csv.gz */ = {isa = PBXFileReference; lastKnownFileType = archive.gzip; path = countries.csv.gz; sourceTree = "<group>"; };
+		CF1AF7B72D9C4F3F00B03E4E /* operators.csv.gz */ = {isa = PBXFileReference; lastKnownFileType = archive.gzip; path = operators.csv.gz; sourceTree = "<group>"; };
 		CF1CD4742BE16C1C009A3582 /* QVerification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QVerification.swift; sourceTree = "<group>"; };
 		CF1DF87C2C175970008F6F40 /* StudyContributionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudyContributionsView.swift; sourceTree = "<group>"; };
 		CF1FAFB22986B11200106930 /* CellReachOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellReachOverlay.swift; sourceTree = "<group>"; };
@@ -492,7 +496,6 @@
 		CF86C7982A6AD51D002EC9B6 /* GroupedMeasurements.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupedMeasurements.swift; sourceTree = "<group>"; };
 		CF86C79C2A6AE0E3002EC9B6 /* VerificationStateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerificationStateView.swift; sourceTree = "<group>"; };
 		CF895A502C9B2E5C001F40EA /* countries.geojson.gz */ = {isa = PBXFileReference; lastKnownFileType = archive.gzip; path = countries.geojson.gz; sourceTree = "<group>"; };
-		CF895A532C9B2F72001F40EA /* operator-definitions.json.gz */ = {isa = PBXFileReference; lastKnownFileType = archive.gzip; path = "operator-definitions.json.gz"; sourceTree = "<group>"; };
 		CF895A562C9B31DF001F40EA /* ari-definitions.json.gz */ = {isa = PBXFileReference; lastKnownFileType = archive.gzip; path = "ari-definitions.json.gz"; sourceTree = "<group>"; };
 		CF895A572C9B31DF001F40EA /* qmi-definitions.json.gz */ = {isa = PBXFileReference; lastKnownFileType = archive.gzip; path = "qmi-definitions.json.gz"; sourceTree = "<group>"; };
 		CF895A5C2C9B3328001F40EA /* cargo-licenses.json.gz */ = {isa = PBXFileReference; lastKnownFileType = archive.gzip; path = "cargo-licenses.json.gz"; sourceTree = "<group>"; };
@@ -649,7 +652,8 @@
 			children = (
 				CF7BE25D2A67EBCB007FF930 /* Verification */,
 				CF895A502C9B2E5C001F40EA /* countries.geojson.gz */,
-				CF895A532C9B2F72001F40EA /* operator-definitions.json.gz */,
+				CF1AF7B62D9C4F3F00B03E4E /* countries.csv.gz */,
+				CF1AF7B72D9C4F3F00B03E4E /* operators.csv.gz */,
 				CF07EFA42A3B4B56005B53ED /* OperatorDefinitions.swift */,
 				CF0157C22CC3FFD1003ACAC4 /* CellIdentification.swift */,
 			);
@@ -1299,7 +1303,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CF895A542C9B2F72001F40EA /* operator-definitions.json.gz in Resources */,
 				CF895A582C9B31DF001F40EA /* ari-definitions.json.gz in Resources */,
 				CFCBA91A2CB92B9E0054249E /* CellFileTypeIcon.png in Resources */,
 				CF895A592C9B31DF001F40EA /* qmi-definitions.json.gz in Resources */,
@@ -1308,6 +1311,8 @@
 				CF895A522C9B2E5C001F40EA /* countries.geojson.gz in Resources */,
 				CFB6CF9B2BD122FA00EAB7B4 /* LaunchScreen.storyboard in Resources */,
 				CFB6CF9E2BD122FA00EAB7B4 /* Package.resolved in Resources */,
+				CF1AF7BA2D9C4F3F00B03E4E /* operators.csv.gz in Resources */,
+				CF1AF7BB2D9C4F3F00B03E4E /* countries.csv.gz in Resources */,
 				CFEA68EA2C13857200F781BC /* PrivacyInfo.xcprivacy in Resources */,
 				CFB6CF9F2BD122FA00EAB7B4 /* Assets.xcassets in Resources */,
 			);
@@ -1317,7 +1322,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CF895A552C9B2F72001F40EA /* operator-definitions.json.gz in Resources */,
 				CF895A5A2C9B31DF001F40EA /* ari-definitions.json.gz in Resources */,
 				CFCBA9192CB92B9E0054249E /* CellFileTypeIcon.png in Resources */,
 				CF895A5B2C9B31DF001F40EA /* qmi-definitions.json.gz in Resources */,
@@ -1326,6 +1330,8 @@
 				CF895A512C9B2E5C001F40EA /* countries.geojson.gz in Resources */,
 				CFE4A7A92B35991C00A37C7A /* LaunchScreen.storyboard in Resources */,
 				CFFF19DF2BC6CF47004E40CE /* Package.resolved in Resources */,
+				CF1AF7B82D9C4F3F00B03E4E /* operators.csv.gz in Resources */,
+				CF1AF7B92D9C4F3F00B03E4E /* countries.csv.gz in Resources */,
 				CFEA68E92C13857200F781BC /* PrivacyInfo.xcprivacy in Resources */,
 				CFD0233B2961A10D00AA5A1C /* Assets.xcassets in Resources */,
 			);
