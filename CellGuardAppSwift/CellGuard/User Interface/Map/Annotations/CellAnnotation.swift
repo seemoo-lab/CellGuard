@@ -30,7 +30,7 @@ class CellAnnotation: NSObject, MKAnnotation, DatabaseAnnotation {
     }
     
     convenience init(cell: CellALS) {
-        let (_, operatorName) = OperatorDefinitions.shared.translate(country: cell.country, network: cell.network)
+        let operatorName = OperatorDefinitions.shared.translate(country:cell.country, network: cell.network)?.combinedName
         self.init(
             cell: cell,
             title: operatorName ?? "Network \(formatMNC(cell.network))",

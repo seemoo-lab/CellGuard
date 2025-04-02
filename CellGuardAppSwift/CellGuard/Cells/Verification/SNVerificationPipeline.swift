@@ -216,8 +216,7 @@ private struct CheckCorrectMCCStage: VerificationStage {
         
         switch await getCountryCode(latitude: latitude, longitude: longitude) {
         case let .found(cc):
-            let operatorCountry = OperatorDefinitions.shared.translate(country: queryCell.country, iso: true)
-            // Hint: Don't use the ! operator in production as the app will crash if there is a null value, instead it's better to handle both cases.
+            let operatorCountry = OperatorDefinitions.shared.translate(country: queryCell.country)?.iso
             guard let operatorCountry = operatorCountry else {
                 return .success()
             }
@@ -255,8 +254,7 @@ private struct CheckCorrectMNCStage: VerificationStage {
         case let .found(cc):
             // TODO: Think if this stage is required or does it effectively perform the same check as the stage above?
             // To do this look at the source code of the OperatorDefinitions
-            let (country, _) = OperatorDefinitions.shared.translate(country: queryCell.country, network: queryCell.network, iso: true)
-            guard let country = country else {
+            guard let country = OperatorDefinitions.shared.translate(country: queryCell.country)?.iso else {
                 return .success()
             }
             
@@ -380,7 +378,7 @@ private struct CheckDistanceOfCell: VerificationStage {
             return .success()
         }
         
-        guard let cellCc = OperatorDefinitions.shared.translate(country: queryCell.country, iso: true)?.uppercased() else {
+        guard let cellCc = OperatorDefinitions.shared.translate(country: queryCell.country)?.iso.uppercased() else {
             return .success()
         }
         

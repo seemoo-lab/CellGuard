@@ -54,6 +54,10 @@
 		CF15E1FA2AA33EA200D440AD /* ImportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF15E1F92AA33EA200D440AD /* ImportView.swift */; };
 		CF1AF5732C97344A004B519B /* CellDetailsIdentification.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1AF5722C97344A004B519B /* CellDetailsIdentification.swift */; };
 		CF1AF5742C97344A004B519B /* CellDetailsIdentification.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1AF5722C97344A004B519B /* CellDetailsIdentification.swift */; };
+		CF1AF7B82D9C4F3F00B03E4E /* operators.csv.gz in Resources */ = {isa = PBXBuildFile; fileRef = CF1AF7B72D9C4F3F00B03E4E /* operators.csv.gz */; };
+		CF1AF7B92D9C4F3F00B03E4E /* countries.csv.gz in Resources */ = {isa = PBXBuildFile; fileRef = CF1AF7B62D9C4F3F00B03E4E /* countries.csv.gz */; };
+		CF1AF7BA2D9C4F3F00B03E4E /* operators.csv.gz in Resources */ = {isa = PBXBuildFile; fileRef = CF1AF7B72D9C4F3F00B03E4E /* operators.csv.gz */; };
+		CF1AF7BB2D9C4F3F00B03E4E /* countries.csv.gz in Resources */ = {isa = PBXBuildFile; fileRef = CF1AF7B62D9C4F3F00B03E4E /* countries.csv.gz */; };
 		CF1CD4752BE16C1C009A3582 /* QVerification.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1CD4742BE16C1C009A3582 /* QVerification.swift */; };
 		CF1DF87D2C175970008F6F40 /* StudyContributionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1DF87C2C175970008F6F40 /* StudyContributionsView.swift */; };
 		CF1DF87E2C17599D008F6F40 /* StudyContributionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1DF87C2C175970008F6F40 /* StudyContributionsView.swift */; };
@@ -148,8 +152,6 @@
 		CF86C79D2A6AE0E3002EC9B6 /* VerificationStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF86C79C2A6AE0E3002EC9B6 /* VerificationStateView.swift */; };
 		CF895A512C9B2E5C001F40EA /* countries.geojson.gz in Resources */ = {isa = PBXBuildFile; fileRef = CF895A502C9B2E5C001F40EA /* countries.geojson.gz */; };
 		CF895A522C9B2E5C001F40EA /* countries.geojson.gz in Resources */ = {isa = PBXBuildFile; fileRef = CF895A502C9B2E5C001F40EA /* countries.geojson.gz */; };
-		CF895A542C9B2F72001F40EA /* operator-definitions.json.gz in Resources */ = {isa = PBXBuildFile; fileRef = CF895A532C9B2F72001F40EA /* operator-definitions.json.gz */; };
-		CF895A552C9B2F72001F40EA /* operator-definitions.json.gz in Resources */ = {isa = PBXBuildFile; fileRef = CF895A532C9B2F72001F40EA /* operator-definitions.json.gz */; };
 		CF895A582C9B31DF001F40EA /* ari-definitions.json.gz in Resources */ = {isa = PBXBuildFile; fileRef = CF895A562C9B31DF001F40EA /* ari-definitions.json.gz */; };
 		CF895A592C9B31DF001F40EA /* qmi-definitions.json.gz in Resources */ = {isa = PBXBuildFile; fileRef = CF895A572C9B31DF001F40EA /* qmi-definitions.json.gz */; };
 		CF895A5A2C9B31DF001F40EA /* ari-definitions.json.gz in Resources */ = {isa = PBXBuildFile; fileRef = CF895A562C9B31DF001F40EA /* ari-definitions.json.gz */; };
@@ -174,6 +176,14 @@
 		CFA09CF92A73D4B000D16832 /* SwiftExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFA09CF82A73D4B000D16832 /* SwiftExtensions.swift */; };
 		CFA632552AB3501800D46025 /* CSV in Frameworks */ = {isa = PBXBuildFile; productRef = CFA632542AB3501800D46025 /* CSV */; };
 		CFA632582AB3503400D46025 /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = CFA632572AB3503400D46025 /* ZIPFoundation */; };
+		CFA83C942D9D467400239AB7 /* CellCountryNetworkSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFA83C932D9D467400239AB7 /* CellCountryNetworkSection.swift */; };
+		CFA83C952D9D467400239AB7 /* CellCountryNetworkSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFA83C932D9D467400239AB7 /* CellCountryNetworkSection.swift */; };
+		CFA83C972D9D78E300239AB7 /* CountryDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFA83C962D9D78E300239AB7 /* CountryDetailsView.swift */; };
+		CFA83C982D9D78E300239AB7 /* CountryDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFA83C962D9D78E300239AB7 /* CountryDetailsView.swift */; };
+		CFA83C9A2D9D78FC00239AB7 /* OperatorDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFA83C992D9D78FC00239AB7 /* OperatorDetailsView.swift */; };
+		CFA83C9B2D9D78FC00239AB7 /* OperatorDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFA83C992D9D78FC00239AB7 /* OperatorDetailsView.swift */; };
+		CFA83C9D2D9D7EBD00239AB7 /* Icons.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFA83C9C2D9D7EBD00239AB7 /* Icons.swift */; };
+		CFA83C9E2D9D7EBD00239AB7 /* Icons.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFA83C9C2D9D7EBD00239AB7 /* Icons.swift */; };
 		CFAE88142C2887C400092B15 /* VerificationStateLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFAE88132C2887C400092B15 /* VerificationStateLog.swift */; };
 		CFAE88152C2887C400092B15 /* VerificationStateLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFAE88132C2887C400092B15 /* VerificationStateLog.swift */; };
 		CFAE88172C2887F300092B15 /* VerificationStateStudy.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFAE88162C2887F300092B15 /* VerificationStateStudy.swift */; };
@@ -417,6 +427,8 @@
 		CF0FDCCC296B480B00A6FFE2 /* TrackedUserLocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackedUserLocation.swift; sourceTree = "<group>"; };
 		CF15E1F92AA33EA200D440AD /* ImportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportView.swift; sourceTree = "<group>"; };
 		CF1AF5722C97344A004B519B /* CellDetailsIdentification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellDetailsIdentification.swift; sourceTree = "<group>"; };
+		CF1AF7B62D9C4F3F00B03E4E /* countries.csv.gz */ = {isa = PBXFileReference; lastKnownFileType = archive.gzip; path = countries.csv.gz; sourceTree = "<group>"; };
+		CF1AF7B72D9C4F3F00B03E4E /* operators.csv.gz */ = {isa = PBXFileReference; lastKnownFileType = archive.gzip; path = operators.csv.gz; sourceTree = "<group>"; };
 		CF1CD4742BE16C1C009A3582 /* QVerification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QVerification.swift; sourceTree = "<group>"; };
 		CF1DF87C2C175970008F6F40 /* StudyContributionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudyContributionsView.swift; sourceTree = "<group>"; };
 		CF1FAFB22986B11200106930 /* CellReachOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellReachOverlay.swift; sourceTree = "<group>"; };
@@ -492,7 +504,6 @@
 		CF86C7982A6AD51D002EC9B6 /* GroupedMeasurements.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupedMeasurements.swift; sourceTree = "<group>"; };
 		CF86C79C2A6AE0E3002EC9B6 /* VerificationStateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerificationStateView.swift; sourceTree = "<group>"; };
 		CF895A502C9B2E5C001F40EA /* countries.geojson.gz */ = {isa = PBXFileReference; lastKnownFileType = archive.gzip; path = countries.geojson.gz; sourceTree = "<group>"; };
-		CF895A532C9B2F72001F40EA /* operator-definitions.json.gz */ = {isa = PBXFileReference; lastKnownFileType = archive.gzip; path = "operator-definitions.json.gz"; sourceTree = "<group>"; };
 		CF895A562C9B31DF001F40EA /* ari-definitions.json.gz */ = {isa = PBXFileReference; lastKnownFileType = archive.gzip; path = "ari-definitions.json.gz"; sourceTree = "<group>"; };
 		CF895A572C9B31DF001F40EA /* qmi-definitions.json.gz */ = {isa = PBXFileReference; lastKnownFileType = archive.gzip; path = "qmi-definitions.json.gz"; sourceTree = "<group>"; };
 		CF895A5C2C9B3328001F40EA /* cargo-licenses.json.gz */ = {isa = PBXFileReference; lastKnownFileType = archive.gzip; path = "cargo-licenses.json.gz"; sourceTree = "<group>"; };
@@ -507,6 +518,10 @@
 		CF9626C22AB7474500C46953 /* PersistenceCSVExporter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PersistenceCSVExporter.swift; sourceTree = "<group>"; };
 		CF9EEEE72B34B6A500F9B6D8 /* SysdiagOpenSettingsCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SysdiagOpenSettingsCard.swift; sourceTree = "<group>"; };
 		CFA09CF82A73D4B000D16832 /* SwiftExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftExtensions.swift; sourceTree = "<group>"; };
+		CFA83C932D9D467400239AB7 /* CellCountryNetworkSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellCountryNetworkSection.swift; sourceTree = "<group>"; };
+		CFA83C962D9D78E300239AB7 /* CountryDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountryDetailsView.swift; sourceTree = "<group>"; };
+		CFA83C992D9D78FC00239AB7 /* OperatorDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperatorDetailsView.swift; sourceTree = "<group>"; };
+		CFA83C9C2D9D7EBD00239AB7 /* Icons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Icons.swift; sourceTree = "<group>"; };
 		CFAE88132C2887C400092B15 /* VerificationStateLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerificationStateLog.swift; sourceTree = "<group>"; };
 		CFAE88162C2887F300092B15 /* VerificationStateStudy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerificationStateStudy.swift; sourceTree = "<group>"; };
 		CFAE88192C28B9C100092B15 /* StudyClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudyClient.swift; sourceTree = "<group>"; };
@@ -649,7 +664,8 @@
 			children = (
 				CF7BE25D2A67EBCB007FF930 /* Verification */,
 				CF895A502C9B2E5C001F40EA /* countries.geojson.gz */,
-				CF895A532C9B2F72001F40EA /* operator-definitions.json.gz */,
+				CF1AF7B62D9C4F3F00B03E4E /* countries.csv.gz */,
+				CF1AF7B72D9C4F3F00B03E4E /* operators.csv.gz */,
 				CF07EFA42A3B4B56005B53ED /* OperatorDefinitions.swift */,
 				CF0157C22CC3FFD1003ACAC4 /* CellIdentification.swift */,
 			);
@@ -670,6 +686,7 @@
 				CF9237122A3E1BD300FC7D21 /* KeyValueListRow.swift */,
 				CFE988DE2AA88A2B0039EDF9 /* CircularProgressView.swift */,
 				45ECF56B2BFBEA5300DD92CF /* DeviceModel.swift */,
+				CFA83C9C2D9D7EBD00239AB7 /* Icons.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -786,6 +803,9 @@
 				CFB51833297AEFA80006C690 /* CellStatusIcon.swift */,
 				CF86C7962A6ACDAA002EC9B6 /* CellDetailsRow.swift */,
 				CF86C7982A6AD51D002EC9B6 /* GroupedMeasurements.swift */,
+				CFA83C932D9D467400239AB7 /* CellCountryNetworkSection.swift */,
+				CFA83C962D9D78E300239AB7 /* CountryDetailsView.swift */,
+				CFA83C992D9D78FC00239AB7 /* OperatorDetailsView.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -1299,7 +1319,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CF895A542C9B2F72001F40EA /* operator-definitions.json.gz in Resources */,
 				CF895A582C9B31DF001F40EA /* ari-definitions.json.gz in Resources */,
 				CFCBA91A2CB92B9E0054249E /* CellFileTypeIcon.png in Resources */,
 				CF895A592C9B31DF001F40EA /* qmi-definitions.json.gz in Resources */,
@@ -1308,6 +1327,8 @@
 				CF895A522C9B2E5C001F40EA /* countries.geojson.gz in Resources */,
 				CFB6CF9B2BD122FA00EAB7B4 /* LaunchScreen.storyboard in Resources */,
 				CFB6CF9E2BD122FA00EAB7B4 /* Package.resolved in Resources */,
+				CF1AF7BA2D9C4F3F00B03E4E /* operators.csv.gz in Resources */,
+				CF1AF7BB2D9C4F3F00B03E4E /* countries.csv.gz in Resources */,
 				CFEA68EA2C13857200F781BC /* PrivacyInfo.xcprivacy in Resources */,
 				CFB6CF9F2BD122FA00EAB7B4 /* Assets.xcassets in Resources */,
 			);
@@ -1317,7 +1338,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CF895A552C9B2F72001F40EA /* operator-definitions.json.gz in Resources */,
 				CF895A5A2C9B31DF001F40EA /* ari-definitions.json.gz in Resources */,
 				CFCBA9192CB92B9E0054249E /* CellFileTypeIcon.png in Resources */,
 				CF895A5B2C9B31DF001F40EA /* qmi-definitions.json.gz in Resources */,
@@ -1326,6 +1346,8 @@
 				CF895A512C9B2E5C001F40EA /* countries.geojson.gz in Resources */,
 				CFE4A7A92B35991C00A37C7A /* LaunchScreen.storyboard in Resources */,
 				CFFF19DF2BC6CF47004E40CE /* Package.resolved in Resources */,
+				CF1AF7B82D9C4F3F00B03E4E /* operators.csv.gz in Resources */,
+				CF1AF7B92D9C4F3F00B03E4E /* countries.csv.gz in Resources */,
 				CFEA68E92C13857200F781BC /* PrivacyInfo.xcprivacy in Resources */,
 				CFD0233B2961A10D00AA5A1C /* Assets.xcassets in Resources */,
 			);
@@ -1482,6 +1504,7 @@
 				45ECF56D2BFBEA5300DD92CF /* DeviceModel.swift in Sources */,
 				45ECF5522BFAAF1F00DD92CF /* CenteredTitleIconTextView.swift in Sources */,
 				CFB6CF352BD122FA00EAB7B4 /* MultiCellMap.swift in Sources */,
+				CFA83C9A2D9D78FC00239AB7 /* OperatorDetailsView.swift in Sources */,
 				CFB6CF362BD122FA00EAB7B4 /* QMIDefinitions.swift in Sources */,
 				CFB6CF372BD122FA00EAB7B4 /* TestDetection.swift in Sources */,
 				CFB6CF392BD122FA00EAB7B4 /* CellDetailsView.swift in Sources */,
@@ -1499,6 +1522,7 @@
 				CFC041132C124D5F00BCD692 /* IntroductionView.swift in Sources */,
 				CFB6CF442BD122FA00EAB7B4 /* CCTCollector.swift in Sources */,
 				CFB6CF452BD122FA00EAB7B4 /* PacketCell.swift in Sources */,
+				CFA83C972D9D78E300239AB7 /* CountryDetailsView.swift in Sources */,
 				45ECF5702BFBFDFB00DD92CF /* NoneModeCard.swift in Sources */,
 				CFB6CF462BD122FA00EAB7B4 /* TweakInfoView.swift in Sources */,
 				CFB6CF472BD122FA00EAB7B4 /* PacketQMIDetailsView.swift in Sources */,
@@ -1506,7 +1530,9 @@
 				CFB6CF482BD122FA00EAB7B4 /* CoreLocationALS.pb.swift in Sources */,
 				45ECF56A2BFBE44800DD92CF /* SysdiagInstructionsDetailedView.swift in Sources */,
 				CFB6CF4A2BD122FA00EAB7B4 /* CellGuard.xcdatamodeld in Sources */,
+				CFA83C942D9D467400239AB7 /* CellCountryNetworkSection.swift in Sources */,
 				45ECF5732BFC00D100DD92CF /* DebugProfileCard.swift in Sources */,
+				CFA83C9D2D9D7EBD00239AB7 /* Icons.swift in Sources */,
 				CFAE881B2C28B9C100092B15 /* StudyClient.swift in Sources */,
 				CF7064F72CC513B500BF8AF9 /* TowerAnnotationView.swift in Sources */,
 				CFB6CF4B2BD122FA00EAB7B4 /* SingleCellMap.swift in Sources */,
@@ -1641,6 +1667,7 @@
 				CF70A9942BE6B6D600989FB5 /* QCommonFetch.swift in Sources */,
 				45ECF56C2BFBEA5300DD92CF /* DeviceModel.swift in Sources */,
 				45ECF5512BFAAF1F00DD92CF /* CenteredTitleIconTextView.swift in Sources */,
+				CFA83C9B2D9D78FC00239AB7 /* OperatorDetailsView.swift in Sources */,
 				CFDF5D6F297EF05D000708A8 /* MultiCellMap.swift in Sources */,
 				CF4E53962A31CE3F00AE2059 /* QMIDefinitions.swift in Sources */,
 				CF5EF92829793F7500C4F50A /* TestDetection.swift in Sources */,
@@ -1658,6 +1685,7 @@
 				CFA09CF92A73D4B000D16832 /* SwiftExtensions.swift in Sources */,
 				CFB8B291296359CC00503189 /* CCTCollector.swift in Sources */,
 				CF54CCC32A331ED300961E4D /* PacketCell.swift in Sources */,
+				CFA83C982D9D78E300239AB7 /* CountryDetailsView.swift in Sources */,
 				45ECF56F2BFBFDFB00DD92CF /* NoneModeCard.swift in Sources */,
 				CF5672962A29E59000B6EA7C /* TweakInfoView.swift in Sources */,
 				CF54CCC12A331E7100961E4D /* PacketQMIDetailsView.swift in Sources */,
@@ -1665,7 +1693,9 @@
 				CF53DB42297473E8005DCD10 /* CoreLocationALS.pb.swift in Sources */,
 				45ECF5692BFBE44800DD92CF /* SysdiagInstructionsDetailedView.swift in Sources */,
 				CFD023432961A10D00AA5A1C /* CellGuard.xcdatamodeld in Sources */,
+				CFA83C952D9D467400239AB7 /* CellCountryNetworkSection.swift in Sources */,
 				45ECF5722BFC00D100DD92CF /* DebugProfileCard.swift in Sources */,
+				CFA83C9E2D9D7EBD00239AB7 /* Icons.swift in Sources */,
 				CFAE881A2C28B9C100092B15 /* StudyClient.swift in Sources */,
 				CF7064F62CC513B500BF8AF9 /* TowerAnnotationView.swift in Sources */,
 				CFDF5D7F297F05A0000708A8 /* SingleCellMap.swift in Sources */,

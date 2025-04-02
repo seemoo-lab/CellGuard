@@ -78,6 +78,11 @@ struct InformationContactView: View {
                 } label: {
                     Text("Third-Party Libraries")
                 }
+                Link(destination: URL(string: "https://en.wikipedia.org/wiki/Mobile_country_code")!, label: {
+                    KeyValueListRow(key: "Network Operators") {
+                        wikipediaIcon
+                    }
+                })
                 Link(destination: URL(string: "https://gitlab.freedesktop.org/mobile-broadband/libqmi")!, label: {
                     KeyValueListRow(key: "libqmi") {
                         Image(systemName: "link")
