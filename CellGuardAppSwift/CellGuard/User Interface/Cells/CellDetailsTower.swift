@@ -18,8 +18,8 @@ struct CellDetailsTower: View {
     let bitCount: Int?
     
     private let techFormatter: CellTechnologyFormatter
-    private let countryName: String?
-    private let networkName: String?
+    private let netCountry: NetworkCountry?
+    private let netOperator: NetworkOperator?
     
     init(technology: ALSTechnology, country: Int32, network: Int32, area: Int32, baseStation: Int64, dissect: @escaping (Int64) -> (Int64, Int64), bitCount: Int? = nil) {
         self.technology = technology
@@ -31,7 +31,8 @@ struct CellDetailsTower: View {
         self.bitCount = bitCount
         
         self.techFormatter = CellTechnologyFormatter(technology: technology)
-        (self.countryName, self.networkName) = OperatorDefinitions.shared.translate(country: country, network: network)
+        self.netCountry = OperatorDefinitions.shared.translate(country: country)
+        self.netOperator = OperatorDefinitions.shared.translate(country: country, network: network)
     }
     
     var baseStationIDSingle: String {
@@ -58,16 +59,7 @@ struct CellDetailsTower: View {
         List {
             CellDetailsTowerMap(baseStation: baseStation, dissect: dissect, fetchRequest: fetchRequest)
             
-            Section(header: Text("Country & Network")) {
-                CellDetailsRow(techFormatter.country(), country)
-                if let countryName = countryName {
-                    CellDetailsRow("Country", countryName)
-                }
-                CellDetailsRow(techFormatter.network(), formatMNC(network))
-                if let networkName = networkName {
-                    CellDetailsRow("Network", networkName)
-                }
-            }
+            CellCountryNetworkSection(country: country, network: network, techFormatter: techFormatter)
             Section(header: Text("Technology & Region")) {
                 CellDetailsRow("Technology", technology.rawValue)
                 CellDetailsRow(techFormatter.area(), area)

@@ -176,6 +176,14 @@
 		CFA09CF92A73D4B000D16832 /* SwiftExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFA09CF82A73D4B000D16832 /* SwiftExtensions.swift */; };
 		CFA632552AB3501800D46025 /* CSV in Frameworks */ = {isa = PBXBuildFile; productRef = CFA632542AB3501800D46025 /* CSV */; };
 		CFA632582AB3503400D46025 /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = CFA632572AB3503400D46025 /* ZIPFoundation */; };
+		CFA83C942D9D467400239AB7 /* CellCountryNetworkSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFA83C932D9D467400239AB7 /* CellCountryNetworkSection.swift */; };
+		CFA83C952D9D467400239AB7 /* CellCountryNetworkSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFA83C932D9D467400239AB7 /* CellCountryNetworkSection.swift */; };
+		CFA83C972D9D78E300239AB7 /* CountryDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFA83C962D9D78E300239AB7 /* CountryDetailsView.swift */; };
+		CFA83C982D9D78E300239AB7 /* CountryDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFA83C962D9D78E300239AB7 /* CountryDetailsView.swift */; };
+		CFA83C9A2D9D78FC00239AB7 /* OperatorDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFA83C992D9D78FC00239AB7 /* OperatorDetailsView.swift */; };
+		CFA83C9B2D9D78FC00239AB7 /* OperatorDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFA83C992D9D78FC00239AB7 /* OperatorDetailsView.swift */; };
+		CFA83C9D2D9D7EBD00239AB7 /* Icons.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFA83C9C2D9D7EBD00239AB7 /* Icons.swift */; };
+		CFA83C9E2D9D7EBD00239AB7 /* Icons.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFA83C9C2D9D7EBD00239AB7 /* Icons.swift */; };
 		CFAE88142C2887C400092B15 /* VerificationStateLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFAE88132C2887C400092B15 /* VerificationStateLog.swift */; };
 		CFAE88152C2887C400092B15 /* VerificationStateLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFAE88132C2887C400092B15 /* VerificationStateLog.swift */; };
 		CFAE88172C2887F300092B15 /* VerificationStateStudy.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFAE88162C2887F300092B15 /* VerificationStateStudy.swift */; };
@@ -510,6 +518,10 @@
 		CF9626C22AB7474500C46953 /* PersistenceCSVExporter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PersistenceCSVExporter.swift; sourceTree = "<group>"; };
 		CF9EEEE72B34B6A500F9B6D8 /* SysdiagOpenSettingsCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SysdiagOpenSettingsCard.swift; sourceTree = "<group>"; };
 		CFA09CF82A73D4B000D16832 /* SwiftExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftExtensions.swift; sourceTree = "<group>"; };
+		CFA83C932D9D467400239AB7 /* CellCountryNetworkSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellCountryNetworkSection.swift; sourceTree = "<group>"; };
+		CFA83C962D9D78E300239AB7 /* CountryDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountryDetailsView.swift; sourceTree = "<group>"; };
+		CFA83C992D9D78FC00239AB7 /* OperatorDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperatorDetailsView.swift; sourceTree = "<group>"; };
+		CFA83C9C2D9D7EBD00239AB7 /* Icons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Icons.swift; sourceTree = "<group>"; };
 		CFAE88132C2887C400092B15 /* VerificationStateLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerificationStateLog.swift; sourceTree = "<group>"; };
 		CFAE88162C2887F300092B15 /* VerificationStateStudy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerificationStateStudy.swift; sourceTree = "<group>"; };
 		CFAE88192C28B9C100092B15 /* StudyClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudyClient.swift; sourceTree = "<group>"; };
@@ -674,6 +686,7 @@
 				CF9237122A3E1BD300FC7D21 /* KeyValueListRow.swift */,
 				CFE988DE2AA88A2B0039EDF9 /* CircularProgressView.swift */,
 				45ECF56B2BFBEA5300DD92CF /* DeviceModel.swift */,
+				CFA83C9C2D9D7EBD00239AB7 /* Icons.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -790,6 +803,9 @@
 				CFB51833297AEFA80006C690 /* CellStatusIcon.swift */,
 				CF86C7962A6ACDAA002EC9B6 /* CellDetailsRow.swift */,
 				CF86C7982A6AD51D002EC9B6 /* GroupedMeasurements.swift */,
+				CFA83C932D9D467400239AB7 /* CellCountryNetworkSection.swift */,
+				CFA83C962D9D78E300239AB7 /* CountryDetailsView.swift */,
+				CFA83C992D9D78FC00239AB7 /* OperatorDetailsView.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -1488,6 +1504,7 @@
 				45ECF56D2BFBEA5300DD92CF /* DeviceModel.swift in Sources */,
 				45ECF5522BFAAF1F00DD92CF /* CenteredTitleIconTextView.swift in Sources */,
 				CFB6CF352BD122FA00EAB7B4 /* MultiCellMap.swift in Sources */,
+				CFA83C9A2D9D78FC00239AB7 /* OperatorDetailsView.swift in Sources */,
 				CFB6CF362BD122FA00EAB7B4 /* QMIDefinitions.swift in Sources */,
 				CFB6CF372BD122FA00EAB7B4 /* TestDetection.swift in Sources */,
 				CFB6CF392BD122FA00EAB7B4 /* CellDetailsView.swift in Sources */,
@@ -1505,6 +1522,7 @@
 				CFC041132C124D5F00BCD692 /* IntroductionView.swift in Sources */,
 				CFB6CF442BD122FA00EAB7B4 /* CCTCollector.swift in Sources */,
 				CFB6CF452BD122FA00EAB7B4 /* PacketCell.swift in Sources */,
+				CFA83C972D9D78E300239AB7 /* CountryDetailsView.swift in Sources */,
 				45ECF5702BFBFDFB00DD92CF /* NoneModeCard.swift in Sources */,
 				CFB6CF462BD122FA00EAB7B4 /* TweakInfoView.swift in Sources */,
 				CFB6CF472BD122FA00EAB7B4 /* PacketQMIDetailsView.swift in Sources */,
@@ -1512,7 +1530,9 @@
 				CFB6CF482BD122FA00EAB7B4 /* CoreLocationALS.pb.swift in Sources */,
 				45ECF56A2BFBE44800DD92CF /* SysdiagInstructionsDetailedView.swift in Sources */,
 				CFB6CF4A2BD122FA00EAB7B4 /* CellGuard.xcdatamodeld in Sources */,
+				CFA83C942D9D467400239AB7 /* CellCountryNetworkSection.swift in Sources */,
 				45ECF5732BFC00D100DD92CF /* DebugProfileCard.swift in Sources */,
+				CFA83C9D2D9D7EBD00239AB7 /* Icons.swift in Sources */,
 				CFAE881B2C28B9C100092B15 /* StudyClient.swift in Sources */,
 				CF7064F72CC513B500BF8AF9 /* TowerAnnotationView.swift in Sources */,
 				CFB6CF4B2BD122FA00EAB7B4 /* SingleCellMap.swift in Sources */,
@@ -1647,6 +1667,7 @@
 				CF70A9942BE6B6D600989FB5 /* QCommonFetch.swift in Sources */,
 				45ECF56C2BFBEA5300DD92CF /* DeviceModel.swift in Sources */,
 				45ECF5512BFAAF1F00DD92CF /* CenteredTitleIconTextView.swift in Sources */,
+				CFA83C9B2D9D78FC00239AB7 /* OperatorDetailsView.swift in Sources */,
 				CFDF5D6F297EF05D000708A8 /* MultiCellMap.swift in Sources */,
 				CF4E53962A31CE3F00AE2059 /* QMIDefinitions.swift in Sources */,
 				CF5EF92829793F7500C4F50A /* TestDetection.swift in Sources */,
@@ -1664,6 +1685,7 @@
 				CFA09CF92A73D4B000D16832 /* SwiftExtensions.swift in Sources */,
 				CFB8B291296359CC00503189 /* CCTCollector.swift in Sources */,
 				CF54CCC32A331ED300961E4D /* PacketCell.swift in Sources */,
+				CFA83C982D9D78E300239AB7 /* CountryDetailsView.swift in Sources */,
 				45ECF56F2BFBFDFB00DD92CF /* NoneModeCard.swift in Sources */,
 				CF5672962A29E59000B6EA7C /* TweakInfoView.swift in Sources */,
 				CF54CCC12A331E7100961E4D /* PacketQMIDetailsView.swift in Sources */,
@@ -1671,7 +1693,9 @@
 				CF53DB42297473E8005DCD10 /* CoreLocationALS.pb.swift in Sources */,
 				45ECF5692BFBE44800DD92CF /* SysdiagInstructionsDetailedView.swift in Sources */,
 				CFD023432961A10D00AA5A1C /* CellGuard.xcdatamodeld in Sources */,
+				CFA83C952D9D467400239AB7 /* CellCountryNetworkSection.swift in Sources */,
 				45ECF5722BFC00D100DD92CF /* DebugProfileCard.swift in Sources */,
+				CFA83C9E2D9D7EBD00239AB7 /* Icons.swift in Sources */,
 				CFAE881A2C28B9C100092B15 /* StudyClient.swift in Sources */,
 				CF7064F62CC513B500BF8AF9 /* TowerAnnotationView.swift in Sources */,
 				CFDF5D7F297F05A0000708A8 /* SingleCellMap.swift in Sources */,
