@@ -1,7 +1,0 @@
-.idea/
-.theos/
-packages/
-.DS_Store
-data
-
-frida-gum.d.ts

@@ -28,7 +28,7 @@ enum ARIGenerationError: Error {
 struct ParsedARIPacket: ParsedPacket {
     
     let header: ARIHeader
-    let tlvs: [ARITLV]
+    let tlvs: [AriTlv]
     
     init(data: Data) throws {
         // The header has a size of 12 bytes
@@ -45,9 +45,9 @@ struct ParsedARIPacket: ParsedPacket {
         
         // We iterating through all TLVs making up the content of the ARI packet
         var offset = 12
-        var tmpTLVs: [ARITLV] = []
+        var tmpTLVs: [AriTlv] = []
         while offset < data.count {
-            let tlv = try ARITLV(data: data.subdata(in: offset..<data.count))
+            let tlv = try AriTlv(data: data.subdata(in: offset..<data.count))
             tmpTLVs.append(tlv)
             // The ARI header has a length of 4 bytes
             offset += 4 + Int(tlv.length)
@@ -55,7 +55,7 @@ struct ParsedARIPacket: ParsedPacket {
         self.tlvs = tmpTLVs
     }
     
-    init(group: UInt8, type: UInt16, transaction: UInt16, sequenceNumber: UInt16, acknowledgement: Bool, tlvs: [ARITLV]) throws {
+    init(group: UInt8, type: UInt16, transaction: UInt16, sequenceNumber: UInt16, acknowledgement: Bool, tlvs: [AriTlv]) throws {
         let tlvByteCount = tlvs.map { $0.byteCount }.reduce(0, +)
         if tlvByteCount >= 1 << 15 {
             throw ARIGenerationError.TLVsTooLong(max: Int(UInt16.max), length: tlvByteCount)
@@ -84,6 +84,9 @@ struct ParsedARIPacket: ParsedPacket {
         return Data(bytes)
     }
     
+    func findTlvValue(type: UInt8) -> AriTlv? {
+        return self.tlvs.filter({ $0.type == type }).first
+    }
 }
 
 struct ARIHeader {
@@ -183,7 +186,7 @@ struct ARIHeader {
     
 }
 
-struct ARITLV {
+struct AriTlv {
     
     var byteCount: Int {
         return 4 + Int(length)
@@ -237,6 +240,10 @@ struct ARITLV {
             print("ARI TLV data to UInt32 conversion failed: \(error)")
             return nil
         }
+    }
+    
+    func hasEmptyData() -> Bool {
+        return length == 0 || data.allSatisfy { $0 == 0 }
     }
     
     fileprivate func write(buffer: inout ByteBuffer, scratch: inout ByteBuffer) {

@@ -65,8 +65,11 @@ private struct VerificationStateInternalView: View {
                 CellDetailsRow("Band", measurement.band)
                 CellDetailsRow("Bandwidth", measurement.bandwidth)
                 CellDetailsRow("Physical Cell ID", measurement.physicalCell)
-                if let neighborTechnology = measurement.neighborTechnology {
-                    CellDetailsRow("Neighbor", neighborTechnology)
+                
+                if let qmiPacket = measurement.packetQmi {
+                    NavigationLink { PacketQMIDetailsView(packet: qmiPacket) } label: { PacketCell(packet: qmiPacket) }
+                } else if let ariPacket = measurement.packetAri {
+                    NavigationLink { PacketARIDetailsView(packet: ariPacket) } label: { PacketCell(packet: ariPacket) }
                 }
             }
             

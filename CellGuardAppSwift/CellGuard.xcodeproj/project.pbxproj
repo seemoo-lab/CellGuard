@@ -228,7 +228,6 @@
 		CFB6CF412BD122FA00EAB7B4 /* CellStatusIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB51833297AEFA80006C690 /* CellStatusIcon.swift */; };
 		CFB6CF422BD122FA00EAB7B4 /* Cell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFBEC8532BC7F7D70021C0B9 /* Cell.swift */; };
 		CFB6CF432BD122FA00EAB7B4 /* SwiftExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFA09CF82A73D4B000D16832 /* SwiftExtensions.swift */; };
-		CFB6CF442BD122FA00EAB7B4 /* CCTCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB8B290296359CC00503189 /* CCTCollector.swift */; };
 		CFB6CF452BD122FA00EAB7B4 /* PacketCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF54CCC22A331ED300961E4D /* PacketCell.swift */; };
 		CFB6CF462BD122FA00EAB7B4 /* TweakInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5672952A29E59000B6EA7C /* TweakInfoView.swift */; };
 		CFB6CF472BD122FA00EAB7B4 /* PacketQMIDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF54CCC02A331E7100961E4D /* PacketQMIDetailsView.swift */; };
@@ -248,7 +247,6 @@
 		CFB6CF572BD122FA00EAB7B4 /* SysdiagOpenSettingsCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF9EEEE72B34B6A500F9B6D8 /* SysdiagOpenSettingsCard.swift */; };
 		CFB6CF582BD122FA00EAB7B4 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0FDCC12969AC1100A6FFE2 /* SettingsView.swift */; };
 		CFB6CF592BD122FA00EAB7B4 /* FirstLastDates.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFFF19E62BC70E83004E40CE /* FirstLastDates.swift */; };
-		CFB6CF5A2BD122FA00EAB7B4 /* CCTClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD023672961AB9900AA5A1C /* CCTClient.swift */; };
 		CFB6CF5B2BD122FA00EAB7B4 /* DataSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF7309992A79122B00498BC3 /* DataSummaryView.swift */; };
 		CFB6CF5C2BD122FA00EAB7B4 /* CellReachOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1FAFB22986B11200106930 /* CellReachOverlay.swift */; };
 		CFB6CF5D2BD122FA00EAB7B4 /* CellGuardAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB8B2892963498200503189 /* CellGuardAppDelegate.swift */; };
@@ -310,7 +308,6 @@
 		CFB86D5A2C7C84FE0072BEFC /* NIOCore in Frameworks */ = {isa = PBXBuildFile; productRef = CFB86D592C7C84FE0072BEFC /* NIOCore */; };
 		CFB8B2882963417B00503189 /* LocationDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB8B2872963417B00503189 /* LocationDataManager.swift */; };
 		CFB8B28A2963498200503189 /* CellGuardAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB8B2892963498200503189 /* CellGuardAppDelegate.swift */; };
-		CFB8B291296359CC00503189 /* CCTCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB8B290296359CC00503189 /* CCTCollector.swift */; };
 		CFB954202BF34DC500F87FF5 /* StudyPacketFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB9541F2BF34DC500F87FF5 /* StudyPacketFilter.swift */; };
 		CFB954212BF34DC500F87FF5 /* StudyPacketFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB9541F2BF34DC500F87FF5 /* StudyPacketFilter.swift */; };
 		CFBEC8402BC7F6E80021C0B9 /* PacketQMI+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFBEC83C2BC7F6E80021C0B9 /* PacketQMI+CoreDataClass.swift */; };
@@ -335,7 +332,6 @@
 		CFD0234D2961A10E00AA5A1C /* CellGuardTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD0234C2961A10E00AA5A1C /* CellGuardTests.swift */; };
 		CFD023572961A10E00AA5A1C /* CellGuardUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD023562961A10E00AA5A1C /* CellGuardUITests.swift */; };
 		CFD023592961A10E00AA5A1C /* CellGuardUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD023582961A10E00AA5A1C /* CellGuardUITestsLaunchTests.swift */; };
-		CFD023682961AB9900AA5A1C /* CCTClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD023672961AB9900AA5A1C /* CCTClient.swift */; };
 		CFD0236A2961ABA100AA5A1C /* ALSClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD023692961ABA100AA5A1C /* ALSClient.swift */; };
 		CFD0236D2961AD1500AA5A1C /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = CFD0236C2961AD1500AA5A1C /* SwiftProtobuf */; };
 		CFD023742961DF7400AA5A1C /* ALSClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD023732961DF7400AA5A1C /* ALSClientTests.swift */; };
@@ -377,6 +373,12 @@
 		CFFF19E32BC6D2D3004E40CE /* AcknowledgementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFFF19E22BC6D2D3004E40CE /* AcknowledgementView.swift */; };
 		CFFF19E52BC70E63004E40CE /* ImportResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFFF19E42BC70E63004E40CE /* ImportResult.swift */; };
 		CFFF19E72BC70E83004E40CE /* FirstLastDates.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFFF19E62BC70E83004E40CE /* FirstLastDates.swift */; };
+		EDAFBFE92D9C0A5300D7748B /* AriCellParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDAFBFE82D9C0A4E00D7748B /* AriCellParser.swift */; };
+		EDAFBFEA2D9C0A5300D7748B /* AriCellParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDAFBFE82D9C0A4E00D7748B /* AriCellParser.swift */; };
+		EDAFBFEC2D9C0A5A00D7748B /* QmiCellParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDAFBFEB2D9C0A5600D7748B /* QmiCellParser.swift */; };
+		EDAFBFED2D9C0A5A00D7748B /* QmiCellParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDAFBFEB2D9C0A5600D7748B /* QmiCellParser.swift */; };
+		EDAFBFEF2D9C0A6800D7748B /* SampleCellParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDAFBFEE2D9C0A5E00D7748B /* SampleCellParser.swift */; };
+		EDAFBFF02D9C0A6800D7748B /* SampleCellParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDAFBFEE2D9C0A5E00D7748B /* SampleCellParser.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -530,7 +532,6 @@
 		CFB6CFA42BD122FA00EAB7B4 /* CellGuard Jailbreak.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "CellGuard Jailbreak.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFB8B2872963417B00503189 /* LocationDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationDataManager.swift; sourceTree = "<group>"; };
 		CFB8B2892963498200503189 /* CellGuardAppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellGuardAppDelegate.swift; sourceTree = "<group>"; };
-		CFB8B290296359CC00503189 /* CCTCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CCTCollector.swift; sourceTree = "<group>"; };
 		CFB9541F2BF34DC500F87FF5 /* StudyPacketFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudyPacketFilter.swift; sourceTree = "<group>"; };
 		CFBEC83C2BC7F6E80021C0B9 /* PacketQMI+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PacketQMI+CoreDataClass.swift"; sourceTree = "<group>"; };
 		CFBEC83E2BC7F6E80021C0B9 /* PacketARI+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PacketARI+CoreDataClass.swift"; sourceTree = "<group>"; };
@@ -554,7 +555,6 @@
 		CFD023522961A10E00AA5A1C /* CellGuardUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CellGuardUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFD023562961A10E00AA5A1C /* CellGuardUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellGuardUITests.swift; sourceTree = "<group>"; };
 		CFD023582961A10E00AA5A1C /* CellGuardUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellGuardUITestsLaunchTests.swift; sourceTree = "<group>"; };
-		CFD023672961AB9900AA5A1C /* CCTClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CCTClient.swift; sourceTree = "<group>"; };
 		CFD023692961ABA100AA5A1C /* ALSClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ALSClient.swift; sourceTree = "<group>"; };
 		CFD023732961DF7400AA5A1C /* ALSClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ALSClientTests.swift; sourceTree = "<group>"; };
 		CFD565792BDFA82C00925FAA /* VerificationPipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerificationPipeline.swift; sourceTree = "<group>"; };
@@ -589,6 +589,9 @@
 		CFFF19E22BC6D2D3004E40CE /* AcknowledgementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AcknowledgementView.swift; sourceTree = "<group>"; };
 		CFFF19E42BC70E63004E40CE /* ImportResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportResult.swift; sourceTree = "<group>"; };
 		CFFF19E62BC70E83004E40CE /* FirstLastDates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstLastDates.swift; sourceTree = "<group>"; };
+		EDAFBFE82D9C0A4E00D7748B /* AriCellParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AriCellParser.swift; sourceTree = "<group>"; };
+		EDAFBFEB2D9C0A5600D7748B /* QmiCellParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QmiCellParser.swift; sourceTree = "<group>"; };
+		EDAFBFEE2D9C0A5E00D7748B /* SampleCellParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleCellParser.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1111,9 +1114,10 @@
 		CFD023662961AB7E00AA5A1C /* Capture Cells */ = {
 			isa = PBXGroup;
 			children = (
-				CFD023672961AB9900AA5A1C /* CCTClient.swift */,
+				EDAFBFEE2D9C0A5E00D7748B /* SampleCellParser.swift */,
+				EDAFBFEB2D9C0A5600D7748B /* QmiCellParser.swift */,
+				EDAFBFE82D9C0A4E00D7748B /* AriCellParser.swift */,
 				CF320F5429620B16009BAD18 /* CCTParser.swift */,
-				CFB8B290296359CC00503189 /* CCTCollector.swift */,
 			);
 			path = "Capture Cells";
 			sourceTree = "<group>";
@@ -1478,6 +1482,7 @@
 				CFB6CF232BD122FA00EAB7B4 /* ARIContentParser.swift in Sources */,
 				CFB6CF242BD122FA00EAB7B4 /* PersistenceCSVExporter.swift in Sources */,
 				CF70A97D2BE682F900989FB5 /* QVerification.swift in Sources */,
+				EDAFBFEC2D9C0A5A00D7748B /* QmiCellParser.swift in Sources */,
 				CF8F3E362BF3C4DE00FC9F43 /* StudyTask.swift in Sources */,
 				CFB6CF252BD122FA00EAB7B4 /* URLIdentifiable.swift in Sources */,
 				CFEC5E772BD1816B004978FA /* CellGuardURLs.swift in Sources */,
@@ -1502,6 +1507,7 @@
 				CFB6CF342BD122FA00EAB7B4 /* LogArchiveReader.swift in Sources */,
 				CF70A9952BE6B6D600989FB5 /* QCommonFetch.swift in Sources */,
 				45ECF56D2BFBEA5300DD92CF /* DeviceModel.swift in Sources */,
+				EDAFBFEA2D9C0A5300D7748B /* AriCellParser.swift in Sources */,
 				45ECF5522BFAAF1F00DD92CF /* CenteredTitleIconTextView.swift in Sources */,
 				CFB6CF352BD122FA00EAB7B4 /* MultiCellMap.swift in Sources */,
 				CFA83C9A2D9D78FC00239AB7 /* OperatorDetailsView.swift in Sources */,
@@ -1520,7 +1526,6 @@
 				CFB6CF422BD122FA00EAB7B4 /* Cell.swift in Sources */,
 				CFB6CF432BD122FA00EAB7B4 /* SwiftExtensions.swift in Sources */,
 				CFC041132C124D5F00BCD692 /* IntroductionView.swift in Sources */,
-				CFB6CF442BD122FA00EAB7B4 /* CCTCollector.swift in Sources */,
 				CFB6CF452BD122FA00EAB7B4 /* PacketCell.swift in Sources */,
 				CFA83C972D9D78E300239AB7 /* CountryDetailsView.swift in Sources */,
 				45ECF5702BFBFDFB00DD92CF /* NoneModeCard.swift in Sources */,
@@ -1551,7 +1556,6 @@
 				CFB6CF582BD122FA00EAB7B4 /* SettingsView.swift in Sources */,
 				45ECF54F2BFAADAA00DD92CF /* NotificationPermissionView.swift in Sources */,
 				CFB6CF592BD122FA00EAB7B4 /* FirstLastDates.swift in Sources */,
-				CFB6CF5A2BD122FA00EAB7B4 /* CCTClient.swift in Sources */,
 				CF2FF6942BF2A3DF006E2DF4 /* StudyClientSamples.swift in Sources */,
 				CFB6CF5B2BD122FA00EAB7B4 /* DataSummaryView.swift in Sources */,
 				CFB6CF5C2BD122FA00EAB7B4 /* CellReachOverlay.swift in Sources */,
@@ -1607,6 +1611,7 @@
 				CFB6CF7F2BD122FA00EAB7B4 /* QMIContentParser.swift in Sources */,
 				CF2FF68E2BF296EE006E2DF4 /* RiskInfoView.swift in Sources */,
 				CF0157C32CC3FFD1003ACAC4 /* CellIdentification.swift in Sources */,
+				EDAFBFF02D9C0A6800D7748B /* SampleCellParser.swift in Sources */,
 				CFB6CF802BD122FA00EAB7B4 /* CellGuardSceneDelegate.swift in Sources */,
 				CF462B482C94315A00BA1BF4 /* MapInfoSheet.swift in Sources */,
 				CFD5657B2BDFA82C00925FAA /* VerificationPipeline.swift in Sources */,
@@ -1641,6 +1646,7 @@
 				CFD8DD282A7175AF00954A25 /* ARIContentParser.swift in Sources */,
 				CF9626C32AB7474500C46953 /* PersistenceCSVExporter.swift in Sources */,
 				CF1CD4752BE16C1C009A3582 /* QVerification.swift in Sources */,
+				EDAFBFED2D9C0A5A00D7748B /* QmiCellParser.swift in Sources */,
 				CF8F3E352BF3C4DE00FC9F43 /* StudyTask.swift in Sources */,
 				CF93B852297FFEF9003F9FFE /* URLIdentifiable.swift in Sources */,
 				CFEC5E762BD1808E004978FA /* CellGuardURLs.swift in Sources */,
@@ -1665,6 +1671,7 @@
 				CF2A1C222975DB8100E8B61C /* CellInformationCard.swift in Sources */,
 				CF57561D2B2F263500C7C60A /* LogArchiveReader.swift in Sources */,
 				CF70A9942BE6B6D600989FB5 /* QCommonFetch.swift in Sources */,
+				EDAFBFE92D9C0A5300D7748B /* AriCellParser.swift in Sources */,
 				45ECF56C2BFBEA5300DD92CF /* DeviceModel.swift in Sources */,
 				45ECF5512BFAAF1F00DD92CF /* CenteredTitleIconTextView.swift in Sources */,
 				CFA83C9B2D9D78FC00239AB7 /* OperatorDetailsView.swift in Sources */,
@@ -1683,7 +1690,6 @@
 				CFB51834297AEFA80006C690 /* CellStatusIcon.swift in Sources */,
 				CFBEC8542BC7F7D70021C0B9 /* Cell.swift in Sources */,
 				CFA09CF92A73D4B000D16832 /* SwiftExtensions.swift in Sources */,
-				CFB8B291296359CC00503189 /* CCTCollector.swift in Sources */,
 				CF54CCC32A331ED300961E4D /* PacketCell.swift in Sources */,
 				CFA83C982D9D78E300239AB7 /* CountryDetailsView.swift in Sources */,
 				45ECF56F2BFBFDFB00DD92CF /* NoneModeCard.swift in Sources */,
@@ -1714,7 +1720,6 @@
 				CF0FDCC22969AC1100A6FFE2 /* SettingsView.swift in Sources */,
 				45ECF54E2BFAADAA00DD92CF /* NotificationPermissionView.swift in Sources */,
 				CFFF19E72BC70E83004E40CE /* FirstLastDates.swift in Sources */,
-				CFD023682961AB9900AA5A1C /* CCTClient.swift in Sources */,
 				CF2FF6932BF2A3DF006E2DF4 /* StudyClientSamples.swift in Sources */,
 				CF73099A2A79122B00498BC3 /* DataSummaryView.swift in Sources */,
 				CF1FAFB32986B11200106930 /* CellReachOverlay.swift in Sources */,
@@ -1770,6 +1775,7 @@
 				CFD8DD262A715E8300954A25 /* QMIContentParser.swift in Sources */,
 				CF2FF68D2BF296EE006E2DF4 /* RiskInfoView.swift in Sources */,
 				CF0157C42CC3FFD1003ACAC4 /* CellIdentification.swift in Sources */,
+				EDAFBFEF2D9C0A6800D7748B /* SampleCellParser.swift in Sources */,
 				CF5CBB9529689FFE001CE9BE /* CellGuardSceneDelegate.swift in Sources */,
 				CF462B472C94315A00BA1BF4 /* MapInfoSheet.swift in Sources */,
 				CFD5657A2BDFA82C00925FAA /* VerificationPipeline.swift in Sources */,

@@ -328,7 +328,7 @@ struct StudyPacketFilter {
             group: header.group, type: header.type,
             transaction: header.transaction, sequenceNumber: header.sequenceNumber,
             acknowledgement: header.acknowledgement,
-            tlvs: [ARITLV(type: 1 << 10, version: 0, data: Data())]
+            tlvs: [AriTlv(type: 1 << 10, version: 0, data: Data())]
         ).write()
     }
     

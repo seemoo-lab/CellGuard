@@ -271,6 +271,7 @@ struct PersistenceCSVExporter {
     }
     
     private func writeUserCells(url: URL, progress: CSVProgressFunc) throws -> Int {
+        let encoder = JSONEncoder()
         return try writeData(
             url: url,
             category: .connectedCells,
@@ -279,7 +280,7 @@ struct PersistenceCSVExporter {
             writers: [DatabaseFileElementWriter(CellTweak.fetchRequest) { csv, result in
                 try csv.write(row: [
                     csvDate(result.collected),
-                    csvString(result.json),
+                    csvString(String(data: encoder.encode(result), encoding: .utf8)!),
                     csvString(result.technology),
                     csvInt(result.country),
                     csvInt(result.network),

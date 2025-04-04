@@ -438,7 +438,7 @@ struct LogArchiveReader {
         let csvReader = try CSVReader(stream: inputStream, hasHeaderRow: true)
         
         // TODO: Import data during import (e.g. there are >1000 entries)
-        var cells: [(CCTCellProperties, String)] = []
+        var controlCells: [CCTCellProperties] = []
         var packets: [CPTPacket] = []
         let packetDates = FirstLastDates()
         var packetsPrivate: [Date] = []
@@ -473,7 +473,7 @@ struct LogArchiveReader {
                     packets.append(try readCSVPacketARI(library: library, timestamp: timestampDate, message: message))
                     packetDates.update(timestampDate)
                 } else if category == "ct.server" && subsystem == "com.apple.CommCenter" {
-                    cells.append(try readCSVCellMeasurement(timestamp: timestampDate, message: message))
+                    controlCells.append(try readCSVCellMeasurement(timestamp: timestampDate, message: message))
                 } else if subsystem == "com.apple.cache_delete" {
                     // TODO: Modify the function `output` in the file `src/csv_parser.rs` to include entries from this subsystem
                     readDeletedAction(timestamp: timestampDate, message: message)
@@ -491,45 +491,43 @@ struct LogArchiveReader {
             progress()
         }
         
-        // Remove cell measurements that aren't different to their predecessor of the last second.
-        // This the same logic which is also implemented in the tweak.
-        // See: https://dev.seemoo.tu-darmstadt.de/apple/cell-guard/-/blob/main/CaptureCellsTweak/CCTManager.m?ref_type=heads#L35
-        
-        // Store the properties of the previous cell in the list
-        var prevCellDate: Date?
-        var prevCellJson: String?
-        let filteredCells = cells
-            .sorted { $0.0.timestamp ?? Date.distantPast < $1.0.timestamp ?? Date.distantPast }
-            .filter { (cell, cellJson) in
-                if let prevCellDate = prevCellDate,
-                   let prevCellJson = prevCellJson,
-                   let cellDate = cell.timestamp,
-                   cellDate.timeIntervalSince(prevCellDate) < 1,
-                   prevCellJson == cellJson {
-                    
-                    return false
-                }
-                
-                prevCellDate = cell.timestamp
-                prevCellJson = cellJson
-                
-                return true
-            }
-            .map { $0.0 }
-        Self.logger.debug("Filtered \(cells.count - filteredCells.count) similar cells, resulting in \(cells.count) cells.")
-        
-        
+        // Check which of the control cells are not already in the database, before storing them.
+        let newControlCells = controlCells.filter { (cell: CCTCellProperties) in
+            let exists = PersistenceController.shared.fetchCellExists(properties: cell) ?? false
+            return !exists
+        }
+
+        var filteredCells: [CCTCellProperties] = []
         do {
-            let controller = PersistenceController.basedOnEnvironment()
-            if cells.count > 0 {
-                try controller.importCollectedCells(from: filteredCells)
-            }
             if packets.count > 0 {
-                _ = try CPTCollector.store(packets)
+                (_, _, filteredCells) = try CPTCollector.store(packets)
             }
         } catch {
             throw LogArchiveError.importError(error)
         }
+
+        // Compare filteredCells (packet parser) with the controlCells (log parser).
+        // Compare the technologies of both cell lists. The control cells must not have more technologies.
+        let cellTechnologies = Set(filteredCells.compactMap { $0.technology })
+        let controlCellTechnologies = Set(newControlCells.compactMap { $0.technology })
+        var erroneousCells = cellTechnologies != controlCellTechnologies
+        
+        // Compare if all the cells have a matching control cell with the same values at the important attributes.
+        for cell in filteredCells {
+            let controlCellIsMissing = controlCells.filter { (controlCell: CCTCellProperties) in
+                return cell.mcc == controlCell.mcc && cell.network == controlCell.network && cell.area == controlCell.area &&
+                cell.cellId == controlCell.cellId && cell.frequency == controlCell.frequency &&
+                cell.band == controlCell.band
+            }.isEmpty
+            erroneousCells = erroneousCells || controlCellIsMissing
+        }
+        
+        var notices: [ImportNotice] = []
+        if erroneousCells {
+            notices.append(.cellParserMisalignment)
+        }
+        
+        Self.logger.debug("Imported \(filteredCells.count) cells.")
         
         // TODO: Recently installed and recently expired (check MCProfileEvents.plist)
         // TODO: Check for log truncation
@@ -539,10 +537,9 @@ struct LogArchiveReader {
             alsCells: nil,
             locations: nil,
             packets: ImportCount(count: packets.count, first: packetDates.first, last: packetDates.last),
-            notices: []  // TODO: currently no more notices, as we don't check profile here
+            notices: notices
         )
     }
-    
     
     private func readCSVPacketQMI(library: String, timestamp: Date, message: String) throws -> CPTPacket {
         
@@ -570,9 +567,8 @@ struct LogArchiveReader {
         return try CPTPacket(direction: direction, data: packetData, timestamp: timestamp, knownProtocol: .qmi)
     }
     
-    
     private func readCSVPacketARI(library: String, timestamp: Date, message: String) throws -> CPTPacket {
-        
+
         let binRegex = Regex("(ind|req|rsp): Bin=\\[(.*)]")
         guard let binMatch = binRegex.firstMatch(in: message) else {
             throw LogArchiveError.noBinaryPacketData
@@ -603,7 +599,7 @@ struct LogArchiveReader {
     private let regexStringQuoted = Regex("kCTCellMonitor([\\w]+) *= *\\\\\"([\\S]+)\\\\\";")
     private let replaceString = "\"$1\": \"$2\","
     
-    private func readCSVCellMeasurement(timestamp: Date, message: String) throws -> (CCTCellProperties, String) {
+    private func readCSVCellMeasurement(timestamp: Date, message: String) throws -> CCTCellProperties {
         let messageBodySuffix = message.components(separatedBy: "info=(")
         if messageBodySuffix.count < 2 {
             throw LogArchiveError.wrongCellPrefixText
@@ -641,7 +637,7 @@ struct LogArchiveReader {
         
         // Parse the JSON dictionary with our own parser
         do {
-            return (try CCTParser().parse(json), jsonMsg)
+            return try CCTParser().parse(json)
         } catch {
             throw LogArchiveError.cellCCTParseError(jsonMsg, error)
         }

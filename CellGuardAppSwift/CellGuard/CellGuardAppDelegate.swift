@@ -16,7 +16,6 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
     // https://www.fivestars.blog/articles/app-delegate-scene-delegate-swiftui/
     // https://holyswift.app/new-backgroundtask-in-swiftui-and-how-to-test-it/
     
-    static let cellRefreshTaskIdentifier = "de.tudarmstadt.seemoo.CellGuard.refresh.cells"
     static let packetRefreshTaskIdentifier = "de.tudarmstadt.seemoo.CellGuard.refresh.packets"
     static let verifyTaskIdentifier = "de.tudarmstadt.seemoo.CellGuard.processing.verify"
     
@@ -62,29 +61,6 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
         // https://developer.apple.com/documentation/uikit/app_and_environment/scenes/preparing_your_ui_to_run_in_the_background/using_background_tasks_to_update_your_app
         
         #if JAILBREAK
-        BGTaskScheduler.shared.register(forTaskWithIdentifier: Self.cellRefreshTaskIdentifier, using: nil) { task in
-            // Only collect cells in the background if the app runs on a jailbroken device
-            if UserDefaults.standard.dataCollectionMode() != DataCollectionMode.automatic {
-                task.setTaskCompleted(success: true)
-                return
-            }
-            
-            // Use to cancel operations:
-            // let queue = OperationQueue()
-            // queue.maxConcurrentOperationCount = 1
-            // https://medium.com/snowdog-labs/managing-background-tasks-with-new-task-scheduler-in-ios-13-aaabdac0d95b
-            
-            let collector = CCTCollector(client: CCTClient(queue: DispatchQueue.global()))
-            
-            // TODO: Should we allow to cancel the task somehow?
-            // task.expirationHandler
-            
-            Task {
-                let count = try? await collector.collectAndStore()
-                task.setTaskCompleted(success: count != nil)
-            }
-        }
-        
         BGTaskScheduler.shared.register(forTaskWithIdentifier: Self.packetRefreshTaskIdentifier, using: nil) { task in
             // Only collect cells in the background if the app runs on a jailbroken device
             if UserDefaults.standard.dataCollectionMode() != DataCollectionMode.automatic {
@@ -114,34 +90,6 @@ class CellGuardAppDelegate : NSObject, UIApplicationDelegate {
             try? await Task.sleep(nanoseconds: UInt64(250 * MSEC_PER_SEC))
             
             #if JAILBREAK
-            let cellCollector = CCTCollector(client: CCTClient(queue: .global(qos: .background)))
-            let collectCellsTask: () async -> () = {
-                // Only run the task if the jailbreak mode is active
-                guard UserDefaults.standard.dataCollectionMode() == .automatic else { return }
-                
-                // Only run task when we currently don't manually import any new data
-                guard !PortStatus.importActive.load(ordering: .relaxed) else { return }
-                
-                do {
-                    // Get the number of successfully collected & stored cells
-                    _ = try await cellCollector.collectAndStore()
-                } catch {
-                    // Print the error if the task execution was not successful
-                    await Self.logger.warning("Failed to collect & store cells in scheduled timer: \(error)")
-                }
-            }
-            // Schedule a timer to continuously poll the latest cells
-            Task {
-                while (true) {
-                    await collectCellsTask()
-                    do {
-                        try await Task.sleep(nanoseconds: 30 * NSEC_PER_SEC)
-                    } catch {
-                        await Self.logger.warning("Failed to sleep after collecting cells: \(error)")
-                    }
-                }
-            }
-            
             let packetCollector = CPTCollector(client: CPTClient(queue: .global(qos: .background)))
             let collectPacketsTask: () async -> () = {
                 // Only run the task if the jailbreak mode is active
