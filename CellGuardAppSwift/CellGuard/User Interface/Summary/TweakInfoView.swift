@@ -17,8 +17,6 @@ The CellGuard iOS app itself does not collect cell identification data. This is 
 CellGuard continuously queries this component for new data and processes it. That's why the tweak must be active alongside the app.
 
 In the last thirty minutes the tweak was either not reachable or did not provide any new data which is unusual. Please check if it is running correctly.
-
-For troubleshooting you can manually delete the file /var/wireless/Documents/CaptureCellsTweak/cells-cache.json and restart the CommCenter process.
 """)
             .padding()
             

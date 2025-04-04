@@ -38,7 +38,6 @@ extension PersistenceController {
             
             // Remove cell measurements that aren't different to their predecessor of the last second.
             // This the same logic which is also implemented in the tweak.
-            // See: https://dev.seemoo.tu-darmstadt.de/apple/cell-guard/-/blob/main/CaptureCellsTweak/CCTManager.m?ref_type=heads#L35
             if filter {
                 var prevCellDate: Date?
                 var prevCellRawPacket: Data?
