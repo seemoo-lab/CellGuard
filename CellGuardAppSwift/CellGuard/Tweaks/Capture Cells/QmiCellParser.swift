@@ -49,7 +49,7 @@ extension CCTParser {
                 cell = try? parseGsmQmi(tlv)
             case .lteV1, .lteV2, .lteV3, .lteV4:
                 cell = try? parseLteQmi(tlv, version: technology)
-            case .nrV2, .nrV3:
+            case .nr, .nrV2, .nrV3:
                 cell = try? parseNrQmi(tlv, version: technology)
             default:
                 throw CCTParserError.unknownRat(technology.rawValue)
@@ -279,11 +279,12 @@ extension CCTParser {
         var cell = CCTCellProperties()
         cell.technology = .NR
         
-        if (version == .nrV2 && tlv.length != 42) || (version == .nrV3 && tlv.length != 57) {
+        if (version == .nr && tlv.length == 38) || (version == .nrV2 && tlv.length != 42) || (version == .nrV3 && tlv.length != 57) {
             throw CCTParserError.unexpectedTlvLength
         }
         
         // See: https://dev.seemoo.tu-darmstadt.de/apple/iphone-qmi-wireshark/-/blob/main/dissector/qmi_dissector_template.lua
+        var offset = 0
         let data = BinaryData(data: tlv.data, bigEndian: false)
         let _: UInt8 = try data.get(0) // array_length
         let _: UInt16 = try data.get(1) // index
@@ -292,21 +293,40 @@ extension CCTParser {
         cell.band = Int32((try? data.get(7) as UInt16) ?? 0) + 1 // The offset by one provides alignment with the iOS libraries
         // According to the specification, the TAC uses just 24 bit. Therefore, this conversion causes no overflow.
         cell.area = Int32((try? data.get(9) as UInt32) ?? 0)
-        // According to the specification, the cell ID uses just 36 bit. Therefore, this conversion causes no overflow.
-        // With a max value of 3279165, this conversion causes no overflow.
-        cell.cellId = Int64((try? data.get(13) as UInt64) ?? 0)
-        cell.frequency = Int32((try? data.get(21) as UInt32) ?? 0)
-        cell.physicalCellId = Int32((try? data.get(25) as UInt16) ?? 0)
-        let _: UInt32 = try data.get(27) // latitude
-        let _: UInt32 = try data.get(31) // longitude
-        cell.bandwidth = Int32((try? data.get(35) as UInt16) ?? 0)
-        let _: UInt8 = try data.get(37) // scs
-        let _: UInt32 = try data.get(38) // gscn
+        
+        offset = 13
+        if version == .nr {
+            cell.cellId = Int64((try? data.get(offset) as UInt32) ?? 0)
+            offset += 4
+        } else if version == .nrV2 || version == .nrV3 {
+            // According to the specification, the cell ID uses just 36 bit. Therefore, this conversion causes no overflow.
+            // With a max value of 3279165, this conversion causes no overflow.
+            cell.cellId = Int64((try? data.get(offset) as UInt64) ?? 0)
+            offset += 8
+        }
+        
+        cell.frequency = Int32((try? data.get(offset) as UInt32) ?? 0)
+        offset += 4
+        cell.physicalCellId = Int32((try? data.get(offset) as UInt16) ?? 0)
+        offset += 2
+        let _: UInt32 = try data.get(offset) // latitude
+        offset += 4
+        let _: UInt32 = try data.get(offset) // longitude
+        offset += 4
+        cell.bandwidth = Int32((try? data.get(offset) as UInt16) ?? 0)
+        offset += 2
+        let _: UInt8 = try data.get(offset) // scs
+        offset += 1
+        let _: UInt32 = try data.get(offset) // gscn
+        offset += 4
         
         if version == .nrV3 {
-            let _: UInt8 = try data.get(42) // bwpSupport
-            let _: UInt32 = try data.get(43) // throughput
-            let _: UInt16 = try data.get(47) // pMax
+            let _: UInt8 = try data.get(offset) // bwpSupport
+            offset += 1
+            let _: UInt32 = try data.get(offset) // throughput
+            offset += 4
+            let _: UInt16 = try data.get(offset) // pMax
+            offset += 2
             // Two unknown UInt32 values are left
         }
         

@@ -43,9 +43,9 @@ extension CCTParser {
                 cell = try? parseUmtsAri(tlv, version: technology)
             case .gsm:
                 cell = try? parseGsmAri(tlv)
-            case .lte, .lteV1T, .lteR15:
+            case .lte, .lteV1T, .lteR15, .lteR15V2:
                 cell = try? parseLteAri(tlv, version: technology)
-            case .nr:
+            case .nr, .nrV2:
                 cell = try? parseNrAri(tlv, version: technology)
             default:
                 throw CCTParserError.unknownRat(technology.rawValue)
@@ -162,7 +162,7 @@ extension CCTParser {
         cell.technology = .LTE
         
         if (version == .lte && tlv.length != 32) || (version == .lteV1T && tlv.length != 36) ||
-            (version == .lteR15 && tlv.length != 36) {
+            (version == .lteR15 && tlv.length != 36) || (version == .lteR15V2 && tlv.length != 52) {
             throw CCTParserError.unexpectedTlvLength
         }
         
@@ -184,7 +184,7 @@ extension CCTParser {
             offset += 2
             cell.physicalCellId = Int32((try? data.get(offset) as UInt16) ?? 0)
             offset += 2
-        } else if version == .lteV1T || version == .lteR15 {
+        } else if version == .lteV1T || version == .lteR15 || version == .lteR15V2 {
             // With a max value of 262143, the conversion causes no overflow.
             cell.frequency = Int32((try? data.get(offset) as UInt32) ?? 0)
             offset += 4
@@ -196,10 +196,13 @@ extension CCTParser {
         offset += 4
         let _: UInt32 = try data.get(offset) // longitude
         offset += 4
-        cell.bandwidth = Int32((try? data.get(offset) as UInt16) ?? 0)
-        offset += 2
-        cell.deploymentType = Int32((try? data.get(offset) as UInt16) ?? 0)
-        offset += 2
+        cell.bandwidth = Int32((try? data.get(offset) as UInt8) ?? 0)
+        offset += 1
+        
+        if version != .lte {
+            cell.deploymentType = Int32((try? data.get(offset) as UInt8) ?? 0)
+            offset += 1
+        }
         
         return cell
     }
@@ -208,31 +211,30 @@ extension CCTParser {
         var cell = CCTCellProperties()
         cell.technology = .NR
         
-        if tlv.length != 52 {
+        if (version == .nr && tlv.length != 104) || (version == .nrV2 && tlv.length != 120) {
             throw CCTParserError.unexpectedTlvLength
         }
 
-        // Just a guess, we have not been able to validate this!
         let data = BinaryData(data: tlv.data, bigEndian: false)
-        let _: UInt16 = try data.get(0) // index
-        cell.mcc = Int32((try? data.get(2) as UInt16) ?? 0)
-        cell.network = Int32((try? data.get(4) as UInt16) ?? 0)
-        cell.band = Int32((try? data.get(6) as UInt16) ?? 0)
+        let _: UInt32 = try data.get(0) // index
+        cell.mcc = Int32((try? data.get(4) as UInt16) ?? 0)
+        cell.network = Int32((try? data.get(6) as UInt16) ?? 0)
+        cell.band = Int32((try? data.get(8) as UInt32) ?? 0)
         // According to the specification, the TAC uses just 36 bit. Therefore, this conversion causes no overflow.
-        cell.area = Int32((try? data.get(8) as UInt32) ?? 0)
+        cell.area = Int32((try? data.get(12) as UInt32) ?? 0)
         // According to the specification, the cell ID uses just 36 bit. Therefore, this conversion causes no overflow.
-        cell.cellId = Int64((try? data.get(12) as UInt64) ?? 0)
+        cell.cellId = Int64((try? data.get(16) as UInt64) ?? 0)
         // With a max value of 3279165, this conversion causes no overflow.
-        cell.frequency = Int32((try? data.get(20) as UInt32) ?? 0)
-        cell.physicalCellId = Int32((try? data.get(24) as UInt16) ?? 0)
-        let _: UInt32 = try data.get(26) // latitude
-        let _: UInt32 = try data.get(30) // longitude
-        cell.bandwidth = Int32((try? data.get(34) as UInt16) ?? 0)
-        let _: UInt16 = try data.get(36) // scs
-        let _: UInt32 = try data.get(38) // gscn
-        let _: UInt16 = try data.get(42) // bwpSupport
-        let _: UInt32 = try data.get(44) // throughput
-        let _: UInt16 = try data.get(48) // pMax
+        cell.frequency = Int32((try? data.get(24) as UInt32) ?? 0)
+        cell.physicalCellId = Int32((try? data.get(28) as UInt32) ?? 0)
+        let _: UInt32 = try data.get(32) // latitude
+        let _: UInt32 = try data.get(36) // longitude
+        cell.bandwidth = Int32((try? data.get(40) as UInt16) ?? 0)
+        let _: UInt16 = try data.get(42) // scs
+        let _: UInt32 = try data.get(44) // gscn
+        let _: UInt16 = try data.get(48) // bwpSupport
+        let _: UInt32 = try data.get(50) // throughput
+        let _: UInt16 = try data.get(54) // pMax
         
         return cell
     }
