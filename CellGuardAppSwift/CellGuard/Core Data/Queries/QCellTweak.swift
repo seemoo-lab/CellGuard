@@ -37,25 +37,21 @@ extension PersistenceController {
             }
             
             // Remove cell measurements that aren't different to their predecessor of the last second.
-            // This the same logic which is also implemented in the tweak.
             if filter {
-                var prevCellDate: Date?
-                var prevCellRawPacket: Data?
+                var prevCellProperties: CCTCellProperties?
                 cells = cells
                     .sorted { $0.1.timestamp ?? Date.distantPast < $1.1.timestamp ?? Date.distantPast }
                     .filter { (packet, cellProperties) in
-                        if let prevCellDate = prevCellDate,
-                           let prevCellRawPacket = prevCellRawPacket,
+                        if let prevCellProperties = prevCellProperties,
+                           let prevCellDate = prevCellProperties.timestamp,
                            let cellDate = cellProperties.timestamp,
-                           let rawPacket = cellProperties.packetQmi?.data ?? cellProperties.packetAri?.data,
                            cellDate.timeIntervalSince(prevCellDate) < 1,
-                           rawPacket == prevCellRawPacket {
+                           prevCellProperties.isEqualExceptTime(other: cellProperties) {
                             
                             return false
                         }
                         
-                        prevCellDate = cellProperties.timestamp
-                        prevCellRawPacket = cellProperties.packetQmi?.data ?? cellProperties.packetAri?.data
+                        prevCellProperties = cellProperties
                         return true
                     }
             }

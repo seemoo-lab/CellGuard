@@ -73,7 +73,27 @@ struct CCTCellProperties {
         
         tweakCell.collected = self.timestamp
     }
-    
+
+    func isEqualExceptTime(other: CCTCellProperties?) -> Bool {
+        guard let other = other else {
+            return false
+        }
+
+        return (
+            self.mcc == other.mcc &&
+            self.network == other.network &&
+            self.area == other.area &&
+            self.cellId == other.cellId &&
+            self.physicalCellId == other.physicalCellId &&
+            self.technology == other.technology &&
+            self.preciseTechnology == other.preciseTechnology &&
+            self.frequency == other.frequency &&
+            self.band == other.band &&
+            self.bandwidth == other.bandwidth &&
+            self.deploymentType == other.deploymentType
+        )
+    }
+
     func isMissingKeyProperties() -> Bool {
         let isMissingMCC = (self.mcc ?? 0) == 0
         let isMissingNetwork = (self.network ?? 0) == 0
