@@ -53,9 +53,6 @@ struct CCTCellProperties {
     
     var timestamp: Date?
     
-    var packetQmi: PacketQMI?
-    var packetAri: PacketARI?
-    
     // applyTo does not set the packetQmi or packetAri because NSBatchInsertRequest does not set relationships.
     func applyTo(tweakCell: CellTweak) {
         tweakCell.country = self.mcc ?? 0
