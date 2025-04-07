@@ -73,6 +73,14 @@ struct CCTCellProperties {
         
         tweakCell.collected = self.timestamp
     }
+    
+    func isMissingKeyProperties() -> Bool {
+        let isMissingMCC = (self.mcc ?? 0) == 0
+        let isMissingNetwork = (self.network ?? 0) == 0
+        let isMissingArea = (self.area ?? 0) == 0
+        let isMissingCellId = (self.cellId ?? 0) == 0
+        return isMissingMCC || isMissingNetwork || isMissingArea || isMissingCellId
+    }
 
 }
 
