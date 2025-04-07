@@ -39,8 +39,10 @@
     // https://developer.apple.com/documentation/dispatch/1452927-dispatch_get_global_queue
     // https://developer.apple.com/documentation/dispatch/1453057-dispatch_async
     dispatch_async(self.writeQueue, ^(void) {
-        // Print the captured data to the syslog
-        [self log:@"writeQueue = %@", entry];
+        #ifndef FINALPACKAGE
+            // Print the captured data to the syslog
+            [self log:@"writeQueue = %@", entry];
+        #endif
         [self writeData:entry];
     });
 }
