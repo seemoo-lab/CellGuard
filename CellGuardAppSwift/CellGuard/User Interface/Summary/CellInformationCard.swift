@@ -44,9 +44,14 @@ struct CellInformationCard: View {
                 Text("Active Cell")
                     .font(.title2)
                     .bold()
+                
                 if dualSim {
-                    Text("SIM Slot \(cell.simSlotID)")
+                    HStack(spacing: 2) {
+                        Image(systemName: "simcard")
+                        Text("\(cell.simSlotID)")
+                    }
                 }
+                
                 Spacer()
                 if let state = tweakCells.first?.primaryVerification {
                     CellStatusIcon(state: state)

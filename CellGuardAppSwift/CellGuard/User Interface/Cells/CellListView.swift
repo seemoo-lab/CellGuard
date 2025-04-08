@@ -288,7 +288,16 @@ private struct GroupedNavigationLink: View {
 
 private struct ListPacketCell: View {
     
-    let measurements: GroupedMeasurements
+    private let measurements: GroupedMeasurements
+    private var simSlots = Set<Int16>()
+    
+    init(measurements: GroupedMeasurements) {
+        self.measurements = measurements
+        
+        for measurement in measurements.measurements {
+            simSlots.insert(measurement.simSlotID)
+        }
+    }
     
     var body: some View {
         let cell = measurements.measurements.first!
@@ -307,6 +316,16 @@ private struct ListPacketCell: View {
                 + Text(" (\(countryName ?? "\(cell.country)"))")
                 + Text(" \(cell.technology ?? "")")
                     .foregroundColor(.gray)
+                
+                if !simSlots.isEmpty {
+                    HStack(spacing: 2) {
+                        Image(systemName: "simcard")
+                            .font(.system(size: 12))
+                        Text(simSlots.map { "\($0)" }.sorted().joined(separator: ","))
+                            .font(.system(size: 14))
+                    }
+                    .foregroundColor(.gray)
+                }
                 
                 Spacer()
             }
