@@ -24,6 +24,8 @@ struct TweakClient {
 
     /// Connects to the tweak, fetches all cells, and converts them into a dictionary structure.
     func query(completion: @escaping (Result<Data, Error>) -> Void, ready: @escaping () -> Void) {
+        let auth = TweakAuthManager()
+
         // Create a connection to localhost on the given port
         let nwPort = NWEndpoint.Port(integerLiteral: UInt16(port))
         let connection = NWConnection(host: "127.0.0.1", port: nwPort, using: NWParameters.tcp)
@@ -34,6 +36,8 @@ struct TweakClient {
         func receiveNextMessage() {
             connection.receiveMessage { content, context, complete, error in
                 Self.logger.trace("Received Message (\(self.port)): \(content?.debugDescription ?? "nil") - \(context.debugDescription) - \(complete) - \(context?.isFinal ?? false) - \(error)")
+
+                Self.logger.info("Tweak Auth Key: \(auth.key())")
 
                 if let error = error {
                     // We've got an error

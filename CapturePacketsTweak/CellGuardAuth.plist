@@ -1,0 +1,9 @@
+<dict>
+  <key>Filter</key>
+  <dict>
+    <key>Bundles</key>
+    <array>
+      <string>de.mpass.cellguard</string>
+    </array>
+  </dict>
+</dict>
