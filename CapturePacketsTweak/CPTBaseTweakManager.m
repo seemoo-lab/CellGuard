@@ -2,6 +2,8 @@
 // Created by Lukas Arnold on 07.06.23.
 //
 
+#import <Foundation/Foundation.h>
+#import <Cephei/HBPreferences.h>
 #import "CPTBaseTweakManager.h"
 
 @interface CPTBaseTweakManager ()
@@ -13,6 +15,8 @@
 - (void)emptyCache;
 
 - (void)closeConnection;
+
+- (void) storePasswordInHBPreferences;
 
 @property NSString *tweakName;
 @property NSString *cacheFileName;
@@ -26,6 +30,37 @@
 
 }
 
+static NSString *const kHBCBPreferencesDomain = @"de.mpass.cellguard";
+static NSString *const kHBCBPreferencesEnabledKey = @"Enabled";
+static NSString *const kHBCBPreferencesAuthKey = @"authkey";
+
+- (void) storePasswordInHBPreferences {
+    // Generate Password
+    NSUInteger byteLength = 32;
+    NSMutableData *randomData = [NSMutableData dataWithLength:byteLength];
+    int result = SecRandomCopyBytes(kSecRandomDefault, byteLength, randomData.mutableBytes);
+    if (result != errSecSuccess) {
+        NSLog(@"Failed to create secure key");
+        return;
+    }
+
+    const unsigned char *dataBuffer = (const unsigned char *)randomData.bytes;
+    NSMutableString *hexString = [NSMutableString stringWithCapacity:byteLength * 2];
+    for (NSUInteger i = 0; i < byteLength; ++i) {
+        [hexString appendFormat:@"%02x", dataBuffer[i]];
+    }
+
+    NSLog(@"CellGuardAuthTweak key: %@", hexString);
+    HBPreferences *preferences = [[HBPreferences alloc] initWithIdentifier: kHBCBPreferencesDomain];
+    [preferences registerDefaults:@{
+		kHBCBPreferencesEnabledKey: @YES,
+        kHBCBPreferencesAuthKey: @"Default"
+	}];
+
+    [preferences setObject: @"Hi" forKey: kHBCBPreferencesAuthKey];
+    // setObject is not working
+}
+
 - (instancetype)initWithQueue:(NSString *)queueName :(NSString *)logPrefix :(NSString *)tweakName :(NSString *)cacheFileName {
     self.tweakName = tweakName;
     self.cacheFileName = cacheFileName;
@@ -33,6 +68,10 @@
     self.writeQueue = dispatch_queue_create_with_target(
             queueName.UTF8String, DISPATCH_QUEUE_SERIAL, dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0)
     );
+
+    // Setup Authentication
+    [self storePasswordInHBPreferences];
+
     return self;
 }
 
@@ -89,6 +128,8 @@
 
 - (void)handleInboundConnection:(nw_connection_t)connection {
     [self log:@"New connection %@", connection];
+
+    [self storePasswordInHBPreferences];
 
     // If there's already an open connection, we'll cancel the incoming one
     if (self.nw_inbound_connection != NULL) {
