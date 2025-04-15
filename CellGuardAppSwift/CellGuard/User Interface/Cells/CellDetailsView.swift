@@ -106,7 +106,7 @@ private struct CellDetailsCell: View {
     let techFormatter: CellTechnologyFormatter
     
     @FetchRequest private var verifyStates: FetchedResults<VerificationState>
-    
+
     init(cell: Cell, verifyStates: FetchRequest<VerificationState>) {
         self.cell = cell
         self.techFormatter = CellTechnologyFormatter.from(technology: cell.technology)
@@ -121,6 +121,11 @@ private struct CellDetailsCell: View {
             Section(header: Text("Technology & Region")) {
                 CellDetailsRow("Technology", cell.technology ?? "Unknown")
                 CellDetailsRow("SIM Slot", simSlots)
+                if let tweakCell = cell as? CellTweak,
+                   tweakCell.supports5gNsa() {
+                    CellDetailsRow("5G NSA", "Supported")
+                }
+
                 CellDetailsRow(techFormatter.area(), cell.area)
             }
             Section(header: Text("Cell & Tower")) {
