@@ -51,7 +51,8 @@ extension CCTParser {
                 throw CCTParserError.unknownRat(technology.rawValue)
             }
          
-            if var cell = cell {
+            if var cell = cell,
+               !cell.isMissingKeyProperties() {
                 cell.preciseTechnology = technology.rawValue
                 cell.timestamp = timestamp
                 
