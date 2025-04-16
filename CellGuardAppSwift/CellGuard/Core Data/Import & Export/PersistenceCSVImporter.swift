@@ -96,7 +96,8 @@ struct PersistenceCSVImporter {
         
         // Import all of the data
         let info = try readInfo(url: PersistenceCategory.info.url(directory: tmpDirectoryURL))
-        Self.logger.debug("Read the info.json file")
+        let formatVersion = Int(info["formatVersion"] as? String ?? "") ?? 1
+        Self.logger.debug("Read the info.json file with format \(formatVersion)")
         
         guard let infoData = info["data"] as? [String: Int] else {
             throw PersistenceCSVImporterError.fieldParsing("data")

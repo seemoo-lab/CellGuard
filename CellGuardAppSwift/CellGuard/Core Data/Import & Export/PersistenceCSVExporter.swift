@@ -197,6 +197,7 @@ struct PersistenceCSVExporter {
         // https://stackoverflow.com/a/28153897
         let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "???"
         let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String  ?? "???"
+        let formatVersion = 1
         
         let info: [String: Any] = [
             "name": device.name,
@@ -207,6 +208,7 @@ struct PersistenceCSVExporter {
             "userInterfaceIdiom": String(device.userInterfaceIdiom.rawValue),
             "identifierForVendor": device.identifierForVendor?.uuidString ?? "nil",
             "cellguardVersion": "\(version) (\(build))",
+            "formatVersion": "\(formatVersion)",
             "data": data
         ]
         
