@@ -7,10 +7,10 @@
 
 import SwiftUI
 
-struct KeyValueListRow<Content: View>: View{
+struct KeyValueListRow<Content: View>: View {
     let key: String
     @ViewBuilder var value: () -> Content
-    
+
     init(key: String, value: String) where Content == Text {
         // See: https://stackoverflow.com/a/70554732
         self.key = key
@@ -18,12 +18,12 @@ struct KeyValueListRow<Content: View>: View{
             Text(value)
         }
     }
-    
+
     init(key: String, value: @escaping () -> Content) {
         self.key = key
         self.value = value
     }
-    
+
     var body: some View {
         HStack {
             Text(key)

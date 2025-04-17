@@ -14,11 +14,11 @@ enum ImportNotice: Identifiable {
     case profileUnknownStatus
     case logTruncatedDueToFullDisk
     case cellParserMisalignment
-    
+
     var id: Self { self }
-    
+
     var text: String {
-        switch (self) {
+        switch self {
         case .profileNewlyInstalled:
             return "The baseband profile was installed recently, thus only a limited amount of data is available."
         case .profileNotInstalled:
@@ -46,6 +46,6 @@ struct ImportResult {
     let alsCells: ImportCount?
     let locations: ImportCount?
     let packets: ImportCount?
-    
+
     let notices: [ImportNotice]
 }

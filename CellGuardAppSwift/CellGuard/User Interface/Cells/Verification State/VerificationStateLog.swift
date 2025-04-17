@@ -16,20 +16,20 @@ private func coordinateToDMS(latitude: Double, longitude: Double) -> (latitude: 
     let latDegrees = abs(Int(latitude))
     let latMinutes = abs(Int((latitude * 3600).truncatingRemainder(dividingBy: 3600) / 60))
     let latSeconds = Double(abs((latitude * 3600).truncatingRemainder(dividingBy: 3600).truncatingRemainder(dividingBy: 60)))
-    
+
     let lonDegrees = abs(Int(longitude))
     let lonMinutes = abs(Int((longitude * 3600).truncatingRemainder(dividingBy: 3600) / 60))
     let lonSeconds = Double(abs((longitude * 3600).truncatingRemainder(dividingBy: 3600).truncatingRemainder(dividingBy: 60) ))
-    
-    return (String(format:"%d° %d' %.4f\" %@", latDegrees, latMinutes, latSeconds, latitude >= 0 ? "N" : "S"),
-            String(format:"%d° %d' %.4f\" %@", lonDegrees, lonMinutes, lonSeconds, longitude >= 0 ? "E" : "W"))
+
+    return (String(format: "%d° %d' %.4f\" %@", latDegrees, latMinutes, latSeconds, latitude >= 0 ? "N" : "S"),
+            String(format: "%d° %d' %.4f\" %@", lonDegrees, lonMinutes, lonSeconds, longitude >= 0 ? "E" : "W"))
 }
 
 struct VerificationStateLogEntryView: View {
-    
+
     @ObservedObject var logEntry: VerificationLog
     let stage: VerificationStage?
-    
+
     var body: some View {
         Group {
             Section(header: Text("Stage: \(stage?.name ?? "ID \(logEntry.stageId)") (\(logEntry.stageNumber))"), footer: Text(stage?.description ?? "")) {
@@ -38,37 +38,37 @@ struct VerificationStateLogEntryView: View {
                 CellDetailsRow("Duration", "\(doubleString(logEntry.duration, maxDigits: 4))s")
                 if let relatedALSCell = logEntry.relatedCellALS {
                     NavigationLink {
-                        VerificationStateLogRelatedALSCellView(alsCell: relatedALSCell)
+                        LogRelatedALSCellView(alsCell: relatedALSCell)
                     } label: {
                         Text("Related ALS Cell")
                     }
                 }
                 if let relatedUserLocation = logEntry.relatedLocationUser {
                     NavigationLink {
-                        VerificationStateLogRelatedUserLocationView(userLocation: relatedUserLocation)
+                        LogRelatedUserLocationView(userLocation: relatedUserLocation)
                     } label: {
                         Text("Related User Location")
                     }
                 }
-                
+
                 if let relatedALSCell = logEntry.relatedCellALS, let relatedUserLocation = logEntry.relatedLocationUser {
                     NavigationLink {
-                        VerificationStageLogRelatedDistanceView(alsCell: relatedALSCell, userLocation: relatedUserLocation)
+                        LogRelatedDistanceView(alsCell: relatedALSCell, userLocation: relatedUserLocation)
                     } label: {
                         Text("Related Distance")
                     }
                 }
-                
+
                 if let relatedARIPackets = logEntry.relatedPacketARI?.compactMap({$0 as? PacketARI}), relatedARIPackets.count > 0 {
                     NavigationLink {
-                        VerificationStageLogRelatedPacketsView(packets: relatedARIPackets)
+                        LogRelatedPacketsView(packets: relatedARIPackets)
                     } label: {
                         Text("Related ARI Packets")
                     }
                 }
                 if let relatedQMIPackets = logEntry.relatedPacketQMI?.compactMap({$0 as? PacketQMI}), relatedQMIPackets.count > 0 {
                     NavigationLink {
-                        VerificationStageLogRelatedPacketsView(packets: relatedQMIPackets)
+                        LogRelatedPacketsView(packets: relatedQMIPackets)
                     } label: {
                         Text("Related QMI Packets")
                     }
@@ -76,29 +76,29 @@ struct VerificationStateLogEntryView: View {
             }
         }
     }
-    
+
     var pointsColor: Color? {
         if logEntry.pointsMax == 0 {
             return nil
         }
-        
+
         if logEntry.pointsAwarded == 0 {
             return .red
         } else if logEntry.pointsAwarded < logEntry.pointsMax {
             return .orange
         }
-        
+
         return nil
     }
 }
 
-private struct VerificationStateLogRelatedALSCellView: View {
-    
+private struct LogRelatedALSCellView: View {
+
     let alsCell: CellALS
-    
+
     var body: some View {
         let techFormatter = CellTechnologyFormatter.from(technology: alsCell.technology)
-        
+
         List {
             Section(header: Text("Identification")) {
                 CellDetailsRow("Technology", alsCell.technology ?? "Unknown")
@@ -107,7 +107,7 @@ private struct VerificationStateLogRelatedALSCellView: View {
                 CellDetailsRow(techFormatter.area(), alsCell.area)
                 CellDetailsRow(techFormatter.cell(), alsCell.cell)
             }
-            
+
             if let importedDate = alsCell.imported {
                 Section(header: Text("Date & Time")) {
                     CellDetailsRow("Queried at", mediumDateTimeFormatter.string(from: importedDate))
@@ -123,7 +123,7 @@ private struct VerificationStateLogRelatedALSCellView: View {
                     CellDetailsRow("Score", alsLocation.score)
                 }
             }
-            
+
             Section(header: Text("Cell Properties")) {
                 CellDetailsRow("\(techFormatter.frequency())", alsCell.frequency)
                 CellDetailsRow("Physical Cell ID", alsCell.physicalCell)
@@ -131,16 +131,16 @@ private struct VerificationStateLogRelatedALSCellView: View {
         }
         .navigationTitle("Related ALS Cell")
     }
-    
+
 }
 
-private struct VerificationStateLogRelatedUserLocationView: View {
-    
+private struct LogRelatedUserLocationView: View {
+
     let userLocation: LocationUser
-    
+
     var body: some View {
         let (userLatitudeStr, userLongitudeStr) = coordinateToDMS(latitude: userLocation.latitude, longitude: userLocation.longitude)
-        
+
         List {
             Section(header: Text("3D Position")) {
                 CellDetailsRow("Latitude", userLatitudeStr)
@@ -149,12 +149,12 @@ private struct VerificationStateLogRelatedUserLocationView: View {
                 CellDetailsRow("Altitude", "\(doubleString(userLocation.altitude)) m")
                 CellDetailsRow("Vertical Accuracy", "± \(doubleString(userLocation.verticalAccuracy)) m")
             }
-            
+
             Section(header: Text("Speed")) {
                 CellDetailsRow("Speed", "\(doubleString(userLocation.speed)) m/s")
                 CellDetailsRow("Speed Accuracy", "± \(doubleString(userLocation.speedAccuracy)) m/s")
             }
-            
+
             Section(header: Text("Metadata")) {
                 CellDetailsRow("App in Background?", "\(userLocation.background)")
                 if let collected = userLocation.collected {
@@ -164,17 +164,17 @@ private struct VerificationStateLogRelatedUserLocationView: View {
         }
         .navigationTitle("Related User Location")
     }
-    
+
 }
 
-private struct VerificationStageLogRelatedDistanceView: View {
-    
+private struct LogRelatedDistanceView: View {
+
     let alsCell: CellALS
     let userLocation: LocationUser
-    @State var distance: CellLocationDistance? = nil
-    
+    @State var distance: CellLocationDistance?
+
     // TODO: Compute distance async
-    
+
     var body: some View {
         List {
             if let distance = distance {
@@ -192,13 +192,13 @@ private struct VerificationStageLogRelatedDistanceView: View {
             }
         }
     }
-    
+
 }
 
-private struct VerificationStageLogRelatedPacketsView: View {
-    
+private struct LogRelatedPacketsView: View {
+
     let packets: [any Packet]
-    
+
     var body: some View {
         List(packets, id: \.id) { packet in
             NavigationLink {
@@ -213,9 +213,9 @@ private struct VerificationStageLogRelatedPacketsView: View {
         }
         .navigationTitle("Related Packets")
     }
-    
+
     // TODO: Compute the custom info async
-    
+
     func customInfo(_ packet: any Packet) -> Text? {
         if let qmiPacket = packet as? PacketQMI {
             if PacketConstants.qmiSignalIndication == qmiPacket.indication
@@ -225,11 +225,11 @@ private struct VerificationStageLogRelatedPacketsView: View {
                let data = qmiPacket.data,
                let parsedPacket = try? ParsedQMIPacket(nsData: data),
                let parsedSignalInfo = try? ParsedQMISignalInfoIndication(qmiPacket: parsedPacket) {
-                
+
                 // So far we have seen no packet that contains NR & LTE signal strengths at the same time,
                 // but we've encountered multiple NR packets that do not contain any signal info.
                 var texts: [String] = []
-                
+
                 if let nr = parsedSignalInfo.nr, nr.rsrp != nil && nr.rsrq != nil && nr.snr != nil {
                     texts.append("NR: rsrp = \(formatSignalStrength(nr.rsrp, unit: "dBm")), rsrq = \(formatSignalStrength(nr.rsrq, unit: "dB")), snr = \(formatSignalStrength(nr.snr, unit: "dB"))")
                 } else if let lte = parsedSignalInfo.lte {
@@ -237,7 +237,7 @@ private struct VerificationStageLogRelatedPacketsView: View {
                 } else if let gsmRssi = parsedSignalInfo.gsm {
                     texts.append("GSM: rssi = \(formatSignalStrength(gsmRssi, unit: "dBm"))")
                 }
-                
+
                 if texts.count > 0 {
                     return Text(texts.joined(separator: "\n"))
                         .font(.system(size: 14))
@@ -256,10 +256,10 @@ private struct VerificationStageLogRelatedPacketsView: View {
                     .font(.system(size: 14))
             }
         }
-        
+
         return nil
     }
-    
+
     func formatSignalStrength(_ number: (any FixedWidthInteger)?, unit: String) -> String {
         if let number = number {
             // Casting number to String to remove the thousand dot
@@ -269,6 +269,5 @@ private struct VerificationStageLogRelatedPacketsView: View {
             return "N/A"
         }
     }
-    
-}
 
+}

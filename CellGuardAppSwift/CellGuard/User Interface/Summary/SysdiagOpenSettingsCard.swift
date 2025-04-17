@@ -8,18 +8,18 @@
 import SwiftUI
 
 struct SysdiagOpenSettingsCard: View {
-    
+
     @State private var showingSettingsInstructions = false
     @AppStorage(UserDefaultsKeys.appMode.rawValue) var appMode: DataCollectionMode = .none
-    
+
     var body: some View {
-        
+
         NavigationLink(isActive: $showingSettingsInstructions) {
             SysdiagOpenSettingsDetailedView()
         } label: {
             EmptyView()
         }
-        
+
         if appMode == .manual {
             Button {
                 // open instructions
@@ -34,13 +34,13 @@ struct SysdiagOpenSettingsCard: View {
 }
 
 private struct OpenCard: View {
-    
+
     @Environment(\.colorScheme) private var colorScheme
-    
+
     var body: some View {
         VStack {
-            
-            HStack() {
+
+            HStack {
                 Text("Import Sysdiagnose")
                     .font(.title2)
                     .bold()
@@ -48,14 +48,14 @@ private struct OpenCard: View {
                 Image(systemName: "chevron.right.circle.fill")
                     .imageScale(.large)
             }
-            
+
             HStack(spacing: 0) {
                 Image(systemName: "square.and.arrow.down")
                     .foregroundColor(.blue)
                     .font(Font.custom("SF Pro", fixedSize: 30))
                     .frame(maxWidth: 40, alignment: .center)
                     .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 10))
-                
+
                 Text("Open system settings to share sysdiagnose files with CellGuard.")
                     .multilineTextAlignment(.leading)
                     .padding()
@@ -71,5 +71,5 @@ private struct OpenCard: View {
         .foregroundColor(colorScheme == .dark ? .white : .black.opacity(0.8))
         .padding()
     }
-    
+
 }

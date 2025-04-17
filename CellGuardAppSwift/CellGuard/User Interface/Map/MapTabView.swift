@@ -11,22 +11,22 @@ import MapKit
 import CoreData
 
 struct MapTabView: View {
-    
+
     @Environment(\.managedObjectContext)
     private var managedContext: NSManagedObjectContext
-    
+
     @ObservedObject private var locationManager = LocationDataManager.shared
-    
+
     @FetchRequest(
         sortDescriptors: [NSSortDescriptor(keyPath: \CellALS.imported, ascending: false)],
         predicate: NSPredicate(format: "location != nil AND observedCells != nil")
     )
     private var alsCells: FetchedResults<CellALS>
-    
+
     @State private var navigationActive = false
-    @State private var navigationTarget: NSManagedObjectID? = nil
+    @State private var navigationTarget: NSManagedObjectID?
     @State private var infoSheetShown = false
-    
+
     var body: some View {
         NavigationView {
             ZStack {
@@ -44,14 +44,14 @@ struct MapTabView: View {
                 }
                 .frame(width: 0, height: 0)
                 .hidden()
-                
+
                 // Map
                 MultiCellMap(alsCells: alsCells) { cellID in
                     navigationTarget = cellID
                     navigationActive = true
                 }
                 .ignoresSafeArea()
-                
+
                 // Info Button
                 HStack {
                     Spacer()
@@ -73,15 +73,15 @@ struct MapTabView: View {
 }
 
 private struct MapInfoButton: View {
-    
+
     @Environment(\.colorScheme) var colorScheme
-    
-    private let onTap: () -> ()
-    
+
+    private let onTap: () -> Void
+
     init(onTap: @escaping () -> Void) {
         self.onTap = onTap
     }
-    
+
     var body: some View {
         Button {
             onTap()
@@ -92,9 +92,8 @@ private struct MapInfoButton: View {
         .roundedThinMaterialBackground(color: colorScheme)
         .padding(EdgeInsets(top: 6, leading: 6, bottom: 6, trailing: 6))
     }
-    
-}
 
+}
 
 struct MapView_Previews: PreviewProvider {
     static var previews: some View {

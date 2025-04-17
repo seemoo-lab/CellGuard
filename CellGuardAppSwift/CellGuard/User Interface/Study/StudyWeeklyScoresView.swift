@@ -8,18 +8,18 @@
 import SwiftUI
 
 struct StudyWeeklyScoresView: View {
-    
+
     @FetchRequest(
         sortDescriptors: [NSSortDescriptor(keyPath: \StudyScore.week, ascending: false)],
         predicate: NSPredicate(format: "uploaded != nil")
     )
     private var scores: FetchedResults<StudyScore>
-    
+
     var body: some View {
         if !scores.isEmpty {
             let weeklyScores = Dictionary(grouping: scores, by: { $0.week })
                 .sorted(by: { $0.key ?? Date.distantPast > $1.key ?? Date.distantPast})
-            
+
             List(weeklyScores, id: \.key) { (week, scores) in
                 StudyWeeklyView(week: week, scores: scores)
             }
@@ -31,14 +31,14 @@ struct StudyWeeklyScoresView: View {
                 .listStyle(.insetGrouped)
         }
     }
-    
+
 }
 
 private struct StudyWeeklyView: View {
-    
+
     let week: Date?
     let scores: [FetchedResults<StudyScore>.Element]
-    
+
     var body: some View {
         Section(header: Text(weekString(week))) {
             ForEach(scores) { score in
@@ -50,15 +50,14 @@ private struct StudyWeeklyView: View {
             }
         }
     }
-    
-    
+
     private func weekString(_ week: Date?) -> String {
         guard let week = week else {
             return "n/a"
         }
-        
+
         let sevenDaysBefore = week.addingTimeInterval(-60 * 60 * 24 * 7)
         return mediumDateFormatter.string(from: sevenDaysBefore) + " - " + mediumDateFormatter.string(from: week)
     }
-    
+
 }

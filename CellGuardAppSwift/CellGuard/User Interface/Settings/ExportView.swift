@@ -12,20 +12,20 @@ struct ExportView: View {
     @State private var doExportALSCache = true
     @State private var doExportLocations = true
     @State private var doExportPackets = true
-    
+
     @State private var isExportInProgress = false
-    @State private var shareURL: URLIdentifiable? = nil
+    @State private var shareURL: URLIdentifiable?
     @State private var showFailAlert: Bool = false
-    @State private var failReason: String? = nil
-    
+    @State private var failReason: String?
+
     @State private var exportProgressUserCells: Float = 0
     @State private var exportProgressALSCells: Float = 0
     @State private var exportProgressLocations: Float = 0
     @State private var exportProgressPackets: Float = 0
-    
+
     @AppStorage(UserDefaultsKeys.lastExportDate.rawValue)
     var lastExportDate: Double = -1.0
-    
+
     var body: some View {
         List {
             Section(header: Text("Datasets"), footer: Text("Be aware that every category includes highly personal information. Only share this data with persons you trust.")) {
@@ -63,7 +63,7 @@ struct ExportView: View {
             )
         }
     }
-    
+
     func exportDateDescription() -> String {
         let prefix = "Last export: "
         if lastExportDate < 0 {
@@ -73,25 +73,25 @@ struct ExportView: View {
             return "\(prefix)\(mediumDateTimeFormatter.string(for: date)!)"
         }
     }
-    
+
     func export() {
         isExportInProgress = true
-        
+
         let exportCategories = [
             PersistenceCategory.connectedCells: doExportCells,
             PersistenceCategory.alsCells: doExportALSCache,
             PersistenceCategory.locations: doExportLocations,
-            PersistenceCategory.packets: doExportPackets,
+            PersistenceCategory.packets: doExportPackets
         ].filter { $0.value }.map { $0.key }
-        
+
         exportProgressUserCells = -1
         exportProgressALSCells = -1
         exportProgressLocations = -1
         exportProgressPackets = -1
-        
+
         PersistenceCSVExporter.exportInBackground(categories: exportCategories) { category, currentProgress, totalProgress in
             let progress = Float(currentProgress) / Float(totalProgress)
-            switch (category) {
+            switch category {
             case .connectedCells: exportProgressUserCells = progress
             case .alsCells: exportProgressALSCells = progress
             case .locations: exportProgressLocations = progress
@@ -103,14 +103,14 @@ struct ExportView: View {
             exportProgressALSCells = -1
             exportProgressLocations = -1
             exportProgressPackets = -1
-            
+
             do {
                 self.shareURL = URLIdentifiable(url: try result.get())
             } catch {
                 failReason = error.localizedDescription
                 showFailAlert = true
             }
-            
+
             isExportInProgress = false
             UserDefaults.standard.setValue(Date().timeIntervalSince1970, forKey: UserDefaultsKeys.lastExportDate.rawValue)
         }
@@ -118,19 +118,19 @@ struct ExportView: View {
 }
 
 private struct ProgressToggle: View {
-    
+
     let text: String
     @Binding var isOn: Bool
     @Binding var processing: Bool
     @Binding var progress: Float
-    
+
     init(_ text: String, isOn: Binding<Bool>, processing: Binding<Bool>, progress: Binding<Float>) {
         self.text = text
         self._isOn = isOn
         self._processing = processing
         self._progress = progress
     }
-    
+
     var body: some View {
         if processing {
             HStack {

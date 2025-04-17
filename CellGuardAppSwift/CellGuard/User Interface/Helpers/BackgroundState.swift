@@ -10,25 +10,25 @@ import SwiftUI
 import OSLog
 
 class BackgroundState: ObservableObject {
-    
+
     static let shared = BackgroundState()
-    
+
     private static let logger = Logger(
         subsystem: Bundle.main.bundleIdentifier!,
         category: String(describing: BackgroundState.self)
     )
-    
+
     @Published var inBackground = false
     @Published var phase = ScenePhase.active
-    
+
     private init() {
-        
+
     }
-    
+
     func update(from phase: ScenePhase) {
         self.inBackground = phase != .active
         self.phase = phase
         Self.logger.debug("Scene Phase Update: \(String(describing: phase)) -> inBackground = \(self.inBackground)")
     }
-    
+
 }

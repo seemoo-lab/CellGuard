@@ -9,15 +9,15 @@ import SwiftUI
 
 struct CircularProgressView: View {
     // The nice circular progress bar of watchOS is not available on iOS 14, so we have to use another option
-    
+
     // See:
     // - https://sarunw.com/posts/swiftui-circular-progress-bar/
     // - https://www.simpleswiftguide.com/how-to-build-a-circular-progress-bar-in-swiftui/
-    
+
     @Binding var progress: Float
-    
+
     let lineWidth = 4.0
-    
+
     var body: some View {
         ZStack {
             Circle()
@@ -34,12 +34,11 @@ struct CircularProgressView: View {
     }
 }
 
-
 struct CircularProgressView_Previews: PreviewProvider {
     static var previews: some View {
         List {
             Button {
-                
+
             } label: {
                 HStack {
                     Text("Import")

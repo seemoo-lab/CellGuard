@@ -14,21 +14,21 @@ import SwiftUI
  Bösartige Mobilfunk-Basisstationen können beispielsweise Positionen von Smartphones erfassen, ihren Datenverkehr überwachen und verändern, und ein Einfallstor für die Ausnutzung von Sicherheitslücken in Smartphones sein. Wir möchten evaluieren, wie gut CellGuard Menschen vor bösartigen Mobilfunk- Basisstationen schützen kann.
  Sie können die App ohne Teilnahme an der Studie verwenden. Wenn Sie an der Studie teilnehmen, gelten folgende Bedingungen:
  Erfasste Daten
- • Informationen über als potentiell bösartig detektierten Mobilfunk-Basisstationen. 
+ • Informationen über als potentiell bösartig detektierten Mobilfunk-Basisstationen.
  • Wir protokollieren Ihre Position zum Zeitpunkt einer Detektion sowie Informationen, welche die Basisstation identifizieren (Ländercode, Mobilfunkbetreibercode, Mobilfunkzellenidentifikator, Frequenz, Bandbreite, eingesetzte Funktechnologie).
  • Zusätzlich erfassen wir die Mobilfunk- Managementpakete (QMI bzw. ARI) in einem Zeitfenster von +/- 15 Sekunden um den Zeitpunkt der Detektion bzw. den Verbindungsaufbau, bereinigt um personenspezifische Daten.
  Freiwillig geteilte Informationen
  • CellGuard bietet die Möglichkeit, Einstufungen der Basisstationen anzupassen und einen Kommentar zur Einstufung zu hinterlassen. Optional lassen sich diese Einstufungen und Kommentare im Rahmen der Studie teilen.
  Dauer der Studie
- • Solange Sie die App installiert haben und an der Studie teilnehmen wollen. 
+ • Solange Sie die App installiert haben und an der Studie teilnehmen wollen.
  • Sie können die Teilnahme jederzeit in den Einstellungen beenden.
  Löschung der Daten
  Die Erfassung der Basisstationsinformationen erfolgt anonym. Die Informationen werden einzeln pro Basisstation übertragen und können weder miteinander noch mit nutzerspezifischen Identifikationsmerkmalen verknüpft werden.
  Datenverarbeitung
  Alle Daten werden vertraulich behandelt und auf Servern der TU Darmstadt gespeichert. Keine weiteren Personen außerhalb des FG SEEMOO an der TU Darmstadt und der NG Cybersecurity – Mobile & Wireless am Hasso- Plattner-Institut erhalten Zugriff. Eine Identifizierung der einzelnen Teilnehmenden ist nicht möglich. Mit der Teilnahme sind keine Risiken verbunden. Die Datenverarbeitung dieser Studie geschieht nach datenschutzrechtlichen Bestimmungen der Datenschutzgrundverordnung (DSGVO) sowie des Hessischen Datenschutz- und Informationsfreiheitsgesetzes (HDSIG). Die Daten werden ausschließlich für die im Aufklärungsbogen beschriebenen Zwecke verwendet.
  Wenn Sie an der Studie teilnehmen bestätigen Sie, dass Sie älter als 18 Jahre alt sind und diese Einverständniserklärung gelesen haben.
- Kontaktmöglichkeiten: 
- Dr.-Ing. Jiska Classen und Lukas Arnold 
+ Kontaktmöglichkeiten:
+ Dr.-Ing. Jiska Classen und Lukas Arnold
  (verantwortlich für Durchführung und Datenverarbeitung)
  Emails: jiska.classen@hpi.de, larnold@seemoo.tu- darmstadt.de
  Für weitere Fragen zum Datenschutz können kontaktiert werden:
@@ -76,16 +76,16 @@ import SwiftUI
  */
 
 struct UserStudyView: View {
-    
+
     var returnToPreviousView: Bool = false
-    
+
     @AppStorage(UserDefaultsKeys.study.rawValue) private var studyParticipationTimestamp: Double = 0
     @Environment(\.presentationMode) private var presentationMode: Binding<PresentationMode>
-    
+
     @State private var agePolicyConfirmation: Bool = false
     @State private var action: Int? = 0
     @State private var confirmationSheet: Bool = false
-    
+
     var body: some View {
         VStack {
             // TODO Änderung, müssen wir noch programmieren --- die Position mit random offset
@@ -102,27 +102,27 @@ While you can use CellGuard without participating in the study, your involvemen
                     size: 120
                 )
             }
-            
+
             // navigation depends, show sysdiag instructions on non-jailbroken devices
             #if JAILBROKEN
             NavigationLink(destination: LocationPermissionView(), tag: 1, selection: $action) {}
             #else
             NavigationLink(destination: SysDiagnoseView(), tag: 1, selection: $action) {}
             #endif
-            
+
             HStack {
                 Toggle(isOn: $agePolicyConfirmation) {
                     Text("I'm over 18 years or older and agree to the privacy policy.")
                 }
                 .toggleStyle(CheckboxStyle())
-                
+
                 Link(destination: CellGuardURLs.privacyPolicy) {
                     Image(systemName: "link")
                         .font(.system(size: 20))
                 }
             }
             .padding(EdgeInsets(top: 2, leading: 10, bottom: 0, trailing: 10))
-            
+
             HStack {
                 // Here, save that the user agreed to join the study
                 Button {
@@ -134,7 +134,7 @@ While you can use CellGuard without participating in the study, your involvemen
                 .buttonStyle(SmallButtonStyle())
                 .padding(3)
                 .disabled(!agePolicyConfirmation)
-                
+
                 // Here, save that the user opted out (currently default)
                 Button {
                     studyParticipationTimestamp = 0
@@ -150,7 +150,7 @@ While you can use CellGuard without participating in the study, your involvemen
         .navigationTitle("Our Study")
         .navigationBarTitleDisplayMode(returnToPreviousView ? .automatic : .large)
     }
-    
+
     func nextView() {
         if returnToPreviousView {
             self.presentationMode.wrappedValue.dismiss()
@@ -163,7 +163,7 @@ While you can use CellGuard without participating in the study, your involvemen
 // See: https://stackoverflow.com/a/65895802
 
 private struct CheckboxStyle: ToggleStyle {
-    
+
     func makeBody(configuration: Self.Configuration) -> some View {
         return HStack {
             Image(systemName: configuration.isOn ? "checkmark.circle" : "circle")
@@ -187,28 +187,28 @@ private struct SmallButtonStyle: ButtonStyle {
     private struct SmallButtonView: View {
         @Environment(\.isEnabled) private var isEnabled: Bool
         let configuration: Configuration
-        
+
         init(configuration: Configuration) {
             self.configuration = configuration
         }
-        
+
         var body: some View {
             let foregroundColor = Color(UIColor.white)
             let backgroundColor = Color(UIColor.systemBlue)
-            
+
             let confForegroundColor = !isEnabled || configuration.isPressed ? foregroundColor.opacity(0.3) : foregroundColor
             let confBackgroundColor = !isEnabled || configuration.isPressed ? backgroundColor.opacity(0.3) : backgroundColor
-            
+
             configuration.label
                 .frame(maxWidth: .infinity)
                 .padding()
                 .background(confBackgroundColor)
                 .foregroundColor(confForegroundColor)
-                //.foregroundStyle(.white)
+                // .foregroundStyle(.white)
                 .clipShape(RoundedRectangle(cornerSize: CGSize(width: 10, height: 20)))
         }
     }
-    
+
     func makeBody(configuration: Configuration) -> some View {
         return SmallButtonView(configuration: configuration)
     }

@@ -20,16 +20,16 @@ enum ALSTechnology: String, CaseIterable, Identifiable {
     case UMTS
     case LTE
     case NR
-    
+
     public static func from(cctTechnology: String) -> ALSTechnology {
         guard let alsTechnology = ALSTechnology(rawValue: cctTechnology) else {
             logger.warning("Unable to find the according ALS technology for '\(cctTechnology)'")
             return .LTE
         }
-            
+
         return alsTechnology
     }
-    
+
     var id: Self { self }
 }
 

@@ -11,22 +11,22 @@ import CoreData
 
 @objc(CellTweak)
 public class CellTweak: NSManagedObject, Encodable, Cell {
-    
+
     // TODO: Is this performant or should we add an additional relation to CellTweak?
     var primaryVerification: VerificationState? {
         return verifications?
             .compactMap({ $0 as? VerificationState })
             .first(where: { $0.pipeline == primaryVerificationPipeline.id })
     }
-    
+
     var score: Int16 {
         return primaryVerification?.score ?? 0
     }
-    
+
     var verificationFinished: Bool {
         return primaryVerification?.finished ?? false
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(self.area, forKey: .area)
@@ -40,7 +40,7 @@ public class CellTweak: NSManagedObject, Encodable, Cell {
         try container.encode(self.preciseTechnology, forKey: .preciseTechnology)
         try container.encode(self.technology, forKey: .technology)
     }
-    
+
     enum CodingKeys: String, CodingKey {
         case area
         case band
@@ -55,7 +55,7 @@ public class CellTweak: NSManagedObject, Encodable, Cell {
         case preciseTechnology
         case technology
     }
-    
+
     // If a deployment type > 0 is set, the cell supports 5G NSA
     public func supports5gNsa() -> Bool {
         return self.technology == "LTE" && self.deploymentType > 0

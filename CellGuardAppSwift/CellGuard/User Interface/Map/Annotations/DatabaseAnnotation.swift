@@ -9,7 +9,7 @@ import CoreData
 import MapKit
 
 protocol DatabaseAnnotation: MKAnnotation {
-    
+
     var coreDataID: NSManagedObjectID { get }
-    
+
 }

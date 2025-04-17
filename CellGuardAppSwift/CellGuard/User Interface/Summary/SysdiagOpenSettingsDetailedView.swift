@@ -15,15 +15,15 @@ struct SysdiagOpenSettingsDetailedView: View {
                 .fontWeight(.bold)
                 .padding()
                 .multilineTextAlignment(.center)
-            
+
             Spacer()
-            
+
             Text("Please follow these steps to import\na sysdiagnose into CellGuard:")
                 .multilineTextAlignment(.center)
-            
+
             Spacer(minLength: 10)
-            
-            VStack (alignment: .leading, spacing: 5) {
+
+            VStack(alignment: .leading, spacing: 5) {
                 HStack {
                     Image(systemName: "gear")
                         .foregroundColor(.blue)
@@ -52,12 +52,12 @@ struct SysdiagOpenSettingsDetailedView: View {
                         .foregroundColor(.gray)
                 }
             }
-            
+
             Spacer(minLength: 40)
-            
+
             LargeButton(title: "Go to Settings", backgroundColor: .blue) {
                 // See: https://github.com/FifiTheBulldog/ios-settings-urls/blob/master/settings-urls.md
-                
+
                 #if JAILBREAK
                 // Apple does not like this URL as it accesses a private API (https://stackoverflow.com/a/70838268)
                 let url = "App-prefs:Privacy&path=PROBLEM_REPORTING"
@@ -65,18 +65,16 @@ struct SysdiagOpenSettingsDetailedView: View {
                 // The App-Store-Safe-URL
                 let url = UIApplication.openSettingsURLString
                 #endif
-                
+
                 if let appSettings = URL(string: url), UIApplication.shared.canOpenURL(appSettings) {
                     UIApplication.shared.open(appSettings)
                 }
             }
             .padding()
-            
+
         }
     }
 }
-
-
 
 #Preview {
     SysdiagOpenSettingsDetailedView()

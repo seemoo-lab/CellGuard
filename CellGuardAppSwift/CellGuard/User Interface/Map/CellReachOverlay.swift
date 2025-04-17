@@ -9,22 +9,18 @@ import MapKit
 import CoreData
 
 class CellReachOverlay: NSObject, MKOverlay {
-    
+
     let coreDataID: NSManagedObjectID
     let circle: MKCircle
-    
+
     var coordinate: CLLocationCoordinate2D {
-        get {
-            circle.coordinate
-        }
+        circle.coordinate
     }
-    
+
     var boundingMapRect: MKMapRect {
-        get {
-            circle.boundingMapRect
-        }
+        circle.boundingMapRect
     }
-        
+
     init(location: LocationALS) {
         // TODO: Measure & Improve performance
         coreDataID = location.objectID
@@ -36,9 +32,9 @@ class CellReachOverlay: NSObject, MKOverlay {
             radius: Double(location.reach)
         )
     }
-    
+
     func intersects(_ mapRect: MKMapRect) -> Bool {
         return circle.intersects(mapRect)
     }
-    
+
 }

@@ -8,18 +8,18 @@
 import SwiftUI
 
 struct SysdiagInstructionsCard: View {
-    
+
     @State private var showingSysdiagInstructions = false
     @AppStorage(UserDefaultsKeys.appMode.rawValue) var appMode: DataCollectionMode = .none
-    
+
     var body: some View {
-        
+
         NavigationLink(isActive: $showingSysdiagInstructions) {
             SysdiagInstructionsDetailedView()
         } label: {
             EmptyView()
         }
-        
+
         if appMode == .manual {
             Button {
                // open instructions
@@ -33,14 +33,13 @@ struct SysdiagInstructionsCard: View {
     }
 }
 
-
 private struct SysdiagCard: View {
-    
+
     @Environment(\.colorScheme) private var colorScheme
-    
+
     var body: some View {
         VStack {
-            HStack() {
+            HStack {
                 Text("Capture Sysdiagnose")
                     .font(.title2)
                     .bold()
@@ -48,19 +47,19 @@ private struct SysdiagCard: View {
                 Image(systemName: "chevron.right.circle.fill")
                     .imageScale(.large)
             }
-            
+
             HStack(spacing: 0) {
                 Image(systemName: "stethoscope")
                     .foregroundColor(.blue)
                     .font(Font.custom("SF Pro", fixedSize: 30))
                     .frame(maxWidth: 40, alignment: .center)
-                    .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 10))  
-                
+                    .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 10))
+
                 Text("Create a sysdiagnose to capture baseband packets.")
                     .multilineTextAlignment(.leading)
                     .padding()
             }
-            
+
         }
         .frame(maxWidth: .infinity)
         .padding()
@@ -72,9 +71,8 @@ private struct SysdiagCard: View {
         .foregroundColor(colorScheme == .dark ? .white : .black.opacity(0.8))
         .padding()
     }
-    
-}
 
+}
 
 #Preview {
     SysdiagInstructionsCard()

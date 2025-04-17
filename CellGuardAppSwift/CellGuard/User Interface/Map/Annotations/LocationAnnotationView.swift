@@ -9,7 +9,7 @@ import Foundation
 import MapKit
 
 class LocationAnnotationView: MKAnnotationView {
-    
+
     static let ReuseID = "locationAnnotation"
     static let ClusterReuseID = "clusterLocationAnnotation"
 
@@ -17,25 +17,25 @@ class LocationAnnotationView: MKAnnotationView {
         super.init(annotation: annotation, reuseIdentifier: reuseIdentifier)
         prepareForReuse()
     }
-    
+
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     override func prepareForReuse() {
         super.prepareForReuse()
-        
+
         clusteringIdentifier = "location"
         collisionMode = .circle
         displayPriority = .defaultLow
     }
-    
+
     override func prepareForDisplay() {
         super.prepareForDisplay()
-        
+
         image = drawLocationDot()
     }
-    
+
     private func drawLocationDot() -> UIImage {
         // Size of the whole drawing area including the shadow
         let drawSize = 15.0
@@ -43,7 +43,7 @@ class LocationAnnotationView: MKAnnotationView {
         let circleSize = 10.0
         // Offset to position everything in the center of the drawing area
         let offset = (drawSize - circleSize) / 2.0
-        
+
         let renderer = UIGraphicsImageRenderer(size: CGSize(width: drawSize, height: drawSize))
         return renderer.image { context in
             // Draw a shadow behind the circle
@@ -57,5 +57,5 @@ class LocationAnnotationView: MKAnnotationView {
             context.cgContext.setShadow(offset: .zero, blur: 0, color: nil)
         }
     }
-    
+
 }

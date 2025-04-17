@@ -9,9 +9,9 @@ import Foundation
 import MapKit
 
 class CellAnnotationView: MKMarkerAnnotationView {
-    
+
     static let ReuseID = "cellAnnotation"
-    
+
     var calloutAccessory: Bool {
         get {
             rightCalloutAccessoryView != nil
@@ -20,19 +20,19 @@ class CellAnnotationView: MKMarkerAnnotationView {
             rightCalloutAccessoryView = newVal ? UIButton(type: .detailDisclosure) : nil
         }
     }
-    
+
     override init(annotation: MKAnnotation?, reuseIdentifier: String?) {
         super.init(annotation: annotation, reuseIdentifier: reuseIdentifier)
         prepareForReuse()
     }
-    
+
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(code:) has not been implemented")
     }
-    
+
     override func prepareForReuse() {
         super.prepareForReuse()
-        
+
         // It's crucial that we set those properties here, otherwise the cells disappear after zooming in and out
         clusteringIdentifier = "cell"
         animatesWhenAdded = false
@@ -40,11 +40,7 @@ class CellAnnotationView: MKMarkerAnnotationView {
         displayPriority = .required
         glyphImage = UIImage(systemName: "wave.3.left")
     }
-    
-    override func prepareForDisplay() {
-        super.prepareForDisplay()
-    }
-    
+
     func updateColor(technology: ALSTechnology) {
         markerTintColor = CellTechnologyFormatter.mapColor(technology)
     }

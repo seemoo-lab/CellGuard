@@ -13,7 +13,7 @@ struct VerificationProgressView: View {
         predicate: NSPredicate(format: "finished == NO and pipeline == %@", Int(primaryVerificationPipeline.id) as NSNumber)
     )
     private var unverifiedStates: FetchedResults<VerificationState>
-    
+
     var body: some View {
         ProgressView {
             Text("Verifying \(unverifiedStates.count) cellular \(unverifiedStates.count == 1 ? "measurement" : "measurements")")

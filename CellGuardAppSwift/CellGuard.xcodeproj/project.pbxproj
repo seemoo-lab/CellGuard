@@ -1177,6 +1177,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				CFE725172D8318010048C057 /* PBXTargetDependency */,
 			);
 			name = "CellGuard Jailbreak";
 			packageProductDependencies = (
@@ -1208,6 +1209,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				CFE725192D83180B0048C057 /* PBXTargetDependency */,
 			);
 			name = "CellGuard AppStore";
 			packageProductDependencies = (
@@ -1305,6 +1307,7 @@
 				CF9EEEE42B347A7000F9B6D8 /* XCRemoteSwiftPackageReference "Regex" */,
 				CFFF19DD2BC6CF0A004E40CE /* XCRemoteSwiftPackageReference "AcknowList" */,
 				CFB86D582C7C84FE0072BEFC /* XCRemoteSwiftPackageReference "swift-nio" */,
+				CFE725152D8317DD0048C057 /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */,
 			);
 			productRefGroup = CFD023342961A10D00AA5A1C /* Products */;
 			projectDirPath = "";
@@ -1824,6 +1827,14 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		CFE725172D8318010048C057 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = CFE725162D8318010048C057 /* SwiftLintBuildToolPlugin */;
+		};
+		CFE725192D83180B0048C057 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = CFE725182D83180B0048C057 /* SwiftLintBuildToolPlugin */;
+		};
 		CFEC5E702BD17544004978FA /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = CFB6CF0B2BD122FA00EAB7B4 /* CellGuard Jailbreak */;
@@ -2413,6 +2424,14 @@
 				minimumVersion = 1.0.0;
 			};
 		};
+		CFE725152D8317DD0048C057 /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SimplyDanny/SwiftLintPlugins";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.58.2;
+			};
+		};
 		CFFF19DD2BC6CF0A004E40CE /* XCRemoteSwiftPackageReference "AcknowList" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/vtourraine/AcknowList";
@@ -2518,6 +2537,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = CFD0236B2961AD1500AA5A1C /* XCRemoteSwiftPackageReference "swift-protobuf" */;
 			productName = SwiftProtobuf;
+		};
+		CFE725162D8318010048C057 /* SwiftLintBuildToolPlugin */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CFE725152D8317DD0048C057 /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */;
+			productName = "plugin:SwiftLintBuildToolPlugin";
+		};
+		CFE725182D83180B0048C057 /* SwiftLintBuildToolPlugin */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CFE725152D8317DD0048C057 /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */;
+			productName = "plugin:SwiftLintBuildToolPlugin";
 		};
 		CFFF19E02BC6D045004E40CE /* AcknowList */ = {
 			isa = XCSwiftPackageProductDependency;

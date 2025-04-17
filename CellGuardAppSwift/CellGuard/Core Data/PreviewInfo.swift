@@ -8,7 +8,7 @@
 import Foundation
 
 struct PreviewInfo {
-    
+
     static func active() -> Bool {
         // See: https://stackoverflow.com/a/61741858
         #if targetEnvironment(simulator)
@@ -17,5 +17,5 @@ struct PreviewInfo {
             return false
         #endif
     }
-    
+
 }

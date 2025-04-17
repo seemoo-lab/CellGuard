@@ -10,14 +10,14 @@ import MapKit
 import CoreData
 
 class CellAnnotation: NSObject, MKAnnotation, DatabaseAnnotation {
-    
+
     let coreDataID: NSManagedObjectID
     let technology: ALSTechnology
-    
+
     @objc dynamic let coordinate: CLLocationCoordinate2D
     @objc dynamic let title: String?
     @objc dynamic let subtitle: String?
-    
+
     init(cell: CellALS, title: String? = nil, subtitle: String? = nil) {
         coreDataID = cell.objectID
         technology = ALSTechnology(rawValue: cell.technology ?? "") ?? .LTE
@@ -28,14 +28,14 @@ class CellAnnotation: NSObject, MKAnnotation, DatabaseAnnotation {
         self.title = title
         self.subtitle = subtitle
     }
-    
+
     convenience init(cell: CellALS) {
-        let operatorName = OperatorDefinitions.shared.translate(country:cell.country, network: cell.network)?.combinedName
+        let operatorName = OperatorDefinitions.shared.translate(country: cell.country, network: cell.network)?.combinedName
         self.init(
             cell: cell,
             title: operatorName ?? "Network \(formatMNC(cell.network))",
             subtitle: "Area: \(cell.area) - Cell: \(cell.cell)"
         )
     }
-    
+
 }

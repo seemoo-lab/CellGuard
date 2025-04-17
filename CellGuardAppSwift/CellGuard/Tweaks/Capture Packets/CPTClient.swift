@@ -28,13 +28,13 @@ struct CPTPacket: CustomStringConvertible {
     let data: Data
     let timestamp: Date
     var simSlotID: UInt8?
-    
+
     init(direction: CPTDirection, data: Data, timestamp: Date, simSlotID: UInt8? = nil, knownProtocol: CPTProtocol? = nil) throws {
         self.direction = direction
         self.data = data
         self.timestamp = timestamp
         self.simSlotID = simSlotID
-        
+
         if let p = knownProtocol {
             self.proto = p
         } else {
@@ -49,13 +49,13 @@ struct CPTPacket: CustomStringConvertible {
             }
         }
     }
-    
+
     var description: String {
         return "\(proto),\(direction),\(data.base64EncodedString()),\(timestamp)"
     }
-    
+
     func parse() throws -> ParsedPacket {
-        switch (proto) {
+        switch proto {
         case .qmi:
             return try ParsedQMIPacket(nsData: data)
         case .ari:
@@ -65,12 +65,12 @@ struct CPTPacket: CustomStringConvertible {
 }
 
 struct CPTClient {
-    
+
     private static let logger = Logger(
         subsystem: Bundle.main.bundleIdentifier!,
         category: String(describing: CPTClient.self)
     )
-    
+
     /// The last timestamp of when a connection was ready to receive data
     static var lastConnectionReady: Date {
         get {
@@ -86,16 +86,16 @@ struct CPTClient {
     }
     private static var _lastConnectionReady: Date = Date.distantPast
     private static var connectionReadyLock = NSLock()
-    
+
     /// The generic tweak client
     private let client: TweakClient
-    
+
     init(queue: DispatchQueue) {
         client = TweakClient(port: 33067, queue: queue)
     }
-    
+
     /// Connects to the tweak, fetches all cells, and converts them into a dictionary structure.
-    func queryPackets(completion: @escaping (Result<[CPTPacket], Error>) -> ()) {
+    func queryPackets(completion: @escaping (Result<[CPTPacket], Error>) -> Void) {
         client.query { result in
             completion(.init {
                 try convert(data: try result.get())
@@ -104,20 +104,20 @@ struct CPTClient {
             Self.lastConnectionReady = Date()
         }
     }
-    
+
     /// Converts data that has been received from the tweak into a dictionary.
-    private func convert(data: Data) throws -> [CPTPacket]  {
+    private func convert(data: Data) throws -> [CPTPacket] {
         if data.count == 0 {
             return []
         }
-        
+
         guard let string = String(data: data, encoding: .utf8) else {
             Self.logger.warning("Can't convert data \(data.debugDescription) to String")
             return []
         }
-        
+
         var packets: [CPTPacket] = []
-        
+
         // Each line received by our tweak represents on QMI or ARI packet
         let lines = string.split(whereSeparator: \.isNewline)
         for line in lines {
@@ -150,15 +150,15 @@ struct CPTClient {
                 continue
             }
             let timestamp = Date(timeIntervalSince1970: unixTimestamp)
-            
+
             do {
                 packets.append(try CPTPacket(direction: direction, data: data, timestamp: timestamp, simSlotID: simSlot))
             } catch {
                 Self.logger.warning("Invalid CPTPacket '\(line)': \(error)")
             }
         }
-        
+
         return packets
     }
-    
+
 }

@@ -23,7 +23,7 @@ struct ALSQueryLocation: Equatable, Hashable {
     var accuracy = 0
     var reach = 0
     var score = 0
-    
+
     init(fromProto proto: AlsProto_Location) {
         self.latitude = Double(proto.latitude) * pow(10, -8)
         self.longitude = Double(proto.longitude) * pow(10, -8)
@@ -31,7 +31,7 @@ struct ALSQueryLocation: Equatable, Hashable {
         self.reach = Int(proto.reach)
         self.score = Int(proto.score)
     }
-    
+
     init(fromImport latitude: Double, longitude: Double, accuracy: Int, reach: Int, score: Int) {
         self.latitude = latitude
         self.longitude = longitude
@@ -39,11 +39,11 @@ struct ALSQueryLocation: Equatable, Hashable {
         self.reach = reach
         self.score = score
     }
-    
+
     func isValid() -> Bool {
         return self.accuracy > 0
     }
-    
+
     func applyTo(location: LocationALS) {
         location.latitude = latitude
         location.longitude = longitude
@@ -55,24 +55,24 @@ struct ALSQueryLocation: Equatable, Hashable {
 
 struct ALSQueryCell: CustomStringConvertible, Equatable, Hashable {
     var technology: ALSTechnology
-    
+
     var country: Int32 = 0
     var network: Int32 = 0
     var area: Int32 = 0
     var cell: Int64 = 0
-    var physicalCell: Int32? = nil
-    
-    var location: ALSQueryLocation? = nil
-    var frequency: Int32? = nil
-    
+    var physicalCell: Int32?
+
+    var location: ALSQueryLocation?
+    var frequency: Int32?
+
     func hasCellId() -> Bool {
         return self.cell >= 0
     }
-    
+
     func isValid() -> Bool {
         return location?.isValid() ?? false
     }
-    
+
     init(technology: ALSTechnology, country: Int32, network: Int32, area: Int32, cell: Int64) {
         self.technology = technology
         self.country = country
@@ -80,7 +80,7 @@ struct ALSQueryCell: CustomStringConvertible, Equatable, Hashable {
         self.area = area
         self.cell = cell
     }
-    
+
     init(fromGsmProto proto: AlsProto_GsmCell) {
         self.technology = .GSM
         self.country = proto.mcc
@@ -90,7 +90,7 @@ struct ALSQueryCell: CustomStringConvertible, Equatable, Hashable {
         self.location = ALSQueryLocation(fromProto: proto.location)
         self.frequency = proto.hasArfcn ? proto.arfcn : nil
     }
-    
+
     init(fromScdmaProto proto: AlsProto_ScdmaCell) {
         self.technology = .SCDMA
         self.country = proto.mcc
@@ -100,7 +100,7 @@ struct ALSQueryCell: CustomStringConvertible, Equatable, Hashable {
         self.location = ALSQueryLocation(fromProto: proto.location)
         self.frequency = proto.hasArfcn ? proto.arfcn : nil
     }
-    
+
     init(fromLteProto proto: AlsProto_LteCell) {
         self.technology = .LTE
         self.country = proto.mcc
@@ -111,7 +111,7 @@ struct ALSQueryCell: CustomStringConvertible, Equatable, Hashable {
         self.location = ALSQueryLocation(fromProto: proto.location)
         self.frequency = proto.hasUarfcn ? proto.uarfcn : nil
     }
-    
+
     init(fromNRProto proto: AlsProto_Nr5GCell) {
         self.technology = .NR
         self.country = proto.mcc
@@ -121,7 +121,7 @@ struct ALSQueryCell: CustomStringConvertible, Equatable, Hashable {
         self.location = ALSQueryLocation(fromProto: proto.location)
         self.frequency = proto.hasNrarfcn ? proto.nrarfcn : nil
     }
-    
+
     init(fromCdmaProto proto: AlsProto_CdmaCell) {
         self.technology = .CDMA
         self.country = proto.mcc
@@ -131,7 +131,7 @@ struct ALSQueryCell: CustomStringConvertible, Equatable, Hashable {
         self.location = ALSQueryLocation(fromProto: proto.location)
         self.frequency = proto.bandclass
     }
-    
+
     init(fromImport technology: ALSTechnology, country: Int32, network: Int32, area: Int32, cell: Int64, physicalCell: Int32, frequency: Int32, location: ALSQueryLocation) {
         self.technology = technology
         self.country = country
@@ -142,8 +142,7 @@ struct ALSQueryCell: CustomStringConvertible, Equatable, Hashable {
         self.frequency = frequency
         self.location = location
     }
-    
-    
+
     func toGsmProto() -> AlsProto_GsmCell {
         AlsProto_GsmCell.with {
             $0.mcc = self.country
@@ -152,12 +151,12 @@ struct ALSQueryCell: CustomStringConvertible, Equatable, Hashable {
             $0.cellID = self.cell
         }
     }
-    
+
     func toScdmaProto() throws -> AlsProto_ScdmaCell {
         if self.cell > Int32.max {
             throw ALSClientError.cellIdTooLarge
         }
-        
+
         return AlsProto_ScdmaCell.with {
             $0.mcc = self.country
             $0.mnc = self.network
@@ -165,12 +164,12 @@ struct ALSQueryCell: CustomStringConvertible, Equatable, Hashable {
             $0.cellID = Int32(self.cell)
         }
     }
-    
-    func toLteProto() throws  -> AlsProto_LteCell {
+
+    func toLteProto() throws -> AlsProto_LteCell {
         if self.cell > Int32.max {
             throw ALSClientError.cellIdTooLarge
         }
-        
+
         return AlsProto_LteCell.with {
             $0.mcc = self.country
             $0.mnc = self.network
@@ -178,7 +177,7 @@ struct ALSQueryCell: CustomStringConvertible, Equatable, Hashable {
             $0.cellID = Int32(self.cell)
         }
     }
-    
+
     func toNRProto() -> AlsProto_Nr5GCell {
         AlsProto_Nr5GCell.with {
             $0.mcc = self.country
@@ -187,12 +186,12 @@ struct ALSQueryCell: CustomStringConvertible, Equatable, Hashable {
             $0.cellID = self.cell
         }
     }
-    
-    func toCDMAProto() throws  -> AlsProto_CdmaCell {
+
+    func toCDMAProto() throws -> AlsProto_CdmaCell {
         if self.cell > Int32.max {
             throw ALSClientError.cellIdTooLarge
         }
-        
+
         return AlsProto_CdmaCell.with {
             $0.mcc = self.country
             $0.sid = self.network
@@ -200,24 +199,24 @@ struct ALSQueryCell: CustomStringConvertible, Equatable, Hashable {
             $0.bsid = Int32(self.cell)
         }
     }
-    
+
     func applyTo(alsCell: CellALS) {
         alsCell.technology = self.technology.rawValue
         alsCell.country = self.country
         alsCell.network = self.network
         alsCell.area = self.area
         alsCell.cell = self.cell
-        
+
         alsCell.frequency = self.frequency ?? 0
         alsCell.physicalCell = self.physicalCell ?? 0
     }
-    
+
     var description: String {
         "ALSQueryCell(technology=\(self.technology), country=\(self.country), network=\(self.network), " +
         "area=\(self.area), cell=\(self.cell), " +
         "location=\(String(describing: self.location)), frequency=\(String(describing: self.frequency)))"
     }
-    
+
     func compareToRequestAttributes(other: ALSQueryCell) -> Bool {
         return (
             self.technology == other.technology &&
@@ -229,35 +228,34 @@ struct ALSQueryCell: CustomStringConvertible, Equatable, Hashable {
     }
 }
 
-
 /// The central access point for Apple's Location Service (ALS)
 struct ALSClient {
-    
+
     // https://swiftwithmajid.com/2022/04/06/logging-in-swift/
     private static let logger = Logger(
         subsystem: Bundle.main.bundleIdentifier!,
         category: String(describing: ALSClient.self)
     )
-    
+
     private let endpoint = URL(string: "https://gs-loc.apple.com/clls/wloc")!
     private let headers = [
         "User-Agent": "locationd/2420.8.11 CFNetwork/1206 Darwin/20.1.0",
         "Accept": "*/*",
-        "Accept-Language": "en-us",
+        "Accept-Language": "en-us"
     ]
     private let serviceIdentifier = "com.apple.locationd"
     private let iOSVersion = "14.2.1.18B121"
     private let locale = "en_US"
-    
+
     /// Request nearby cellular cells from Apple's Location Service
     /// - Parameters:
     ///   - origin: the cell used as origin for the request, it doesn't require a location
     ///   - completion: called upon success with a list of nearby cells
     func requestCells(origin: ALSQueryCell) async throws -> [ALSQueryCell] {
-        let data: Data;
+        let data: Data
         do {
             let protoRequest = try AlsProto_ALSLocationRequest.with {
-                switch (origin.technology) {
+                switch origin.technology {
                 case .GSM:
                     $0.gsmCells = [origin.toGsmProto()]
                 case .UMTS:
@@ -275,13 +273,13 @@ struct ALSClient {
                 $0.numberOfSurroundingWifis = 1
                 $0.surroundingWifiBands = [1]
             }
-            
+
             data = try protoRequest.serializedData()
         } catch {
             Self.logger.warning("Can't encode proto request: \(error)")
             throw error
         }
-        
+
         do {
             let httpData = try await sendHttpRequest(protoData: data)
             let protoResponse = try AlsProto_ALSLocationResponse(serializedBytes: httpData)
@@ -301,23 +299,23 @@ struct ALSClient {
             throw error
         }
     }
-    
+
     /// Send an HTTP request to Apple's Location Service.
     /// - Parameters:
     ///   - protoData: the encoded data of the Protocol Buffer request
     ///   - completion: called upon success with the binary Protocol Buffer data of the response
     private func sendHttpRequest(protoData: Data) async throws -> Data {
         // Why we escape the parameter completion? https://www.donnywals.com/what-is-escaping-in-swift/
-        
+
         // First build a binary request header and then append the length and the binary of the protobuf request
         let body = self.buildRequestHeader() + self.packLength(protoData.count) + protoData
-        
+
         // Create a POST request in Swift (https://stackoverflow.com/a/58356848)
         var request = URLRequest(url: self.endpoint)
         request.httpMethod = "POST"
         request.httpBody = body
         request.allHTTPHeaderFields = self.headers
-        
+
         // Execute the HTTP request using GCD (https://developer.apple.com/documentation/foundation/url_loading_system/fetching_website_data_into_memory?language=objc)
         return try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Data, Error>) in
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
@@ -349,32 +347,32 @@ struct ALSClient {
             task.resume()
         }
     }
-    
+
     /// Build the TLV (type length value) header bytes for an ALS request.
     /// - Returns: header bytes for a request to ALS
     private func buildRequestHeader() -> Data {
         // Reference: https://www.appelsiini.net/2017/reverse-engineering-location-services/
-        
+
         // Fixed bytes indicating the start and end of a section in the header
         let start = Data([0x00, 0x01])
         let end = Data([0x00, 0x00])
-        
+
         var header = Data()
-        
+
         // Build the first section of header bytes
         header += start
         header += self.packString(self.locale)
         header += self.packString(self.serviceIdentifier)
         header += self.packString(self.iOSVersion)
         header += end
-        
+
         // Build the second section of header bytes
         header += start
         header += end
-        
+
         return header
     }
-    
+
     /// Pack the given string into bytes by putting its length as a prefix.
     /// - Parameter string: the string to be packed
     /// - Returns: the packed bytes of the string
@@ -383,10 +381,10 @@ struct ALSClient {
         if data.isEmpty {
             Self.logger.warning("Failed to pack string '\(string)' into bytes")
         }
-        
+
         return self.packLength(data.count) + data
     }
-    
+
     /// Pack the given integer (length value) into a signed short (2 bytes) with big endianness.
     /// - Parameter length: the length integer to be packed
     /// - Returns: length as 2 byte value
@@ -395,10 +393,10 @@ struct ALSClient {
             Self.logger.warning("Failed to pack length into bytes as it is too long: \(length) > \(Int16.max)")
             return Data()
         }
-        
+
         var shortLength = Int16(length).bigEndian
         // https://stackoverflow.com/a/43247959
         return Data(bytes: &shortLength, count: 2)
     }
-    
+
 }

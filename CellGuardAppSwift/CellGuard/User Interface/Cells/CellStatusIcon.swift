@@ -8,11 +8,11 @@
 import SwiftUI
 
 struct CellStatusIcon: View {
-    
+
     // It's important to mark this as an observable object, otherwise this status icon is not updated upon status updates
     // See: https://stackoverflow.com/a/64527233
     @ObservedObject var state: VerificationState
-    
+
     var body: some View {
         if state.finished {
             if state.score < primaryVerificationPipeline.pointsUntrusted {
@@ -41,7 +41,7 @@ struct CellStatusIcon: View {
 struct CellStatusIcon_Previews: PreviewProvider {
     static var previews: some View {
         // TODO: Rewrite
-        
+
         /* CellStatusIcon(status: CellStatus.verified.rawValue, score: Int16(primaryVerificationPipeline.pointsSuspicious))
             .previewDisplayName("Verified")
         
@@ -57,7 +57,7 @@ struct CellStatusIcon_Previews: PreviewProvider {
          // Imported Verifying
          
          */
-        
+
         // TODO: CHANGE
         CellStatusIcon(state: VerificationState())
     }

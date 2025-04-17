@@ -9,5 +9,5 @@ import Foundation
 import MapKit
 
 class LocationClusterAnnotation: MKClusterAnnotation {
-    
+
 }

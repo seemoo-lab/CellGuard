@@ -8,19 +8,19 @@
 import SwiftUI
 
 struct DebugProfileCard: View {
-    
+
     @State private var showDebugProfileInstructions = false
     @AppStorage(UserDefaultsKeys.appMode.rawValue) var appMode: DataCollectionMode = .none
     @StateObject private var profileData = ProfileData.shared
-    
+
     var body: some View {
-        
+
         NavigationLink(isActive: $showDebugProfileInstructions) {
             DebugProfileDetailedView()
         } label: {
             EmptyView()
         }
-        
+
         if appMode == .manual && [.notPresent, .expiringSoon].contains(profileData.installState) {
             Button {
                // open instructions
@@ -34,15 +34,14 @@ struct DebugProfileCard: View {
     }
 }
 
-
 private struct DebugProfileCardView: View {
-    
+
     @Environment(\.colorScheme) private var colorScheme
     @StateObject private var profileData = ProfileData.shared
-    
+
     var body: some View {
         VStack {
-            HStack() {
+            HStack {
                 Text((profileData.installState == .expiringSoon ? "Update" : "Install") + " Debug Profile")
                     .font(.title2)
                     .bold()
@@ -50,17 +49,17 @@ private struct DebugProfileCardView: View {
                 Image(systemName: "chevron.right.circle.fill")
                     .imageScale(.large)
             }
-            
+
             HStack(spacing: 0) {
                 Image(systemName: "heart.text.square")
                     .foregroundColor(.blue)
                     .font(Font.custom("SF Pro", fixedSize: 30))
                     .frame(maxWidth: 40, alignment: .center)
                     .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 10))
-                
+
                 if profileData.installState == .expiringSoon, let removalDate = profileData.removalDate {
                     let hours = Int(removalDate.timeIntervalSinceNow / 3600) % 60
-                    
+
                     (Text("Expose baseband management packets to sysdiagnoses. The profile expires in ") + Text("\(hours)h").foregroundColor(.orange) + Text("."))
                         .multilineTextAlignment(.leading)
                         .padding()
@@ -70,7 +69,7 @@ private struct DebugProfileCardView: View {
                         .padding()
                 }
             }
-            
+
         }
         .frame(maxWidth: .infinity)
         .padding()
@@ -82,9 +81,8 @@ private struct DebugProfileCardView: View {
         .foregroundColor(colorScheme == .dark ? .white : .black.opacity(0.8))
         .padding()
     }
-    
-}
 
+}
 
 #Preview {
     DebugProfileCardView()

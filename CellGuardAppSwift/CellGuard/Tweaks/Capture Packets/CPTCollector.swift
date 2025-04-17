@@ -9,20 +9,20 @@ import Foundation
 import OSLog
 
 struct CPTCollector {
-    
+
     private static let logger = Logger(
         subsystem: Bundle.main.bundleIdentifier!,
         category: String(describing: CPTCollector.self)
     )
-    
+
     static var mostRecentPacket: Date = Date(timeIntervalSince1970: 0)
-    
+
     private let client: CPTClient
-    
+
     init(client: CPTClient) {
         self.client = client
     }
-    
+
     func collectAndStore() async throws -> (Int, Int, Int) {
         return try await withCheckedThrowingContinuation { completion in
             client.queryPackets { result in
@@ -39,12 +39,12 @@ struct CPTCollector {
             }
         }
     }
-    
+
     public static func store(_ packets: [CPTPacket]) throws -> (Int, Int, [CCTCellProperties]) {
         do {
             var qmiPackets: [(CPTPacket, ParsedQMIPacket)] = []
             var ariPackets: [(CPTPacket, ParsedARIPacket)] = []
-            
+
             for packet in packets {
                 do {
                     let parsedPacket = try packet.parse()
@@ -65,16 +65,16 @@ struct CPTCollector {
                     CPTCollector.mostRecentPacket = packet.timestamp
                 }
             }
-            
+
             let (_, qmiCellPackets) = try PersistenceController.shared.importQMIPackets(from: qmiPackets)
             let (_, ariCellPackets) = try PersistenceController.shared.importARIPackets(from: ariPackets)
             let importedCells = try PersistenceController.shared.importCollectedCells(from: qmiCellPackets + ariCellPackets, filter: true)
-            
+
             return (qmiPackets.count, ariPackets.count, importedCells)
         } catch {
             Self.logger.warning("Can't import packets: \(error)")
             throw error
         }
     }
-    
+
 }

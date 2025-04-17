@@ -15,26 +15,26 @@ enum StudyClientError: Error {
 
 // The client for the backend
 struct StudyClient {
-    
+
     internal static let logger = Logger(
         subsystem: Bundle.main.bundleIdentifier!,
         category: String(describing: StudyClient.self)
     )
-    
+
     internal let persistence = PersistenceController.shared
     internal let jsonEncoder = {
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .millisecondsSince1970
         return encoder
     }()
-    
+
     internal func upload(jsonData: Data, url: URL, description: String) async throws {
         Self.logger.debug("Sending backend request with \(description) to \(url)")
-        
+
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        
+
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<(), any Error>) in
             URLSession.shared.uploadTask(with: request, from: jsonData) { data, response, error in
                 if let error = error {
@@ -53,12 +53,12 @@ struct StudyClient {
                     continuation.resume(throwing: StudyClientError.uploadErrorExternal(response))
                     return
                 }
-                
+
                 Self.logger.debug("Successfully uploaded \(description): \(response)")
                 continuation.resume()
                 return
             }.resume()
         }
     }
-    
+
 }

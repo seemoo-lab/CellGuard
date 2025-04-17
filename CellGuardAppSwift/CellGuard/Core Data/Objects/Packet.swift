@@ -17,9 +17,9 @@ public protocol Packet: NSFetchRequestResult, Identifiable {
 
 extension Packet {
     var proto: String {
-        if (self is PacketARI) {
+        if self is PacketARI {
             return CPTProtocol.ari.rawValue
-        } else if (self is PacketQMI) {
+        } else if self is PacketQMI {
             return CPTProtocol.qmi.rawValue
         } else {
             return "UNK"
@@ -28,9 +28,9 @@ extension Packet {
 }
 
 struct PacketContainer: Identifiable {
-    
+
     let packet: any Packet
-    
+
     var id: ObjectIdentifier {
         return packet.id
     }

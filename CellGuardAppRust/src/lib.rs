@@ -1,3 +1,4 @@
+#![allow(clippy::unnecessary_cast)]
 extern crate alloc;
 
 use std::backtrace::Backtrace;
@@ -57,7 +58,7 @@ impl RustApp {
         }));
 
         let result = std::panic::catch_unwind(|| {
-            return csv_parser::parse_log_archive(Path::new(input), Path::new(output), speedup);
+            csv_parser::parse_log_archive(Path::new(input), Path::new(output), speedup)
         });
 
         match result {
@@ -78,7 +79,7 @@ impl RustApp {
                 // Create error string
                 (
                     u32::MAX,
-                    format!("{}\n\n{}", panic_message, trace.to_string()).to_string(),
+                    format!("{}\n\n{}", panic_message, trace).to_string(),
                 )
             }
         }

@@ -9,8 +9,8 @@ import Atomics
 import Foundation
 
 struct PortStatus {
-    
+
     static var importActive = ManagedAtomic<Bool>(false)
     static var exportActive = ManagedAtomic<Bool>(false)
-    
+
 }

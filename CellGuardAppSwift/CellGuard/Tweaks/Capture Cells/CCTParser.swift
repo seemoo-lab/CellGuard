@@ -30,47 +30,47 @@ enum CCTParserError: Error {
 }
 
 enum CCTCellType: String {
-    case Serving = "CellTypeServing"
-    case Neighbor = "CellTypeNeighbor"
-    case Monitor = "CellTypeMonitor"
-    case Detected = "CellTypeDetected"
+    case serving = "CellTypeServing"
+    case neighbor = "CellTypeNeighbor"
+    case monitor = "CellTypeMonitor"
+    case detected = "CellTypeDetected"
 }
 
 /// A structure similar to the model "Cell".
 struct CCTCellProperties {
-    
+
     var mcc: Int32?
     var network: Int32?
     var area: Int32?
     var cellId: Int64?
     var physicalCellId: Int32?
-    
+
     var technology: ALSTechnology?
     var preciseTechnology: String?
     var frequency: Int32?
     var band: Int32?
     var bandwidth: Int32?
     var deploymentType: Int32?
-    
+
     var timestamp: Date?
     var simSlotID: UInt8?
-    
+
     // applyTo does not set the packetQmi or packetAri because NSBatchInsertRequest does not set relationships.
     func applyTo(tweakCell: CellTweak) {
         tweakCell.country = self.mcc ?? 0
         tweakCell.network = self.network ?? 0
         tweakCell.area = self.area ?? 0
         tweakCell.cell = self.cellId ?? 0
-        
+
         tweakCell.technology = (self.technology ?? .LTE).rawValue
         tweakCell.preciseTechnology = self.preciseTechnology
-        
+
         tweakCell.frequency = self.frequency ?? 0
         tweakCell.band = self.band ?? 0
         tweakCell.bandwidth = self.bandwidth ?? 0
         tweakCell.physicalCell = self.physicalCellId ?? 0
         tweakCell.deploymentType = self.deploymentType ?? 0
-        
+
         tweakCell.collected = self.timestamp
         tweakCell.simSlotID = self.simSlotID != nil ? Int16(self.simSlotID!) : 0
     }

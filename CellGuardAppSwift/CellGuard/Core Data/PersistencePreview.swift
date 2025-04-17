@@ -9,7 +9,7 @@ import Foundation
 import CoreData
 
 struct PersistencePreview {
-    
+
     static func userLocation(location: LocationUser, error: Double) -> LocationUser {
         location.latitude = 49.8726737 + Double.random(in: -error..<error)
         location.longitude = 8.6516291 + Double.random(in: -error..<error)
@@ -17,7 +17,7 @@ struct PersistencePreview {
 
         return location
     }
-    
+
     static func alsLocation(location: LocationALS, error: Double) -> LocationALS {
         location.latitude = 49.8726737 + Double.random(in: -error..<error)
         location.longitude = 8.6516291 + Double.random(in: -error..<error)
@@ -25,7 +25,7 @@ struct PersistencePreview {
 
         return location
     }
-    
+
     static func tweakCell(context: NSManagedObjectContext, imported: Date) -> CellTweak {
         let cell = CellTweak(context: context)
         cell.technology = "LTE"
@@ -38,10 +38,10 @@ struct PersistencePreview {
         cell.location = userLocation(location: LocationUser(context: context), error: 0.005)
         cell.location?.imported = cell.imported
         // TODO: Add VerificationState to TweakCell
-        
+
         return cell
     }
-    
+
     static func tweakCell(context: NSManagedObjectContext, from alsCell: CellALS) -> CellTweak {
         let cell = CellTweak(context: context)
         cell.technology = alsCell.technology
@@ -54,11 +54,11 @@ struct PersistencePreview {
         cell.location = userLocation(location: LocationUser(context: context), error: 0.01)
         cell.location?.imported = cell.imported
         // TODO: Add VerificationState to TweakCell
-        
+
         return cell
 
     }
-    
+
     static func alsCell(context: NSManagedObjectContext) -> CellALS {
         let cell = CellALS(context: context)
         cell.technology = "LTE"
@@ -69,18 +69,18 @@ struct PersistencePreview {
         cell.imported = Calendar.current.date(byAdding: .day, value: -Int.random(in: 0..<3), to: Date())
         cell.location = alsLocation(location: LocationALS(context: context), error: 0.005)
         cell.location?.imported = cell.imported
-        
+
         for _ in 0...Int.random(in: 2..<7) {
             _ = PersistencePreview.tweakCell(context: context, from: cell)
         }
 
         return cell
     }
-    
+
     static func packet(proto: CPTProtocol, direction: CPTDirection, data: String, major: UInt8, minor: UInt16, indication: Bool, collected: Date, context: NSManagedObjectContext) -> any Packet {
         var packet: any Packet
-        
-        switch (proto) {
+
+        switch proto {
         case .qmi:
             let qmiPacket = PacketQMI(context: context)
             qmiPacket.service = Int16(major)
@@ -93,25 +93,25 @@ struct PersistencePreview {
             ariPacket.type = Int32(minor)
             packet = ariPacket
         }
-        
+
         packet.collected = collected
         packet.direction = direction.rawValue
         packet.data = Data(base64Encoded: data)
         packet.imported = Date()
-        
+
         return packet
     }
-    
+
     static func packets(context: NSManagedObjectContext) -> [any Packet] {
         var packets: [any Packet] = []
-        
+
         // 4th packet from the test trace
         packets.append(packet(proto: .qmi, direction: .outgoing, data: "ARcAACIBAE8FUQALAAEBAAAQBAAHAAAA", major: 0x22, minor: 0x0051, indication: false, collected: Date().addingTimeInterval(-60*2), context: context))
         // 269th packet from the test trace
         packets.append(packet(proto: .qmi, direction: .ingoing, data: "ARcAgAAAASIiAAwAAgQAAAAAAAECADAM", major: 0x00, minor: 0x0022, indication: false, collected: Date().addingTimeInterval(-60*4), context: context))
         // 1702th packet from the test trace
        packets.append(packet(proto: .qmi, direction: .ingoing, data: "AbYAgAMBBBYATgCqABACAAAAEQIAAAASAwAAAAATAwAAAAAUAwACAgAZHQABAwEDAQABAAD//wEDF+8AAAAAATI2MjAy/wF0tR4CAP//IQEAAScBAAAoBAABAAAAKgEAASsEAAEAAAAwBAAAAAAAMgQAAAAAADUCAP//OQQAAQAAADoEAAEAAAA/BAAAAAAARQQAAwAAAEcEAAQAAABMAwAAAABQAQABUQEAAFcBAAFdBAAAAAAA", major: 0x03, minor: 0x004E, indication: true, collected: Date().addingTimeInterval(-60*60*24*2), context: context))
-        
+
         // 1st packet from the test trace
         packets.append(packet(proto: .ari, direction: .ingoing, data: "3sB+q3igoABCwAAAAiAQAAAAAAAGIBAA8BMAAAggEAAAAAAACiCwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADCAQAAAAAAA=", major: 15, minor: 0x301, indication: false, collected: Date().addingTimeInterval(-60*3), context: context))
         // 19th packet from the test trace
@@ -120,21 +120,21 @@ struct PersistencePreview {
 
         return packets
     }
-    
+
     static func controller() -> PersistenceController {
         let result = PersistenceController.preview
         let viewContext = result.container.viewContext
-        
+
         let importedDate = Date()
-        
+
         for _ in 0..<10 {
             // TODO: One cell at multiple dates
             _ = tweakCell(context: viewContext, imported: importedDate)
             _ = alsCell(context: viewContext)
         }
-        
+
         _ = packets(context: viewContext)
-        
+
         do {
             try viewContext.save()
         } catch {
@@ -145,5 +145,5 @@ struct PersistencePreview {
         }
         return result
     }
-    
+
 }

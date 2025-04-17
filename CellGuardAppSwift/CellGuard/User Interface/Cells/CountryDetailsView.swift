@@ -9,7 +9,7 @@ import SwiftUI
 
 struct CountryDetailsView: View {
     let country: NetworkCountry
-    
+
     var body: some View {
         List {
             Section {
@@ -23,7 +23,7 @@ struct CountryDetailsView: View {
                     }
                 }
             }
-            
+
             Section(header: Text("Mobile Country Codes")) {
                 ForEach(country.listMccs()) {
                     Text($0.mcc)

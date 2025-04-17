@@ -8,22 +8,22 @@
 import Foundation
 
 struct StudyPacketFilter {
-    
+
     /// Filters QMI packets to decide if they should be included in the study.
     /// Returns true if the packet should be included.
     static func filter(qmi packet: PacketQMI) -> Bool {
         // Packet Content Documentation:
         // - https://dev.seemoo.tu-darmstadt.de/apple/libqmi/-/tree/ios-message-ids/data/ios?ref_type=heads
         // - https://dev.seemoo.tu-darmstadt.de/apple/iphone-qmi-wireshark/-/blob/main/dissector/qmi_services.py?ref_type=heads
-        
+
         // How to find packets with PII:
         // - Search libqmi for "personal-info"
         // - Search Wireshark traces for personal data, e.g. using "frame contains aa:aa:aa"
-        
+
         let indication = packet.indication
         let service = packet.service
         let message = packet.message
-        
+
         // WDS
         if service == 0x01 {
             // Start Network
@@ -55,7 +55,7 @@ struct StudyPacketFilter {
                 return false
             }
         }
-        
+
         // DMS
         if service == 0x02 {
             // Get IDs (including IMEI)
@@ -91,7 +91,7 @@ struct StudyPacketFilter {
                 return false
             }
         }
-        
+
         // NAS
         if service == 0x03 {
             // Send WiFi Network Info
@@ -99,7 +99,7 @@ struct StudyPacketFilter {
                 return false
             }
         }
-        
+
         // WMS
         if service == 0x05 {
             // Event Report
@@ -119,14 +119,14 @@ struct StudyPacketFilter {
                 return false
             }
         }
-        
+
         // PDS
         if service == 0x06 {
             // For now we're don't collect any packets from the service as they might contain location data,
             // are quite frequent on jailbroken devices, and are relatively big.
             return false
         }
-        
+
         // VS
         if service == 0x09 {
             // Dial Call
@@ -166,7 +166,7 @@ struct StudyPacketFilter {
                 return false
             }
         }
-        
+
         // UIM
         if service == 0x0B {
             // Read Transparent
@@ -218,7 +218,7 @@ struct StudyPacketFilter {
                 return false
             }
         }
-        
+
         // MS
         if service == 0x52 {
             // Session Initialize (SIP)
@@ -230,7 +230,7 @@ struct StudyPacketFilter {
                 return false
             }
         }
-        
+
         // CAT
         if service == 0x0A {
             // Send Decoded Envelope
@@ -238,20 +238,20 @@ struct StudyPacketFilter {
                 return false
             }
         }
-        
+
         // By default we include all packets
         return true
     }
-    
+
     /// Strips PII from the QMI packet and marks it as stripped.
     /// Returns the stripped data.
     static func strip(qmi packet: Data) throws -> Data {
         let parsed = try ParsedQMIPacket(nsData: packet)
-        
+
         let qmuxHeader = parsed.qmuxHeader
         let messageHeader = parsed.messageHeader
         let txHeader = parsed.transactionHeader
-        
+
         // Modifying the flag to signal that we removed PII from this packet
         return try ParsedQMIPacket(
             flag: qmuxHeader.flag + 1, serviceId: qmuxHeader.serviceId, clientId: qmuxHeader.clientId,
@@ -260,16 +260,16 @@ struct StudyPacketFilter {
             tlvs: []
         ).write()
     }
-    
+
     /// Filters ARI packets to decide if they should be included in the study.
     /// Returns true if the packet should be included.
     static func filter(ari packet: PacketARI) -> Bool {
         let group = packet.group
         let type = packet.type
-        
+
         // Packet Content Documentation: 
         // - https://github.com/seemoo-lab/aristoteles/blob/master/types/structure/libari_dylib.lua
-        
+
         // 01_bsp
         if group == 1 {
             // CsiMsCpsReadImeiRspCb (513)
@@ -277,52 +277,52 @@ struct StudyPacketFilter {
                 return false
             }
         }
-        
+
         // Removes all packets from the group "02_cs"
         if group == 2 {
             return false
         }
-        
+
         // Removes all packets from the group "04_sms"
         if group == 4 {
             return false
         }
-        
+
         // Removes all packets from the group "12_sim_sec"
         if group == 12 {
             return false
         }
-        
+
         // Removes all packets from the group "14_sim_pb"
         if group == 14 {
             return false
         }
-        
+
         // Removes all packets from the group "16_call_cs_voims"
         if group == 16 {
             return false
         }
-        
+
         // Removes all packets from the group "19_cls"
         if group == 19 {
             return false
         }
-        
+
         // Removes all packets from the group "50_ibi_vinyl"
         if group == 50 {
             return false
         }
-        
+
         // By default we include all packets
         return true
     }
-    
+
     /// Strips PII from the ARI packet and marks it as stripped.
     /// Returns the stripped data.
     static func strip(ari packet: Data) throws -> Data {
         let parsed = try ParsedARIPacket(data: packet)
         let header = parsed.header
-        
+
         // Adding a dummy TLV to signal that we removed PII from this packet
         return try ParsedARIPacket(
             group: header.group, type: header.type,
@@ -331,5 +331,5 @@ struct StudyPacketFilter {
             tlvs: [AriTlv(type: 1 << 10, version: 0, data: Data())]
         ).write()
     }
-    
+
 }

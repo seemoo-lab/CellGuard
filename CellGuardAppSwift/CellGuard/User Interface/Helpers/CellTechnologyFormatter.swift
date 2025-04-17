@@ -10,24 +10,20 @@ import UIKit
 import SwiftUI
 
 struct CellTechnologyFormatter {
-    
+
     let technology: ALSTechnology
-    
-    init(technology: ALSTechnology) {
-        self.technology = technology
-    }
-    
+
     public func country() -> String {
         return "MCC"
     }
-    
+
     public func network() -> String {
         if technology == .CDMA {
             return "SID"
         }
         return "MNC"
     }
-    
+
     public func area() -> String {
         if technology == .CDMA {
             return "NID"
@@ -37,7 +33,7 @@ struct CellTechnologyFormatter {
         }
         return "LAC"
     }
-    
+
     public func cell() -> String {
         switch technology {
         case .CDMA:
@@ -52,9 +48,9 @@ struct CellTechnologyFormatter {
             return "Cell ID"
         }
     }
-    
+
     public func frequency() -> String {
-        switch (technology) {
+        switch technology {
         case .CDMA: return "Channel"
         case .GSM: return "ARFCN"
         case .UMTS: return "ARFCN"
@@ -63,13 +59,13 @@ struct CellTechnologyFormatter {
         case .NR: return "ARFCN"
         }
     }
-    
+
     public static func from(technology: String?) -> CellTechnologyFormatter {
         // Return a default formatter if no technology is given
         guard let technology = technology?.uppercased() else {
             return CellTechnologyFormatter(technology: .LTE)
         }
-        
+
         if let alsTech = ALSTechnology(rawValue: technology) {
             return CellTechnologyFormatter(technology: alsTech)
         } else {
@@ -78,21 +74,21 @@ struct CellTechnologyFormatter {
             return CellTechnologyFormatter(technology: .LTE)
         }
     }
-    
+
     public static func mapColor(_ technology: ALSTechnology) -> UIColor {
-        switch (technology) {
+        switch technology {
         case .GSM: return .systemPink
         case .CDMA: return .systemPurple
-            
+
         case .UMTS: return .systemOrange
         case .SCDMA: return .systemYellow
-        
+
         case .LTE: return .systemBlue
-            
+
         case .NR: return .systemGreen
         }
     }
-    
+
     public static func userInfo(_ technology: ALSTechnology) -> String {
         switch technology {
         case .GSM: return "2G"
@@ -103,5 +99,5 @@ struct CellTechnologyFormatter {
         case .NR: return "5G"
         }
     }
-    
+
 }

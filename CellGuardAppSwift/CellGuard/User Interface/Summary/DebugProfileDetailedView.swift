@@ -9,7 +9,7 @@ import SwiftUI
 
 struct DebugProfileDetailedView: View {
     @Environment(\.openURL) var openURL
-    
+
     var body: some View {
         ScrollView {
             CenteredTitleIconTextView(
@@ -20,12 +20,12 @@ A baseband debug profile adds more data about cellular network connections to yo
 """,
                 size: 120
             )
-            
+
             LargeButton(title: "Download Profile", backgroundColor: .blue) {
                 openURL(AppleURLs.downloadBasebandProfile)
             }
             .padding(.horizontal)
-            
+
             Text("""
 Please install the baseband debug profile provided and signed by Apple. If you are in Lockdown Mode, we recommend disconnecting your iPhone from the Internet, temporarily disabling Lockdown Mode, and then installing the baseband debug profile. After the installation, you can enable Lockdown Mode again.
 
@@ -35,11 +35,11 @@ The debug profile expires after 21 days. Please reinstall after expiry.
                 .padding()
                 .multilineTextAlignment(.leading)
                 .frame(maxWidth: .infinity, alignment: .leading)
-            
+
             Spacer(minLength: 10)
         }
     }
-    
+
     private var icon: String {
         if #available(iOS 16, *) {
             return "cellularbars"
@@ -48,8 +48,6 @@ The debug profile expires after 21 days. Please reinstall after expiry.
         }
     }
 }
-
-
 
 #Preview {
     DebugProfileDetailedView()

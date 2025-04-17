@@ -9,10 +9,10 @@ import Foundation
 import BinarySwift
 
 extension CCTParser {
-    
+
     func parseAriCell(_ data: Data, timestamp: Date, simSlot: UInt8) throws -> [CCTCellProperties] {
         // Source: https://github.com/seemoo-lab/aristoteles/blob/master/types/structure/libari_dylib.lua
-        
+
         let parsedPacket = try ParsedARIPacket(data: data)
 
         if parsedPacket.header.group != PacketConstants.ariCellInfoGroup {
@@ -50,13 +50,13 @@ extension CCTParser {
             default:
                 throw CCTParserError.unknownRat(technology.rawValue)
             }
-         
+
             if var cell = cell,
                !cell.isMissingKeyProperties() {
                 cell.preciseTechnology = technology.rawValue
                 cell.timestamp = timestamp
                 cell.simSlotID = simSlot
-                
+
                 // We keep only the most recent cell technology info version, e.g. we use the `lteR15` cell infos, if available, instead of the
                 // `.lteV1T`, or `lte` cell infos. The order is defined by the PacketConstants.ariCellInfoTechnologies.
                 if let index = cells.firstIndex(where: { $0.technology == cell.technology }) {
@@ -73,15 +73,15 @@ extension CCTParser {
 
         return cells
     }
-    
+
     private func parseGsmAri(_ tlv: AriTlv) throws -> CCTCellProperties {
         var cell = CCTCellProperties()
         cell.technology = .GSM
-        
+
         if tlv.length != 24 {
             throw CCTParserError.unexpectedTlvLength
         }
-        
+
         let data = BinaryData(data: tlv.data, bigEndian: false)
         let _: UInt16 = try data.get(0) // index
         cell.mcc = Int32((try? data.get(2) as UInt16) ?? 0)
@@ -92,18 +92,18 @@ extension CCTParser {
         cell.frequency = Int32((try? data.get(12) as UInt16) ?? 0)
         let _: UInt32 = try data.get(14) // latitude
         let _: UInt32 = try data.get(18) // longitude
-        
+
         return cell
     }
-    
+
     private func parseUmtsAri(_ tlv: AriTlv, version: ALSTechnologyVersion) throws -> CCTCellProperties {
         var cell = CCTCellProperties()
         cell.technology = .UMTS
-        
+
         if tlv.length != 28 {
             throw CCTParserError.unexpectedTlvLength
         }
-        
+
         // Just a guess, we have not been able to validate this!
         let data = BinaryData(data: tlv.data, bigEndian: false)
         let _: UInt16 = try data.get(0) // index
@@ -117,25 +117,25 @@ extension CCTParser {
         let _: UInt16 = try data.get(18) // primary synchronization code (PSC)
         let _: UInt32 = try data.get(20) // latitude
         let _: UInt32 = try data.get(24) // longitude
-        
+
         return cell
     }
-    
+
     private func parseCdmaAri(_ tlv: AriTlv, version: ALSTechnologyVersion) throws -> CCTCellProperties {
         var cell = CCTCellProperties()
         cell.technology = .CDMA
-        
+
         if (version == .cdma1x && tlv.length != 48) || (version == .cdmaEvdo && tlv.length != 52) {
             throw CCTParserError.unexpectedTlvLength
         }
-        
+
         // Just a guess, we have not been able to validate this!
         let data = BinaryData(data: tlv.data, bigEndian: false)
         let _: UInt16 = try data.get(0) // index
         cell.mcc = Int32((try? data.get(2) as UInt16) ?? 0)
-        
+
         if version == .cdma1x {
-            let _ = Int32((try? data.get(4) as UInt16) ?? 0) // mnc
+            _ = Int32((try? data.get(4) as UInt16) ?? 0) // mnc
             cell.frequency = Int32((try? data.get(6) as UInt16) ?? 0)
             cell.band = Int32((try? data.get(8) as UInt16) ?? 0)
             cell.network = Int32((try? data.get(10) as UInt16) ?? 0)
@@ -150,27 +150,27 @@ extension CCTParser {
         } else if version == .cdmaEvdo {
             cell.frequency = Int32((try? data.get(4) as UInt16) ?? 0)
             cell.band = Int32((try? data.get(6) as UInt16) ?? 0)
-            let _ = try data.getUTF8(8, length: 16) // sectorID
+            _ = try data.getUTF8(8, length: 16) // sectorID
             let _: UInt32 = try data.get(24) // latitude
             let _: UInt32 = try data.get(28) // longitude
             cell.area = Int32((try? data.get(32) as UInt16) ?? 0)
         }
-        
+
         return cell
     }
-    
+
     private func parseLteAri(_ tlv: AriTlv, version: ALSTechnologyVersion) throws -> CCTCellProperties {
         var cell = CCTCellProperties()
         cell.technology = .LTE
-        
+
         if (version == .lte && tlv.length != 32) || (version == .lteV1T && tlv.length != 36) ||
             (version == .lteR15 && tlv.length != 36) || (version == .lteR15V2 && tlv.length != 52) {
             throw CCTParserError.unexpectedTlvLength
         }
-        
+
         var offset = 0
         let data = BinaryData(data: tlv.data, bigEndian: false)
-        
+
         let _: UInt16 = try data.get(0) // index
         cell.mcc = Int32((try? data.get(2) as UInt16) ?? 0)
         cell.network = Int32((try? data.get(4) as UInt16) ?? 0)
@@ -179,7 +179,7 @@ extension CCTParser {
         cell.area = Int32((try? data.get(8) as UInt32) ?? 0)
         // See: https://dev.seemoo.tu-darmstadt.de/apple/cell-guard/-/issues/98
         cell.cellId = Int64((try? data.get(12) as UInt32) ?? 0)
-        
+
         offset = 16
         if version == .lte {
             cell.frequency = Int32((try? data.get(offset) as UInt16) ?? 0)
@@ -193,26 +193,26 @@ extension CCTParser {
             cell.physicalCellId = Int32((try? data.get(offset) as UInt32) ?? 0)
             offset += 4
         }
-        
+
         let _: UInt32 = try data.get(offset) // latitude
         offset += 4
         let _: UInt32 = try data.get(offset) // longitude
         offset += 4
         cell.bandwidth = Int32((try? data.get(offset) as UInt8) ?? 0)
         offset += 1
-        
+
         if version != .lte {
             cell.deploymentType = Int32((try? data.get(offset) as UInt8) ?? 0)
             offset += 1
         }
-        
+
         return cell
     }
-    
+
     private func parseNrAri(_ tlv: AriTlv, version: ALSTechnologyVersion) throws -> CCTCellProperties {
         var cell = CCTCellProperties()
         cell.technology = .NR
-        
+
         if (version == .nr && tlv.length != 104) || (version == .nrV2 && tlv.length != 120) {
             throw CCTParserError.unexpectedTlvLength
         }
@@ -237,7 +237,7 @@ extension CCTParser {
         let _: UInt16 = try data.get(48) // bwpSupport
         let _: UInt32 = try data.get(50) // throughput
         let _: UInt16 = try data.get(54) // pMax
-        
+
         return cell
     }
 }

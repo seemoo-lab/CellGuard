@@ -8,13 +8,13 @@
 import SwiftUI
 
 struct MapInfoSheet: View {
-    
+
     var body: some View {
         ScrollView {
             Text("Cell Reception Map")
                 .font(.title.bold())
                 .padding(EdgeInsets(top: 40, leading: 20, bottom: 30, trailing: 20))
-            
+
             // Inline links with SwiftUI in iOS 14 are cursed: https://betterprogramming.pub/swiftui-pain-links-in-text-b31319783c9e
             // It's way better in iOS 15: https://stackoverflow.com/a/59627066
             if #available(iOS 15, *) {
@@ -37,31 +37,31 @@ struct MapInfoSheet: View {
                 }
                 .padding(EdgeInsets(top: 0, leading: 20, bottom: 10, trailing: 20))
             }
-            
+
             Divider()
-            
+
             Text("Connected Cells")
                 .font(.title2.bold())
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(EdgeInsets(top: 10, leading: 20, bottom: 5, trailing: 20))
-            
+
             // Using the frame to align the text with the padding
             // See: https://stackoverflow.com/a/62091672
             Text("For performance reasons, the map solely displays the cells to which your iPhone was connected. However, Apple Location Services provides data for sounding cells your iPhone hasn't seen. In the future, we plan to add filter capabilities, enabling you to explore all of them.")
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(EdgeInsets(top: 0, leading: 20, bottom: 10, trailing: 20))
-            
+
             Divider()
-            
+
             Text("Annotations")
                 .font(.title2.bold())
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(EdgeInsets(top: 10, leading: 20, bottom: 5, trailing: 20))
-            
+
             Text("The balloon annotations are positioned at the center of the cell's reception radius, which Apple Location Services determined. Tap on them to reveal more information. The cell's radio access technology defines its color.")
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(EdgeInsets(top: 0, leading: 20, bottom: 10, trailing: 20))
-            
+
             VStack {
                 let rats: [ALSTechnology] = [.GSM, .CDMA, .UMTS, .SCDMA, .LTE, .NR]
                 ForEach(rats) { technology in
@@ -78,11 +78,9 @@ struct MapInfoSheet: View {
 
         }
     }
-    
+
 }
 
 #Preview {
     MapInfoSheet()
 }
-
-
