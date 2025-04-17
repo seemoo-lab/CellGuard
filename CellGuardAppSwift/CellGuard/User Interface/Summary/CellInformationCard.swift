@@ -70,7 +70,8 @@ struct CellInformationCard: View {
             .padding(EdgeInsets(top: 5, leading: 15, bottom: 10, trailing: 15))
             
             HStack {
-                CellInformationItem(title: "Technology", text: cell.technology)
+                let technology = cell.supports5gNsa() ? "5G NSA" : cell.technology
+                CellInformationItem(title: "Technology", text: technology)
                 // CellInformationItem(title: techFormatter.frequency(), number: cell.frequency)
                 CellInformationItem(
                     title: "Date",

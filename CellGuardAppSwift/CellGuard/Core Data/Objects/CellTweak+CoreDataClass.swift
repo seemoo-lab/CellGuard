@@ -55,5 +55,10 @@ public class CellTweak: NSManagedObject, Encodable, Cell {
         case preciseTechnology
         case technology
     }
+    
+    // If a deployment type > 0 is set, the cell supports 5G NSA
+    public func supports5gNsa() -> Bool {
+        return self.technology == "LTE" && self.deploymentType > 0
+    }
 
 }

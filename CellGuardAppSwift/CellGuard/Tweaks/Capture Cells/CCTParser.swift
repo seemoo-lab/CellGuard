@@ -69,6 +69,7 @@ struct CCTCellProperties {
         tweakCell.band = self.band ?? 0
         tweakCell.bandwidth = self.bandwidth ?? 0
         tweakCell.physicalCell = self.physicalCellId ?? 0
+        tweakCell.deploymentType = self.deploymentType ?? 0
         
         tweakCell.collected = self.timestamp
         tweakCell.simSlotID = self.simSlotID != nil ? Int16(self.simSlotID!) : 0

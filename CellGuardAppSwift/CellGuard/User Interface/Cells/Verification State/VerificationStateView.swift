@@ -65,6 +65,9 @@ private struct VerificationStateInternalView: View {
                 CellDetailsRow("Band", measurement.band)
                 CellDetailsRow("Bandwidth", measurement.bandwidth)
                 CellDetailsRow("Physical Cell ID", measurement.physicalCell)
+                if measurement.technology == "LTE" {
+                    CellDetailsRow("Deployment Type", measurement.deploymentType)
+                }
                 
                 if let qmiPacket = measurement.packetQmi {
                     NavigationLink { PacketQMIDetailsView(packet: qmiPacket) } label: { PacketCell(packet: qmiPacket) }
