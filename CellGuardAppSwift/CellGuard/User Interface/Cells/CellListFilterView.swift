@@ -33,8 +33,8 @@ struct CellListFilterSettings {
             predicateList.append(NSPredicate(format: "cell.technology == %@", technology.rawValue))
         }
         
-        if simSlot != .all {
-            predicateList.append(NSPredicate(format: "cell.simSlotID == %@", NSNumber(value: simSlot.rawValue)))
+        if let slotNumber = simSlot.slotNumber {
+            predicateList.append(NSPredicate(format: "cell.simSlotID == %@", NSNumber(value: slotNumber)))
         }
         
         if let country = country {
@@ -146,6 +146,17 @@ enum CellListFilterSimSlot: UInt8, CaseIterable, Identifiable {
     case slot1, slot2, all
     
     var id: Self { self }
+    
+    var slotNumber: Int? {
+        switch self {
+        case .slot1:
+            return 1
+        case .slot2:
+            return 2
+        default:
+            return nil
+        }
+    }
 }
 
 struct CellListFilterView: View {
