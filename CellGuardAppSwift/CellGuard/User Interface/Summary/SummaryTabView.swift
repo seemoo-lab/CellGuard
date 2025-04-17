@@ -144,6 +144,11 @@ private struct CombinedRiskCellView: View {
             
             // manual mode: show link to opening sysdiag settings
             SysdiagOpenSettingsCard()
+            
+            // jailbreak mode: show tweak installation info
+#if JAILBREAK
+            TweakInstallInfoCard()
+#endif
         }
     }
     

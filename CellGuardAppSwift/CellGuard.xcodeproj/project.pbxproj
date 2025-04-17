@@ -104,7 +104,7 @@
 		CF54CCC32A331ED300961E4D /* PacketCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF54CCC22A331ED300961E4D /* PacketCell.swift */; };
 		CF54CCC52A33680200961E4D /* PacketCommonDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF54CCC42A33680200961E4D /* PacketCommonDetails.swift */; };
 		CF54CCC72A33699A00961E4D /* PacketARIDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF54CCC62A33699A00961E4D /* PacketARIDetailsView.swift */; };
-		CF5672962A29E59000B6EA7C /* TweakInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5672952A29E59000B6EA7C /* TweakInfoView.swift */; };
+		CF5672962A29E59000B6EA7C /* TweakInstallInfoCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5672952A29E59000B6EA7C /* TweakInstallInfoCard.swift */; };
 		CF5756152B2F232A00C7C60A /* cellguard.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5756122B2F232A00C7C60A /* cellguard.swift */; };
 		CF57561A2B2F25DB00C7C60A /* SwiftBridgeCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5756182B2F25DB00C7C60A /* SwiftBridgeCore.swift */; };
 		CF57561D2B2F263500C7C60A /* LogArchiveReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF57561C2B2F263500C7C60A /* LogArchiveReader.swift */; };
@@ -229,7 +229,7 @@
 		CFB6CF422BD122FA00EAB7B4 /* Cell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFBEC8532BC7F7D70021C0B9 /* Cell.swift */; };
 		CFB6CF432BD122FA00EAB7B4 /* SwiftExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFA09CF82A73D4B000D16832 /* SwiftExtensions.swift */; };
 		CFB6CF452BD122FA00EAB7B4 /* PacketCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF54CCC22A331ED300961E4D /* PacketCell.swift */; };
-		CFB6CF462BD122FA00EAB7B4 /* TweakInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5672952A29E59000B6EA7C /* TweakInfoView.swift */; };
+		CFB6CF462BD122FA00EAB7B4 /* TweakInstallInfoCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5672952A29E59000B6EA7C /* TweakInstallInfoCard.swift */; };
 		CFB6CF472BD122FA00EAB7B4 /* PacketQMIDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF54CCC02A331E7100961E4D /* PacketQMIDetailsView.swift */; };
 		CFB6CF482BD122FA00EAB7B4 /* CoreLocationALS.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF53DB41297473E8005DCD10 /* CoreLocationALS.pb.swift */; };
 		CFB6CF4A2BD122FA00EAB7B4 /* CellGuard.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = CFD023412961A10D00AA5A1C /* CellGuard.xcdatamodeld */; };
@@ -470,7 +470,7 @@
 		CF54CCC22A331ED300961E4D /* PacketCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacketCell.swift; sourceTree = "<group>"; };
 		CF54CCC42A33680200961E4D /* PacketCommonDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacketCommonDetails.swift; sourceTree = "<group>"; };
 		CF54CCC62A33699A00961E4D /* PacketARIDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacketARIDetailsView.swift; sourceTree = "<group>"; };
-		CF5672952A29E59000B6EA7C /* TweakInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TweakInfoView.swift; sourceTree = "<group>"; };
+		CF5672952A29E59000B6EA7C /* TweakInstallInfoCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TweakInstallInfoCard.swift; sourceTree = "<group>"; };
 		CF5756122B2F232A00C7C60A /* cellguard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = cellguard.swift; sourceTree = "<group>"; };
 		CF5756132B2F232A00C7C60A /* cellguard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cellguard.h; sourceTree = "<group>"; };
 		CF5756172B2F259100C7C60A /* BridgingHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BridgingHeader.h; sourceTree = "<group>"; };
@@ -766,7 +766,7 @@
 				CF2FF68C2BF296EE006E2DF4 /* RiskInfoView.swift */,
 				CF2A1C212975DB8100E8B61C /* CellInformationCard.swift */,
 				CF0A5677298A7A910012B2A8 /* VerificationProgressView.swift */,
-				CF5672952A29E59000B6EA7C /* TweakInfoView.swift */,
+				CF5672952A29E59000B6EA7C /* TweakInstallInfoCard.swift */,
 				CF7309992A79122B00498BC3 /* DataSummaryView.swift */,
 				45ECF5712BFC00D100DD92CF /* DebugProfileCard.swift */,
 				45ECF5742BFC025300DD92CF /* DebugProfileDetailedView.swift */,
@@ -1529,7 +1529,7 @@
 				CFB6CF452BD122FA00EAB7B4 /* PacketCell.swift in Sources */,
 				CFA83C972D9D78E300239AB7 /* CountryDetailsView.swift in Sources */,
 				45ECF5702BFBFDFB00DD92CF /* NoneModeCard.swift in Sources */,
-				CFB6CF462BD122FA00EAB7B4 /* TweakInfoView.swift in Sources */,
+				CFB6CF462BD122FA00EAB7B4 /* TweakInstallInfoCard.swift in Sources */,
 				CFB6CF472BD122FA00EAB7B4 /* PacketQMIDetailsView.swift in Sources */,
 				45ED01B72D445ABA0023A090 /* ProfileTask.swift in Sources */,
 				CFB6CF482BD122FA00EAB7B4 /* CoreLocationALS.pb.swift in Sources */,
@@ -1693,7 +1693,7 @@
 				CF54CCC32A331ED300961E4D /* PacketCell.swift in Sources */,
 				CFA83C982D9D78E300239AB7 /* CountryDetailsView.swift in Sources */,
 				45ECF56F2BFBFDFB00DD92CF /* NoneModeCard.swift in Sources */,
-				CF5672962A29E59000B6EA7C /* TweakInfoView.swift in Sources */,
+				CF5672962A29E59000B6EA7C /* TweakInstallInfoCard.swift in Sources */,
 				CF54CCC12A331E7100961E4D /* PacketQMIDetailsView.swift in Sources */,
 				45ED01B62D445ABA0023A090 /* ProfileTask.swift in Sources */,
 				CF53DB42297473E8005DCD10 /* CoreLocationALS.pb.swift in Sources */,
