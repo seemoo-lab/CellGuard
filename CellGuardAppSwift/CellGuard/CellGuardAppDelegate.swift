@@ -219,7 +219,7 @@ class CellGuardAppDelegate: NSObject, UIApplicationDelegate {
             Task {
                 try? await Task.sleep(nanoseconds: 15 * NSEC_PER_SEC)
                 var task = SysdiagTask()
-                while (true) {
+                while true {
                     await task.run()
                     try? await Task.sleep(nanoseconds: 30 * NSEC_PER_SEC)
                 }
@@ -289,7 +289,6 @@ extension CellGuardAppDelegate: UNUserNotificationCenterDelegate {
             // There's still hope: https://developer.apple.com/forums/thread/759900
             // There are schemes like App-prefs:com.apple.MobileSMS and App-prefs:com.apple.mobilephone
             // TODO: Maybe we can find a similar scheme with Reversing for "Analytics & Improvement"
-
 
             // We could run a shortcut:
             /*
