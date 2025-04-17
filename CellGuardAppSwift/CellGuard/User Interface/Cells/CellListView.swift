@@ -11,18 +11,18 @@ import SwiftUI
 import OSLog
 
 struct CellListView: View {
-    
+
     @State private var isShowingFilterView = false
     @State private var isShowingDateSheet = false
     @State var settings: CellListFilterSettings
-    
+
     @State private var sheetDate = Date()
     @Environment(\.managedObjectContext) var managedObjectContext
-    
+
     init(settings: CellListFilterSettings = CellListFilterSettings()) {
         self._settings = State(initialValue: settings)
     }
-    
+
     var body: some View {
         VStack {
             // A workaround for that the NavigationLink on iOS does not respect the isShowingFilterView variable if it's embedded into a ToolbarItem.
@@ -96,41 +96,41 @@ struct CellListView: View {
 }
 
 private struct SelectCellDateView: View {
-    
+
     @Binding var settings: CellListFilterSettings
     @Binding var sheetDate: Date
     @Binding var isShowingDateSheet: Bool
-    
+
     @FetchRequest
     private var firstMeasurement: FetchedResults<CellTweak>
-    
+
     @FetchRequest
     private var lastMeasurement: FetchedResults<CellTweak>
-    
+
     init(settings: Binding<CellListFilterSettings>, sheetDate: Binding<Date>, isShowingDateSheet: Binding<Bool>) {
         self._settings = settings
         self._sheetDate = sheetDate
         self._isShowingDateSheet = isShowingDateSheet
-        
+
         let firstMeasurementRequest: NSFetchRequest<CellTweak> = CellTweak.fetchRequest()
         firstMeasurementRequest.fetchLimit = 1
         firstMeasurementRequest.sortDescriptors = [NSSortDescriptor(keyPath: \CellTweak.collected, ascending: true)]
         firstMeasurementRequest.propertiesToFetch = ["collected"]
         self._firstMeasurement = FetchRequest(fetchRequest: firstMeasurementRequest)
-        
+
         let lastMeasurementRequest: NSFetchRequest<CellTweak> = CellTweak.fetchRequest()
         lastMeasurementRequest.fetchLimit = 1
         lastMeasurementRequest.sortDescriptors = [NSSortDescriptor(keyPath: \CellTweak.collected, ascending: false)]
         lastMeasurementRequest.propertiesToFetch = ["collected"]
         self._lastMeasurement = FetchRequest(fetchRequest: lastMeasurementRequest)
     }
-    
+
     var dateRange: ClosedRange<Date> {
         let start = firstMeasurement.first?.collected ?? Date.distantPast
         let end = lastMeasurement.first?.collected ?? Date()
         return start...end
     }
-    
+
     var body: some View {
         VStack {
             Text("Select Date")
@@ -138,10 +138,10 @@ private struct SelectCellDateView: View {
             Text("Choose a date to inspect cells")
                 .font(.subheadline)
                 .padding([.bottom], 40)
-            
+
             DatePicker("Cell Date", selection: $sheetDate, in: dateRange, displayedComponents: [.date])
                 .datePickerStyle(.graphical)
-            
+
             Button {
                 let selectedDate: Date
                 if let lastDate = lastMeasurement.first?.collected {
@@ -149,10 +149,10 @@ private struct SelectCellDateView: View {
                 } else {
                     selectedDate = sheetDate
                 }
-                
+
                 let startOfToday = Calendar.current.startOfDay(for: Date())
                 let startOfDate: Date = Calendar.current.startOfDay(for: selectedDate)
-                
+
                 settings.timeFrame = startOfToday == startOfDate ? .live : .pastDay
                 settings.date = selectedDate
                 isShowingDateSheet.toggle()
@@ -164,43 +164,43 @@ private struct SelectCellDateView: View {
         }
         .padding()
     }
-    
+
 }
 
 private struct FilteredCellView: View {
-    
+
     private static let logger = Logger(
         subsystem: Bundle.main.bundleIdentifier!,
         category: String(describing: FilteredCellView.self)
     )
-    
+
     private let settings: CellListFilterSettings
-    
+
     @FetchRequest
     private var measurementsStates: FetchedResults<VerificationState>
 
     init(settings: CellListFilterSettings) {
         self.settings = settings
-        
+
         let statesRequest: NSFetchRequest<VerificationState> = VerificationState.fetchRequest()
         // cellsRequest.fetchBatchSize = 25
         statesRequest.sortDescriptors = [NSSortDescriptor(key: "cell.collected", ascending: false)]
         settings.applyTo(request: statesRequest)
-        
+
         self._measurementsStates = FetchRequest(fetchRequest: statesRequest, animation: .easeOut)
     }
-    
+
     private func groupMeasurements() -> [GroupedMeasurements] {
         let queryCell = PersistenceController.queryCell
         var groups: [GroupedMeasurements] = []
-        
+
         // Iterate through all measurements and start a new group upon encountering a new cell
         var groupMeasurements: [CellTweak] = []
         var first = true
         for measurementState in measurementsStates {
             // Ensure that a cell is assigned to the state with a request predicate in CellListFilterView
             let measurement = measurementState.cell!
-            
+
             // If we've encountered a new cell, we start a new group
             if let firstGroupMeasurement = groupMeasurements.first, queryCell(firstGroupMeasurement) != queryCell(measurement) {
                 do {
@@ -211,11 +211,11 @@ private struct FilteredCellView: View {
                 first = false
                 groupMeasurements = []
             }
-            
+
             // In any case, we append the cell measurement
             groupMeasurements.append(measurement)
         }
-        
+
         // The final batch of measurements
         if !groupMeasurements.isEmpty {
             do {
@@ -224,10 +224,10 @@ private struct FilteredCellView: View {
                 Self.logger.warning("Can't group cell measurements (\(groupMeasurements)): \(error)")
             }
         }
-        
+
         return groups
     }
-    
+
     private func groupMeasurementsByDay(_ groupedMeasurements: [GroupedMeasurements]) -> [(Date, [GroupedMeasurements])] {
         return Dictionary(grouping: groupedMeasurements) { measurement in
             Calendar.current.startOfDay(for: measurement.start)
@@ -236,7 +236,7 @@ private struct FilteredCellView: View {
             groupOne.key > groupTwo.key
         }
     }
-    
+
     var body: some View {
         let groupedMeasurements = groupMeasurements()
         if !groupedMeasurements.isEmpty {
@@ -257,20 +257,20 @@ private struct FilteredCellView: View {
                 }
                 .listStyle(.insetGrouped)
             }
-            
+
         } else {
             Text("No cells match your query.")
                 .multilineTextAlignment(.center)
                 .padding()
         }
     }
-    
+
 }
 
 private struct GroupedNavigationLink: View {
-    
+
     let cellMeasurements: GroupedMeasurements
-    
+
     var body: some View {
         return NavigationLink {
             // The first entry should also update to include newer cell measurements
@@ -283,32 +283,32 @@ private struct GroupedNavigationLink: View {
             ListPacketCell(measurements: cellMeasurements)
         }
     }
-    
+
 }
 
 private struct ListPacketCell: View {
-    
+
     private let measurements: GroupedMeasurements
     private var simSlots = Set<Int16>()
-    
+
     init(measurements: GroupedMeasurements) {
         self.measurements = measurements
-        
+
         for measurement in measurements.measurements {
             simSlots.insert(measurement.simSlotID)
         }
     }
-    
+
     var body: some View {
         let cell = measurements.measurements.first!
         let countryName = OperatorDefinitions.shared.translate(country: cell.country)?.iso
         let operatorName = OperatorDefinitions.shared.translate(country: cell.country, network: cell.network)?.combinedName
-        
+
         let calendar = Calendar.current
         let sameDay = calendar.startOfDay(for: measurements.start) == calendar.startOfDay(for: measurements.end)
-        
+
         let (pending, points, pointsMax) = GroupedMeasurements.countByStatus(measurements.measurements)
-                
+
         VStack {
             HStack {
                 Text(operatorName ?? formatMNC(cell.network))
@@ -316,7 +316,7 @@ private struct ListPacketCell: View {
                 + Text(" (\(countryName ?? "\(cell.country)"))")
                 + Text(" \(cell.technology ?? "")")
                     .foregroundColor(.gray)
-                
+
                 if !simSlots.isEmpty {
                     HStack(spacing: 2) {
                         Image(systemName: "simcard")
@@ -326,7 +326,7 @@ private struct ListPacketCell: View {
                     }
                     .foregroundColor(.gray)
                 }
-                
+
                 Spacer()
             }
             // TODO: This only updates, when a new cell arrives -> We would have to fetch it from the database
@@ -364,7 +364,7 @@ private struct ListPacketCell: View {
             .foregroundColor(.gray)
         }
     }
-    
+
 }
 
 struct CellListView_Previews: PreviewProvider {

@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct CellDetectionView: View {
-    
+
     @State private var action: Int? = 0
 
     var body: some View {
@@ -27,7 +27,6 @@ In a few cases, these anomalies indicate an attack by a fake base station. Such 
                     size: 120
                 )
             }
-            
 
             NavigationLink(destination: UserStudyView(), tag: 1, selection: $action) {}
 
@@ -39,7 +38,7 @@ In a few cases, these anomalies indicate an attack by a fake base station. Such 
         .navigationTitle("Fake Base Stations")
         .navigationBarTitleDisplayMode(.large)
     }
-    
+
     private var icon: String {
         if #available(iOS 16, *) {
             return "cellularbars"

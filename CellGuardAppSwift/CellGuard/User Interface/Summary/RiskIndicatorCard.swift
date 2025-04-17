@@ -17,11 +17,11 @@ enum RiskMediumCause: Equatable {
     case CantCompute
     case DiskSpace
     case LowPowerMode
-    
+
     func text() -> String {
         let ftDaysSuffix = UserDefaults.standard.dataCollectionMode() != .none ? " in the last 14 days" : ""
-        
-        switch (self) {
+
+        switch self {
         case .Permissions:
             return "Ensure you granted all required permissions!"
         case .TweakCells:
@@ -48,9 +48,9 @@ enum RiskLevel: Equatable {
     case LowMonitor
     case Medium(cause: RiskMediumCause)
     case High(cellCount: Int)
-    
+
     func header() -> String {
-        switch (self) {
+        switch self {
         case .Unknown: return "Unknown"
         case .Low: return "Low"
         case .LowMonitor: return "Low"
@@ -58,12 +58,12 @@ enum RiskLevel: Equatable {
         case .High: return "Increased"
         }
     }
-    
+
     // as shown in mini card
     func description() -> String {
         let ftDaysSuffix = UserDefaults.standard.dataCollectionMode() != .none ? " collected in the last 14 days" : ""
-        
-        switch (self) {
+
+        switch self {
         case .Unknown:
             return "Collecting and processing data."
         case .Low:
@@ -76,17 +76,17 @@ enum RiskLevel: Equatable {
             return "Detected \(cellCount) suspicious \(cellCount == 1 ? "cell" : "cells")\(ftDaysSuffix)."
         }
     }
-    
+
     // as shown in risk explanation
     func verboseDescription() -> String {
         @AppStorage(UserDefaultsKeys.study.rawValue) var studyParticipationTimestamp: Double = 0
         let ftDaysSuffix = UserDefaults.standard.dataCollectionMode() != .none ? " collected in the last 14 days" : ""
-        
+
         let explanationSuffix = "In most cases, cellular anomalies can be explained by non-malicious network settings: The ALS scores trigger when your network provider legitimately sets up new cells, authentication fails when your iPhone connects to third-party cells to enable emergency calls during lousy network coverage, and bandwidth decreases for high-user-density environments.\n\nWe recommend taking a detailed look into the scores and manually comparing the detection result with the actual circumstances of the anomaly detection."
-        
+
         let studySuffix = studyParticipationTimestamp == 0 ? "The CellGuard team is studying fake base station behavior and countermeasures! As a next step in the fight against fake base stations, we recommend that you participate in our study." : "By participating in the study, you did everything possible to uncover fake base station abuse. The CellGuard team is actively analyzing and studying fake base station behavior and countermeasures!"
-        
-        switch (self) {
+
+        switch self {
         case .Unknown:
             return "CellGuard is still collecting and processing data, your current risk status is unknown."
         case .Low:
@@ -95,7 +95,7 @@ enum RiskLevel: Equatable {
             return "CellGuard is monitoring the connected cell and verified the remaining cells. No anomalies were detected."
         case let .Medium(cause):
             switch cause {
-            case .Cells(cellCount: _):
+            case .Cells:
                 return "\(cause.text())\n\n\(explanationSuffix)"
             default:
                 return cause.text()
@@ -104,9 +104,9 @@ enum RiskLevel: Equatable {
             return "Detected \(cellCount) suspicious \(cellCount == 1 ? "cell" : "cells")\(ftDaysSuffix).\n\n\(explanationSuffix)\n\n\(studySuffix)"
         }
     }
-    
+
     func color(dark: Bool) -> Color {
-        switch (self) {
+        switch self {
         case .Unknown: return dark ? Color(UIColor.systemGray6) : .gray
         case .Low: return dark ? Color(.green * 0.6 + .black * 0.4) : .green
         case .LowMonitor: return dark ? Color(.green * 0.6 + .black * 0.4) : .green
@@ -114,8 +114,7 @@ enum RiskLevel: Equatable {
         case .High: return dark ? Color(.red * 0.2 + .yellow * 0.1 + .black * 0.4) : .orange
         }
     }
-    
-    
+
 }
 
 extension RiskLevel: Comparable {
@@ -127,50 +126,50 @@ extension RiskLevel: Comparable {
             return 0
         case .Unknown:
             return 1
-        case .Medium(cause: _):
+        case .Medium:
             return 2
-        case .High(cellCount: _):
+        case .High:
             return 3
         }
     }
-    
+
     static func < (lhs: RiskLevel, rhs: RiskLevel) -> Bool {
         return lhs.level() < rhs.level()
     }
 }
 
 extension RiskLevel {
-    
+
     func isCausedByCells() -> Bool {
-        switch (self) {
+        switch self {
         case let .Medium(cause: mediumCause):
-            switch (mediumCause) {
-            case .Cells(cellCount: _):
+            switch mediumCause {
+            case .Cells:
                 return true
             default:
                 return false
             }
-        case .High(cellCount: _):
+        case .High:
             return true
         default:
             return false
         }
     }
-    
+
 }
 
 struct RiskIndicatorCard: View {
-    
+
     let risk: RiskLevel
-    
+
     @Environment(\.colorScheme) private var colorScheme
-    
+
     var body: some View {
         NavigationLink {
             RiskInfoView(risk: risk)
         } label: {
             VStack {
-                HStack() {
+                HStack {
                     Text("\(risk.header()) Risk")
                         .font(.title2)
                         .bold()

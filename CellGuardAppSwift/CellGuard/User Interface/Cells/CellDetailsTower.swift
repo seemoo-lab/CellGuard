@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct CellDetailsTower: View {
-    
+
     let technology: ALSTechnology
     let country: Int32
     let network: Int32
@@ -16,11 +16,11 @@ struct CellDetailsTower: View {
     let baseStation: Int64
     let dissect: (Int64) -> (Int64, Int64)
     let bitCount: Int?
-    
+
     private let techFormatter: CellTechnologyFormatter
     private let netCountry: NetworkCountry?
     private let netOperator: NetworkOperator?
-    
+
     init(technology: ALSTechnology, country: Int32, network: Int32, area: Int32, baseStation: Int64, dissect: @escaping (Int64) -> (Int64, Int64), bitCount: Int? = nil) {
         self.technology = technology
         self.country = country
@@ -29,12 +29,12 @@ struct CellDetailsTower: View {
         self.baseStation = baseStation
         self.dissect = dissect
         self.bitCount = bitCount
-        
+
         self.techFormatter = CellTechnologyFormatter(technology: technology)
         self.netCountry = OperatorDefinitions.shared.translate(country: country)
         self.netOperator = OperatorDefinitions.shared.translate(country: country, network: network)
     }
-    
+
     var baseStationIDSingle: String {
         switch technology {
         case .GSM: "BTS ID"
@@ -44,7 +44,7 @@ struct CellDetailsTower: View {
         default: "BS ID"
         }
     }
-    
+
     var fetchRequest: FetchRequest<CellALS> {
         let request = CellALS.fetchRequest()
         request.predicate = NSPredicate(
@@ -54,11 +54,11 @@ struct CellDetailsTower: View {
         request.sortDescriptors = [NSSortDescriptor(keyPath: \CellALS.cell, ascending: true)]
         return FetchRequest(fetchRequest: request)
     }
-    
+
     var body: some View {
         List {
             CellDetailsTowerMap(baseStation: baseStation, dissect: dissect, fetchRequest: fetchRequest)
-            
+
             CellCountryNetworkSection(country: country, network: network, techFormatter: techFormatter)
             Section(header: Text("Technology & Region")) {
                 CellDetailsRow("Technology", technology.rawValue)
@@ -75,46 +75,46 @@ struct CellDetailsTower: View {
 }
 
 private struct CellDetailsTowerMap: View {
-    
+
     let baseStation: Int64
     let dissect: (Int64) -> (Int64, Int64)
-    
+
     @FetchRequest private var cells: FetchedResults<CellALS>
-    
+
     init(baseStation: Int64, dissect: @escaping (Int64) -> (Int64, Int64), fetchRequest: FetchRequest<CellALS>) {
         self.baseStation = baseStation
         self.dissect = dissect
         self._cells = fetchRequest
     }
-    
+
     var body: some View {
         // TODO: Show sector id instead of provider name / network
         ExpandableMap {
             TowerCellMap(alsCells: cells.filter { dissect($0.cell).0 == baseStation }, dissect: dissect)
         }
     }
-    
+
 }
 
 private struct CellDetailsList: View {
-    
+
     let technology: ALSTechnology
     let baseStation: Int64
     let dissect: (Int64) -> (Int64, Int64)
-    
+
     @FetchRequest private var cells: FetchedResults<CellALS>
-    
+
     init(technology: ALSTechnology, baseStation: Int64, dissect: @escaping (Int64) -> (Int64, Int64), fetchRequest: FetchRequest<CellALS>) {
         self.technology = technology
         self.baseStation = baseStation
         self.dissect = dissect
         self._cells = fetchRequest
     }
-    
+
     var filteredCells: [CellALS] {
         cells.filter { dissect($0.cell).0 == baseStation }
     }
-    
+
     var body: some View {
         Section(header: Text("Cells")) {
             ForEach(filteredCells, id: \.id) { (cell: CellALS) in
@@ -124,7 +124,7 @@ private struct CellDetailsList: View {
             }
         }
     }
-    
+
 }
 
 #Preview {

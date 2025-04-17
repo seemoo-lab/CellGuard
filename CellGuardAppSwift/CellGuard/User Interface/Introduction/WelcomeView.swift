@@ -8,9 +8,9 @@
 import SwiftUI
 
 struct WelcomeView: View {
-    
+
     @State private var action: Int? = 0
-    
+
     var body: some View {
         VStack {
             ScrollView {
@@ -37,7 +37,7 @@ struct WelcomeView: View {
                     size: 35
                 )
             }
-            
+
             // Navigate to next view
             // WelcomeSheet
             //  -> CellDetectionView
@@ -46,7 +46,7 @@ struct WelcomeView: View {
             //  -> LocationPermissionView
             //  -> NotificationPermissionView
             NavigationLink(destination: CellDetectionView(), tag: 1, selection: $action) {}
-            
+
             LargeButton(title: "Continue", backgroundColor: .blue) {
                 self.action = 1
             }
@@ -59,12 +59,12 @@ struct WelcomeView: View {
 }
 
 private struct WelcomeInformation: View {
-    
+
     let icon: String
     let title: String
     let description: String
     let size: CGFloat
-    
+
     var body: some View {
         HStack(spacing: 0) {
             Image(systemName: self.icon)
@@ -74,8 +74,7 @@ private struct WelcomeInformation: View {
                 .font(Font.custom("SF Pro", fixedSize: self.size))
                 .frame(width: 50)
                 .padding(EdgeInsets(top: 0, leading: 5, bottom: 0, trailing: 15))
-                
-            
+
             VStack(alignment: .leading) {
                 Text(self.title)
                     .bold()
@@ -89,7 +88,7 @@ private struct WelcomeInformation: View {
         .frame(maxWidth: .infinity)
         .padding()
     }
-    
+
 }
 
 #Preview {

@@ -8,15 +8,15 @@
 import SwiftUI
 
 struct PacketCell: View {
-    
+
     let packet: any Packet
     let customInfo: Text?
-    
+
     init(packet: any Packet, customInfo: Text? = nil) {
         self.packet = packet
         self.customInfo = customInfo
     }
-    
+
     var body: some View {
         VStack {
             if let qmiPacket = packet as? PacketQMI {
@@ -33,29 +33,29 @@ struct PacketCell: View {
 }
 
 private struct PacketCellQMIBody: View {
-    
+
     let packet: PacketQMI
-    
+
     var body: some View {
         let definitions = QMIDefinitions.shared
         let service = definitions.services[UInt8(packet.service)]
         let message = packet.indication ? service?.indications[UInt16(packet.message)] : service?.messages[UInt16(packet.message)]
-        
+
         VStack {
             HStack {
-                if (packet.direction == CPTDirection.ingoing.rawValue) {
+                if packet.direction == CPTDirection.ingoing.rawValue {
                     Image(systemName: "arrow.right")
-                } else if (packet.direction == CPTDirection.outgoing.rawValue) {
+                } else if packet.direction == CPTDirection.outgoing.rawValue {
                     Image(systemName: "arrow.left")
                 }
-                
+
                 // We can combine text views using the + operator
                 // See: https://www.hackingwithswift.com/quick-start/swiftui/how-to-combine-text-views-together
                 Text("\(packet.proto) \(packet.indication ? "Indication" : "Message")")
                     .bold()
                 + Text(" (\(service?.shortName ?? hexString(packet.service))) ")
                 + GrayText(bytes: packet.data?.count ?? 0)
-                
+
                 Spacer()
             }
             HStack {
@@ -64,13 +64,13 @@ private struct PacketCellQMIBody: View {
             }
         }
     }
-    
+
 }
 
 private struct PacketCellARIBody: View {
-    
+
     let packet: PacketARI
-    
+
     var body: some View {
         let definitions = ARIDefinitions.shared
         let group = definitions.groups[UInt8(packet.group)]
@@ -78,17 +78,17 @@ private struct PacketCellARIBody: View {
 
         VStack {
             HStack {
-                if (packet.direction == CPTDirection.ingoing.rawValue) {
+                if packet.direction == CPTDirection.ingoing.rawValue {
                     Image(systemName: "arrow.right")
-                } else if (packet.direction == CPTDirection.outgoing.rawValue) {
+                } else if packet.direction == CPTDirection.outgoing.rawValue {
                     Image(systemName: "arrow.left")
                 }
-                
+
                 Text("\(packet.proto)")
                     .bold()
                 + Text(" (\(group?.name ?? hexString(packet.group))) ")
                 + GrayText(bytes: packet.data?.count ?? 0)
-                
+
                 Spacer()
             }
             HStack {
@@ -97,13 +97,13 @@ private struct PacketCellARIBody: View {
             }
         }
     }
-    
+
 }
 
 private struct PacketCellCustomInfo: View {
-    
+
     let info: Text
-    
+
     var body: some View {
         VStack {
             HStack {
@@ -112,13 +112,13 @@ private struct PacketCellCustomInfo: View {
             }
         }
     }
-    
+
 }
 
 private struct PacketCellFooter: View {
-    
+
     let packet: any Packet
-    
+
     var body: some View {
         HStack {
             Text(fullMediumDateTimeFormatter.string(from: packet.collected ?? Date(timeIntervalSince1970: 0)))
@@ -153,7 +153,7 @@ struct PacketCell_Previews: PreviewProvider {
     static var previews: some View {
         let context = PersistenceController.preview.container.viewContext
         let packets = PersistencePreview.packets(context: context).map { PacketContainer(packet: $0) }
-        
+
         NavigationView {
             List {
                 ForEach(packets) { packet in

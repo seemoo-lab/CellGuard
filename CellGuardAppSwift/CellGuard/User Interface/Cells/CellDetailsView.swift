@@ -9,28 +9,28 @@ import CoreData
 import SwiftUI
 
 struct CellDetailsView: View {
-    
+
     let cell: Cell
     let predicate: NSPredicate?
-    
+
     @State private var showAll: Bool
-    
+
     init(alsCell: CellALS) {
         self.cell = alsCell
         self.predicate = nil
         self._showAll = State(initialValue: true)
     }
-    
+
     init(tweakCell: CellTweak, predicate: NSPredicate? = nil) {
         self.cell = tweakCell
         self.predicate = predicate
         self._showAll = State(initialValue: false)
     }
-    
+
     var body: some View {
         let alsCellsRequest = alsFetchRequest()
         let measurementsRequest = tweakFetchRequest()
-        
+
         List {
             TweakCellDetailsMap(alsCells: alsCellsRequest, verifyStates: measurementsRequest)
             CellDetailsCell(cell: cell, verifyStates: measurementsRequest)
@@ -46,7 +46,7 @@ struct CellDetailsView: View {
         .listStyle(.insetGrouped)
         .navigationTitle("\(cell.technology ?? "Unknown") Cell")
     }
-    
+
     private func alsFetchRequest() -> FetchRequest<CellALS> {
         return FetchRequest<CellALS>(
             sortDescriptors: [NSSortDescriptor(keyPath: \CellALS.imported, ascending: false)],
@@ -54,57 +54,57 @@ struct CellDetailsView: View {
             animation: .default
         )
     }
-    
+
     private func tweakFetchRequest() -> FetchRequest<VerificationState> {
         var predicates = [
             PersistenceController.shared.sameCellPredicate(cell: cell, mergeUMTS: false, prefix: "cell.")
         ]
-        
+
         // Append custom predicates
         if !showAll, let predicate = predicate {
             predicates.append(predicate)
         }
-        
+
         // Ensure the correct pipeline is used & the cell is not null
         predicates.append(NSPredicate(format: "pipeline == %@", Int(primaryVerificationPipeline.id) as NSNumber))
         predicates.append(NSPredicate(format: "cell != nil"))
-        
+
         let request = VerificationState.fetchRequest()
         request.sortDescriptors = [NSSortDescriptor(key: "cell.collected", ascending: false)]
         request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
         request.relationshipKeyPathsForPrefetching = ["cell"]
         return FetchRequest(fetchRequest: request, animation: .default)
     }
-    
+
 }
 
 private struct TweakCellDetailsMap: View {
-    
+
     @FetchRequest private var alsCells: FetchedResults<CellALS>
     @FetchRequest private var verifyStates: FetchedResults<VerificationState>
-    
+
     init(alsCells: FetchRequest<CellALS>, verifyStates: FetchRequest<VerificationState>) {
         self._alsCells = alsCells
         self._verifyStates = verifyStates
     }
-    
+
     var body: some View {
         let tweakCells = verifyStates.compactMap { $0.cell }
-        
+
         if SingleCellMap.hasAnyLocation(alsCells, tweakCells) {
             ExpandableMap {
                 SingleCellMap(alsCells: alsCells, tweakCells: tweakCells)
             }
         }
     }
-    
+
 }
 
 private struct CellDetailsCell: View {
-    
+
     let cell: Cell
     let techFormatter: CellTechnologyFormatter
-    
+
     @FetchRequest private var verifyStates: FetchedResults<VerificationState>
 
     init(cell: Cell, verifyStates: FetchRequest<VerificationState>) {
@@ -112,7 +112,7 @@ private struct CellDetailsCell: View {
         self.techFormatter = CellTechnologyFormatter.from(technology: cell.technology)
         self._verifyStates = verifyStates
     }
-    
+
     var body: some View {
         let simSlotsSet = Set(verifyStates.compactMap { $0.cell?.simSlotID })
         let simSlots = simSlotsSet.map { "\($0)" }.sorted().joined(separator: ",")
@@ -132,7 +132,7 @@ private struct CellDetailsCell: View {
                 CellDetailsRow(techFormatter.cell(), cell.cell)
                 CellDetailsIdentification(cell: cell)
             }
-            
+
             if let measurement = cell as? CellTweak, let alsCell = measurement.appleDatabase {
                 CellDetailsALSInfo(alsCell: alsCell, techFormatter: techFormatter)
             } else if let alsCell = cell as? CellALS {
@@ -140,14 +140,14 @@ private struct CellDetailsCell: View {
             }
         }
     }
-    
+
 }
 
 private struct CellDetailsALSInfo: View {
-    
+
     let alsCell: CellALS
     let techFormatter: CellTechnologyFormatter
-    
+
     var body: some View {
         Section(header: Text("ALS Information")) {
             if let importedDate = alsCell.imported {
@@ -160,22 +160,22 @@ private struct CellDetailsALSInfo: View {
             CellDetailsRow(techFormatter.frequency(), alsCell.frequency)
         }
     }
-    
+
 }
 
 private struct TweakCellDetailsMeasurementCount: View {
-    
+
     @FetchRequest private var alsCells: FetchedResults<CellALS>
     @FetchRequest private var verifyStates: FetchedResults<VerificationState>
-    
+
     init(alsCells: FetchRequest<CellALS>, verifyStates: FetchRequest<VerificationState>) {
         self._alsCells = alsCells
         self._verifyStates = verifyStates
     }
-    
+
     var body: some View {
         let count = countByStatus(verifyStates)
-        
+
         Section(header: Text("Measurements")) {
             // We query the measurements in descending order, so that's we have to replace last with first and so on
             if let lastMeasurement = verifyStates.last?.cell, let firstCollected = lastMeasurement.collected {
@@ -195,16 +195,16 @@ private struct TweakCellDetailsMeasurementCount: View {
             }
             .disabled(verifyStates.count == 0)
         }
-    
+
     }
-    
+
     func countByStatus(_ verificationStates: any RandomAccessCollection<VerificationState>) -> (pending: Int, trusted: Int, suspicious: Int, untrusted: Int) {
         var pending = 0
-        
+
         var untrusted = 0
         var suspicious = 0
         var trusted = 0
-        
+
         for state in verificationStates {
             if state.finished {
                 if state.score < primaryVerificationPipeline.pointsUntrusted {
@@ -218,17 +218,17 @@ private struct TweakCellDetailsMeasurementCount: View {
                 pending += 1
             }
         }
-        
+
         return (pending, trusted, suspicious, untrusted)
     }
 
 }
 
 private struct TweakCellMeasurementList: View {
-    
+
     @State private var pipelineId: Int16 = primaryVerificationPipeline.id
     let measurements: any RandomAccessCollection<CellTweak>
-    
+
     var body: some View {
         List {
             ForEach(groupByDay(), id: \.key) { (day, dayMeasurements) in
@@ -252,25 +252,25 @@ private struct TweakCellMeasurementList: View {
                 }
 
             }
-            
+
         }
         .navigationTitle("Measurements")
         .navigationBarTitleDisplayMode(.inline)
         .listStyle(.insetGrouped)
     }
-    
+
     private func groupByDay() -> [(key: Date, value: [CellTweak])] {
         return Dictionary(grouping: measurements) { Calendar.current.startOfDay(for: $0.collected ?? Date()) }
             .sorted(by: {$0.key > $1.key})
     }
-    
+
 }
 
 private struct TweakCellMeasurementNavLink: View {
-    
+
     let measurement: CellTweak
     let pipelineId: Int16
-    
+
     var body: some View {
         if let state = measurement.verifications?.compactMap({ $0 as? VerificationState }).first(where: { $0.pipeline == pipelineId }) {
             NavigationLink {
@@ -283,7 +283,7 @@ private struct TweakCellMeasurementNavLink: View {
             labelUnknown()
         }
     }
-    
+
     private func labelUnknown() -> some View {
         HStack {
             date
@@ -291,7 +291,7 @@ private struct TweakCellMeasurementNavLink: View {
             Image(systemName: "questionmark.diamond")
         }
     }
-    
+
     private func label(score: Int16?, study: Bool) -> some View {
         HStack {
             date
@@ -308,7 +308,7 @@ private struct TweakCellMeasurementNavLink: View {
             }
         }
     }
-    
+
     private var date: some View {
         if let collectedDate = measurement.collected {
             Text("\(mediumTimeFormatter.string(from: collectedDate))")
@@ -316,14 +316,14 @@ private struct TweakCellMeasurementNavLink: View {
             Text("No Date")
         }
     }
-    
+
 }
 
 struct CellDetailsView_Previews: PreviewProvider {
-    
+
     static var previews: some View {
         let (alsCell, measurements) = prepareDB()
-        
+
         NavigationView {
             CellDetailsView(
                 tweakCell: measurements.first!,
@@ -332,7 +332,7 @@ struct CellDetailsView_Previews: PreviewProvider {
         }
         .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
         .previewDisplayName("Tweak Measurement")
-        
+
         NavigationView {
             CellDetailsView(
                 alsCell: alsCell
@@ -340,9 +340,9 @@ struct CellDetailsView_Previews: PreviewProvider {
         }
         .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
         .previewDisplayName("ALS Cell")
-        
+
     }
-    
+
     private static func prepareDB() -> (CellALS, [CellTweak]) {
         let context = PersistenceController.preview.container.viewContext
         let alsCell = PersistencePreview.alsCell(context: context)
@@ -352,14 +352,14 @@ struct CellDetailsView_Previews: PreviewProvider {
             PersistencePreview.tweakCell(context: context, from: alsCell),
             PersistencePreview.tweakCell(context: context, from: alsCell)
         ]
-        
+
         do {
             try context.save()
             PersistenceController.preview.fetchPersistentHistory()
         } catch {
             print("Something went wrong while preparing the preview")
         }
-        
+
         return (alsCell, tweakCells)
     }
 }

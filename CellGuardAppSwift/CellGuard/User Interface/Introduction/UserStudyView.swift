@@ -76,16 +76,16 @@ import SwiftUI
  */
 
 struct UserStudyView: View {
-    
+
     var returnToPreviousView: Bool = false
-    
+
     @AppStorage(UserDefaultsKeys.study.rawValue) private var studyParticipationTimestamp: Double = 0
     @Environment(\.presentationMode) private var presentationMode: Binding<PresentationMode>
-    
+
     @State private var agePolicyConfirmation: Bool = false
     @State private var action: Int? = 0
     @State private var confirmationSheet: Bool = false
-    
+
     var body: some View {
         VStack {
             // TODO Änderung, müssen wir noch programmieren --- die Position mit random offset
@@ -102,27 +102,27 @@ While you can use CellGuard without participating in the study, your involvemen
                     size: 120
                 )
             }
-            
+
             // navigation depends, show sysdiag instructions on non-jailbroken devices
             #if JAILBROKEN
             NavigationLink(destination: LocationPermissionView(), tag: 1, selection: $action) {}
             #else
             NavigationLink(destination: SysDiagnoseView(), tag: 1, selection: $action) {}
             #endif
-            
+
             HStack {
                 Toggle(isOn: $agePolicyConfirmation) {
                     Text("I'm over 18 years or older and agree to the privacy policy.")
                 }
                 .toggleStyle(CheckboxStyle())
-                
+
                 Link(destination: CellGuardURLs.privacyPolicy) {
                     Image(systemName: "link")
                         .font(.system(size: 20))
                 }
             }
             .padding(EdgeInsets(top: 2, leading: 10, bottom: 0, trailing: 10))
-            
+
             HStack {
                 // Here, save that the user agreed to join the study
                 Button {
@@ -134,7 +134,7 @@ While you can use CellGuard without participating in the study, your involvemen
                 .buttonStyle(SmallButtonStyle())
                 .padding(3)
                 .disabled(!agePolicyConfirmation)
-                
+
                 // Here, save that the user opted out (currently default)
                 Button {
                     studyParticipationTimestamp = 0
@@ -150,7 +150,7 @@ While you can use CellGuard without participating in the study, your involvemen
         .navigationTitle("Our Study")
         .navigationBarTitleDisplayMode(returnToPreviousView ? .automatic : .large)
     }
-    
+
     func nextView() {
         if returnToPreviousView {
             self.presentationMode.wrappedValue.dismiss()
@@ -163,7 +163,7 @@ While you can use CellGuard without participating in the study, your involvemen
 // See: https://stackoverflow.com/a/65895802
 
 private struct CheckboxStyle: ToggleStyle {
-    
+
     func makeBody(configuration: Self.Configuration) -> some View {
         return HStack {
             Image(systemName: configuration.isOn ? "checkmark.circle" : "circle")
@@ -187,28 +187,28 @@ private struct SmallButtonStyle: ButtonStyle {
     private struct SmallButtonView: View {
         @Environment(\.isEnabled) private var isEnabled: Bool
         let configuration: Configuration
-        
+
         init(configuration: Configuration) {
             self.configuration = configuration
         }
-        
+
         var body: some View {
             let foregroundColor = Color(UIColor.white)
             let backgroundColor = Color(UIColor.systemBlue)
-            
+
             let confForegroundColor = !isEnabled || configuration.isPressed ? foregroundColor.opacity(0.3) : foregroundColor
             let confBackgroundColor = !isEnabled || configuration.isPressed ? backgroundColor.opacity(0.3) : backgroundColor
-            
+
             configuration.label
                 .frame(maxWidth: .infinity)
                 .padding()
                 .background(confBackgroundColor)
                 .foregroundColor(confForegroundColor)
-                //.foregroundStyle(.white)
+                // .foregroundStyle(.white)
                 .clipShape(RoundedRectangle(cornerSize: CGSize(width: 10, height: 20)))
         }
     }
-    
+
     func makeBody(configuration: Configuration) -> some View {
         return SmallButtonView(configuration: configuration)
     }

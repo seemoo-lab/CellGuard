@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct SysDiagnoseView: View {
-    
+
     @State private var action: Int? = 0
 
     var body: some View {
@@ -20,10 +20,10 @@ struct SysDiagnoseView: View {
                     size: 120
                 )
             }
-            
+
             // Navigate to next permission, forward closing statement
             NavigationLink(destination: LocationPermissionView(), tag: 1, selection: $action) {}
-            
+
             LargeButton(title: "Continue", backgroundColor: .blue) {
                 self.action = 1
             }

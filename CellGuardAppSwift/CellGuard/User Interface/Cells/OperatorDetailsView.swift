@@ -10,12 +10,12 @@ import SwiftUI
 struct OperatorDetailsView: View {
     let country: NetworkCountry?
     let netOperator: NetworkOperator
-    
+
     init(netOperator: NetworkOperator) {
         self.netOperator = netOperator
         self.country = netOperator.country()
     }
-    
+
     var body: some View {
         List {
             Section(header: Text("Country")) {
@@ -31,12 +31,12 @@ struct OperatorDetailsView: View {
                     }
                 }
             }
-            
+
             Section(header: Text("Network")) {
                 CellDetailsRow("MNC", netOperator.mnc)
                 CellDetailsRow("Status", netOperator.status.humanString())
             }
-            
+
             if let brandName = netOperator.brandName {
                 Section(header: Text("Brand")) {
                     Text(brandName)
@@ -49,7 +49,7 @@ struct OperatorDetailsView: View {
                     }
                 }
             }
-            
+
             if let operatorName = netOperator.operatorName {
                 Section(header: Text("Operator")) {
                     Text(operatorName)

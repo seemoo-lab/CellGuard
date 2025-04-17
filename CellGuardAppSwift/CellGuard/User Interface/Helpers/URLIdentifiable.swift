@@ -10,7 +10,7 @@ import Foundation
 struct URLIdentifiable: Identifiable {
     let id: String
     let url: URL
-    
+
     init(url: URL) {
         self.id = url.absoluteString
         self.url = url

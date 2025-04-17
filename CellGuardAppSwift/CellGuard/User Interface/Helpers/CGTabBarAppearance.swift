@@ -8,9 +8,9 @@
 import UIKit
 
 struct CGTabBarAppearance {
-    
+
     // See: https://nemecek.be/blog/127/how-to-disable-automatic-transparent-tabbar-in-ios-15
-    
+
     static func opaque() {
         let tabBarAppearance = UITabBarAppearance()
         tabBarAppearance.configureWithOpaqueBackground()
@@ -20,7 +20,7 @@ struct CGTabBarAppearance {
             UITabBar.appearance().scrollEdgeAppearance = tabBarAppearance
         }
     }
-    
+
     static func transparent() {
         let tabBarAppearance = UITabBarAppearance()
         tabBarAppearance.configureWithTransparentBackground()
@@ -30,5 +30,5 @@ struct CGTabBarAppearance {
             UITabBar.appearance().scrollEdgeAppearance = tabBarAppearance
         }
     }
-    
+
 }

@@ -8,14 +8,14 @@
 import Foundation
 
 class FirstLastDates {
-    
-    var first: Date? = nil
-    var last: Date? = nil
-    
+
+    var first: Date?
+    var last: Date?
+
     init() {
-        
+
     }
-    
+
     func update(_ date: Date) {
         if let first = first {
             if date < first {
@@ -24,7 +24,7 @@ class FirstLastDates {
         } else {
             first = date
         }
-        
+
         if let last = last {
             if date > last {
                 self.last = date
@@ -33,5 +33,5 @@ class FirstLastDates {
             last = date
         }
     }
-    
+
 }

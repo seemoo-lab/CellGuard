@@ -8,22 +8,22 @@
 import SwiftUI
 
 struct CenteredTitleIconTextView: View {
-    
+
     let icon: String
     let title: String?
     let description: String
     let size: CGFloat
-    
+
     init(icon: String, title: String? = nil, description: String, size: CGFloat) {
         self.icon = icon
         self.title = title
         self.description = description
         self.size = size
     }
-    
+
     var body: some View {
         VStack(spacing: 0) {
-            
+
             // Only show the title if its set
             if let title = self.title {
                 Text(title)
@@ -31,10 +31,10 @@ struct CenteredTitleIconTextView: View {
                     .fontWeight(.bold)
                     .padding()
                     .multilineTextAlignment(.center)
-                
+
                 Spacer()
             }
-            
+
             Image(systemName: self.icon)
                 .foregroundColor(.blue)
             // We're using a fixed font size as the icons should always be the same size
@@ -42,9 +42,9 @@ struct CenteredTitleIconTextView: View {
                 .font(Font.custom("SF Pro", fixedSize: self.size))
                 .frame(maxWidth: 40, alignment: .center)
                 .padding()
-            
+
             Spacer()
-            
+
             Text(self.description)
                 .foregroundColor(.gray)
                 .padding()
@@ -53,7 +53,7 @@ struct CenteredTitleIconTextView: View {
         }
         .frame(maxWidth: .infinity)
     }
-    
+
 }
 
 #Preview {
@@ -65,5 +65,5 @@ struct CenteredTitleIconTextView: View {
         )
         .navigationTitle("Name of the Permission Request")
     }
-    
+
 }

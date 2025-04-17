@@ -9,9 +9,9 @@ import SwiftUI
 import CoreData
 
 struct VerificationStateView: View {
-    
+
     var verificationState: VerificationState
-    
+
     var body: some View {
         List {
             if let measurement = verificationState.cell,
@@ -25,28 +25,28 @@ struct VerificationStateView: View {
         .navigationBarTitleDisplayMode(.inline)
         .listStyle(.insetGrouped)
     }
-    
+
 }
 
 private struct VerificationStateInternalView: View {
-    
+
     let verificationPipeline: VerificationPipeline
     @ObservedObject var verificationState: VerificationState
     @ObservedObject var measurement: CellTweak
-    
+
     var body: some View {
         let techFormatter = CellTechnologyFormatter.from(technology: measurement.technology)
-        
-        var currentStage: VerificationStage? = nil
+
+        var currentStage: VerificationStage?
         if !verificationState.finished && verificationState.stage < verificationPipeline.stages.count {
             currentStage = verificationPipeline.stages[Int(verificationState.stage)]
         }
-        
+
         let logs = verificationState.logs?
             .compactMap { $0 as? VerificationLog }
             .sorted { $0.stageNumber < $1.stageNumber }
         ?? []
-        
+
         return Group {
             Section(header: Text("Date & Time")) {
                 if let collectedDate = measurement.collected {
@@ -56,7 +56,7 @@ private struct VerificationStateInternalView: View {
                     CellDetailsRow("Imported", fullMediumDateTimeFormatter.string(from: importedDate))
                 }
             }
-            
+
             Section(header: Text("Cell Properties")) {
                 if let rat = measurement.technology {
                     CellDetailsRow("Generation", rat)
@@ -68,27 +68,27 @@ private struct VerificationStateInternalView: View {
                 if measurement.technology == "LTE" {
                     CellDetailsRow("Deployment Type", measurement.deploymentType)
                 }
-                
+
                 if let qmiPacket = measurement.packetQmi {
                     NavigationLink { PacketQMIDetailsView(packet: qmiPacket) } label: { PacketCell(packet: qmiPacket) }
                 } else if let ariPacket = measurement.packetAri {
                     NavigationLink { PacketARIDetailsView(packet: ariPacket) } label: { PacketCell(packet: ariPacket) }
                 }
             }
-            
+
             // TODO: Should we show the cell's identification (MNC, MCC, ...) which is shown two pages up?
-            
+
             if let json = measurement.json, let jsonPretty = try? self.formatJSON(json: json) {
                 Section(header: Text("iOS-Internal Data")) {
                     Text(jsonPretty)
                         .font(Font(UIFont.monospacedSystemFont(ofSize: UIFont.smallSystemFontSize, weight: .regular)))
                 }
             }
-             
+
             if verificationState.finished && verificationPipeline.id == primaryVerificationPipeline.id {
                 VerificationStateStudyView(verificationPipeline: verificationPipeline, verificationState: verificationState, measurement: measurement)
             }
-            
+
             Section(header: Text("Verification")) {
                 CellDetailsRow("Status", verificationState.finished ? "Finished" : "In Progress")
                 CellDetailsRow("Pipeline", verificationPipeline.name)
@@ -114,11 +114,11 @@ private struct VerificationStateInternalView: View {
                     }
                 }
             }
-            
+
             ForEach(logs, id: \.id) { logEntry in
                 VerificationStateLogEntryView(logEntry: logEntry, stage: stageFor(logEntry: logEntry))
             }
-                        
+
             if let currentStage = currentStage {
                 Section(header: Text("Stage: \(currentStage.name) (\(verificationState.stage))"), footer: Text(currentStage.description)) {
                     KeyValueListRow(key: "Status") {
@@ -130,44 +130,44 @@ private struct VerificationStateInternalView: View {
             }
         }
     }
-    
+
     private func stageFor(logEntry: VerificationLog) -> VerificationStage? {
         // Since this verification log entry was recorded its respective verification pipeline could have been modified.
         // We try to find the current's states description in the most effective manner.
-        
+
         // Check if the stage resides in the same position of the pipeline
         if let stage = verificationPipeline.stages[safe: Int(logEntry.stageNumber)],
             stage.id == logEntry.stageId {
             return stage
         }
-        
+
         // Check if the stages resides anywhere in the pipeline
         if let stage = verificationPipeline.stages.first(where: { $0.id == logEntry.stageId }) {
             return stage
         }
-        
+
         // The stage is missing from the pipeline
         return nil
     }
-    
+
     private func formatJSON(json inputJSON: String?) throws -> String? {
         guard let inputJSON = inputJSON else {
             return nil
         }
-        
+
         guard let inputData = inputJSON.data(using: .utf8) else {
             return nil
         }
-        
+
         let parsedData = try JSONSerialization.jsonObject(with: inputData)
         let outputJSON = try JSONSerialization.data(withJSONObject: parsedData, options: .prettyPrinted)
-        
+
         return String(data: outputJSON, encoding: .utf8)
     }
 }
 
 struct VerificationStateView_Previews: PreviewProvider {
-    
+
     static var previews: some View {
         /*let viewContext = PersistenceController.preview.container.viewContext
         let cell = PersistencePreview.alsCell(context: viewContext)

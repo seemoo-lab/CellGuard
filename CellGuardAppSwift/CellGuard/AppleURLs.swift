@@ -8,7 +8,7 @@
 import Foundation
 
 struct AppleURLs {
-    
+
     static let downloadBasebandProfile = URL(string: "https://developer.apple.com/bug-reporting/profiles-and-logs/?platform=ios&name=baseband")!
-    
+
 }

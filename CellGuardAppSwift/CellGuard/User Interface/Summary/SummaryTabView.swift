@@ -23,15 +23,14 @@ import SwiftUI
 // See: WelcomeSheet.swift
 // See: https://www.hackingwithswift.com/quick-start/swiftui/how-to-find-which-data-change-is-causing-a-swiftui-view-to-update
 
-
 struct SummaryTabView: View {
-    
+
     @State private var showingCellList = false
     #if STATS_VIEW
     @State private var showingStats = false
     #endif
     @State private var showingSettings = false
-    
+
     var body: some View {
         NavigationView {
             VStack {
@@ -94,28 +93,28 @@ struct SummaryTabView: View {
 private struct CombinedRiskCellView: View {
     @FetchRequest private var tweakCellsSlot1: FetchedResults<CellTweak>
     @FetchRequest private var tweakCellsSlot2: FetchedResults<CellTweak>
-    
+
     init() {
         let latestTweakCellRequest = NSFetchRequest<CellTweak>()
         latestTweakCellRequest.entity = CellTweak.entity()
         latestTweakCellRequest.fetchLimit = 1
         latestTweakCellRequest.predicate = NSPredicate(format: "simSlotID = 1")
         latestTweakCellRequest.sortDescriptors = [NSSortDescriptor(keyPath: \CellTweak.collected, ascending: false)]
-        
+
         let dualSimCellRequest = NSFetchRequest<CellTweak>()
         dualSimCellRequest.entity = CellTweak.entity()
         dualSimCellRequest.fetchLimit = 1
         dualSimCellRequest.predicate = NSPredicate(format: "simSlotID = 2")
         dualSimCellRequest.sortDescriptors = [NSSortDescriptor(keyPath: \CellTweak.collected, ascending: false)]
-        
+
         _tweakCellsSlot1 = FetchRequest(fetchRequest: latestTweakCellRequest)
         _tweakCellsSlot2 = FetchRequest(fetchRequest: dualSimCellRequest)
     }
-    
+
     var body: some View {
         ScrollView {
             CalculatedRiskView()
-            
+
             if let tweakCell = tweakCellsSlot1.first {
                 NavigationLink {
                     CellDetailsView(tweakCell: tweakCell)
@@ -132,36 +131,36 @@ private struct CombinedRiskCellView: View {
                 }
                 .buttonStyle(.plain)
             }
-            
+
             // none mode: show warning, might not be intended
             NoneModeCard()
-            
+
             // manual mode: show debug profile import instructions
             DebugProfileCard()
-            
+
             // manual mode: show sys diagnose taking instructions
             SysdiagInstructionsCard()
-            
+
             // manual mode: show link to opening sysdiag settings
             SysdiagOpenSettingsCard()
-            
+
             // jailbreak mode: show tweak installation info
 #if JAILBREAK
             TweakInstallInfoCard()
 #endif
         }
     }
-    
+
 }
 
 private struct CalculatedRiskView: View {
-    
+
     @State private var risk: RiskLevel = .Unknown
-    @State private var timer: Timer? = nil
-    
+    @State private var timer: Timer?
+
     var body: some View {
         return RiskIndicatorCard(risk: risk)
-            .onAppear() {
+            .onAppear {
                 func computeRiskStatus() {
                     DispatchQueue.global(qos: .utility).async {
                         // TODO: Can we reduce the CPU load of this check?
@@ -171,25 +170,25 @@ private struct CalculatedRiskView: View {
                         }
                     }
                 }
-                
+
                 // Update the risk indicator asynchronously to reduce the Core Data load
                 timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
                     // Skip the update of the risk status if the app is in the background
                     if UIApplication.shared.applicationState == .background {
                         return
                     }
-                    
+
                     computeRiskStatus()
                 }
-                
+
                 // Instantly compute the new risk status
                 computeRiskStatus()
             }
-            .onDisappear() {
+            .onDisappear {
                 timer?.invalidate()
             }
     }
-    
+
 }
 
 struct SummaryView_Previews: PreviewProvider {

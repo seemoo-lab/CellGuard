@@ -9,61 +9,61 @@ import CoreData
 import SwiftUI
 
 struct CellListFilterSettings {
-    
+
     var status: CellListFilterStatus = .all
     var study: CellListFilterStudyOptions = .all
-    
+
     var timeFrame: CellListFilterTimeFrame = .live
     var date: Date = Calendar.current.startOfDay(for: Date())
-    
+
     var technology: ALSTechnology?
     var simSlot: CellListFilterSimSlot = .all
     var country: Int?
     var network: Int?
     var area: Int?
     var cell: Int?
-    
+
     func predicates(startDate: Date?, endDate: Date?) -> [NSPredicate] {
         var predicateList: [NSPredicate] = [
             NSPredicate(format: "cell != nil"),
             NSPredicate(format: "pipeline == %@", Int(primaryVerificationPipeline.id) as NSNumber)
         ]
-        
+
         if let technology = technology {
             predicateList.append(NSPredicate(format: "cell.technology == %@", technology.rawValue))
         }
-        
+
         if let slotNumber = simSlot.slotNumber {
             predicateList.append(NSPredicate(format: "cell.simSlotID == %@", NSNumber(value: slotNumber)))
         }
-        
+
         if let country = country {
             predicateList.append(NSPredicate(format: "cell.country == %@", country as NSNumber))
         }
-        
+
         if let network = network {
             predicateList.append(NSPredicate(format: "cell.network == %@", network as NSNumber))
         }
-        
+
         if let area = area {
             predicateList.append(NSPredicate(format: "cell.area == %@", area as NSNumber))
         }
-        
+
         if let cell = cell {
             predicateList.append(NSPredicate(format: "cell.cell == %@", cell as NSNumber))
         }
-        
+
         if let start = startDate {
             predicateList.append(NSPredicate(format: "%@ <= cell.collected", start as NSDate))
         }
         if let end = endDate {
             predicateList.append(NSPredicate(format: "cell.collected <= %@", end as NSDate))
         }
-        
+
         let thresholdSuspicious = primaryVerificationPipeline.pointsSuspicious as NSNumber
         let thresholdUntrusted = primaryVerificationPipeline.pointsUntrusted as NSNumber
-        
-        switch (status) {
+
+        switch status {
         case .all:
             break
         case .processing:
@@ -78,8 +78,8 @@ struct CellListFilterSettings {
             predicateList.append(NSPredicate(format: "finished == YES"))
             predicateList.append(NSPredicate(format: "score < %@", thresholdUntrusted))
         }
-        
-        switch (study) {
+
+        switch study {
         case .all:
             break
         case .submitted:
@@ -88,13 +88,13 @@ struct CellListFilterSettings {
 
         return predicateList
     }
-    
+
     func applyTo(request: NSFetchRequest<VerificationState>) {
         var beginDate: Date
         var endDate: Date
         let calendar = Calendar.current
-        
-        switch (timeFrame) {
+
+        switch timeFrame {
         case .live:
             beginDate = calendar.startOfDay(for: Date())
             endDate = calendar.date(byAdding: .day, value: 1, to: beginDate)!
@@ -109,44 +109,44 @@ struct CellListFilterSettings {
         request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates(startDate: beginDate, endDate: endDate))
         request.relationshipKeyPathsForPrefetching = ["cell"]
     }
-    
+
 }
 
 enum CellListFilterTimeFrame: String, CaseIterable, Identifiable {
     case live, pastDay, pastDays
-    
+
     var id: Self { self }
 }
 
 enum CellListFilterStatus: String, CaseIterable, Identifiable {
     case all, processing, trusted, anomalous, suspicious
-    
+
     var id: Self { self }
 }
 
 enum CellListFilterCustomOptions: String, CaseIterable, Identifiable {
     case all, custom
-    
+
     var id: Self { self }
 }
 
 enum CellListFilterPredefinedOptions: String, CaseIterable, Identifiable {
     case all, predefined, custom
-    
+
     var id: Self { self }
 }
 
 enum CellListFilterStudyOptions: String, CaseIterable, Identifiable {
     case all, submitted
-    
+
     var id: Self { self }
 }
 
 enum CellListFilterSimSlot: UInt8, CaseIterable, Identifiable {
     case all, slot1, slot2
-    
+
     var id: Self { self }
-    
+
     var slotNumber: Int? {
         switch self {
         case .slot1:
@@ -161,16 +161,16 @@ enum CellListFilterSimSlot: UInt8, CaseIterable, Identifiable {
 
 struct CellListFilterView: View {
     let close: () -> Void
-    
+
     @Binding var settingsBound: CellListFilterSettings
     @State var settings: CellListFilterSettings = CellListFilterSettings()
-    
+
     init(settingsBound: Binding<CellListFilterSettings>, close: @escaping () -> Void) {
         self.close = close
         self._settingsBound = settingsBound
         self._settings = State(wrappedValue: self._settingsBound.wrappedValue)
     }
-    
+
     var body: some View {
         CellListFilterSettingsView(settings: $settings, save: {
             self.settingsBound = settings
@@ -195,12 +195,11 @@ struct CellListFilterView: View {
     }
 }
 
-
 private struct CellListFilterSettingsView: View {
-    
+
     @Binding var settings: CellListFilterSettings
     let save: () -> Void
-    
+
     var body: some View {
         // TODO: Somehow the Pickers that open a navigation selection menu pose an issue for the navigation bar on iOS 14
         // If the "Apply" button is pressed afterwards, the "< Back" button vanishes from the navigation bar
@@ -214,7 +213,7 @@ private struct CellListFilterSettingsView: View {
                 Picker("SIM Slot", selection: $settings.simSlot) {
                     ForEach(CellListFilterSimSlot.allCases) { Text(String(describing: $0).capitalized) }
                 }
-                
+
                 LabelNumberField("Country", "MCC", $settings.country)
                 LabelNumberField("Network", "MNC", $settings.network)
                 LabelNumberField("Area", "LAC or TAC", $settings.area)
@@ -234,14 +233,14 @@ private struct CellListFilterSettingsView: View {
                     DatePicker("Day", selection: $settings.date, in: ...Date(), displayedComponents: [.date])
                 }
             }
-            
+
             Section(header: Text("Study")) {
                 Picker("Status", selection: $settings.study) {
                     Text("All").tag(CellListFilterStudyOptions.all)
                     Text("Submitted").tag(CellListFilterStudyOptions.submitted)
                 }
             }
-            
+
             if #unavailable(iOS 15) {
                 Button {
                     save()
@@ -255,21 +254,21 @@ private struct CellListFilterSettingsView: View {
             }
         }
     }
-    
+
 }
 
 private struct LabelNumberField: View {
-    
+
     let label: String
     let hint: String
     let numberBinding: Binding<Int?>
-    
+
     init(_ label: String, _ hint: String, _ numberBinding: Binding<Int?>) {
         self.label = label
         self.hint = hint
         self.numberBinding = numberBinding
     }
-    
+
     var body: some View {
         HStack {
             Text(label)
@@ -279,7 +278,7 @@ private struct LabelNumberField: View {
         .keyboardType(.numberPad)
         .disableAutocorrection(true)
     }
-    
+
     private func positiveNumberBinding(_ property: Binding<Int?>) -> Binding<String> {
         // See: https://stackoverflow.com/a/65385643
         return Binding(
@@ -300,13 +299,12 @@ private struct LabelNumberField: View {
         )
     }
 
-    
 }
 
 struct CellListFilterView_Previews: PreviewProvider {
     static var previews: some View {
         @State var settings = CellListFilterSettings()
-        
+
         NavigationView {
             CellListFilterView(settingsBound: $settings) {
                 // Doing nothing

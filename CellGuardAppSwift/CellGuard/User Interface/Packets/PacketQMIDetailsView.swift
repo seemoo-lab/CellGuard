@@ -9,7 +9,7 @@ import SwiftUI
 
 struct PacketQMIDetailsView: View {
     let packet: PacketQMI
-    
+
     var body: some View {
         List {
             if let data = packet.data {
@@ -29,11 +29,11 @@ struct PacketQMIDetailsView: View {
 }
 
 private struct PacketQMIDetailsList: View {
-    
+
     let packet: PacketQMI
     let data: Data
     let parsed: ParsedQMIPacket
-    
+
     var body: some View {
         let serviceId = parsed.qmuxHeader.serviceId
         let messageId = parsed.messageHeader.messageId
@@ -41,7 +41,7 @@ private struct PacketQMIDetailsList: View {
         let definitions = QMIDefinitions.shared
         let serviceDef = definitions.services[serviceId]
         let messageDef = parsed.transactionHeader.indication ? serviceDef?.indications[messageId] : serviceDef?.messages[messageId]
-        
+
         Group {
             Section(header: Text("Packet")) {
                 PacketDetailsRow("Protocol", packet.proto)
@@ -74,7 +74,7 @@ private struct PacketQMIDetailsList: View {
                 }
                 PacketDetailsRow("Message Length", bytes: Int(parsed.messageHeader.messageLength))
             }
-            
+
             ForEach(parsed.tlvs, id: \.type) { tlv in
                 Section(header: Text("TLV")) {
                     PacketDetailsRow("ID", hex: tlv.type)
@@ -82,18 +82,18 @@ private struct PacketQMIDetailsList: View {
                     PacketDetailsDataRow("Data", data: tlv.data)
                 }
             }
-            
+
             // TODO: Include QMIContentParser, e.g., for signal strength, or use libqmi definitions to parse the packet on-the-fly
         }
     }
-    
+
 }
 
 struct PacketQMIDetailsView_Previews: PreviewProvider {
     static var previews: some View {
         let context = PersistenceController.preview.container.viewContext
         let packets = PersistencePreview.packets(context: context)
-        
+
         NavigationView {
             PacketQMIDetailsView(packet: packets[0] as! PacketQMI)
         }

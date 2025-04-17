@@ -10,22 +10,22 @@ import SwiftUI
 import OSLog
 
 struct PacketTabView: View {
-    
+
     // TODO: Add divider for days (bold) & hours
-    
+
     private static let logger = Logger(
         subsystem: Bundle.main.bundleIdentifier!,
         category: String(describing: PacketTabView.self)
     )
-    
+
     @AppStorage(UserDefaultsKeys.appMode.rawValue) private var appMode: DataCollectionMode = .none
-    
+
     @State private var filter: PacketFilterSettings = PacketFilterSettings()
     @State private var isShowingFilterView = false
     @State private var pausedBeforeBackground = false
-    @State private var backgroundObserver: NSObjectProtocol? = nil
-    @State private var foregroundObserver: NSObjectProtocol? = nil
-    
+    @State private var backgroundObserver: NSObjectProtocol?
+    @State private var foregroundObserver: NSObjectProtocol?
+
     var body: some View {
         // TODO: Store filter settings across different app executions?
         NavigationView {
@@ -82,7 +82,7 @@ struct PacketTabView: View {
                     }
                 }
             }
-            
+
             #if JAILBREAK
             // Pause the FilteredPacketView when entering background.
             self.backgroundObserver = NotificationCenter.default.addObserver(forName: UIApplication.didEnterBackgroundNotification, object: nil, queue: .main) { _ in
@@ -115,9 +115,9 @@ struct PacketTabView: View {
 }
 
 private struct PauseContinueButton: View {
-    
+
     @Binding var filter: PacketFilterSettings
-    
+
     var body: some View {
         Button {
             if filter.timeFrame == .live {
@@ -139,38 +139,38 @@ private struct PauseContinueButton: View {
         // For now we disable the continue button for past traces as it lags when pressed
         .disabled(filter.timeFrame != .live)
     }
-    
+
 }
 
 private struct FilteredPacketView: View {
-    
+
     // We have to use separate fetch request as the preview crashes for a unified request
     @FetchRequest
     private var qmiPackets: FetchedResults<PacketQMI>
-    
+
     @FetchRequest
     private var ariPackets: FetchedResults<PacketARI>
-    
+
     private let filter: PacketFilterSettings
-    
+
     init(filter: PacketFilterSettings) {
         self.filter = filter
-        
+
         // https://www.hackingwithswift.com/quick-start/swiftui/how-to-limit-the-number-of-items-in-a-fetch-request
         let qmiRequest: NSFetchRequest<PacketQMI> = PacketQMI.fetchRequest()
         qmiRequest.fetchBatchSize = 25
         qmiRequest.sortDescriptors = [NSSortDescriptor(keyPath: \PacketQMI.collected, ascending: false)]
         filter.applyTo(qmi: qmiRequest)
-        
+
         let ariRequest: NSFetchRequest<PacketARI> = PacketARI.fetchRequest()
         ariRequest.fetchBatchSize = 25
         ariRequest.sortDescriptors = [NSSortDescriptor(keyPath: \PacketARI.collected, ascending: false)]
         filter.applyTo(ari: ariRequest)
-        
+
         self._qmiPackets = FetchRequest(fetchRequest: qmiRequest, animation: .easeOut)
         self._ariPackets = FetchRequest(fetchRequest: ariRequest, animation: .easeOut)
     }
-    
+
     var body: some View {
         if filter.proto == .qmi {
             if qmiPackets.isEmpty {
@@ -190,7 +190,7 @@ private struct FilteredPacketView: View {
 
 private struct QMIPacketList: View {
     let qmiPackets: FetchedResults<PacketQMI>
-    
+
     var body: some View {
         List(qmiPackets) { packet in
             NavigationLink {
@@ -205,7 +205,7 @@ private struct QMIPacketList: View {
 
 private struct ARIPacketList: View {
     let ariPackets: FetchedResults<PacketARI>
-    
+
     var body: some View {
         List(ariPackets) { packet in
             NavigationLink {

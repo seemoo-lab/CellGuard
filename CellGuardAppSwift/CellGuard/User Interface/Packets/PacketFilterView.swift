@@ -13,35 +13,35 @@ struct PacketFilterSettings {
     var proto: PacketFilterProtocol = .qmi
     var protoAutoSet: Bool = false
     var direction: PacketFilterDirection = .all
-    
+
     var qmiType: PacketFilterQMIType = .all
     var qmiServices: Set<UInt8> = Set(QMIDefinitions.shared.services.keys)
-    
+
     var ariGroups: Set<UInt8> = Set(ARIDefinitions.shared.groups.keys)
-    
+
     var timeFrame: PacketFilterTimeFrame = .live
     var livePacketCount: Double = 200
     var startDate = Date().addingTimeInterval(-60*30)
     var endDate = Date()
-    
-    var pauseDate: Date? = nil
-    
+
+    var pauseDate: Date?
+
     func applyTo(qmi request: NSFetchRequest<PacketQMI>) {
         if proto != .qmi {
             request.fetchLimit = 0
             return
         }
-        
+
         var predicateList: [NSPredicate] = []
-        
+
         if let slotNumber = simSlotID.slotNumber {
             predicateList.append(NSPredicate(format: "simSlotID == %@", NSNumber(value: slotNumber)))
         }
-        
+
         if let direction = direction.cpt?.rawValue {
             predicateList.append(NSPredicate(format: "direction == %@", direction))
         }
-        
+
         if let typeFilter = qmiType.db {
             // https://stackoverflow.com/a/34631602
             predicateList.append(NSPredicate(format: "indication == %@", NSNumber(value: typeFilter)))
@@ -51,7 +51,7 @@ struct PacketFilterSettings {
             predicateList.append(NSCompoundPredicate(
                 orPredicateWithSubpredicates: qmiServices.map { NSPredicate(format: "service == %@", NSNumber(value: $0)) }))
         }
-        
+
         if timeFrame == .live {
             request.fetchLimit = Int(livePacketCount)
             if let pauseDate = pauseDate {
@@ -61,22 +61,22 @@ struct PacketFilterSettings {
             predicateList.append(NSPredicate(format: "collected >= %@", startDate as NSDate))
             predicateList.append(NSPredicate(format: "collected <= %@", endDate as NSDate))
         }
-       
+
         request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicateList)
     }
-    
+
     func applyTo(ari request: NSFetchRequest<PacketARI>) {
         if proto != .ari {
             request.fetchLimit = 0
             return
         }
-        
+
         var predicateList: [NSPredicate] = []
-        
+
         if simSlotID != .all {
             predicateList.append(NSPredicate(format: "simSlotID == %@", NSNumber(value: simSlotID.rawValue)))
         }
-        
+
         if let direction = direction.cpt?.rawValue {
             predicateList.append(NSPredicate(format: "direction == %@", direction))
         }
@@ -85,7 +85,7 @@ struct PacketFilterSettings {
             predicateList.append(NSCompoundPredicate(
                 orPredicateWithSubpredicates: ariGroups.map { NSPredicate(format: "group == %@", NSNumber(value: $0)) }))
         }
-        
+
         if timeFrame == .live {
             request.fetchLimit = Int(livePacketCount)
             if let pauseDate = pauseDate {
@@ -95,17 +95,17 @@ struct PacketFilterSettings {
             predicateList.append(NSPredicate(format: "collected >= %@", startDate as NSDate))
             predicateList.append(NSPredicate(format: "collected <= %@", endDate as NSDate))
         }
-       
+
         request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicateList)
     }
-    
+
 }
 
 enum PacketFilterSimSlot: UInt8, CaseIterable, Identifiable {
     case all, slot1, slot2, none
-    
+
     var id: Self { self }
-    
+
     var slotNumber: Int? {
         switch self {
         case .none:
@@ -122,17 +122,17 @@ enum PacketFilterSimSlot: UInt8, CaseIterable, Identifiable {
 
 enum PacketFilterProtocol: String, CaseIterable, Identifiable {
     case qmi, ari
-    
+
     var id: Self { self }
 }
 
 enum PacketFilterDirection: String, CaseIterable, Identifiable {
     case all, ingoing, outgoing
-    
+
     var id: Self { self }
-    
+
     var cpt: CPTDirection? {
-        switch (self) {
+        switch self {
         case .all: return nil
         case .ingoing: return CPTDirection.ingoing
         case .outgoing: return CPTDirection.outgoing
@@ -142,11 +142,11 @@ enum PacketFilterDirection: String, CaseIterable, Identifiable {
 
 enum PacketFilterQMIType: String, CaseIterable, Identifiable {
     case all, messages, indications
-    
+
     var id: Self { self }
-    
+
     var db: Bool? {
-        switch (self) {
+        switch self {
         case .all: return nil
         case .messages: return false
         case .indications: return true
@@ -156,23 +156,23 @@ enum PacketFilterQMIType: String, CaseIterable, Identifiable {
 
 enum PacketFilterTimeFrame: String, CaseIterable, Identifiable {
     case live, past
-    
+
     var id: Self { self }
 }
 
 struct PacketFilterView: View {
-    
+
     let close: () -> Void
-    
+
     @Binding var settingsBound: PacketFilterSettings
     @State var settings: PacketFilterSettings = PacketFilterSettings()
-    
+
     init(settingsBound: Binding<PacketFilterSettings>, close: @escaping () -> Void) {
         self.close = close
         self._settingsBound = settingsBound
         self._settings = State(wrappedValue: self._settingsBound.wrappedValue)
     }
-    
+
     var body: some View {
         PacketFilterListView(settings: $settings)
         .navigationTitle("Filter")
@@ -199,9 +199,9 @@ struct PacketFilterView: View {
 }
 
 private struct PacketFilterListView: View {
-    
+
     @Binding var settings: PacketFilterSettings
-    
+
     var body: some View {
         Form {
             Section(header: Text("Packets")) {
@@ -271,10 +271,10 @@ private struct PacketFilterListView: View {
 }
 
 private struct PacketFilterQMIServicesView: View {
-    
+
     let all: [QMIDefinitionService]
     @Binding var selected: Set<UInt8>
-    
+
     var body: some View {
         List(all) { element in
             HStack {
@@ -312,10 +312,10 @@ private struct PacketFilterQMIServicesView: View {
 }
 
 private struct PacketFilterARIGroupsView: View {
-    
+
     let all: [ARIDefinitionGroup]
     @Binding var selected: Set<UInt8>
-    
+
     var body: some View {
         List(all) { element in
             HStack {
@@ -355,7 +355,7 @@ private struct PacketFilterARIGroupsView: View {
 struct PacketFilterView_Previews: PreviewProvider {
     static var previews: some View {
         @State var settings = PacketFilterSettings()
-        
+
         NavigationView {
             PacketFilterView(settingsBound: $settings) {
                 // Doing nothing

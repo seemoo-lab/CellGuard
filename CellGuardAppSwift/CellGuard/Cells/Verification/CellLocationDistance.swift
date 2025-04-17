@@ -8,7 +8,7 @@
 import CoreLocation
 
 struct CellLocationDistance {
-    
+
     // The distance in meter between the user's location and the location from ALS
     let distance: CLLocationDistance
     // The horizontal accuracy in meters of the user's location
@@ -17,10 +17,10 @@ struct CellLocationDistance {
     let userSpeed: Double
     // The accuracy returned from ALS
     let alsAccuracy: CLLocationDistance
-    
+
     let userLocationBackground: Bool
     let preciseBackground: Bool
-    
+
     func correctedDistance() -> Double {
         // The absolute maximum reach of a cell tower is about 75km, so we subtract it from the distance
         let cellMaxReach = 75_000.0
@@ -35,30 +35,30 @@ struct CellLocationDistance {
         } else {
             speedMargin = 0
         }
-        
+
         // Subtract all the possible error margins from the original distance calculated
         return (distance - cellMaxReach - inaccuracies - speedMargin)
     }
-    
+
     func score() -> Double {
         // Sources:
         // - https://dgtlinfra.com/cell-tower-range-how-far-reach/
         // - https://en.wikipedia.org/wiki/Cell_site#Operation
-        
+
         // Calculate a percentage how likely it is that the cell's location is too far away based on the distance and the user's speed.
         // We divide a corrected distance (with error margins) by 150km, the absolute maximum error tolerance, to get a percentage.
         // If it's below zero, the cell at its right place.
         // If it's larger than 50%, we're sure that even with all of our margin, the cell is more than 75km away from its ALS location, and thus a possible threat.
         let score = self.correctedDistance() / 150_000.0
-        
+
         // The score should be within the range [0,1]
         return score.clamped(to: 0.0...1.0)
     }
-    
+
     static func distance(userLocation: LocationUser, alsLocation: LocationALS) -> CellLocationDistance {
         let clUserLocation = CLLocation(latitude: userLocation.latitude, longitude: userLocation.longitude)
         let clAlsLocation = CLLocation(latitude: alsLocation.latitude, longitude: alsLocation.longitude)
-        
+
         return CellLocationDistance(
             distance: clUserLocation.distance(from: clAlsLocation),
             userAccuracy: userLocation.horizontalAccuracy,
@@ -68,5 +68,5 @@ struct CellLocationDistance {
             preciseBackground: userLocation.preciseBackground
         )
     }
-    
+
 }

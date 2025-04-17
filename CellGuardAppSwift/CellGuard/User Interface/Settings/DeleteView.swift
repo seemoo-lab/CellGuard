@@ -10,11 +10,11 @@ import SwiftUI
 private enum DeleteAlert: Hashable, Identifiable {
     case deletionFailed(String)
     case exportWarning(Date?)
-    
+
     var id: Self { return self }
-    
+
     func alert(deleteFunc: @escaping () -> Void) -> Alert {
-        switch (self) {
+        switch self {
         case let .deletionFailed(reason):
             return Alert(
                 title: Text("Deletion Failed"),
@@ -22,14 +22,14 @@ private enum DeleteAlert: Hashable, Identifiable {
             )
         case let .exportWarning(lastExport):
             let formatter = RelativeDateTimeFormatter()
-            
+
             let message: String
             if let lastExport = lastExport {
                 message = "Your last exported data \(formatter.string(for: lastExport)!)"
             } else {
                 message = "You never exported data"
             }
-            
+
             return Alert(
                 title: Text("No Export"),
                 message: Text("\(message). You are about to delete data not exported!"),
@@ -38,44 +38,44 @@ private enum DeleteAlert: Hashable, Identifiable {
             )
         }
     }
-    
+
 }
 
 struct DeleteView: View {
-    
+
     public static let packetRetentionInfinite = 35.0
     public static let locationRetentionInfinite = 35.0
-    
+
     // We fetch the entity counts in intervals as live updates cause too much lag
     @State private var cellMeasurements: Int = 0
     @State private var alsCells: Int = 0
     @State private var locations: Int = 0
     @State private var packets: Int = 0
-    
+
     // We fetch the database size in intervals as live updates wouldn't be possible
     @State private var databaseSize: UInt64 = 0
-    
+
     @State private var doDeleteCells = true
     @State private var doDeleteALSCache = true
     @State private var doDeleteLocations = true
     @State private var doDeletePackets = true
-    
+
     @State private var isDeletionInProgress = false
-    @State private var deleteAlert: DeleteAlert? = nil
-    
+    @State private var deleteAlert: DeleteAlert?
+
     @AppStorage(UserDefaultsKeys.packetRetention.rawValue)
     private var packetRetentionDays: Double = 3
     @State private var deletingPackets: Bool = false
-    
+
     @AppStorage(UserDefaultsKeys.locationRetention.rawValue)
     private var locationRetentionDays: Double = 7
     @State private var deletingLocations: Bool = false
-    
-    @State private var timer: Timer? = nil
-    
+
+    @State private var timer: Timer?
+
     @AppStorage(UserDefaultsKeys.lastExportDate.rawValue)
     private var lastExportDate: Double = -1
-    
+
     var body: some View {
         List {
             Section(
@@ -106,7 +106,7 @@ struct DeleteView: View {
                 }
             }
             .disabled(isDeletionInProgress)
-            
+
             Section(
                 header: Text("Packet Retention"),
                 footer: Text(
@@ -116,7 +116,7 @@ struct DeleteView: View {
             ) {
                 Slider(value: $packetRetentionDays, in: 1...Self.packetRetentionInfinite, step: 1)
             }
-            
+
             Section(
                 header: Text("Location Retention"),
                 footer: Text(
@@ -124,10 +124,10 @@ struct DeleteView: View {
                     ? "Keeping locations for an infinite amount of days"
                     : "Keeping locations for \(Int(locationRetentionDays)) \(Int(locationRetentionDays) != 1 ? "days" : "day"). Locations not assigned to cells are deleted automatically in the background.")
             ) {
-                
+
                 Slider(value: $locationRetentionDays, in: 1...Self.locationRetentionInfinite, step: 1)
             }
-            
+
             Section(header: Text("Actions"), footer: Text(exportDateDescription())) {
                 DeleteOldButton(text: "Delete Old Packets", active: $deletingPackets) {
                     PersistenceController.basedOnEnvironment().deletePacketsOlderThan(days: Int(packetRetentionDays))
@@ -160,7 +160,7 @@ struct DeleteView: View {
         .alert(item: $deleteAlert, content: { alert in
             return alert.alert(deleteFunc: self.delete)
         })
-        .onAppear() {
+        .onAppear {
             updateCounts(first: true)
             timer = Timer.scheduledTimer(withTimeInterval: 5, repeats: true, block: { _ in
                 // A bit hacky selfmade timer.
@@ -169,13 +169,13 @@ struct DeleteView: View {
                 // See: https://www.hackingwithswift.com/quick-start/swiftui/how-to-use-a-timer-with-swiftui
                 updateCounts(first: false)
             })
-            
+
         }
-        .onDisappear() {
+        .onDisappear {
             timer?.invalidate()
         }
     }
-    
+
     func formatBytes(_ bytes: UInt64) -> String {
         let formatter = ByteCountFormatter()
         formatter.allowedUnits = [.useMB]
@@ -183,45 +183,45 @@ struct DeleteView: View {
         formatter.countStyle = .file
         return formatter.string(fromByteCount: Int64(bytes))
     }
-    
+
     func exportDateDescription() -> String {
         if lastExportDate < 0 {
             return "You never performed an export."
         }
-        
+
         let date = Date(timeIntervalSince1970: lastExportDate)
         let formatter = RelativeDateTimeFormatter()
-        
+
         return "You performed your last export \(formatter.string(for: date)!)."
     }
-    
+
     func checkLastExport() -> Bool {
         if lastExportDate < 0 {
             deleteAlert = .exportWarning(nil)
             return false
         }
-        
+
         let exportDate = Date(timeIntervalSince1970: lastExportDate)
         let twoHoursAgo = Calendar.current.date(byAdding: .hour, value: -2, to: Date()) ?? Date.distantPast
-        
+
         if exportDate <= twoHoursAgo {
             deleteAlert = .exportWarning(exportDate)
             return false
         }
-        
+
         return true
     }
-    
+
     func delete() {
         isDeletionInProgress = true
-        
+
         let deletionCategories = [
             PersistenceCategory.connectedCells: doDeleteCells,
             PersistenceCategory.alsCells: doDeleteALSCache,
             PersistenceCategory.locations: doDeleteLocations,
-            PersistenceCategory.packets: doDeletePackets,
+            PersistenceCategory.packets: doDeletePackets
         ].filter { $0.value }.map { $0.key }
-        
+
         PersistenceController.shared.deleteDataInBackground(categories: deletionCategories) { result in
             updateCounts(first: false)
             isDeletionInProgress = false
@@ -233,20 +233,20 @@ struct DeleteView: View {
             }
         }
     }
-    
+
     func updateCounts(first: Bool) {
         DispatchQueue.global(qos: .utility).async {
             let persistence = PersistenceController.basedOnEnvironment()
-            
+
             // Count entities of each database model
             let cellMeasurements = persistence.countEntitiesOf(CellTweak.fetchRequest()) ?? self.cellMeasurements
             let alsCells = persistence.countEntitiesOf(CellALS.fetchRequest()) ?? self.alsCells
             let locations = persistence.countEntitiesOf(LocationUser.fetchRequest()) ?? self.locations
             let packets = (persistence.countEntitiesOf(PacketQMI.fetchRequest()) ?? 0) + (persistence.countEntitiesOf(PacketARI.fetchRequest()) ?? 0)
-            
+
             // Calculate the size
             let size = PersistenceController.shared.size()
-            
+
             // Set the size on the main queue
             DispatchQueue.main.async {
                 withAnimation(first ? .none : .easeIn) {
@@ -259,15 +259,15 @@ struct DeleteView: View {
             }
         }
     }
-    
+
 }
 
 private struct DeleteOldButton: View {
-    
+
     let text: String
     @Binding var active: Bool
     let deleteAction: () -> Void
-    
+
     var body: some View {
         Button {
             active = true
@@ -290,7 +290,7 @@ private struct DeleteOldButton: View {
         }
         .disabled(active)
     }
-    
+
 }
 
 struct DeleteView_Previews: PreviewProvider {

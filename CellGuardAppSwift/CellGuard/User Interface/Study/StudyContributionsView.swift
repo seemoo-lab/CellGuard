@@ -19,7 +19,7 @@ struct StudyContributionsView: View {
             } label: {
                 Text("Cells")
             }
-            
+
             NavigationLink {
                 StudyWeeklyScoresView()
             } label: {

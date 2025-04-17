@@ -15,7 +15,7 @@ import SwiftProtobuf
 // incompatible with the version of SwiftProtobuf to which you are linking.
 // Please ensure that you are building against the same version of the API
 // that was used to generate this file.
-fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAPIVersionCheck {
+private struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAPIVersionCheck {
   struct _2: SwiftProtobuf.ProtobufAPIVersion_2 {}
   typealias Version = _2
 }
@@ -119,15 +119,15 @@ struct AlsProto_Location {
 
   init() {}
 
-  fileprivate var _latitude: Int64? = nil
-  fileprivate var _longitude: Int64? = nil
-  fileprivate var _accuracy: Int32? = nil
-  fileprivate var _locationType: Int32? = nil
-  fileprivate var _altitude: Int32? = nil
-  fileprivate var _verticalAccuracy: Int32? = nil
-  fileprivate var _reach: UInt32? = nil
-  fileprivate var _score: Int32? = nil
-  fileprivate var _infoMask: UInt32? = nil
+  fileprivate var _latitude: Int64?
+  fileprivate var _longitude: Int64?
+  fileprivate var _accuracy: Int32?
+  fileprivate var _locationType: Int32?
+  fileprivate var _altitude: Int32?
+  fileprivate var _verticalAccuracy: Int32?
+  fileprivate var _reach: UInt32?
+  fileprivate var _score: Int32?
+  fileprivate var _infoMask: UInt32?
 }
 
 /// We're able to confirm our assumptions with a field test.
@@ -171,9 +171,9 @@ struct AlsProto_WirelessAP {
 
   init() {}
 
-  fileprivate var _macID: String? = nil
-  fileprivate var _location: AlsProto_Location? = nil
-  fileprivate var _channel: UInt32? = nil
+  fileprivate var _macID: String?
+  fileprivate var _location: AlsProto_Location?
+  fileprivate var _channel: UInt32?
 }
 
 struct AlsProto_Nr5GCell {
@@ -251,12 +251,12 @@ struct AlsProto_Nr5GCell {
 
   init() {}
 
-  fileprivate var _mcc: Int32? = nil
-  fileprivate var _mnc: Int32? = nil
-  fileprivate var _cellID: Int64? = nil
-  fileprivate var _tacID: Int32? = nil
-  fileprivate var _location: AlsProto_Location? = nil
-  fileprivate var _nrarfcn: Int32? = nil
+  fileprivate var _mcc: Int32?
+  fileprivate var _mnc: Int32?
+  fileprivate var _cellID: Int64?
+  fileprivate var _tacID: Int32?
+  fileprivate var _location: AlsProto_Location?
+  fileprivate var _nrarfcn: Int32?
 }
 
 /// SCDMA is mainly used in China.
@@ -347,13 +347,13 @@ struct AlsProto_ScdmaCell {
 
   init() {}
 
-  fileprivate var _mcc: Int32? = nil
-  fileprivate var _mnc: Int32? = nil
-  fileprivate var _cellID: Int32? = nil
-  fileprivate var _lacID: Int32? = nil
-  fileprivate var _location: AlsProto_Location? = nil
-  fileprivate var _arfcn: Int32? = nil
-  fileprivate var _psc: Int32? = nil
+  fileprivate var _mcc: Int32?
+  fileprivate var _mnc: Int32?
+  fileprivate var _cellID: Int32?
+  fileprivate var _lacID: Int32?
+  fileprivate var _location: AlsProto_Location?
+  fileprivate var _arfcn: Int32?
+  fileprivate var _psc: Int32?
 }
 
 /// The message class is also used for UTMS cells.
@@ -444,13 +444,13 @@ struct AlsProto_LteCell {
 
   init() {}
 
-  fileprivate var _mcc: Int32? = nil
-  fileprivate var _mnc: Int32? = nil
-  fileprivate var _cellID: Int32? = nil
-  fileprivate var _tacID: Int32? = nil
-  fileprivate var _location: AlsProto_Location? = nil
-  fileprivate var _uarfcn: Int32? = nil
-  fileprivate var _pid: Int32? = nil
+  fileprivate var _mcc: Int32?
+  fileprivate var _mnc: Int32?
+  fileprivate var _cellID: Int32?
+  fileprivate var _tacID: Int32?
+  fileprivate var _location: AlsProto_Location?
+  fileprivate var _uarfcn: Int32?
+  fileprivate var _pid: Int32?
 }
 
 /// This message not only refers to GSM but also to UMTS cells.
@@ -542,13 +542,13 @@ struct AlsProto_GsmCell {
 
   init() {}
 
-  fileprivate var _mcc: Int32? = nil
-  fileprivate var _mnc: Int32? = nil
-  fileprivate var _cellID: Int64? = nil
-  fileprivate var _lacID: Int32? = nil
-  fileprivate var _location: AlsProto_Location? = nil
-  fileprivate var _arfcn: Int32? = nil
-  fileprivate var _psc: Int32? = nil
+  fileprivate var _mcc: Int32?
+  fileprivate var _mnc: Int32?
+  fileprivate var _cellID: Int64?
+  fileprivate var _lacID: Int32?
+  fileprivate var _location: AlsProto_Location?
+  fileprivate var _arfcn: Int32?
+  fileprivate var _psc: Int32?
 }
 
 struct AlsProto_CdmaCell {
@@ -789,14 +789,14 @@ struct AlsProto_ALSLocationRequest {
 
   init() {}
 
-  fileprivate var _numberOfSurroundingCells: Int32? = nil
-  fileprivate var _numberOfSurroundingWifis: Int32? = nil
-  fileprivate var _appBundleID: String? = nil
-  fileprivate var _numberOfSurroundingCdmaCells: Int32? = nil
-  fileprivate var _numberOfSurroundingCdmaEvdoCells: Int32? = nil
-  fileprivate var _numberOfSurroundingLteCells: Int32? = nil
-  fileprivate var _numberOfSurroundingScdmaCells: Int32? = nil
-  fileprivate var _numberOfSurroundingNr5Gcells: Int32? = nil
+  fileprivate var _numberOfSurroundingCells: Int32?
+  fileprivate var _numberOfSurroundingWifis: Int32?
+  fileprivate var _appBundleID: String?
+  fileprivate var _numberOfSurroundingCdmaCells: Int32?
+  fileprivate var _numberOfSurroundingCdmaEvdoCells: Int32?
+  fileprivate var _numberOfSurroundingLteCells: Int32?
+  fileprivate var _numberOfSurroundingScdmaCells: Int32?
+  fileprivate var _numberOfSurroundingNr5Gcells: Int32?
 }
 
 /// Response from Apple's servers for a ALSLocationRequest.
@@ -827,8 +827,6 @@ struct AlsProto_ALSLocationResponse {
   var nr5Gcells: [AlsProto_Nr5GCell] = []
 
   var unknownFields = SwiftProtobuf.UnknownStorage()
-
-  init() {}
 }
 
 #if swift(>=5.5) && canImport(_Concurrency)
@@ -845,7 +843,7 @@ extension AlsProto_ALSLocationResponse: @unchecked Sendable {}
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 
-fileprivate let _protobuf_package = "als_proto"
+private let _protobuf_package = "als_proto"
 
 extension AlsProto_Location: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = _protobuf_package + ".Location"
@@ -858,7 +856,7 @@ extension AlsProto_Location: SwiftProtobuf.Message, SwiftProtobuf._MessageImplem
     6: .same(proto: "verticalAccuracy"),
     11: .same(proto: "reach"),
     12: .same(proto: "score"),
-    13: .same(proto: "infoMask"),
+    13: .same(proto: "infoMask")
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -936,7 +934,7 @@ extension AlsProto_WirelessAP: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "macID"),
     2: .same(proto: "location"),
-    3: .same(proto: "channel"),
+    3: .same(proto: "channel")
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -987,7 +985,7 @@ extension AlsProto_Nr5GCell: SwiftProtobuf.Message, SwiftProtobuf._MessageImplem
     3: .same(proto: "cellID"),
     4: .same(proto: "tacID"),
     5: .same(proto: "location"),
-    6: .same(proto: "nrarfcn"),
+    6: .same(proto: "nrarfcn")
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -1054,7 +1052,7 @@ extension AlsProto_ScdmaCell: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
     4: .same(proto: "lacID"),
     5: .same(proto: "location"),
     6: .same(proto: "arfcn"),
-    7: .same(proto: "psc"),
+    7: .same(proto: "psc")
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -1126,7 +1124,7 @@ extension AlsProto_LteCell: SwiftProtobuf.Message, SwiftProtobuf._MessageImpleme
     4: .same(proto: "tacID"),
     5: .same(proto: "location"),
     6: .same(proto: "uarfcn"),
-    7: .same(proto: "pid"),
+    7: .same(proto: "pid")
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -1198,7 +1196,7 @@ extension AlsProto_GsmCell: SwiftProtobuf.Message, SwiftProtobuf._MessageImpleme
     4: .same(proto: "lacID"),
     5: .same(proto: "location"),
     6: .same(proto: "arfcn"),
-    7: .same(proto: "psc"),
+    7: .same(proto: "psc")
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -1272,19 +1270,19 @@ extension AlsProto_CdmaCell: SwiftProtobuf.Message, SwiftProtobuf._MessageImplem
     6: .same(proto: "zoneid"),
     7: .same(proto: "bandclass"),
     8: .same(proto: "channel"),
-    9: .same(proto: "pnoffset"),
+    9: .same(proto: "pnoffset")
   ]
 
   fileprivate class _StorageClass {
-    var _mcc: Int32? = nil
-    var _sid: Int32? = nil
-    var _nid: Int32? = nil
-    var _bsid: Int32? = nil
-    var _location: AlsProto_Location? = nil
-    var _zoneid: Int32? = nil
-    var _bandclass: Int32? = nil
-    var _channel: Int32? = nil
-    var _pnoffset: Int32? = nil
+    var _mcc: Int32?
+    var _sid: Int32?
+    var _nid: Int32?
+    var _bsid: Int32?
+    var _location: AlsProto_Location?
+    var _zoneid: Int32?
+    var _bandclass: Int32?
+    var _channel: Int32?
+    var _pnoffset: Int32?
 
     static let defaultInstance = _StorageClass()
 
@@ -1411,7 +1409,7 @@ extension AlsProto_ALSLocationRequest: SwiftProtobuf.Message, SwiftProtobuf._Mes
     28: .same(proto: "numberOfSurroundingScdmaCells"),
     29: .same(proto: "nr5GCells"),
     30: .same(proto: "numberOfSurroundingNr5GCells"),
-    31: .same(proto: "surroundingWifiBands"),
+    31: .same(proto: "surroundingWifiBands")
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -1527,7 +1525,7 @@ extension AlsProto_ALSLocationResponse: SwiftProtobuf.Message, SwiftProtobuf._Me
     21: .same(proto: "cdmaCells"),
     22: .same(proto: "lteCells"),
     23: .same(proto: "scdmaCells"),
-    24: .same(proto: "nr5GCells"),
+    24: .same(proto: "nr5GCells")
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {

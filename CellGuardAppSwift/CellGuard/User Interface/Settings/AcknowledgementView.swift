@@ -27,13 +27,13 @@ struct CargoLicense: Codable {
 }
 
 struct AcknowledgementView: View {
-    
+
     @State private var swiftAcknowledgements: [Acknow] = []
     @State private var rustAcknowledgements: [Acknow] = []
-    
+
     private func loadSwiftAcknowledgements () {
         var acknowledgements: [Acknow] = []
-        
+
         if let url = Bundle.main.url(forResource: "Package", withExtension: "resolved"),
               let data = try? Data(contentsOf: url),
               let acknowList = try? AcknowPackageDecoder().decode(from: data) {
@@ -41,7 +41,7 @@ struct AcknowledgementView: View {
         } else {
             acknowledgements = []
         }
-        
+
         if let url = Bundle.main.url(forResource: "macos-unifiedlogs-license", withExtension: "txt"),
            let data = try? Data(contentsOf: url) {
             acknowledgements.append(Acknow(
@@ -49,21 +49,21 @@ struct AcknowledgementView: View {
                 text: String(data: data, encoding: .utf8)
             ))
         }
-        
+
         acknowledgements.sort { $0.title < $1.title }
         self.swiftAcknowledgements = acknowledgements
     }
-    
+
     private func loadRustAcknowledgements() {
         let jsonDecoder = JSONDecoder()
         jsonDecoder.keyDecodingStrategy = .convertFromSnakeCase
-        
+
         guard let url = Bundle.main.url(forResource: "cargo-licenses.json", withExtension: "gz"),
               let data = try? Data(contentsOf: url).gunzipped(),
               let json = try? jsonDecoder.decode(CargoLicenseFile.self, from: data) else {
             return
         }
-        
+
         // Convert to Acknow type and remove duplicates
         // See: https://stackoverflow.com/a/46354989
         var seen = Set<String>()
@@ -77,7 +77,7 @@ struct AcknowledgementView: View {
             seen.insert(acknow.title).inserted
         }
     }
-    
+
     var body: some View {
         List {
             NavigationLink {
@@ -102,5 +102,5 @@ struct AcknowledgementView: View {
         .navigationTitle("Third-Party Libraries")
         .listStyle(.insetGrouped)
     }
-    
+
 }

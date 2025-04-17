@@ -13,7 +13,7 @@ private enum ShownTab: Identifiable {
     case summary
     case map
     case packets
-    
+
     var id: Self {
         return self
     }
@@ -21,14 +21,14 @@ private enum ShownTab: Identifiable {
 
 private enum ShownSheet: Hashable, Identifiable {
     case importFile(URL)
-    
+
     var id: Self {
         return self
     }
 }
 
 struct HomeTabView: View {
-    
+
     var body: some View {
         if #available(iOS 15, *) {
             HomeTabViewIOS15()
@@ -36,21 +36,21 @@ struct HomeTabView: View {
             HomeTabViewIOS14()
         }
     }
-    
+
 }
 
 @available(iOS 15, *)
 private struct HomeTabViewIOS15: View {
-    
+
     @AppStorage(UserDefaultsKeys.introductionShown.rawValue) var introductionShown: Bool = false
-    
+
     @State private var showingTab = ShownTab.summary
     @State private var showingSheet: ShownSheet?
-    
+
     var body: some View {
         CompositeTabView(shownTab: $showingTab, shownSheet: $showingSheet)
             .sheet(item: $showingSheet) { (sheet: ShownSheet) in
-                switch (sheet) {
+                switch sheet {
                 case let .importFile(url):
                     NavigationView {
                         ImportView(fileUrl: url)
@@ -59,7 +59,7 @@ private struct HomeTabViewIOS15: View {
             }
             .fullScreenCover(isPresented: Binding(get: {
                 !introductionShown
-            }, set: { Bool in
+            }, set: { _ in
                 // Ignore the change
             })) {
                 IntroductionView()
@@ -71,47 +71,47 @@ private struct HomeTabViewIOS15: View {
 // See: https://stackoverflow.com/a/63181811
 // See: https://www.hackingwithswift.com/forums/swiftui/using-sheet-and-fullscreencover-together/4258/13585
 private struct HomeTabViewIOS14: View {
-    
+
     @AppStorage(UserDefaultsKeys.introductionShown.rawValue) var introductionShown: Bool = false
-    
+
     @State private var shownTab = ShownTab.summary
     @State private var shownSheet: ShownSheet?
-    
+
     var body: some View {
         ZStack {
             EmptyView()
                 .sheet(item: $shownSheet) { (sheet: ShownSheet) in
-                    switch (sheet) {
+                    switch sheet {
                     case let .importFile(url):
                         NavigationView {
                             ImportView(fileUrl: url)
                         }
                     }
                 }
-            
+
             CompositeTabView(shownTab: $shownTab, shownSheet: $shownSheet)
                 .fullScreenCover(isPresented: Binding(get: {
                     !introductionShown
-                }, set: { Bool in
+                }, set: { _ in
                     // Ignore the change
                 })) {
                     IntroductionView()
                 }
         }
     }
-    
+
 }
 
 private struct CompositeTabView: View {
-    
+
     private static let logger = Logger(
         subsystem: Bundle.main.bundleIdentifier!,
         category: String(describing: CompositeTabView.self)
     )
-    
+
     @Binding var shownTab: ShownTab
     @Binding var shownSheet: ShownSheet?
-    
+
     var body: some View {
         TabView(selection: $shownTab) {
             SummaryTabView()
@@ -138,11 +138,11 @@ private struct CompositeTabView: View {
         }
         .onOpenURL { url in
             Self.logger.debug("Open URL: \(url)")
-            
+
             // Switch to the summary tab and close the shown sheet (if there's any)
             self.shownTab = .summary
             self.shownSheet = nil
-            
+
             // Wait a bit so the sheet can close and we can present the alert
             // See: https://stackoverflow.com/a/71638878
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
@@ -150,7 +150,7 @@ private struct CompositeTabView: View {
             }
         }
     }
-    
+
 }
 
 struct CompositeTabView_Previews: PreviewProvider {
