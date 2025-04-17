@@ -54,7 +54,7 @@ private struct PacketCellQMIBody: View {
                 Text("\(packet.proto) \(packet.indication ? "Indication" : "Message")")
                     .bold()
                 + Text(" (\(service?.shortName ?? hexString(packet.service))) ")
-                + GrayText(bytes: packet.data?.count ?? 0)
+                + grayText(bytes: packet.data?.count ?? 0)
 
                 Spacer()
             }
@@ -87,7 +87,7 @@ private struct PacketCellARIBody: View {
                 Text("\(packet.proto)")
                     .bold()
                 + Text(" (\(group?.name ?? hexString(packet.group))) ")
-                + GrayText(bytes: packet.data?.count ?? 0)
+                + grayText(bytes: packet.data?.count ?? 0)
 
                 Spacer()
             }
@@ -133,20 +133,20 @@ private func hexString(_ hex: any BinaryInteger) -> String {
     return "0x\(String(hex, radix: 16, uppercase: true))"
 }
 
-private func GrayText(_ text: String) -> Text {
+private func grayText(_ text: String) -> Text {
     return Text("\(text)")
         .foregroundColor(.gray)
 }
 
-private func GrayText(bytes: Int) -> Text {
+private func grayText(bytes: Int) -> Text {
     // 0x2009 is a half-width space Unicode character
     // See: https://www.compart.com/en/unicode/U+2009
     // See: https://stackoverflow.com/a/27272056
-    return GrayText("\(bytes)\u{2009}B")
+    return grayText("\(bytes)\u{2009}B")
 }
 
-private func GrayText(hex: any BinaryInteger) -> Text {
-    return GrayText(hexString(hex))
+private func grayText(hex: any BinaryInteger) -> Text {
+    return grayText(hexString(hex))
 }
 
 struct PacketCell_Previews: PreviewProvider {

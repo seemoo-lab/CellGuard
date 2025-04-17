@@ -49,11 +49,11 @@ func multiplyColor(_ color: UIColor, by multiplier: CGFloat) -> UIColor {
     return UIColor(red: r * multiplier, green: g * multiplier, blue: b * multiplier, alpha: a)
 }
 
-func +(color1: UIColor, color2: UIColor) -> UIColor {
+func + (color1: UIColor, color2: UIColor) -> UIColor {
     return addColor(color1, with: color2)
 }
 
-func *(color: UIColor, multiplier: Double) -> UIColor {
+func * (color: UIColor, multiplier: Double) -> UIColor {
     return multiplyColor(color, by: CGFloat(multiplier))
 }
 

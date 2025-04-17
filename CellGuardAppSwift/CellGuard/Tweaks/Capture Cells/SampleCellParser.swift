@@ -31,7 +31,7 @@ extension CCTParser {
             throw CCTParserError.noCells(sample)
         }
 
-        guard var servingCell = cells.first(where: { $0.type == CCTCellType.Serving})?.cell else {
+        guard var servingCell = cells.first(where: { $0.type == CCTCellType.serving})?.cell else {
             throw CCTParserError.noServingCell(sample)
         }
 

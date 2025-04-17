@@ -155,7 +155,7 @@ private struct CombinedRiskCellView: View {
 
 private struct CalculatedRiskView: View {
 
-    @State private var risk: RiskLevel = .Unknown
+    @State private var risk: RiskLevel = .unknown
     @State private var timer: Timer?
 
     var body: some View {

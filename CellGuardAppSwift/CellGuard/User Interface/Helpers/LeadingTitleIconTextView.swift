@@ -48,11 +48,11 @@ struct LeadingTitleIconTextView: View {
 
 }
 
-struct LeadingTitleIconTextView_Preview: PreviewProvider {
-    static var previews: some View {
-        LeadingTitleIconTextView(icon: "people.3.fill",
-                              title: "Our Study",
-                              description: "Very long text alsjdfasldfj alsdjfasldf askldfjasldfj alsjdflasdkjfaslkd lasdjfalskd laksdjflasdjfladksfjadslkfj laksdjflasdjfadsl aslkdfjlaskdfj lkjsadflajsdflkasdjflaskdfj lasjdflas asdfasdf asdfasdfas asdfsadf asdfsadf asfasdfasdfsadf asdfasdf",
-                              size: 120)
-    }
+#Preview {
+    LeadingTitleIconTextView(
+        icon: "people.3.fill",
+        title: "Our Study",
+        description: "Very long text alsjdfasldfj alsdjfasldf askldfjasldfj alsjdflasdkjfaslkd lasdjfalskd laksdjflasdjfladksfjadslkfj laksdjflasdjfadsl aslkdfjlaskdfj lkjsadflajsdflkasdjflaskdfj lasjdflas asdfasdf asdfasdfas asdfsadf asdfsadf asfasdfasdfsadf asdfasdf",
+        size: 120,
+    )
 }

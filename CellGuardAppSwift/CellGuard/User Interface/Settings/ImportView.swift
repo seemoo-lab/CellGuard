@@ -260,7 +260,7 @@ struct ImportView: View {
             } completion: {
                 finishImport(result: $0)
             }
-            case .sysdiagnose:
+        case .sysdiagnose:
             LogArchiveReader.importInBackground(url: url, speedup: logArchiveSpeedup) { phase, currentProgress, totalProgress in
                 let progress = Float(currentProgress) / Float(totalProgress)
                 switch phase {

@@ -38,14 +38,14 @@ struct VerificationStateLogEntryView: View {
                 CellDetailsRow("Duration", "\(doubleString(logEntry.duration, maxDigits: 4))s")
                 if let relatedALSCell = logEntry.relatedCellALS {
                     NavigationLink {
-                        VerificationStateLogRelatedALSCellView(alsCell: relatedALSCell)
+                        LogRelatedALSCellView(alsCell: relatedALSCell)
                     } label: {
                         Text("Related ALS Cell")
                     }
                 }
                 if let relatedUserLocation = logEntry.relatedLocationUser {
                     NavigationLink {
-                        VerificationStateLogRelatedUserLocationView(userLocation: relatedUserLocation)
+                        LogRelatedUserLocationView(userLocation: relatedUserLocation)
                     } label: {
                         Text("Related User Location")
                     }
@@ -53,7 +53,7 @@ struct VerificationStateLogEntryView: View {
 
                 if let relatedALSCell = logEntry.relatedCellALS, let relatedUserLocation = logEntry.relatedLocationUser {
                     NavigationLink {
-                        VerificationStageLogRelatedDistanceView(alsCell: relatedALSCell, userLocation: relatedUserLocation)
+                        LogRelatedDistanceView(alsCell: relatedALSCell, userLocation: relatedUserLocation)
                     } label: {
                         Text("Related Distance")
                     }
@@ -61,14 +61,14 @@ struct VerificationStateLogEntryView: View {
 
                 if let relatedARIPackets = logEntry.relatedPacketARI?.compactMap({$0 as? PacketARI}), relatedARIPackets.count > 0 {
                     NavigationLink {
-                        VerificationStageLogRelatedPacketsView(packets: relatedARIPackets)
+                        LogRelatedPacketsView(packets: relatedARIPackets)
                     } label: {
                         Text("Related ARI Packets")
                     }
                 }
                 if let relatedQMIPackets = logEntry.relatedPacketQMI?.compactMap({$0 as? PacketQMI}), relatedQMIPackets.count > 0 {
                     NavigationLink {
-                        VerificationStageLogRelatedPacketsView(packets: relatedQMIPackets)
+                        LogRelatedPacketsView(packets: relatedQMIPackets)
                     } label: {
                         Text("Related QMI Packets")
                     }
@@ -92,7 +92,7 @@ struct VerificationStateLogEntryView: View {
     }
 }
 
-private struct VerificationStateLogRelatedALSCellView: View {
+private struct LogRelatedALSCellView: View {
 
     let alsCell: CellALS
 
@@ -134,7 +134,7 @@ private struct VerificationStateLogRelatedALSCellView: View {
 
 }
 
-private struct VerificationStateLogRelatedUserLocationView: View {
+private struct LogRelatedUserLocationView: View {
 
     let userLocation: LocationUser
 
@@ -167,7 +167,7 @@ private struct VerificationStateLogRelatedUserLocationView: View {
 
 }
 
-private struct VerificationStageLogRelatedDistanceView: View {
+private struct LogRelatedDistanceView: View {
 
     let alsCell: CellALS
     let userLocation: LocationUser
@@ -195,7 +195,7 @@ private struct VerificationStageLogRelatedDistanceView: View {
 
 }
 
-private struct VerificationStageLogRelatedPacketsView: View {
+private struct LogRelatedPacketsView: View {
 
     let packets: [any Packet]
 

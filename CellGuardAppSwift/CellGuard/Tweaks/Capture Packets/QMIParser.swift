@@ -10,19 +10,19 @@ import BinarySwift
 import NIOCore
 
 enum QMIParseError: Error {
-    case InvalidQMuxStart(UInt8)
-    case InvalidQMuxFlag(UInt8)
-    case InvalidPacketLength(UInt16, UInt16)
-    case InvalidContentLength(UInt16, UInt16)
+    case invalidQmuxStart(UInt8)
+    case invalidQmuxFlag(UInt8)
+    case invalidPacketLength(UInt16, UInt16)
+    case invalidContentLength(UInt16, UInt16)
 }
 
 enum QMIGenerationError: Error {
-    case DataTooLong(max: Int, length: Int)
-    case MessageTooLong(max: Int, length: Int)
-    case TransactionIdTooLong(max: Int, length: Int)
-    case PacketTooLong(max: Int, length: Int)
-    case InvalidFlag(UInt8)
-    case CantReadBuffer
+    case dataTooLong(max: Int, length: Int)
+    case messageTooLong(max: Int, length: Int)
+    case transactionIdTooLong(max: Int, length: Int)
+    case packetTooLong(max: Int, length: Int)
+    case invalidFlag(UInt8)
+    case cantReadBuffer
 }
 
 // Sources:
@@ -48,7 +48,7 @@ struct ParsedQMIPacket: ParsedPacket {
 
         // The header's packet size excludes the magic byte at the beginning.
         if qmuxHeader.length != nsData.count - 1 {
-            throw QMIParseError.InvalidPacketLength(qmuxHeader.length, UInt16(nsData.count - 1))
+            throw QMIParseError.invalidPacketLength(qmuxHeader.length, UInt16(nsData.count - 1))
         }
 
         offset += qmuxHeader.byteCount
@@ -67,7 +67,7 @@ struct ParsedQMIPacket: ParsedPacket {
 
         // Check that content length of the packet matches with the header
         if messageHeader.messageLength != nsData.count - offset {
-            throw QMIParseError.InvalidPacketLength(messageHeader.messageLength, UInt16(nsData.count - offset))
+            throw QMIParseError.invalidPacketLength(messageHeader.messageLength, UInt16(nsData.count - offset))
         }
 
         // TLVs (Variable Size)
@@ -92,14 +92,14 @@ struct ParsedQMIPacket: ParsedPacket {
         // Calculate and check the number of TLV bytes, i.e. the message length
         let tlvsByteCount = tlvs.map { $0.byteCount }.reduce(0, +)
         if tlvsByteCount > UInt16.max {
-            throw QMIGenerationError.MessageTooLong(max: Int(UInt16.max), length: tlvsByteCount)
+            throw QMIGenerationError.messageTooLong(max: Int(UInt16.max), length: tlvsByteCount)
         }
         self.messageHeader = QMIMessageHeader(messageId: messageId, messageLength: UInt16(tlvsByteCount))
 
         // Generate the transaction header based on the service id (and check the txid bounds before)
         if serviceId == 0x00 {
             if transactionId > UInt8.max {
-                throw QMIGenerationError.TransactionIdTooLong(max: Int(UInt8.max), length: Int(transactionId))
+                throw QMIGenerationError.transactionIdTooLong(max: Int(UInt8.max), length: Int(transactionId))
             }
             self.transactionHeader = QMITransactionHeader(response: response, indication: indication, transactionId: UInt8(transactionId))
         } else {
@@ -109,7 +109,7 @@ struct ParsedQMIPacket: ParsedPacket {
         // Calculate and check the packet length (that excludes the first magic byte)
         let packetLength = tlvsByteCount + messageHeader.byteCount + transactionHeader.byteCount + 5
         if packetLength > UInt16.max {
-            throw QMIGenerationError.PacketTooLong(max: Int(UInt16.max), length: packetLength)
+            throw QMIGenerationError.packetTooLong(max: Int(UInt16.max), length: packetLength)
         }
         self.qmuxHeader = try QMIQMuxHeader(length: UInt16(packetLength), flag: flag, serviceId: serviceId, clientId: clientId)
     }
@@ -129,7 +129,7 @@ struct ParsedQMIPacket: ParsedPacket {
 
         // Read bytes from buffer and convert it to Data
         guard let bytes = buffer.readBytes(length: buffer.readableBytes) else {
-            throw QMIGenerationError.CantReadBuffer
+            throw QMIGenerationError.cantReadBuffer
         }
         return Data(bytes)
     }
@@ -156,7 +156,7 @@ struct QMIQMuxHeader {
         // The first byte must be the QMI magic byte 0x01
         let tf: UInt8 = try data.get(0)
         if tf != 0x01 {
-            throw QMIParseError.InvalidQMuxStart(tf)
+            throw QMIParseError.invalidQmuxStart(tf)
         }
 
         // The next two store the packet's length, excluding the first magic byte
@@ -167,7 +167,7 @@ struct QMIQMuxHeader {
         // 0x80 = Baseband -> iOS
         flag = try data.get(3)
         if !Self.allowedFlags.contains(flag) {
-            throw QMIParseError.InvalidQMuxFlag(flag)
+            throw QMIParseError.invalidQmuxFlag(flag)
         }
 
         // The service id is central to identifying a packet's function.
@@ -178,7 +178,7 @@ struct QMIQMuxHeader {
 
     fileprivate init (length: UInt16, flag: UInt8, serviceId: UInt8, clientId: UInt8) throws {
         if !Self.allowedFlags.contains(flag) {
-            throw QMIGenerationError.InvalidFlag(flag)
+            throw QMIGenerationError.invalidFlag(flag)
         }
 
         self.length = length
@@ -201,9 +201,7 @@ struct QMIQMuxHeader {
 struct QMITransactionHeader {
     let serviceCtl: Bool
     var byteCount: Int {
-        get {
-            return serviceCtl ? 2 : 3
-        }
+        serviceCtl ? 2 : 3
     }
 
     let compound: Bool
@@ -342,7 +340,7 @@ struct QmiTlv {
     init(type: UInt8, data: Data) throws {
         self.type = type
         if data.count >= UInt16.max {
-            throw QMIGenerationError.DataTooLong(max: Int(UInt16.max), length: data.count)
+            throw QMIGenerationError.dataTooLong(max: Int(UInt16.max), length: data.count)
         }
         self.length = UInt16(data.count)
         self.data = data

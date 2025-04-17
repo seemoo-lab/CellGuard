@@ -51,7 +51,7 @@ extension PersistenceController {
 
             // We show the unknown status if there's work left and were in the analysis mode
             if unknowns.count > 0 && dataCollectionMode == .none {
-                return .Unknown
+                return .unknown
             }
 
             // == Failed Measurements ==
@@ -67,7 +67,7 @@ extension PersistenceController {
             let failed = try context.fetch(failedFetchRequest)
             if failed.count > 0 {
                 let cellCount = Dictionary(grouping: failed) { Self.queryCell(from: $0.cell!) }.count
-                return .High(cellCount: cellCount)
+                return .high(cellCount: cellCount)
             }
 
             // == Suspicious Measurements ==
@@ -83,7 +83,7 @@ extension PersistenceController {
             let suspicious = try context.fetch(suspiciousFetchRequest)
             if suspicious.count > 0 {
                 let cellCount = Dictionary(grouping: suspicious) { Self.queryCell(from: $0.cell!) }.count
-                return .Medium(cause: .Cells(cellCount: cellCount))
+                return .medium(cause: .cells(cellCount: cellCount))
             }
 
             #if JAILBREAK
@@ -98,10 +98,10 @@ extension PersistenceController {
 
                 // We've received no cells for 30 minutes from the tweak, so we warn the user
                 guard let latestTweakCell = all.first?.cell else {
-                    return .Medium(cause: .TweakCells)
+                    return .medium(cause: .tweakCells)
                 }
                 if latestTweakCell.collected ?? Date.distantPast < thirtyMinutesAgo {
-                    return .Medium(cause: .TweakCells)
+                    return .medium(cause: .tweakCells)
                 }
 
                 // == Latest Packet ==
@@ -120,10 +120,10 @@ extension PersistenceController {
                     .sorted { return $0.collected ?? Date.distantPast < $1.collected ?? Date.distantPast }
                     .last
                 guard let latestPacket = latestPacket else {
-                    return .Medium(cause: .TweakPackets)
+                    return .medium(cause: .tweakPackets)
                 }
                 if latestPacket.collected ?? Date.distantPast < thirtyMinutesAgo {
-                    return .Medium(cause: .TweakPackets)
+                    return .medium(cause: .tweakPackets)
                 }
             }
             #endif
@@ -133,7 +133,7 @@ extension PersistenceController {
                 // == Low Power Mode ==
                 // See: https://developer.apple.com/documentation/foundation/processinfo/1617047-islowpowermodeenabled
                 if ProcessInfo.processInfo.isLowPowerModeEnabled {
-                    return .Medium(cause: .LowPowerMode)
+                    return .medium(cause: .lowPowerMode)
                 }
 
                 // == Disk Space ==
@@ -141,9 +141,9 @@ extension PersistenceController {
                 let homeURL = URL(fileURLWithPath: NSHomeDirectory() as String, isDirectory: true)
                 do {
                     let values = try homeURL.resourceValues(forKeys: [.volumeAvailableCapacityForOpportunisticUsageKey])
-                    if let volumeAvailableCapacityForOpportunisticUsage = values.volumeAvailableCapacityForOpportunisticUsage {
-                        if volumeAvailableCapacityForOpportunisticUsage < 1024 * 1024 * 1024 {
-                            return .Medium(cause: .DiskSpace)
+                    if let availableCapacity = values.volumeAvailableCapacityForOpportunisticUsage {
+                        if availableCapacity < 1024 * 1024 * 1024 {
+                            return .medium(cause: .diskSpace)
                         }
                     }
                 } catch {
@@ -162,10 +162,10 @@ extension PersistenceController {
 
                 // We've received no location for 30 minutes from iOS, so we warn the user
                 guard let latestLocation = location.first else {
-                    return .Medium(cause: .Location)
+                    return .medium(cause: .location)
                 }
                 if latestLocation.collected ?? Date.distantPast < thirtyMinutesAgo {
-                    return .Medium(cause: .Location)
+                    return .medium(cause: .location)
                 }
             }
 
@@ -173,20 +173,20 @@ extension PersistenceController {
 
             if (LocationDataManager.shared.authorizationStatus ?? .authorizedAlways) != .authorizedAlways ||
                 (CGNotificationManager.shared.authorizationStatus ?? .authorized) != .authorized {
-                return .Medium(cause: .Permissions)
+                return .medium(cause: .permissions)
             }
 
             // We keep the unknown status until all cells are verified (except the current cell which we are monitoring)
             // If the analysis mode is not active, we the unknown mode has a lower priority
             if unknowns.count == 1, let unknownCellStatus = unknowns.first, unknownCellStatus.stage >= primaryVerificationPipeline.stageNumberWaitingForPackets {
-                return .LowMonitor
+                return .lowMonitor
             } else if unknowns.count > 0 {
-                return .Unknown
+                return .unknown
             }
 
-            return .Low
+            return .low
 
-        }) ?? RiskLevel.Medium(cause: .CantCompute)
+        }) ?? RiskLevel.medium(cause: .cantCompute)
     }
 
 }

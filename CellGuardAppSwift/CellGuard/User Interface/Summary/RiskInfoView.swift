@@ -26,7 +26,7 @@ struct RiskInfoView: View {
                         .foregroundColor(risk.color(dark: false))
                 }
 
-                if risk == .Unknown {
+                if risk == .unknown {
                     ProgressCounterView()
                 }
             }
@@ -47,7 +47,7 @@ struct RiskInfoView: View {
                             Text(Image(systemName: "shield")) + Text(" Anomalous Cells")
                         }
 
-                        if risk >= .High(cellCount: 1) {
+                        if risk >= .high(cellCount: 1) {
                             NavigationLink {
                                 CellListView(settings: CellListFilterSettings(status: .suspicious, timeFrame: .pastDays, date: subTwoWeeksFromCurrentDate))
                             } label: {
@@ -71,7 +71,7 @@ struct RiskInfoView: View {
                         CellListView(settings: CellListFilterSettings(status: .suspicious, timeFrame: .pastDays, date: subTwoWeeksFromCurrentDate))
                     } label: {
                         Text(Image(systemName: "exclamationmark.shield")) + Text(" Suspicious Cells")
-                    }.disabled(risk < .High(cellCount: 1))
+                    }.disabled(risk < .high(cellCount: 1))
                 }
             }
 
@@ -135,17 +135,17 @@ private struct ProgressCounterView: View {
 
 struct RiskInfoView_Previews: PreviewProvider {
     static var previews: some View {
-        RiskInfoView(risk: .Unknown)
+        RiskInfoView(risk: .unknown)
             .previewDisplayName("Unknown")
-        RiskInfoView(risk: .Low)
+        RiskInfoView(risk: .low)
             .previewDisplayName("Low")
-        RiskInfoView(risk: .LowMonitor)
+        RiskInfoView(risk: .lowMonitor)
             .previewDisplayName("Low (Monitor)")
-        RiskInfoView(risk: .Medium(cause: .Permissions))
+        RiskInfoView(risk: .medium(cause: .permissions))
             .previewDisplayName("Medium (Permissions)")
-        RiskInfoView(risk: .Medium(cause: .Cells(cellCount: 3)))
+        RiskInfoView(risk: .medium(cause: .cells(cellCount: 3)))
             .previewDisplayName("Medium (Cells)")
-        RiskInfoView(risk: .High(cellCount: 3))
+        RiskInfoView(risk: .high(cellCount: 3))
             .previewDisplayName("High")
     }
 }

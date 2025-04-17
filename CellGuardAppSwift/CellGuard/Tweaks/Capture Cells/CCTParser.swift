@@ -30,10 +30,10 @@ enum CCTParserError: Error {
 }
 
 enum CCTCellType: String {
-    case Serving = "CellTypeServing"
-    case Neighbor = "CellTypeNeighbor"
-    case Monitor = "CellTypeMonitor"
-    case Detected = "CellTypeDetected"
+    case serving = "CellTypeServing"
+    case neighbor = "CellTypeNeighbor"
+    case monitor = "CellTypeMonitor"
+    case detected = "CellTypeDetected"
 }
 
 /// A structure similar to the model "Cell".

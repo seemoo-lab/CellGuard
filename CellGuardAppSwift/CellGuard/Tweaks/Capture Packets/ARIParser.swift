@@ -14,15 +14,15 @@ import NIOCore
 // - https://tuprints.ulb.tu-darmstadt.de/19397/1/Thesis.pdf
 
 enum ARIParseError: Error {
-    case HeaderMissing
-    case InvalidMagicBytes
-    case InvalidPacketLength(UInt16, UInt16)
+    case headerMissing
+    case invalidMagicBytes
+    case invalidPacketLength(UInt16, UInt16)
 }
 
 enum ARIGenerationError: Error {
-    case TLVsTooLong(max: Int, length: Int)
-    case HeaderFieldTooLong(field: String, max: Int, length: Int)
-    case TLVFieldTooLong(field: String, max: Int, length: Int)
+    case tlvsTooLong(max: Int, length: Int)
+    case headerFieldTooLong(field: String, max: Int, length: Int)
+    case tlvFieldTooLong(field: String, max: Int, length: Int)
 }
 
 struct ParsedARIPacket: ParsedPacket {
@@ -33,14 +33,14 @@ struct ParsedARIPacket: ParsedPacket {
     init(data: Data) throws {
         // The header has a size of 12 bytes
         if data.count < 12 {
-            throw ARIParseError.HeaderMissing
+            throw ARIParseError.headerMissing
         }
 
         header = try ARIHeader(data: data.subdata(in: 0..<12))
 
         // The length field of the header does not include the header length itself
         if header.length + 12 != data.count {
-            throw ARIParseError.InvalidPacketLength(header.length + 12, UInt16(data.count))
+            throw ARIParseError.invalidPacketLength(header.length + 12, UInt16(data.count))
         }
 
         // We iterating through all TLVs making up the content of the ARI packet
@@ -58,7 +58,7 @@ struct ParsedARIPacket: ParsedPacket {
     init(group: UInt8, type: UInt16, transaction: UInt16, sequenceNumber: UInt16, acknowledgement: Bool, tlvs: [AriTlv]) throws {
         let tlvByteCount = tlvs.map { $0.byteCount }.reduce(0, +)
         if tlvByteCount >= 1 << 15 {
-            throw ARIGenerationError.TLVsTooLong(max: Int(UInt16.max), length: tlvByteCount)
+            throw ARIGenerationError.tlvsTooLong(max: Int(UInt16.max), length: tlvByteCount)
         }
 
         self.header = try ARIHeader(group: group, sequenceNumber: sequenceNumber, length: UInt16(tlvByteCount), type: type, transaction: transaction, acknowledgement: acknowledgement)
@@ -79,7 +79,7 @@ struct ParsedARIPacket: ParsedPacket {
 
         // Read bytes from buffer and convert it to Data
         guard let bytes = buffer.readBytes(length: buffer.readableBytes) else {
-            throw QMIGenerationError.CantReadBuffer
+            throw QMIGenerationError.cantReadBuffer
         }
         return Data(bytes)
     }
@@ -130,7 +130,7 @@ struct ARIHeader {
         // Each ARI packet starts with 4 magic bytes
         let magicBytes = data.subdata(in: 0..<4)
         if magicBytes != Data(magicBytes) {
-            throw ARIParseError.InvalidMagicBytes
+            throw ARIParseError.invalidMagicBytes
         }
 
         // ARI does not respect byte boundaries like QMI does, instead fields are spread out over multiple bytes.
@@ -155,19 +155,19 @@ struct ARIHeader {
 
     fileprivate init(group: UInt8, sequenceNumber: UInt16, length: UInt16, type: UInt16, transaction: UInt16, acknowledgement: Bool) throws {
         if group >= (1 << 6) {
-            throw ARIGenerationError.HeaderFieldTooLong(field: "group", max: Int(1 << 6), length: Int(group))
+            throw ARIGenerationError.headerFieldTooLong(field: "group", max: Int(1 << 6), length: Int(group))
         }
         if sequenceNumber >= (1 << 11) {
-            throw ARIGenerationError.HeaderFieldTooLong(field: "sequenceNumber", max: Int(1 << 11), length: Int(group))
+            throw ARIGenerationError.headerFieldTooLong(field: "sequenceNumber", max: Int(1 << 11), length: Int(group))
         }
         if length >= (1 << 15) {
-            throw ARIGenerationError.HeaderFieldTooLong(field: "length", max: Int(1 << 15), length: Int(group))
+            throw ARIGenerationError.headerFieldTooLong(field: "length", max: Int(1 << 15), length: Int(group))
         }
         if type >= (1 << 10) {
-            throw ARIGenerationError.HeaderFieldTooLong(field: "type", max: Int(1 << 10), length: Int(group))
+            throw ARIGenerationError.headerFieldTooLong(field: "type", max: Int(1 << 10), length: Int(group))
         }
         if transaction >= (1 << 15) {
-            throw ARIGenerationError.HeaderFieldTooLong(field: "transaction", max: Int(1 << 15), length: Int(group))
+            throw ARIGenerationError.headerFieldTooLong(field: "transaction", max: Int(1 << 15), length: Int(group))
         }
 
         self.group = group
@@ -237,13 +237,13 @@ struct AriTlv {
 
     init(type: UInt16, version: UInt8, data: Data) throws {
         if type >= (1 << 12) {
-            throw ARIGenerationError.TLVFieldTooLong(field: "type", max: (1 << 12) - 1, length: data.count)
+            throw ARIGenerationError.tlvFieldTooLong(field: "type", max: (1 << 12) - 1, length: data.count)
         }
         if version >= (1 << 3) {
-            throw ARIGenerationError.TLVFieldTooLong(field: "version", max: (1 << 3) - 1, length: data.count)
+            throw ARIGenerationError.tlvFieldTooLong(field: "version", max: (1 << 3) - 1, length: data.count)
         }
         if data.count > (1 << 14) {
-            throw ARIGenerationError.TLVFieldTooLong(field: "data", max: (1 << 14) - 1, length: data.count)
+            throw ARIGenerationError.tlvFieldTooLong(field: "data", max: (1 << 14) - 1, length: data.count)
         }
 
         self.type = type

@@ -332,14 +332,15 @@ private struct CheckDistanceOfCell: VerificationStage {
     }
 
     private func haversineDistance(lat1: Double, lon1: Double, lat2: Double, lon2: Double) -> Double {
-        let R = 6371.00887714 // Mean earth radius in km, we just take this value as the truth. R_0 of the WGS 84.
+        // Mean earth radius in km, we just take this value as the truth. R_0 of the WGS 84.
+        let radius = 6371.00887714
         let dLat = (lat2 - lat1).degreesToRadians
         let dLon = (lon2 - lon1).degreesToRadians
         let a = sin(dLat / 2) * sin(dLat / 2) +
         cos(lat1.degreesToRadians) * cos(lat2.degreesToRadians) *
         sin(dLon / 2) * sin(dLon / 2)
         let c = 2 * atan2(sqrt(a), sqrt(1 - a))
-        return R * c
+        return radius * c
     }
 
     private func isCountryWithinDistance(start: CLLocationCoordinate2D, radius: Double, countryBorders: [String: [[CLLocationCoordinate2D]]]) -> [String] {

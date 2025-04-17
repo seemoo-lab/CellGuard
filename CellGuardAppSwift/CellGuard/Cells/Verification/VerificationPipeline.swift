@@ -233,11 +233,9 @@ extension VerificationPipeline {
 
         // Checking for multiple stages in the pipeline with the same stageId (which is not allowed)
         let stagesDict = Dictionary(grouping: stages, by: { $0.id })
-        for (stageId, stages) in stagesDict {
-            if stages.count > 1 {
-                let stageNames = stages.map {$0.name}
-                logger.warning("Multiple stages \(stageNames.joined(separator: ", ")) with same stageId = \(stageId)")
-            }
+        for (stageId, stages) in stagesDict where stages.count > 1 {
+            let stageNames = stages.map {$0.name}
+            logger.warning("Multiple stages \(stageNames.joined(separator: ", ")) with same stageId = \(stageId)")
         }
     }
 

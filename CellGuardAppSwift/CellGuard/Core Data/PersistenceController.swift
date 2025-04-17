@@ -8,13 +8,6 @@
 import CoreData
 import OSLog
 
-// TODO: Maybe use later
-protocol Persistable<T> {
-    associatedtype T
-
-    func applyTo(_ object: T)
-}
-
 extension UserDefaults {
 
     // See: https://stackoverflow.com/a/49276809

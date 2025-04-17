@@ -95,7 +95,9 @@ struct PacketQMIDetailsView_Previews: PreviewProvider {
         let packets = PersistencePreview.packets(context: context)
 
         NavigationView {
-            PacketQMIDetailsView(packet: packets[0] as! PacketQMI)
+            if let packet = packets[0] as? PacketQMI {
+                PacketQMIDetailsView(packet: packet)
+            }
         }
         .environment(\.managedObjectContext, context)
     }

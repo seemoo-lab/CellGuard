@@ -104,7 +104,9 @@ struct PacketARIDetailsView_Previews: PreviewProvider {
         let packets = PersistencePreview.packets(context: context)
 
         NavigationView {
-            PacketARIDetailsView(packet: packets[3] as! PacketARI)
+            if let packet = packets[3] as? PacketARI {
+                PacketARIDetailsView(packet: packet)
+            }
         }
         .environment(\.managedObjectContext, context)
     }

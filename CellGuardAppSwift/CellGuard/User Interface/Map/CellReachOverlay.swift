@@ -14,15 +14,11 @@ class CellReachOverlay: NSObject, MKOverlay {
     let circle: MKCircle
 
     var coordinate: CLLocationCoordinate2D {
-        get {
-            circle.coordinate
-        }
+        circle.coordinate
     }
 
     var boundingMapRect: MKMapRect {
-        get {
-            circle.boundingMapRect
-        }
+        circle.boundingMapRect
     }
 
     init(location: LocationALS) {

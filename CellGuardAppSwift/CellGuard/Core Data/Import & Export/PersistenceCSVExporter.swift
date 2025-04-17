@@ -67,7 +67,7 @@ struct DatabaseFileElementWriter<T: NSFetchRequestResult>: FileElementWriter {
                     try fileHandle.write(contentsOf: data)
 
                     // Append a new line as the string produced by the library doesn't end with one
-                    try fileHandle.write(contentsOf: "\n".data(using: .utf8)!)
+                    try fileHandle.write(contentsOf: Data("\n".utf8))
 
                     // Create a new CSV writer
                     csv = try CSVWriter(stream: .toMemory())
@@ -264,7 +264,7 @@ struct PersistenceCSVExporter {
             try fileHandle.write(contentsOf: data)
 
             // Append a new line as the string produced by the library doesn't end with one
-            try fileHandle.write(contentsOf: "\n".data(using: .utf8)!)
+            try fileHandle.write(contentsOf: Data("\n".utf8))
 
             progress(category, counter, count)
 
@@ -305,7 +305,7 @@ struct PersistenceCSVExporter {
                 let request: NSFetchRequest<CellALS> = CellALS.fetchRequest()
                 request.relationshipKeyPathsForPrefetching = ["location"]
                 return request
-            }) { csv, result in
+            }, { csv, result in
                 let location = result.location
 
                 try csv.write(row: [
@@ -323,7 +323,7 @@ struct PersistenceCSVExporter {
                     csvInt(location?.reach),
                     csvInt(location?.score)
                 ])
-            }]
+            })]
         )
     }
 

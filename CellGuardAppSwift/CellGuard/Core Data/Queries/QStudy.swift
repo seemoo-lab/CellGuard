@@ -60,16 +60,13 @@ extension PersistenceController {
 
             cellsToBeUploaded.removeAll { cell in
                 // Check with all dates of uploaded cells within range
-                for date in uploadedCollectedDates {
-                    if abs(cell.collected!.timeIntervalSince(date)) < 15 * 60 {
+                for date in uploadedCollectedDates where abs(cell.collected!.timeIntervalSince(date)) < 15 * 60 {
+                    // Store this information, so we don't have to check the cell again
+                    let studyCell = StudyCell(context: context)
+                    studyCell.skippedDueTime = true
+                    cell.study = studyCell
 
-                        // Store this information, so we don't have to check the cell again
-                        let studyCell = StudyCell(context: context)
-                        studyCell.skippedDueTime = true
-                        cell.study = studyCell
-
-                        return true
-                    }
+                    return true
                 }
 
                 return false
