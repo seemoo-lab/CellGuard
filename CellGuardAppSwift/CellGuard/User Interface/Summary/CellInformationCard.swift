@@ -13,6 +13,7 @@ struct CellInformationCard: View {
     
     let dateFormatter = RelativeDateTimeFormatter()
     let cell: CellTweak
+    let dualSim: Bool
     
     @FetchRequest private var alsCells: FetchedResults<CellALS>
     @FetchRequest private var tweakCells: FetchedResults<CellTweak>
@@ -20,9 +21,10 @@ struct CellInformationCard: View {
     
     private let techFormatter: CellTechnologyFormatter
     
-    init(cell: CellTweak) {
+    init(cell: CellTweak, dualSim: Bool = false) {
         self.cell = cell
         self.techFormatter = CellTechnologyFormatter.from(technology: cell.technology)
+        self.dualSim = dualSim
         
         self._alsCells = FetchRequest(
             sortDescriptors: [NSSortDescriptor(keyPath: \CellALS.imported, ascending: false)],
@@ -42,6 +44,14 @@ struct CellInformationCard: View {
                 Text("Active Cell")
                     .font(.title2)
                     .bold()
+                
+                if dualSim {
+                    HStack(spacing: 2) {
+                        Image(systemName: "simcard")
+                        Text("\(cell.simSlotID)")
+                    }
+                }
+                
                 Spacer()
                 if let state = tweakCells.first?.primaryVerification {
                     CellStatusIcon(state: state)

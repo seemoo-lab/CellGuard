@@ -9,6 +9,7 @@ import CoreData
 import SwiftUI
 
 struct PacketFilterSettings {
+    var simSlotID: PacketFilterSimSlot = .all
     var proto: PacketFilterProtocol = .qmi
     var protoAutoSet: Bool = false
     var direction: PacketFilterDirection = .all
@@ -32,6 +33,10 @@ struct PacketFilterSettings {
         }
         
         var predicateList: [NSPredicate] = []
+        
+        if let slotNumber = simSlotID.slotNumber {
+            predicateList.append(NSPredicate(format: "simSlotID == %@", NSNumber(value: slotNumber)))
+        }
         
         if let direction = direction.cpt?.rawValue {
             predicateList.append(NSPredicate(format: "direction == %@", direction))
@@ -68,6 +73,10 @@ struct PacketFilterSettings {
         
         var predicateList: [NSPredicate] = []
         
+        if simSlotID != .all {
+            predicateList.append(NSPredicate(format: "simSlotID == %@", NSNumber(value: simSlotID.rawValue)))
+        }
+        
         if let direction = direction.cpt?.rawValue {
             predicateList.append(NSPredicate(format: "direction == %@", direction))
         }
@@ -90,6 +99,25 @@ struct PacketFilterSettings {
         request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicateList)
     }
     
+}
+
+enum PacketFilterSimSlot: UInt8, CaseIterable, Identifiable {
+    case all, slot1, slot2, none
+    
+    var id: Self { self }
+    
+    var slotNumber: Int? {
+        switch self {
+        case .none:
+            return 0
+        case .slot1:
+            return 1
+        case .slot2:
+            return 2
+        default:
+            return nil
+        }
+    }
 }
 
 enum PacketFilterProtocol: String, CaseIterable, Identifiable {
@@ -182,6 +210,9 @@ private struct PacketFilterListView: View {
                 }
                 Picker("Direction", selection: $settings.direction) {
                     ForEach(PacketFilterDirection.allCases) { Text($0.rawValue.capitalized) }
+                }
+                Picker("SIM Slot", selection: $settings.simSlotID) {
+                    ForEach(PacketFilterSimSlot.allCases) { Text(String(describing: $0).capitalized) }
                 }
                 if settings.proto == .qmi {
                     Picker("Type", selection: $settings.qmiType) {

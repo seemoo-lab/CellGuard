@@ -561,10 +561,13 @@ struct LogArchiveReader {
             throw LogArchiveError.binaryPacketDataDecodingError
         }
         
+        let slotIDCapture = message.split(separator: " ").first(where: {$0.starts(with: "Sim=")})?.dropFirst(4)
+        let simSlotID = slotIDCapture != nil ? UInt8(slotIDCapture!) : nil
+
         let direction: CPTDirection
         direction = message.contains("Req") ? .outgoing : .ingoing
         
-        return try CPTPacket(direction: direction, data: packetData, timestamp: timestamp, knownProtocol: .qmi)
+        return try CPTPacket(direction: direction, data: packetData, timestamp: timestamp, simSlotID: simSlotID, knownProtocol: .qmi)
     }
     
     private func readCSVPacketARI(library: String, timestamp: Date, message: String) throws -> CPTPacket {
@@ -589,6 +592,7 @@ struct LogArchiveReader {
         let direction: CPTDirection
         direction = message.contains("req") ? .outgoing : .ingoing
         
+        // We add the simSlotId when parsing the ARI packet at CPTCollector.store()
         return try CPTPacket(direction: direction, data: packetData, timestamp: timestamp, knownProtocol: .ari)
     }
     
@@ -597,6 +601,7 @@ struct LogArchiveReader {
     
     private let regexString = Regex("kCTCellMonitor([\\w]+) *= *kCTCellMonitor([a-zA-Z][\\w\\d]*);")
     private let regexStringQuoted = Regex("kCTCellMonitor([\\w]+) *= *\\\\\"([\\S]+)\\\\\";")
+    private let regexSimSlotID = Regex("slotID=(?<slotID>.*?),")
     private let replaceString = "\"$1\": \"$2\","
     
     private func readCSVCellMeasurement(timestamp: Date, message: String) throws -> CCTCellProperties {
@@ -604,6 +609,7 @@ struct LogArchiveReader {
         if messageBodySuffix.count < 2 {
             throw LogArchiveError.wrongCellPrefixText
         }
+        let messageHeaders = messageBodySuffix[0]
         // Remove the final closing parentheses
         let messageBody = messageBodySuffix[1].trimmingCharacters(in: CharacterSet(charactersIn: "()"))
         
@@ -632,8 +638,20 @@ struct LogArchiveReader {
             throw LogArchiveError.wrongCellJsonType
         }
         
-        // Append the timestamp
-        json.append(["timestamp": timestamp.timeIntervalSince1970])
+        var metaInfos: [String: Any] = [:]
+        metaInfos["timestamp"] = timestamp.timeIntervalSince1970
+        if let slotIDMatch = regexSimSlotID.firstMatch(in: messageHeaders), let slotIDCapture = slotIDMatch.captures[0]?.dropFirst(18) {
+            // The slots are named like "CTSubscriptionSlotOne", "CTSubscriptionSlotTwo", etc
+            let slotIDSpelled = String(slotIDCapture).lowercased()
+            let numberFormatter = NumberFormatter()
+            numberFormatter.locale = Locale(identifier: "en_US_POSIX")
+            numberFormatter.numberStyle = .spellOut
+            if let slotIDNumber = numberFormatter.number(from: slotIDSpelled), let simSlotID = slotIDNumber as? UInt8 {
+                metaInfos["simSlotID"] = simSlotID
+            }
+        }
+        // Append the timestamp and simSlotID
+        json.append(metaInfos)
         
         // Parse the JSON dictionary with our own parser
         do {

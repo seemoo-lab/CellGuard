@@ -27,11 +27,11 @@ extension PersistenceController {
                     continue
                 }
                 
-                if let _ = packet as? PacketQMI,
-                   let packetCells = try? cellParser.parseQmiCell(packetData, timestamp: collectedTimestamp) {
+                if let qmiPacket = packet as? PacketQMI,
+                   let packetCells = try? cellParser.parseQmiCell(packetData, timestamp: collectedTimestamp, simSlot: UInt8(qmiPacket.simSlotID)) {
                     cells += packetCells.map { (packet, $0) }
-                } else if let _ = packet as? PacketARI,
-                          let packetCells = try? cellParser.parseAriCell(packetData, timestamp: collectedTimestamp) {
+                } else if let ariPacket = packet as? PacketARI,
+                          let packetCells = try? cellParser.parseAriCell(packetData, timestamp: collectedTimestamp, simSlot: UInt8(ariPacket.simSlotID)) {
                     cells += packetCells.map { (packet, $0) }
                 }
             }
@@ -120,7 +120,7 @@ extension PersistenceController {
         }
     }
     
-    func fetchCellLifespan(of tweakCellID: NSManagedObjectID) throws -> (start: Date, end: Date, after: NSManagedObjectID)? {
+    func fetchCellLifespan(of tweakCellID: NSManagedObjectID) throws -> (start: Date, end: Date, after: NSManagedObjectID, simSlotID: UInt8)? {
         return try? performAndWait(name: "fetchContext", author: "fetchCellLifespan") { context in
             guard let tweakCell = context.object(with: tweakCellID) as? CellTweak else {
                 logger.warning("Can't convert NSManagedObjectID \(tweakCellID) to CellTweak")
@@ -131,11 +131,11 @@ extension PersistenceController {
                 logger.warning("CellTweak \(tweakCell) has not collected timestamp")
                 return nil
             }
-            
+
             let request = NSFetchRequest<CellTweak>()
             request.entity = CellTweak.entity()
             request.fetchLimit = 1
-            request.predicate = NSPredicate(format: "collected > %@", startTimestamp as NSDate)
+            request.predicate = NSPredicate(format: "collected > %@ and simSlotID = %@", startTimestamp as NSDate, tweakCell.simSlotID as NSNumber)
             request.sortDescriptors = [NSSortDescriptor(keyPath: \CellTweak.collected, ascending: true)]
             request.returnsObjectsAsFaults = false
             
@@ -149,7 +149,7 @@ extension PersistenceController {
                 return nil
             }
             
-            return (start: startTimestamp, end: endTimestamp, after: tweakCell.objectID)
+            return (start: startTimestamp, end: endTimestamp, after: tweakCell.objectID, simSlotID: UInt8(tweakCell.simSlotID))
         }
     }
     

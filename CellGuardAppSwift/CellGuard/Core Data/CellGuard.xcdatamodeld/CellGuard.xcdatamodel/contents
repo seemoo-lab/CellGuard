@@ -35,6 +35,7 @@
         <attribute name="network" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="physicalCell" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="preciseTechnology" optional="YES" attributeType="String"/>
+        <attribute name="simSlotID" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="technology" optional="YES" attributeType="String"/>
         <relationship name="appleDatabase" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CellALS" inverseName="observedCells" inverseEntity="CellALS"/>
         <relationship name="location" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="LocationUser" inverseName="cells" inverseEntity="LocationUser"/>
@@ -105,6 +106,7 @@
         <attribute name="direction" optional="YES" attributeType="String"/>
         <attribute name="group" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="imported" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="simSlotID" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="type" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <relationship name="cells" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CellTweak" inverseName="packetAri" inverseEntity="CellTweak"/>
         <relationship name="index" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="PacketIndexARI" inverseName="packet" inverseEntity="PacketIndexARI"/>
@@ -136,6 +138,7 @@
         <attribute name="collected" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="reject" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="signal" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="simSlotID" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <relationship name="packet" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PacketQMI" inverseName="index" inverseEntity="PacketQMI"/>
         <fetchIndex name="byRejectedPackets" partialIndexPredicate="reject == 1 AND signal == 0">
             <fetchIndexElement property="reject" type="Binary" order="ascending"/>
@@ -154,6 +157,7 @@
         <attribute name="indication" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="message" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="service" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="simSlotID" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <relationship name="cells" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CellTweak" inverseName="packetQmi" inverseEntity="CellTweak"/>
         <relationship name="index" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="PacketIndexQMI" inverseName="packet" inverseEntity="PacketIndexQMI"/>
         <relationship name="verificationLogs" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="VerificationLog" inverseName="relatedPacketQMI" inverseEntity="VerificationLog"/>

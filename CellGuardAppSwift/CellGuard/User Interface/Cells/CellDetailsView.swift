@@ -33,7 +33,7 @@ struct CellDetailsView: View {
         
         List {
             TweakCellDetailsMap(alsCells: alsCellsRequest, verifyStates: measurementsRequest)
-            CellDetailsCell(cell: cell)
+            CellDetailsCell(cell: cell, verifyStates: measurementsRequest)
             TweakCellDetailsMeasurementCount(alsCells: alsCellsRequest, verifyStates: measurementsRequest)
             // A toolbar item somehow hides the navigation history (back button) upon state change and thus, we use a simple button
             Button {
@@ -105,16 +105,22 @@ private struct CellDetailsCell: View {
     let cell: Cell
     let techFormatter: CellTechnologyFormatter
     
-    init(cell: Cell) {
+    @FetchRequest private var verifyStates: FetchedResults<VerificationState>
+    
+    init(cell: Cell, verifyStates: FetchRequest<VerificationState>) {
         self.cell = cell
         self.techFormatter = CellTechnologyFormatter.from(technology: cell.technology)
+        self._verifyStates = verifyStates
     }
     
     var body: some View {
+        let simSlotsSet = Set(verifyStates.compactMap { $0.cell?.simSlotID })
+        let simSlots = simSlotsSet.map { "\($0)" }.sorted().joined(separator: ",")
         Group {
             CellCountryNetworkSection(country: cell.country, network: cell.network, techFormatter: techFormatter)
             Section(header: Text("Technology & Region")) {
                 CellDetailsRow("Technology", cell.technology ?? "Unknown")
+                CellDetailsRow("SIM Slot", simSlots)
                 CellDetailsRow(techFormatter.area(), cell.area)
             }
             Section(header: Text("Cell & Tower")) {

@@ -87,6 +87,30 @@ struct ParsedARIPacket: ParsedPacket {
     func findTlvValue(type: UInt8) -> AriTlv? {
         return self.tlvs.filter({ $0.type == type }).first
     }
+    
+    // simSlotId reimplements `subscriber::instanceAsSimSlot(unsigned int)` of the `libCommCenterBase.dylib`.
+    func simSlotId() -> UInt8? {
+        if !ariMsgHasInstance(group: self.header.group, type: self.header.type) {
+            return  nil
+        }
+        
+        guard let instanceTlv = self.findTlvValue(type: PacketConstants.ariInstanceTlvId),
+              let instance = instanceTlv.uint() else {
+            return nil
+        }
+        
+        return instance == 0 ? 1 : 2
+        
+        /* Ghidra Decompiled Code
+        int iVar1;
+
+        iVar1 = (uint)(param_1 == 1) << 1;
+        if (param_1 == 0) {
+        iVar1 = 1;
+        }
+        return iVar1;
+        */
+    }
 }
 
 struct ARIHeader {

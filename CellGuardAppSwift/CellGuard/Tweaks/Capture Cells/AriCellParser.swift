@@ -10,7 +10,7 @@ import BinarySwift
 
 extension CCTParser {
     
-    func parseAriCell(_ data: Data, timestamp: Date) throws -> [CCTCellProperties] {
+    func parseAriCell(_ data: Data, timestamp: Date, simSlot: UInt8) throws -> [CCTCellProperties] {
         // Source: https://github.com/seemoo-lab/aristoteles/blob/master/types/structure/libari_dylib.lua
         
         let parsedPacket = try ParsedARIPacket(data: data)
@@ -55,6 +55,7 @@ extension CCTParser {
                !cell.isMissingKeyProperties() {
                 cell.preciseTechnology = technology.rawValue
                 cell.timestamp = timestamp
+                cell.simSlotID = simSlot
                 
                 // We keep only the most recent cell technology info version, e.g. we use the `lteR15` cell infos, if available, instead of the
                 // `.lteV1T`, or `lte` cell infos. The order is defined by the PacketConstants.ariCellInfoTechnologies.

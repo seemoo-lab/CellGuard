@@ -17,6 +17,7 @@ struct CellListFilterSettings {
     var date: Date = Calendar.current.startOfDay(for: Date())
     
     var technology: ALSTechnology?
+    var simSlot: CellListFilterSimSlot = .all
     var country: Int?
     var network: Int?
     var area: Int?
@@ -30,6 +31,10 @@ struct CellListFilterSettings {
         
         if let technology = technology {
             predicateList.append(NSPredicate(format: "cell.technology == %@", technology.rawValue))
+        }
+        
+        if let slotNumber = simSlot.slotNumber {
+            predicateList.append(NSPredicate(format: "cell.simSlotID == %@", NSNumber(value: slotNumber)))
         }
         
         if let country = country {
@@ -137,6 +142,23 @@ enum CellListFilterStudyOptions: String, CaseIterable, Identifiable {
     var id: Self { self }
 }
 
+enum CellListFilterSimSlot: UInt8, CaseIterable, Identifiable {
+    case all, slot1, slot2
+    
+    var id: Self { self }
+    
+    var slotNumber: Int? {
+        switch self {
+        case .slot1:
+            return 1
+        case .slot2:
+            return 2
+        default:
+            return nil
+        }
+    }
+}
+
 struct CellListFilterView: View {
     let close: () -> Void
     
@@ -188,6 +210,9 @@ private struct CellListFilterSettingsView: View {
                 Picker("Technology", selection: $settings.technology) {
                     Text("All").tag(nil as ALSTechnology?)
                     ForEach(ALSTechnology.allCases) { Text($0.rawValue).tag($0 as ALSTechnology?) }
+                }
+                Picker("SIM Slot", selection: $settings.simSlot) {
+                    ForEach(CellListFilterSimSlot.allCases) { Text(String(describing: $0).capitalized) }
                 }
                 
                 LabelNumberField("Country", "MCC", $settings.country)

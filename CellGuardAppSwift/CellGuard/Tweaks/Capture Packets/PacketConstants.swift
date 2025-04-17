@@ -22,6 +22,8 @@ struct PacketConstants {
     static let ariSignalGroup = 9
     static let ariSignalType = 772
     
+    static let ariInstanceTlvId: UInt8 = 1
+
     static let ariCellInfoDirection = CPTDirection.ingoing
     static let ariCellInfoGroup = 9
     // IBINetGetCellInfoRespCb, IBINetGetCellInfoRespCbV1, IBINetGetCellInfoIndCb, IBINetGetCellInfoIndCbV1
@@ -69,4 +71,34 @@ struct PacketConstants {
         .lteV1: 0xbb, .lteV2: 0xbc, .lteV3: 0xd2, .lteV4: 0xd3, .nr: 0xe0, .nrV2: 0xe2, .nrV3: 0xe4
     ]
 
+}
+
+
+func ariMsgHasInstance(group: UInt8, type: UInt16) -> Bool {
+    switch group {
+    case 2, 4, 5, 6, 8, 10, 11, 12, 13, 14, 16, 19, 21, 29, 31, 33:
+        return true
+    case 20, 22, 23, 34, 51, 54, 60, 61, 62, 63:
+        return false
+    case 1:
+        return [257, 258, 265, 274, 513, 514, 521, 530].contains(type)
+    case 3:
+        return ![330, 586].contains(type)
+    case 7:
+        return ![278, 279, 534, 535, 545].contains(type)
+    case 9:
+        return ![293, 294, 298, 550, 554].contains(type)
+    case 15:
+        return [257, 261, 262, 264, 265, 513, 517, 518, 520, 521, 769, 773].contains(type)
+    case 17:
+        return [263, 266, 268, 519, 522, 524].contains(type)
+    case 18:
+        return ![265, 266, 521, 522].contains(type)
+    case 42:
+        return [257, 258, 513].contains(type)
+    case 50:
+        return ![273, 275, 276, 277, 278, 529, 531, 532, 533, 534, 771, 773, 774, 775].contains(type)
+    default:
+        return false
+    }
 }

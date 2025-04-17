@@ -9,7 +9,7 @@
 
 + (instancetype)manager;
 
-- (void)addData:(NSData *)packetData :(NSString *)direction;
+- (void)addData:(NSData *)packetData :(NSString *)direction :(int)simSlot;
 
 
 @end

@@ -31,6 +31,7 @@ extension PersistenceController {
                     dbPacket.collected = tweakPacket.timestamp
                     dbPacket.direction = tweakPacket.direction.rawValue
                     // dbPacket.proto = tweakPacket.proto.rawValue
+                    dbPacket.simSlotID = tweakPacket.simSlotID != nil ? Int16(tweakPacket.simSlotID!) : 0
                     
                     dbPacket.service = Int16(parsedPacket.qmuxHeader.serviceId)
                     dbPacket.message = Int32(parsedPacket.messageHeader.messageId)
@@ -74,12 +75,14 @@ extension PersistenceController {
                     if qmiPacket.message == PacketConstants.qmiRejectMessage {
                         let index = PacketIndexQMI(context: context)
                         index.collected = qmiPacket.collected
+                        index.simSlotID = qmiPacket.simSlotID
                         index.reject = true
                         qmiPacket.index = index
                         added = true
                     } else if qmiPacket.message == PacketConstants.qmiSignalMessage {
                         let index = PacketIndexQMI(context: context)
                         index.collected = qmiPacket.collected
+                        index.simSlotID = qmiPacket.simSlotID
                         index.signal = true
                         qmiPacket.index = index
                         added = true
@@ -122,6 +125,7 @@ extension PersistenceController {
                     dbPacket.collected = tweakPacket.timestamp
                     dbPacket.direction = tweakPacket.direction.rawValue
                     // dbPacket.proto = tweakPacket.proto.rawValue
+                    dbPacket.simSlotID = tweakPacket.simSlotID != nil ? Int16(tweakPacket.simSlotID!) : 0
                     
                     dbPacket.group = Int16(parsedPacket.header.group)
                     dbPacket.type = Int32(parsedPacket.header.type)
@@ -190,14 +194,16 @@ extension PersistenceController {
         return (packets.count, cellPackets)
     }
     
-    func fetchIndexedQMIPackets(start: Date, end: Date, reject: Bool = false, signal: Bool = false) throws -> [NSManagedObjectID: ParsedQMIPacket] {
+    func fetchIndexedQMIPackets(start: Date, end: Date, simSlotID: UInt8, reject: Bool = false, signal: Bool = false) throws -> [NSManagedObjectID: ParsedQMIPacket] {
         return try performAndWait(name: "fetchContext", author: "fetchIndexedQMIPackets") { context in
             let request = PacketIndexQMI.fetchRequest()
-            
-            request.predicate = NSPredicate(
-                format: "reject = %@ and signal = %@ and %@ <= collected and collected <= %@",
-                NSNumber(booleanLiteral: reject), NSNumber(booleanLiteral: signal), start as NSDate, end as NSDate
-            )
+            var predicateList: [NSPredicate] = []
+            predicateList.append(NSPredicate(format: "reject = %@", NSNumber(booleanLiteral: reject)))
+            predicateList.append(NSPredicate(format: "signal = %@", NSNumber(booleanLiteral: signal)))
+            predicateList.append(NSPredicate(format: "simSlotID = 0 or simSlotID = %@", NSNumber(value: simSlotID)))
+            predicateList.append(NSPredicate(format: "%@ <= collected", start as NSDate))
+            predicateList.append(NSPredicate(format: "collected <= %@", end as NSDate))
+            request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicateList)
             request.sortDescriptors = [NSSortDescriptor(keyPath: \PacketIndexQMI.collected, ascending: false)]
             request.includesSubentities = true
         

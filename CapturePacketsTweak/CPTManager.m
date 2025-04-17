@@ -19,7 +19,7 @@
             :@"CPTManager" :@"CapturePacketsTweak" :@"packets-cache.json"];
 }
 
-- (void)addData:(NSData *)packetData :(NSString *)direction; {
+- (void)addData:(NSData *)packetData :(NSString *)direction :(int)simSlot; {
     // If the packet data is null, we'll just ignore it
     if (packetData == NULL) {
         return;
@@ -29,6 +29,8 @@
     NSTimeInterval now = [[NSDate date] timeIntervalSince1970];
 
     NSMutableString *entry = [NSMutableString stringWithString:direction];
+    [entry appendString:@","];
+    [entry appendFormat:@"%d", simSlot];
     [entry appendString:@","];
     [entry appendString:[packetData base64EncodedStringWithOptions:NSDataBase64EncodingEndLineWithLineFeed]];
     [entry appendString:@","];
