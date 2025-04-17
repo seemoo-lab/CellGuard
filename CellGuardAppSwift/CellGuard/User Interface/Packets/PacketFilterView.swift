@@ -34,8 +34,8 @@ struct PacketFilterSettings {
         
         var predicateList: [NSPredicate] = []
         
-        if simSlotID != .all {
-            predicateList.append(NSPredicate(format: "simSlotID == %@", NSNumber(value: simSlotID.rawValue)))
+        if let slotNumber = simSlotID.slotNumber {
+            predicateList.append(NSPredicate(format: "simSlotID == %@", NSNumber(value: slotNumber)))
         }
         
         if let direction = direction.cpt?.rawValue {
@@ -102,9 +102,22 @@ struct PacketFilterSettings {
 }
 
 enum PacketFilterSimSlot: UInt8, CaseIterable, Identifiable {
-    case none, slot1, slot2, all
+    case all, slot1, slot2, none
     
     var id: Self { self }
+    
+    var slotNumber: Int? {
+        switch self {
+        case .none:
+            return 0
+        case .slot1:
+            return 1
+        case .slot2:
+            return 2
+        default:
+            return nil
+        }
+    }
 }
 
 enum PacketFilterProtocol: String, CaseIterable, Identifiable {

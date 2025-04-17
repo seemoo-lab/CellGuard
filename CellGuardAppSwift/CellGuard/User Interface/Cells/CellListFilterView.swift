@@ -143,7 +143,7 @@ enum CellListFilterStudyOptions: String, CaseIterable, Identifiable {
 }
 
 enum CellListFilterSimSlot: UInt8, CaseIterable, Identifiable {
-    case slot1, slot2, all
+    case all, slot1, slot2
     
     var id: Self { self }
     
