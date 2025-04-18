@@ -24,7 +24,7 @@ lint_swiftlint:
     - swiftlint --config CellGuardAppSwift/.swiftlint.yml --reporter codeclimate --output swift-lint.json CellGuardAppSwift
   artifacts:
     reports:
-      codequality: CellGuardAppSwift/swift-lint.json
+      codequality: swift-lint.json
 
 # Lint the Rust code with Rustfmt and clippy
 # We cache the environment - see https://stackoverflow.com/a/74888341
