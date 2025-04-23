@@ -136,6 +136,12 @@ class CGNotificationManager: ObservableObject {
             return
         }
 
+        // Do not queue another notification if there was already a (scheduled) notification
+        let pastNotifyRemovalDate = UserDefaults.standard.date(forKey: UserDefaultsKeys.profileExpiryNotification.rawValue)
+        if let pastNotifyRemovalDate = pastNotifyRemovalDate, pastNotifyRemovalDate == removalDate {
+            return
+        }
+
         if dayBefore > Date() {
             // If there is still more than one day left, queue the notification
             content.title = "Baseband profile expires tomorrow"
@@ -144,12 +150,6 @@ class CGNotificationManager: ObservableObject {
             let dayBeforeComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute, .timeZone], from: dayBefore)
             trigger = UNCalendarNotificationTrigger(dateMatching: dayBeforeComponents, repeats: false)
         } else {
-            // Do not queue another notification if there was already a (scheduled) notification
-            let pastNotifyRemovalDate = UserDefaults.standard.date(forKey: UserDefaultsKeys.profileExpiryNotification.rawValue)
-            if let pastNotifyRemovalDate = pastNotifyRemovalDate, pastNotifyRemovalDate == removalDate {
-                return
-            }
-
             // If not, send it instantly
             content.title = "Baseband profile expires soon"
             content.body = "The baseband debug profile expires soon, reinstall it to continue collecting data."
