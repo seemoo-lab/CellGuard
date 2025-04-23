@@ -138,7 +138,8 @@ class CGNotificationManager: ObservableObject {
 
         // Do not queue another notification if there was already a (scheduled) notification
         let pastNotifyRemovalDate = UserDefaults.standard.date(forKey: UserDefaultsKeys.profileExpiryNotification.rawValue)
-        if let pastNotifyRemovalDate = pastNotifyRemovalDate, pastNotifyRemovalDate == removalDate {
+        // We can't compare date using == due to floating point issues: https://stackoverflow.com/a/59107589
+        if let pastNotifyRemovalDate = pastNotifyRemovalDate, calendar.isDate(pastNotifyRemovalDate, equalTo: removalDate, toGranularity: .second) {
             return
         }
 
