@@ -273,22 +273,9 @@ extension CellGuardAppDelegate: UNUserNotificationCenterDelegate {
         let userInfo = response.notification.request.content.userInfo
         if let type = userInfo["type"] as? String,
             type == "sysdiag",
-            let fileName = userInfo["fileName"],
-            let url = URL(string: "app-prefs:root=Privacy") {
-
-            // TODO: There are "deeper" links, but they do seem to be working reliably on iOS 18 :(
-            // Note: They should be working on iOS 17 ...
-            // - Even the privacy link doesn't seem to be working anymore
-            // - PROBLEM_REPORTING
-            // - PROBLEM_REPORTING/DIAGNOSTIC_USAGE_DATA
-            // - PROBLEM_REPORTING/DIAGNOSTIC_USAGE_DATA/sysdiagnose_2023.07.29_20-09-34+0200_iPhone-OS_iPhone_18B121.tar.gz
-            // See: https://dev.seemoo.tu-darmstadt.de/apple/cell-guard/-/issues/111#note_15596
-            // If we use the links with a shortcut they seem to be working
-            // We can't call the new iOS 18 settings-navigation:// URLs from our app :(
-            // See: https://www.reddit.com/r/shortcuts/comments/1hag60z/does_anyone_know_the_new_settings_url_sub_paths/
-            // There's still hope: https://developer.apple.com/forums/thread/759900
-            // There are schemes like App-prefs:com.apple.MobileSMS and App-prefs:com.apple.mobilephone
-            // TODO: Maybe we can find a similar scheme with Reversing for "Analytics & Improvement"
+            let fileName = userInfo["fileName"] as? String,
+            let diagnosticsUrl = URL(string: SysdiagTask.settingsUrlFor(sysdiagnose: nil)),
+            let sysdiagnoseUrl = URL(string: SysdiagTask.settingsUrlFor(sysdiagnose: fileName)) {
 
             // We could run a shortcut:
             /*
@@ -300,10 +287,17 @@ extension CellGuardAppDelegate: UNUserNotificationCenterDelegate {
              */
             // See: https://www.reddit.com/r/shortcuts/comments/1fvb5w2/comment/lrb90p8/
 
-            if UIApplication.shared.canOpenURL(url) {
-                UIApplication.shared.open(url)
+            if UIApplication.shared.canOpenURL(diagnosticsUrl) {
+                UIApplication.shared.open(diagnosticsUrl)
             }
             print("Opening settings for sysdiagnose: \(fileName)")
+            
+            Task.detached {
+                try? await Task.sleep(nanoseconds: NSEC_PER_SEC)
+                if await UIApplication.shared.canOpenURL(sysdiagnoseUrl) {
+                    await UIApplication.shared.open(sysdiagnoseUrl)
+                }
+            }
         }
 
         completionHandler()
