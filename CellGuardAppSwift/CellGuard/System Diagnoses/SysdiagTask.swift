@@ -127,20 +127,4 @@ struct SysdiagTask {
         return nil
     }
 
-    private static let diagnosticsSettingsUrl: String = {
-        if #available(iOS 18.0, *) {
-            return "settings-navigation://com.apple.Settings.PrivacyAndSecurity/PROBLEM_REPORTING/DIAGNOSTIC_USAGE_DATA"
-        } else {
-            return "prefs:root=Privacy&path=PROBLEM_REPORTING/DIAGNOSTIC_USAGE_DATA"
-        }
-    }()
-
-    static func settingsUrlFor(sysdiagnose: String?) -> String {
-        if let sysdiagnose = sysdiagnose {
-            return diagnosticsSettingsUrl + "/" + sysdiagnose
-        } else {
-            return diagnosticsSettingsUrl
-        }
-    }
-
 }

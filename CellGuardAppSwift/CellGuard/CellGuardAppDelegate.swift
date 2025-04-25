@@ -272,31 +272,18 @@ extension CellGuardAppDelegate: UNUserNotificationCenterDelegate {
 
         let userInfo = response.notification.request.content.userInfo
         if let type = userInfo["type"] as? String,
-            type == "sysdiag",
-            let fileName = userInfo["fileName"] as? String,
-            let diagnosticsUrl = URL(string: SysdiagTask.settingsUrlFor(sysdiagnose: nil)),
-            let sysdiagnoseUrl = URL(string: SysdiagTask.settingsUrlFor(sysdiagnose: fileName)) {
+           type == "sysdiag",
+           let fileName = (userInfo["fileName"] as? String),
+           let fileNameEncoded = fileName.addingPercentEncoding(withAllowedCharacters: .urlFragmentAllowed),
+           // Our shortcut: https://www.icloud.com/shortcuts/88c3baa7613445fa9db58ec3cc88c7e2
+           // See: https://support.apple.com/de-de/guide/shortcuts/apd624386f42/ios
+           let url = URL(string: "shortcuts://run-shortcut?name=Open%20Sysdiagnose&input=text&text=\(fileNameEncoded)") {
 
-            // We could run a shortcut:
-            /*
-             Button {
-                 UIApplication.shared.open(URL(string: "shortcuts://run-shortcut?name=Analytics%20%26%20Improvement")!)
-             } label: {
-                 Text("Test")
-             }
-             */
-            // See: https://www.reddit.com/r/shortcuts/comments/1fvb5w2/comment/lrb90p8/
-
-            if UIApplication.shared.canOpenURL(diagnosticsUrl) {
-                UIApplication.shared.open(diagnosticsUrl)
-            }
-            print("Opening settings for sysdiagnose: \(fileName)")
-            
-            Task.detached {
-                try? await Task.sleep(nanoseconds: NSEC_PER_SEC)
-                if await UIApplication.shared.canOpenURL(sysdiagnoseUrl) {
-                    await UIApplication.shared.open(sysdiagnoseUrl)
-                }
+            if UIApplication.shared.canOpenURL(url) {
+                Self.logger.debug("Opening shortcut for sysdiagnose: \(fileName) - \(url)")
+                UIApplication.shared.open(url)
+            } else {
+                Self.logger.warning("Can't shortcut shortcut for sysdiagnose: \(fileName) - \(url)")
             }
         }
 
