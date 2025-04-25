@@ -179,7 +179,7 @@ extension CCTParser {
             let _: UInt8 = try data.get(29) // dayLightSavings
         } else if version == .cdmaEvdo {
             cell.frequency = Int32((try? data.get(5) as UInt8) ?? 0)
-            cell.band = Int32((try? data.get(6) as UInt16) ?? 0)
+            cell.band = Int32((try? data.get(6) as UInt16) ?? 0) + 1 // The offset by one provides alignment with the iOS libraries
             _ = try data.getUTF8(8, length: 16) // sectorID
             let _: UInt32 = try data.get(24) // latitude
             let _: UInt32 = try data.get(28) // longitude
