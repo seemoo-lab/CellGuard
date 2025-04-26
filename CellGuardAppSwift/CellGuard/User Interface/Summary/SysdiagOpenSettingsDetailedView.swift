@@ -8,6 +8,9 @@
 import SwiftUI
 
 struct SysdiagOpenSettingsDetailedView: View {
+    @AppStorage(UserDefaultsKeys.shortcutInstalled.rawValue)
+    private var shortcutInstalled: Bool = false
+
     var body: some View {
         ScrollView {
             Text("Import a Sysdiagnose")
@@ -18,8 +21,11 @@ struct SysdiagOpenSettingsDetailedView: View {
 
             Spacer()
 
-            Text("Please follow these steps to import\na sysdiagnose into CellGuard:")
+            // CellGuard will notify you once a sysdiagnose is ready to be imported.
+
+            Text("Follow these steps to manually import\na sysdiagnose into CellGuard")
                 .multilineTextAlignment(.center)
+                .padding()
 
             Spacer(minLength: 10)
 
@@ -53,25 +59,30 @@ struct SysdiagOpenSettingsDetailedView: View {
                 }
             }
 
-            Spacer(minLength: 40)
-
-            LargeButton(title: "Go to Settings", backgroundColor: .blue) {
-                // See: https://github.com/FifiTheBulldog/ios-settings-urls/blob/master/settings-urls.md
-
-                #if JAILBREAK
-                // Apple does not like this URL as it accesses a private API (https://stackoverflow.com/a/70838268)
-                let url = "App-prefs:Privacy&path=PROBLEM_REPORTING"
-                #else
-                // The App-Store-Safe-URL
-                let url = UIApplication.openSettingsURLString
-                #endif
-
-                if let appSettings = URL(string: url), UIApplication.shared.canOpenURL(appSettings) {
-                    UIApplication.shared.open(appSettings)
-                }
+            LargeButton(title: "Go to \(shortcutInstalled ? "Analytics Data" : "Settings")", backgroundColor: .blue) {
+                SysdiagUrls.open(sysdiagnose: nil)
             }
             .padding()
 
+            VStack {
+                Text("You can directly navigate to sysdiagnoses using a Shortcut. Once installed, simply tap CellGuard's ready-to-import notification.")
+                    .foregroundColor(.gray)
+
+                Toggle(isOn: .init(get: {
+                    shortcutInstalled
+                }, set: { state in
+                    // Prompt the user to install the shortcut if the setting is enabled
+                    // We cannot verify that the shortcut was installed successfully
+                    if state {
+                        SysdiagUrls.installShortcut()
+                    }
+                    shortcutInstalled = state
+                })) {
+                    Text("Shortcut Active")
+                }
+                .padding()
+            }
+            .padding(.horizontal)
         }
     }
 }

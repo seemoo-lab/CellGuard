@@ -275,18 +275,8 @@ extension CellGuardAppDelegate: UNUserNotificationCenterDelegate {
         let userInfo = response.notification.request.content.userInfo
         if let type = userInfo["type"] as? String,
            type == "sysdiag",
-           let fileName = (userInfo["fileName"] as? String),
-           let fileNameEncoded = fileName.addingPercentEncoding(withAllowedCharacters: .urlFragmentAllowed),
-           // Our shortcut: https://www.icloud.com/shortcuts/88c3baa7613445fa9db58ec3cc88c7e2
-           // See: https://support.apple.com/de-de/guide/shortcuts/apd624386f42/ios
-           let url = URL(string: "shortcuts://run-shortcut?name=Open%20Sysdiagnose&input=text&text=\(fileNameEncoded)") {
-
-            if UIApplication.shared.canOpenURL(url) {
-                Self.logger.debug("Opening shortcut for sysdiagnose: \(fileName) - \(url)")
-                UIApplication.shared.open(url)
-            } else {
-                Self.logger.warning("Can't shortcut shortcut for sysdiagnose: \(fileName) - \(url)")
-            }
+           let fileName = (userInfo["fileName"] as? String) {
+            SysdiagUrls.open(sysdiagnose: fileName)
         }
 
         completionHandler()

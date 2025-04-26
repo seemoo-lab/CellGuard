@@ -40,6 +40,8 @@
 		CF0157C42CC3FFD1003ACAC4 /* CellIdentification.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0157C22CC3FFD1003ACAC4 /* CellIdentification.swift */; };
 		CF0157C92CC419DD003ACAC4 /* ExpandableMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0157C82CC419DD003ACAC4 /* ExpandableMap.swift */; };
 		CF0157CA2CC419DD003ACAC4 /* ExpandableMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0157C82CC419DD003ACAC4 /* ExpandableMap.swift */; };
+		CF0591F32DBCF653003CB81C /* SysdiagUrls.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0591F22DBCF653003CB81C /* SysdiagUrls.swift */; };
+		CF0591F42DBCF653003CB81C /* SysdiagUrls.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0591F22DBCF653003CB81C /* SysdiagUrls.swift */; };
 		CF07EFA52A3B4B56005B53ED /* OperatorDefinitions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF07EFA42A3B4B56005B53ED /* OperatorDefinitions.swift */; };
 		CF0A5678298A7A910012B2A8 /* VerificationProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0A5677298A7A910012B2A8 /* VerificationProgressView.swift */; };
 		CF0FDCB529698E1500A6FFE2 /* SummaryTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0FDCB429698E1500A6FFE2 /* SummaryTabView.swift */; };
@@ -418,6 +420,7 @@
 		45ED01B52D445AB40023A090 /* ProfileTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileTask.swift; sourceTree = "<group>"; };
 		CF0157C22CC3FFD1003ACAC4 /* CellIdentification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellIdentification.swift; sourceTree = "<group>"; };
 		CF0157C82CC419DD003ACAC4 /* ExpandableMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpandableMap.swift; sourceTree = "<group>"; };
+		CF0591F22DBCF653003CB81C /* SysdiagUrls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SysdiagUrls.swift; sourceTree = "<group>"; };
 		CF07EFA42A3B4B56005B53ED /* OperatorDefinitions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperatorDefinitions.swift; sourceTree = "<group>"; };
 		CF0A5677298A7A910012B2A8 /* VerificationProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerificationProgressView.swift; sourceTree = "<group>"; };
 		CF0FDCB429698E1500A6FFE2 /* SummaryTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SummaryTabView.swift; sourceTree = "<group>"; };
@@ -693,6 +696,7 @@
 				CFE988DE2AA88A2B0039EDF9 /* CircularProgressView.swift */,
 				45ECF56B2BFBEA5300DD92CF /* DeviceModel.swift */,
 				CFA83C9C2D9D7EBD00239AB7 /* Icons.swift */,
+				CF0591F22DBCF653003CB81C /* SysdiagUrls.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -1621,6 +1625,7 @@
 				EDAFBFF02D9C0A6800D7748B /* SampleCellParser.swift in Sources */,
 				CFB6CF802BD122FA00EAB7B4 /* CellGuardSceneDelegate.swift in Sources */,
 				CF462B482C94315A00BA1BF4 /* MapInfoSheet.swift in Sources */,
+				CF0591F32DBCF653003CB81C /* SysdiagUrls.swift in Sources */,
 				CFD5657B2BDFA82C00925FAA /* VerificationPipeline.swift in Sources */,
 				CFB6CF812BD122FA00EAB7B4 /* CellGuardApp.swift in Sources */,
 				45ECF55E2BFACB7D00DD92CF /* UserStudyView.swift in Sources */,
@@ -1786,6 +1791,7 @@
 				EDAFBFEF2D9C0A6800D7748B /* SampleCellParser.swift in Sources */,
 				CF5CBB9529689FFE001CE9BE /* CellGuardSceneDelegate.swift in Sources */,
 				CF462B472C94315A00BA1BF4 /* MapInfoSheet.swift in Sources */,
+				CF0591F42DBCF653003CB81C /* SysdiagUrls.swift in Sources */,
 				CFD5657A2BDFA82C00925FAA /* VerificationPipeline.swift in Sources */,
 				CFD023372961A10D00AA5A1C /* CellGuardApp.swift in Sources */,
 				45ECF55D2BFACB7D00DD92CF /* UserStudyView.swift in Sources */,
