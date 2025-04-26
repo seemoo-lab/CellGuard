@@ -8,7 +8,13 @@
 import Foundation
 import OSLog
 
+class SysdiagTaskStatus: ObservableObject {
+    @Published var activeSysdiagnoses: Set<Int> = []
+}
+
 struct SysdiagTask {
+
+    static let status = SysdiagTaskStatus()
 
     private static let logger = Logger(
         subsystem: Bundle.main.bundleIdentifier!,
@@ -44,6 +50,7 @@ struct SysdiagTask {
             if fileName != nil, !inProgress.contains(timestamp) {
                 CGNotificationManager.shared.queueSysdiagStartedNotification(captured: captured)
                 inProgress.insert(timestamp)
+                Self.status.activeSysdiagnoses.insert(timestamp)
                 Self.logger.info("Found active sysdiagnose: \(captured)")
             }
         }
@@ -57,6 +64,7 @@ struct SysdiagTask {
             if let fileName = fileName {
                 CGNotificationManager.shared.queueSysdiagReadyNotification(fileName: fileName, captured: captured)
                 inProgress.remove(timestamp)
+                Self.status.activeSysdiagnoses.remove(timestamp)
                 Self.logger.info("Found completed sysdiagnose: \(captured)")
             }
         }
