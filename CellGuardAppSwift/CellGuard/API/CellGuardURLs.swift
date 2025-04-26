@@ -19,7 +19,9 @@ struct CellGuardURLs {
     static let privacyPolicy = URL(string: "privacy-policy", relativeTo: docs)!
     static let reportIssues = URL(string: "report-issues", relativeTo: docs)!
     static let installGuide = URL(string: "docs/install/#jailbroken-ios", relativeTo: baseUrl)!
+    static let changelog = URL(string: "docs/changelog", relativeTo: baseUrl)!
 
+    static let updateCheck = URL(string: "api/update-check", relativeTo: baseUrl)!
     static let api = URL(string: "api/submit/", relativeTo: baseUrl)!
     static let apiCells = URL(string: "cells", relativeTo: api)!
     static let apiWeekly = URL(string: "weekly", relativeTo: api)!

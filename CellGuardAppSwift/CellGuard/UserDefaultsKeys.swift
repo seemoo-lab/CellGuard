@@ -19,6 +19,7 @@ enum UserDefaultsKeys: String {
     case activePipelines
     case profileExpiryNotification
     case shortcutInstalled
+    case updateCheck
 }
 
 enum DataCollectionMode: String, CaseIterable, Identifiable {
