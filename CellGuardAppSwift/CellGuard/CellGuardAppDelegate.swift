@@ -222,7 +222,7 @@ class CellGuardAppDelegate: NSObject, UIApplicationDelegate {
                 var task = SysdiagTask()
                 while true {
                     await task.run()
-                    try? await Task.sleep(nanoseconds: 30 * NSEC_PER_SEC)
+                    try? await Task.sleep(nanoseconds: 15 * NSEC_PER_SEC)
                 }
             }
             #endif

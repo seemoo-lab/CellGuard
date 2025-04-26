@@ -37,7 +37,7 @@ struct SysdiagTask {
         Self.logger.info("Checking for active sysdiagnoses")
 
         // We check for system diagnoses which were recently started (the task runs every 30s -> check last 45s)
-        for seconds in 0..<45 {
+        for seconds in 0..<25 {
             let captured = now.addingTimeInterval(Double(-seconds))
             let timestamp = Int(captured.timeIntervalSince1970)
             let fileName = await check(forDate: captured, inProgress: true)
