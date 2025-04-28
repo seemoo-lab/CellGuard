@@ -40,7 +40,8 @@ struct SysdiagUrls {
                 urlString = "App-prefs:Privacy&path=PROBLEM_REPORTING/DIAGNOSTIC_USAGE_DATA/"
             }
             #else
-            // TODO: Are these URLs fine for the App Store or do we have to use UIApplication.openSettingsURLString (which is more inconvenient for users)?
+            // Use UIApplication.openSettingsURLString if App Store validation should fail.
+            // However this is more inconvenient for users as it always navigates to the app's settings page.
             urlString = "App-prefs:"
             #endif
         }
