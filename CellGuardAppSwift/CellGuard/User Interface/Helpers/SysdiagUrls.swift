@@ -38,7 +38,11 @@ struct SysdiagUrls {
             } else {
                 #if JAILBREAK
                 // For jailbreaks <= iOS 18: https://github.com/FifiTheBulldog/ios-settings-urls/blob/master/settings-urls.md
-                urlString = "prefs:root=Privacy&path=PROBLEM_REPORTING/DIAGNOSTIC_USAGE_DATA/\(fileName)"
+                if let fileName = fileName {
+                    urlString = "prefs:root=Privacy&path=PROBLEM_REPORTING/DIAGNOSTIC_USAGE_DATA/\(fileName)"
+                } else {
+                    urlString = "prefs:"
+                }
                 #else
                 urlString = "prefs:"
                 #endif
@@ -72,7 +76,9 @@ struct SysdiagUrls {
         // 2. Load the recent diagnostic usage data by opening DIAGNOSTIC_USAGE_DATA
         // 3. Wait 2s until the content has loaded
         // 4. Open the targeted sysdiagnose (if its name was provided)
-        let urlString = "https://www.icloud.com/shortcuts/f05d4ebe856d414dab452061b6c62de0"
+        let urlString = "https://www.icloud.com/shortcuts/678a20e0100a4f558df36aa834ac55e0"
+        // TODO: Add iOS 14 shortcut
+        // TODO: Test which shortcut iOS 14, 15, 16 & 17 support
         guard let url = URL(string: urlString) else {
             Self.logger.warning("Cannot create URL to install shortcut: \(urlString)")
             return

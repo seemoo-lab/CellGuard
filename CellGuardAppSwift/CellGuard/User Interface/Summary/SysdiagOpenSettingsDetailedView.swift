@@ -65,7 +65,7 @@ struct SysdiagOpenSettingsDetailedView: View {
             .padding()
 
             VStack {
-                Text("You can directly navigate to sysdiagnoses using a Shortcut. Once installed, simply tap CellGuard's ready-to-import notification.")
+                Text("You can directly navigate to sysdiagnoses using a shortcut. Once installed, simply tap CellGuard's ready-to-import notification.")
                     .foregroundColor(.gray)
 
                 Toggle(isOn: .init(get: {

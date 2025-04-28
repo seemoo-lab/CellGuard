@@ -86,7 +86,7 @@ struct SysdiagInstructionsDetailedView: View {
                 // - There's no vibration on iPads
                 // - iPhones with a home button do not take a screenshot
                 // See: https://it-training.apple.com/tutorials/support/sup075
-                Text("Press and hold both volume buttons and the power button for 1 second to capture a sysdiagnose. You'll feel a short vibration and take a screenshot. CellGuard notifies you shortly after the capture has started and once it is finished. This will approx. take 3 minutes. You can share the sysdiagnose from the system settings.")
+                Text("Press and hold both volume buttons and the power button for 1 second to capture a sysdiagnose. Your iPhone will vibrate and take a screenshot. CellGuard notifies you shortly after the capture has started and once it is finished. This will take a few minutes. You'll find the sysdiagnose in the System Settings.")
                     .font(.callout)
                     .foregroundColor(.gray)
                     .padding(EdgeInsets(top: 40, leading: 20, bottom: 0, trailing: 20))
