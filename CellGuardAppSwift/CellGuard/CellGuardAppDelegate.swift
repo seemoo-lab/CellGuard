@@ -206,13 +206,22 @@ class CellGuardAppDelegate: NSObject, UIApplicationDelegate {
                 }
             }
 
-            let task = ProfileTask()
             // Check if when debug profile will expire
             Task {
+                let task = ProfileTask()
                 // try? await Task.sleep(nanoseconds: 15 * NSEC_PER_SEC)
                 while true {
                     await task.run()
                     try? await Task.sleep(nanoseconds: 60 * NSEC_PER_SEC)
+                }
+            }
+
+            Task {
+                try? await Task.sleep(nanoseconds: 15 * NSEC_PER_SEC)
+                var task = SysdiagTask()
+                while true {
+                    await task.run()
+                    try? await Task.sleep(nanoseconds: 15 * NSEC_PER_SEC)
                 }
             }
 
@@ -255,6 +264,20 @@ extension CellGuardAppDelegate: UNUserNotificationCenterDelegate {
         // We'll show the notifications as a banner and put them into the notification list for later review
         // https://stackoverflow.com/a/65963174
         completionHandler([.banner, .list])
+    }
+
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        // Handle notification tapped by the user
+        // https://stackoverflow.com/a/79185555
+
+        let userInfo = response.notification.request.content.userInfo
+        if let type = userInfo["type"] as? String,
+           type == "sysdiag",
+           let fileName = (userInfo["fileName"] as? String) {
+            SysdiagUrls.open(sysdiagnose: fileName)
+        }
+
+        completionHandler()
     }
 
 }

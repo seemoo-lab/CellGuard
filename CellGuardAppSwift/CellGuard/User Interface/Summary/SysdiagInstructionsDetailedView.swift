@@ -45,6 +45,12 @@ struct SysdiagInstructionsDetailedView: View {
 
                 }
             } else {
+                // Adjust spacer depending on iPhone model
+                // TODO: Check on different devices
+                if !UIDevice.modelName.contains("mini") && !UIDevice.modelName.contains("SE") {
+                    Spacer(minLength: 80)
+                }
+
                 HStack {
                     VStack {
                         Image(systemName: "arrow.left")
@@ -60,7 +66,9 @@ struct SysdiagInstructionsDetailedView: View {
                             .padding()
                     }
 
-                    Text("Press all buttons for one second!")
+                    Text("Press all buttons for one second")
+                        .multilineTextAlignment(.center)
+                        .font(.callout)
 
                     Image(systemName: "arrow.right")
                         .foregroundColor(.blue)
@@ -74,28 +82,44 @@ struct SysdiagInstructionsDetailedView: View {
             // on iPhone SE 1st gen display we need a scroll view
             ScrollView {
 
-                Spacer()
-
-                Image(systemName: "waveform.path.ecg")
-                    .foregroundColor(.blue)
-                    .font(Font.custom("SF Pro", fixedSize: 120))
-                    .frame(maxWidth: 40, alignment: .center)
-                    .padding()
-
-                Spacer()
-
-                // https://it-training.apple.com/tutorials/support/sup075
-                // if we also support iPad: no vibration
-                // TODO: iPhones with a home button do not take a screenshot
-                // TODO: We can detect when the user takes a screenshot: https://stackoverflow.com/a/63955097
-                // TODO: We can use the iPhone's gyroscope to detect the short vibration (?)
-                Text("Press and hold both volume buttons and the power button for 1 to 1.5 seconds to start a sysdiagnose. You feel a short vibration when sysdiagnose starts. Your iPhone will also take a screenshot. It takes approximately 3 minutes to take a sysdiagnose. Afterwards, it appears in the system settings.")
+                // Side Notes:
+                // - There's no vibration on iPads
+                // - iPhones with a home button do not take a screenshot
+                // See: https://it-training.apple.com/tutorials/support/sup075
+                Text("Press and hold both volume buttons and the power button for 1 second to capture a sysdiagnose. Your iPhone will vibrate and take a screenshot. CellGuard notifies you shortly after the capture has started and once it is finished. This will take a few minutes. You'll find the sysdiagnose in the System Settings.")
+                    .font(.callout)
                     .foregroundColor(.gray)
-                    .padding()
+                    .padding(EdgeInsets(top: 40, leading: 20, bottom: 0, trailing: 20))
                     .multilineTextAlignment(.center)
+
+                ActiveSysdiagnoses()
+                    .padding()
             }
         }
     }
+}
+
+private struct ActiveSysdiagnoses: View {
+
+    @ObservedObject var status = SysdiagTask.status
+
+    var body: some View {
+        HStack {
+            ProgressView()
+                .padding(.trailing, 5)
+            if status.activeSysdiagnoses.count == 1 {
+                Text("Capturing \(status.activeSysdiagnoses.count) sysdiagnose")
+                    .foregroundColor(.blue)
+            } else if status.activeSysdiagnoses.count > 1 {
+                Text("Capturing \(status.activeSysdiagnoses.count) sysdiagnoses")
+                    .foregroundColor(.blue)
+            } else {
+                Text("Scanning for sysdiagnoses")
+                    .foregroundColor(.gray)
+            }
+        }
+    }
+
 }
 
 #Preview {

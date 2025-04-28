@@ -40,6 +40,8 @@
 		CF0157C42CC3FFD1003ACAC4 /* CellIdentification.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0157C22CC3FFD1003ACAC4 /* CellIdentification.swift */; };
 		CF0157C92CC419DD003ACAC4 /* ExpandableMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0157C82CC419DD003ACAC4 /* ExpandableMap.swift */; };
 		CF0157CA2CC419DD003ACAC4 /* ExpandableMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0157C82CC419DD003ACAC4 /* ExpandableMap.swift */; };
+		CF0591F32DBCF653003CB81C /* SysdiagUrls.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0591F22DBCF653003CB81C /* SysdiagUrls.swift */; };
+		CF0591F42DBCF653003CB81C /* SysdiagUrls.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0591F22DBCF653003CB81C /* SysdiagUrls.swift */; };
 		CF07EFA52A3B4B56005B53ED /* OperatorDefinitions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF07EFA42A3B4B56005B53ED /* OperatorDefinitions.swift */; };
 		CF0A5678298A7A910012B2A8 /* VerificationProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0A5677298A7A910012B2A8 /* VerificationProgressView.swift */; };
 		CF0FDCB529698E1500A6FFE2 /* SummaryTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0FDCB429698E1500A6FFE2 /* SummaryTabView.swift */; };
@@ -104,7 +106,6 @@
 		CF54CCC32A331ED300961E4D /* PacketCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF54CCC22A331ED300961E4D /* PacketCell.swift */; };
 		CF54CCC52A33680200961E4D /* PacketCommonDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF54CCC42A33680200961E4D /* PacketCommonDetails.swift */; };
 		CF54CCC72A33699A00961E4D /* PacketARIDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF54CCC62A33699A00961E4D /* PacketARIDetailsView.swift */; };
-		CF5672962A29E59000B6EA7C /* TweakInstallInfoCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5672952A29E59000B6EA7C /* TweakInstallInfoCard.swift */; };
 		CF5756152B2F232A00C7C60A /* cellguard.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5756122B2F232A00C7C60A /* cellguard.swift */; };
 		CF57561A2B2F25DB00C7C60A /* SwiftBridgeCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5756182B2F25DB00C7C60A /* SwiftBridgeCore.swift */; };
 		CF57561D2B2F263500C7C60A /* LogArchiveReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF57561C2B2F263500C7C60A /* LogArchiveReader.swift */; };
@@ -364,6 +365,8 @@
 		CFEA68EA2C13857200F781BC /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = CFEA68E82C13856300F781BC /* PrivacyInfo.xcprivacy */; };
 		CFEA68EC2C13B0B600F781BC /* InformationContactView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFEA68EB2C13B0B600F781BC /* InformationContactView.swift */; };
 		CFEA68ED2C13B0B600F781BC /* InformationContactView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFEA68EB2C13B0B600F781BC /* InformationContactView.swift */; };
+		CFEAB13A2D833C4500525C0C /* SysdiagTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFEAB1392D833C4500525C0C /* SysdiagTask.swift */; };
+		CFEAB13B2D833C4500525C0C /* SysdiagTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFEAB1392D833C4500525C0C /* SysdiagTask.swift */; };
 		CFEC5E762BD1808E004978FA /* CellGuardURLs.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFEC5E752BD1808E004978FA /* CellGuardURLs.swift */; };
 		CFEC5E772BD1816B004978FA /* CellGuardURLs.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFEC5E752BD1808E004978FA /* CellGuardURLs.swift */; };
 		CFF05F6D2A39AA3900DE6FB2 /* DeleteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFF05F6C2A39AA3900DE6FB2 /* DeleteView.swift */; };
@@ -416,6 +419,7 @@
 		45ED01B52D445AB40023A090 /* ProfileTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileTask.swift; sourceTree = "<group>"; };
 		CF0157C22CC3FFD1003ACAC4 /* CellIdentification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellIdentification.swift; sourceTree = "<group>"; };
 		CF0157C82CC419DD003ACAC4 /* ExpandableMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpandableMap.swift; sourceTree = "<group>"; };
+		CF0591F22DBCF653003CB81C /* SysdiagUrls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SysdiagUrls.swift; sourceTree = "<group>"; };
 		CF07EFA42A3B4B56005B53ED /* OperatorDefinitions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperatorDefinitions.swift; sourceTree = "<group>"; };
 		CF0A5677298A7A910012B2A8 /* VerificationProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerificationProgressView.swift; sourceTree = "<group>"; };
 		CF0FDCB429698E1500A6FFE2 /* SummaryTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SummaryTabView.swift; sourceTree = "<group>"; };
@@ -580,6 +584,7 @@
 		CFEA68E52C131F9400F781BC /* AppleURLs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleURLs.swift; sourceTree = "<group>"; };
 		CFEA68E82C13856300F781BC /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		CFEA68EB2C13B0B600F781BC /* InformationContactView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InformationContactView.swift; sourceTree = "<group>"; };
+		CFEAB1392D833C4500525C0C /* SysdiagTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SysdiagTask.swift; sourceTree = "<group>"; };
 		CFEC5E732BD17782004978FA /* TestPlan.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = TestPlan.xctestplan; sourceTree = "<group>"; };
 		CFEC5E752BD1808E004978FA /* CellGuardURLs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellGuardURLs.swift; sourceTree = "<group>"; };
 		CFEECE622C0F795C00D6D13F /* Config.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Config.xcconfig; path = Config/Config.xcconfig; sourceTree = "<group>"; };
@@ -690,6 +695,7 @@
 				CFE988DE2AA88A2B0039EDF9 /* CircularProgressView.swift */,
 				45ECF56B2BFBEA5300DD92CF /* DeviceModel.swift */,
 				CFA83C9C2D9D7EBD00239AB7 /* Icons.swift */,
+				CF0591F22DBCF653003CB81C /* SysdiagUrls.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -860,6 +866,7 @@
 			children = (
 				45ED01B52D445AB40023A090 /* ProfileTask.swift */,
 				CF57561C2B2F263500C7C60A /* LogArchiveReader.swift */,
+				CFEAB1392D833C4500525C0C /* SysdiagTask.swift */,
 			);
 			path = "System Diagnoses";
 			sourceTree = "<group>";
@@ -1617,10 +1624,12 @@
 				EDAFBFF02D9C0A6800D7748B /* SampleCellParser.swift in Sources */,
 				CFB6CF802BD122FA00EAB7B4 /* CellGuardSceneDelegate.swift in Sources */,
 				CF462B482C94315A00BA1BF4 /* MapInfoSheet.swift in Sources */,
+				CF0591F32DBCF653003CB81C /* SysdiagUrls.swift in Sources */,
 				CFD5657B2BDFA82C00925FAA /* VerificationPipeline.swift in Sources */,
 				CFB6CF812BD122FA00EAB7B4 /* CellGuardApp.swift in Sources */,
 				45ECF55E2BFACB7D00DD92CF /* UserStudyView.swift in Sources */,
 				CFB6CF822BD122FA00EAB7B4 /* WelcomeView.swift in Sources */,
+				CFEAB13B2D833C4500525C0C /* SysdiagTask.swift in Sources */,
 				CFB6CF832BD122FA00EAB7B4 /* HomeTabView.swift in Sources */,
 				CF2FF6912BF2A3D3006E2DF4 /* QStudy.swift in Sources */,
 				CFB6CF842BD122FA00EAB7B4 /* QMIParser.swift in Sources */,
@@ -1696,7 +1705,6 @@
 				CF54CCC32A331ED300961E4D /* PacketCell.swift in Sources */,
 				CFA83C982D9D78E300239AB7 /* CountryDetailsView.swift in Sources */,
 				45ECF56F2BFBFDFB00DD92CF /* NoneModeCard.swift in Sources */,
-				CF5672962A29E59000B6EA7C /* TweakInstallInfoCard.swift in Sources */,
 				CF54CCC12A331E7100961E4D /* PacketQMIDetailsView.swift in Sources */,
 				45ED01B62D445ABA0023A090 /* ProfileTask.swift in Sources */,
 				CF53DB42297473E8005DCD10 /* CoreLocationALS.pb.swift in Sources */,
@@ -1781,10 +1789,12 @@
 				EDAFBFEF2D9C0A6800D7748B /* SampleCellParser.swift in Sources */,
 				CF5CBB9529689FFE001CE9BE /* CellGuardSceneDelegate.swift in Sources */,
 				CF462B472C94315A00BA1BF4 /* MapInfoSheet.swift in Sources */,
+				CF0591F42DBCF653003CB81C /* SysdiagUrls.swift in Sources */,
 				CFD5657A2BDFA82C00925FAA /* VerificationPipeline.swift in Sources */,
 				CFD023372961A10D00AA5A1C /* CellGuardApp.swift in Sources */,
 				45ECF55D2BFACB7D00DD92CF /* UserStudyView.swift in Sources */,
 				CF0FDCBD2969A21000A6FFE2 /* WelcomeView.swift in Sources */,
+				CFEAB13A2D833C4500525C0C /* SysdiagTask.swift in Sources */,
 				CF0FDCBB29699E8A00A6FFE2 /* HomeTabView.swift in Sources */,
 				CF2FF6902BF2A3D3006E2DF4 /* QStudy.swift in Sources */,
 				CF2002E82A2F2BE2000922E6 /* QMIParser.swift in Sources */,
