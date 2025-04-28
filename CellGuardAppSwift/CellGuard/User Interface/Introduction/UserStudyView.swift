@@ -104,7 +104,7 @@ While you can use CellGuard without participating in the study, your involvemen
             }
 
             // navigation depends, show sysdiag instructions on non-jailbroken devices
-            #if JAILBROKEN
+            #if JAILBREAK
             NavigationLink(destination: LocationPermissionView(), tag: 1, selection: $action) {}
             #else
             NavigationLink(destination: SysDiagnoseView(), tag: 1, selection: $action) {}
