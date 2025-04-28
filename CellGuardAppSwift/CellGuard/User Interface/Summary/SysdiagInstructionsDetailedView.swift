@@ -106,8 +106,12 @@ private struct ActiveSysdiagnoses: View {
     var body: some View {
         HStack {
             ProgressView()
-            if status.activeSysdiagnoses.count > 0 {
-                Text("Capturing ^[\(status.activeSysdiagnoses.count) sysdiagnose](inflect: true)")
+                .padding(.trailing, 5)
+            if status.activeSysdiagnoses.count == 1 {
+                Text("Capturing \(status.activeSysdiagnoses.count) sysdiagnose")
+                    .foregroundColor(.blue)
+            } else if status.activeSysdiagnoses.count > 1 {
+                Text("Capturing \(status.activeSysdiagnoses.count) sysdiagnoses")
                     .foregroundColor(.blue)
             } else {
                 Text("Scanning for sysdiagnoses")

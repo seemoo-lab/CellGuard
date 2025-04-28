@@ -76,9 +76,9 @@ struct SysdiagUrls {
         // 2. Load the recent diagnostic usage data by opening DIAGNOSTIC_USAGE_DATA
         // 3. Wait 2s until the content has loaded
         // 4. Open the targeted sysdiagnose (if its name was provided)
-        let urlString = "https://www.icloud.com/shortcuts/678a20e0100a4f558df36aa834ac55e0"
-        // TODO: Add iOS 14 shortcut
-        // TODO: Test which shortcut iOS 14, 15, 16 & 17 support
+        //
+        // We have to include the URL actions as required by iOS 14
+        let urlString = "https://www.icloud.com/shortcuts/f61eaf9ab6c64d8c9de8dfbc57d92fcd"
         guard let url = URL(string: urlString) else {
             Self.logger.warning("Cannot create URL to install shortcut: \(urlString)")
             return

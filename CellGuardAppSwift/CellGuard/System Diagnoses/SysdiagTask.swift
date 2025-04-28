@@ -115,8 +115,11 @@ struct SysdiagTask {
             let path = Self.sysdiagnoseDir + fileName
 
             do {
-                // This operation will always fail
+                // This operation will always fail (on newer iOS versions)
                 try Self.fm.attributesOfItem(atPath: path)
+                // On older iOS version (14) we receive attributes if the file exists
+                Self.logger.debug("Sysdiagnose \(fileName) exists (attributes present)")
+                return fileName
             } catch {
                 // But the type of error is interesting for us:
 
@@ -124,7 +127,7 @@ struct SysdiagTask {
                 // Error: Error Domain=NSCocoaErrorDomain Code=260 "The file “sysdiagnose_2025.03.13_18-11-50+0100_iPhone-OS_iPhone_22D82.tar.gz” couldn’t be opened because there is no such file." -> Does not exists
 
                 if (error as NSError).code == 257 {
-                    Self.logger.debug("Sysdiagnose \(fileName) exists")
+                    Self.logger.debug("Sysdiagnose \(fileName) exists (error 257)")
                     return fileName
                 }
 
