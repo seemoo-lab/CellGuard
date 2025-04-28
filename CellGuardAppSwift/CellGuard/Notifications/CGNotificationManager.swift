@@ -196,7 +196,7 @@ class CGNotificationManager: ObservableObject {
     }
 
     private func sysdiagNotificationId(captured: Date) -> String {
-        return "capturing-sysdiag-\(captured.timeIntervalSince1970.rounded())"
+        return "capturing-sysdiag-\(captured.timeIntervalSince1970.rounded(.up))"
     }
 
     func queueSysdiagStartedNotification(captured: Date) {
