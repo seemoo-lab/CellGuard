@@ -32,21 +32,17 @@ struct SysdiagUrls {
                 urlString = "shortcuts://run-shortcut?name=Open%20Sysdiagnose"
             }
         } else {
-            // TODO: Are these URLs fine for the App Store or do we have to use UIApplication.openSettingsURLString (which is more inconvenient for users)?
-            if #available(iOS 18, *) {
-                urlString = "App-prefs:"
+            #if JAILBREAK
+            // For jailbreaks <= iOS 18: https://github.com/FifiTheBulldog/ios-settings-urls/blob/master/settings-urls.md
+            if let fileName = fileName {
+                urlString = "App-prefs:Privacy&path=PROBLEM_REPORTING/DIAGNOSTIC_USAGE_DATA/\(fileName)"
             } else {
-                #if JAILBREAK
-                // For jailbreaks <= iOS 18: https://github.com/FifiTheBulldog/ios-settings-urls/blob/master/settings-urls.md
-                if let fileName = fileName {
-                    urlString = "prefs:root=Privacy&path=PROBLEM_REPORTING/DIAGNOSTIC_USAGE_DATA/\(fileName)"
-                } else {
-                    urlString = "prefs:"
-                }
-                #else
-                urlString = "prefs:"
-                #endif
+                urlString = "App-prefs:Privacy&path=PROBLEM_REPORTING/DIAGNOSTIC_USAGE_DATA/"
             }
+            #else
+            // TODO: Are these URLs fine for the App Store or do we have to use UIApplication.openSettingsURLString (which is more inconvenient for users)?
+            urlString = "App-prefs:"
+            #endif
         }
 
         guard let url = URL(string: urlString) else {

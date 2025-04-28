@@ -216,7 +216,6 @@ class CellGuardAppDelegate: NSObject, UIApplicationDelegate {
                 }
             }
 
-            #if !JAILBREAK
             Task {
                 try? await Task.sleep(nanoseconds: 15 * NSEC_PER_SEC)
                 var task = SysdiagTask()
@@ -225,7 +224,6 @@ class CellGuardAppDelegate: NSObject, UIApplicationDelegate {
                     try? await Task.sleep(nanoseconds: 15 * NSEC_PER_SEC)
                 }
             }
-            #endif
 
             await Self.logger.debug("Started all maintenance background tasks")
 
