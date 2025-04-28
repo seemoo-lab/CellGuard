@@ -15,6 +15,9 @@ struct TweakInstallInfoCard: View {
     @FetchRequest
     private var ariPackets: FetchedResults<PacketARI>
 
+    @AppStorage(UserDefaultsKeys.appMode.rawValue)
+    private var appMode: DataCollectionMode = .none
+
     init() {
         // https://www.hackingwithswift.com/quick-start/swiftui/how-to-limit-the-number-of-items-in-a-fetch-request
         let qmiRequest: NSFetchRequest<PacketQMI> = PacketQMI.fetchRequest()
@@ -31,7 +34,7 @@ struct TweakInstallInfoCard: View {
 
     var body: some View {
         let hasData = !qmiPackets.isEmpty || !ariPackets.isEmpty
-        if !hasData {
+        if !hasData && appMode == .automatic {
             TweakCard()
         } else {
             EmptyView()
