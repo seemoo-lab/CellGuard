@@ -380,6 +380,8 @@
 		ED6F69262DBB8D40007BFE78 /* UpdateCheckView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED6F69242DBB8D40007BFE78 /* UpdateCheckView.swift */; };
 		ED6F69282DBBC1CC007BFE78 /* UpdateCheckInfoCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED6F69272DBBC1CA007BFE78 /* UpdateCheckInfoCard.swift */; };
 		ED6F69292DBBC1CC007BFE78 /* UpdateCheckInfoCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED6F69272DBBC1CA007BFE78 /* UpdateCheckInfoCard.swift */; };
+		ED7DB14D2DC785E8007D5314 /* UpdateCheckTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED7DB14C2DC785DA007D5314 /* UpdateCheckTask.swift */; };
+		ED7DB14E2DC785E8007D5314 /* UpdateCheckTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED7DB14C2DC785DA007D5314 /* UpdateCheckTask.swift */; };
 		EDAFBFE92D9C0A5300D7748B /* AriCellParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDAFBFE82D9C0A4E00D7748B /* AriCellParser.swift */; };
 		EDAFBFEA2D9C0A5300D7748B /* AriCellParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDAFBFE82D9C0A4E00D7748B /* AriCellParser.swift */; };
 		EDAFBFEC2D9C0A5A00D7748B /* QmiCellParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDAFBFEB2D9C0A5600D7748B /* QmiCellParser.swift */; };
@@ -600,6 +602,7 @@
 		CFFF19E62BC70E83004E40CE /* FirstLastDates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstLastDates.swift; sourceTree = "<group>"; };
 		ED6F69242DBB8D40007BFE78 /* UpdateCheckView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateCheckView.swift; sourceTree = "<group>"; };
 		ED6F69272DBBC1CA007BFE78 /* UpdateCheckInfoCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateCheckInfoCard.swift; sourceTree = "<group>"; };
+		ED7DB14C2DC785DA007D5314 /* UpdateCheckTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateCheckTask.swift; sourceTree = "<group>"; };
 		EDAFBFE82D9C0A4E00D7748B /* AriCellParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AriCellParser.swift; sourceTree = "<group>"; };
 		EDAFBFEB2D9C0A5600D7748B /* QmiCellParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QmiCellParser.swift; sourceTree = "<group>"; };
 		EDAFBFEE2D9C0A5E00D7748B /* SampleCellParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleCellParser.swift; sourceTree = "<group>"; };
@@ -766,6 +769,7 @@
 		CF2A1C19297566CE00E8B61C /* Notifications */ = {
 			isa = PBXGroup;
 			children = (
+				ED7DB14C2DC785DA007D5314 /* UpdateCheckTask.swift */,
 				CF2A1C1A2975670000E8B61C /* CGNotificationManager.swift */,
 			);
 			path = Notifications;
@@ -1582,6 +1586,7 @@
 				45ECF5582BFAC62900DD92CF /* CellDetectionView.swift in Sources */,
 				CF70A9892BE6B01400989FB5 /* QNotifications.swift in Sources */,
 				CFB6CF5D2BD122FA00EAB7B4 /* CellGuardAppDelegate.swift in Sources */,
+				ED7DB14D2DC785E8007D5314 /* UpdateCheckTask.swift in Sources */,
 				CFB6CF5E2BD122FA00EAB7B4 /* MapTabView.swift in Sources */,
 				CFB6CF5F2BD122FA00EAB7B4 /* CellListView.swift in Sources */,
 				CFB6CF602BD122FA00EAB7B4 /* VerificationStateView.swift in Sources */,
@@ -1696,6 +1701,7 @@
 				EDAFBFE92D9C0A5300D7748B /* AriCellParser.swift in Sources */,
 				45ECF56C2BFBEA5300DD92CF /* DeviceModel.swift in Sources */,
 				45ECF5512BFAAF1F00DD92CF /* CenteredTitleIconTextView.swift in Sources */,
+				ED7DB14E2DC785E8007D5314 /* UpdateCheckTask.swift in Sources */,
 				CFA83C9B2D9D78FC00239AB7 /* OperatorDetailsView.swift in Sources */,
 				CFDF5D6F297EF05D000708A8 /* MultiCellMap.swift in Sources */,
 				CF4E53962A31CE3F00AE2059 /* QMIDefinitions.swift in Sources */,

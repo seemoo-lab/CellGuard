@@ -9,62 +9,13 @@ import SwiftUI
 import OSLog
 
 struct UpdateCheckInfoCard: View {
-
-    private static let logger = Logger(
-        subsystem: Bundle.main.bundleIdentifier!,
-        category: String(describing: UpdateCheckInfoCard.self)
-    )
-
-    @State private var latestReleaseVersion = ""
+    @StateObject private var updateData = CheckUpdateData.shared
 
     var body: some View {
-        Group {
-            if !latestReleaseVersion.isEmpty {
-                UpdateCard(latestReleaseVersion: latestReleaseVersion)
-            } else {
-                // We use a hidden rectangle instead of an EmptyView, as onAppear is not being called for the latter.
-                Rectangle().hidden()
-            }
-        }
-        .onAppear {
-            Task.detached(priority: .background) {
-                await checkForUpdate()
-            }
-        }
-    }
-
-    private func checkForUpdate() async {
-        // Verify that the user has enabled the update check
-        guard UserDefaults.standard.bool(forKey: UserDefaultsKeys.updateCheck.rawValue) else {
-            self.latestReleaseVersion = ""
-            return
-        }
-
-        guard let majorVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String,
-              let minorVersion = Bundle.main.infoDictionary?["CFBundleVersion"] as? String else {
-            Self.logger.error("Could not parse the current version Info")
-            return
-        }
-        let currentAppVersion = "\(majorVersion) (\(minorVersion))"
-
-        do {
-            let (data, _) = try await URLSession.shared.data(from: CellGuardURLs.updateCheck)
-
-            guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
-                Self.logger.warning("Response data could not be parsed")
-                return
-            }
-
-            guard let latestReleaseVersion = json["name"] as? String else {
-                Self.logger.warning("Release name could not be parsed")
-                return
-            }
-
-            if currentAppVersion != latestReleaseVersion {
-                self.latestReleaseVersion = latestReleaseVersion
-            }
-        } catch {
-            Self.logger.warning("Request error: \(error.localizedDescription)")
+        if let version = updateData.latestReleaseVersion {
+            UpdateCard(latestReleaseVersion: version)
+        } else {
+            EmptyView()
         }
     }
 }

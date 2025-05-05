@@ -18,7 +18,7 @@ struct UpdateCheckView: View {
             ScrollView {
                 CenteredTitleIconTextView(
                     icon: "server.rack",
-                    description: "CellGuard can check for updates in the background. For this, CellGuard would establish an internet connection to an external server.",
+                    description: "CellGuard can check for updates in the background. If enabled, CellGuard establishes a connection via the Internet to our server.",
                     size: 120
                 )
             }
@@ -32,7 +32,7 @@ struct UpdateCheckView: View {
 
             HStack {
                 Toggle(isOn: $agePolicyConfirmation) {
-                    Text("I'm over 18 years or older and agree to the privacy policy.")
+                    Text("I agree to the privacy policy.")
                 }
                 .toggleStyle(CheckboxStyle())
 
@@ -49,7 +49,7 @@ struct UpdateCheckView: View {
                     updateCheck = true
                     self.action = 1
                 } label: {
-                    Text("Check for Updates")
+                    Text("Enable")
                 }
                 .buttonStyle(SmallButtonStyle())
                 .padding(3)
