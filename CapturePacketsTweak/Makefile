@@ -5,18 +5,13 @@ TARGET := iphone:clang:latest:14.0
 include $(THEOS)/makefiles/common.mk
 
 TWEAK_NAME = CapturePackets
+
 CapturePackets_FILES = Tweak.x CPTManager.m CPTBaseTweakManager.m
 CapturePackets_CFLAGS = -fobjc-arc
-CapturePackets_EXTRA_FRAMEWORKS = Cephei
 
 ifeq ($(FINALPACKAGE), 1)
 CapturePackets_CFLAGS += -DFINALPACKAGE
 endif
-
-TWEAK_NAME += CellGuardAuth
-CellGuardAuth_FILES = CellGuardAuthTweak.x
-CellGuardAuth_CFLAGS = -fobjc-arc
-CellGuardAuth_EXTRA_FRAMEWORKS = Cephei
 
 # The dynamic_lookup flag is very important, otherwise the tweak won't compile
 # $ man ld

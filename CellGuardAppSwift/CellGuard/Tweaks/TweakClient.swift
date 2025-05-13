@@ -9,6 +9,10 @@ import Foundation
 import Network
 import OSLog
 
+enum AuthTokenError: Error {
+    case gotNothing
+}
+
 struct TweakClient {
 
     private static let logger = Logger(
@@ -22,9 +26,46 @@ struct TweakClient {
     /// The queue used for processing incoming messages
     let queue: DispatchQueue
 
+    func fetchAuthToken() -> String? {
+        // https://developer.apple.com/documentation/security/searching-for-keychain-items
+        let service = "capture-packets-token"
+        let searchQuery: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: service,
+            kSecMatchLimit as String: kSecMatchLimitOne,
+            kSecReturnData as String: true
+        ]
+
+        var item: CFTypeRef?
+        let status = SecItemCopyMatching(searchQuery as CFDictionary, &item)
+        guard status != errSecItemNotFound else {
+            Self.logger.info("Auth key not in keychain")
+            return nil
+        }
+
+        guard status == errSecSuccess else {
+            let res = SecCopyErrorMessageString(status, nil)
+            Self.logger.warning("Error \(status) while fetching auth key from keychain: \(res)")
+            return nil
+        }
+
+        guard let tokenData = item as? Data,
+            let token = String(data: tokenData, encoding: .utf8)
+        else {
+            Self.logger.warning("Cannot extract token from keychain")
+            return nil
+        }
+        return token
+
+    }
+
     /// Connects to the tweak, fetches all cells, and converts them into a dictionary structure.
     func query(completion: @escaping (Result<Data, Error>) -> Void, ready: @escaping () -> Void) {
-        let auth = TweakAuthManager()
+        guard let authToken = fetchAuthToken() else {
+            completion(.failure(AuthTokenError.gotNothing))
+            return
+        }
+        Self.logger.info("Tweak Auth Key: \(authToken)")
 
         // Create a connection to localhost on the given port
         let nwPort = NWEndpoint.Port(integerLiteral: UInt16(port))
@@ -36,8 +77,6 @@ struct TweakClient {
         func receiveNextMessage() {
             connection.receiveMessage { content, context, complete, error in
                 Self.logger.trace("Received Message (\(self.port)): \(content?.debugDescription ?? "nil") - \(context.debugDescription) - \(complete) - \(context?.isFinal ?? false) - \(error)")
-
-                Self.logger.info("Tweak Auth Key: \(auth.key())")
 
                 if let error = error {
                     // We've got an error

@@ -6,4 +6,4 @@ Description: Captures the binary packets iOS and the iPhone's baseband exchange 
 Maintainer: Lukas Arnold
 Author: Lukas Arnold
 Section: Tweaks
-Depends: ws.hbang.common (>= 1.17), mobilesubstrate (>= 0.9.5000) | ellekit (>= 1.0)
+Depends: mobilesubstrate (>= 0.9.5000) | ellekit (>= 1.0)

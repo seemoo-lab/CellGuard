@@ -10,6 +10,5 @@
 
 #include "Generated/SwiftBridgeCore.h"
 #include "Generated/cellguard/cellguard.h"
-#include "CellGuard/Tweaks/TweakAuthManager.h"
 
 #endif /* BridgingHeader_h */

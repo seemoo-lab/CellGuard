@@ -382,8 +382,6 @@
 		ED6F69292DBBC1CC007BFE78 /* UpdateCheckInfoCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED6F69272DBBC1CA007BFE78 /* UpdateCheckInfoCard.swift */; };
 		ED7DB14D2DC785E8007D5314 /* UpdateCheckTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED7DB14C2DC785DA007D5314 /* UpdateCheckTask.swift */; };
 		ED7DB14E2DC785E8007D5314 /* UpdateCheckTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED7DB14C2DC785DA007D5314 /* UpdateCheckTask.swift */; };
-		ED4E1BA22DA72584001D704C /* TweakAuthManager.m in Sources */ = {isa = PBXBuildFile; fileRef = ED4E1BA12DA72584001D704C /* TweakAuthManager.m */; };
-		ED4E1BA32DA72584001D704C /* TweakAuthManager.m in Sources */ = {isa = PBXBuildFile; fileRef = ED4E1BA12DA72584001D704C /* TweakAuthManager.m */; };
 		EDAFBFE92D9C0A5300D7748B /* AriCellParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDAFBFE82D9C0A4E00D7748B /* AriCellParser.swift */; };
 		EDAFBFEA2D9C0A5300D7748B /* AriCellParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDAFBFE82D9C0A4E00D7748B /* AriCellParser.swift */; };
 		EDAFBFEC2D9C0A5A00D7748B /* QmiCellParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDAFBFEB2D9C0A5600D7748B /* QmiCellParser.swift */; };
@@ -605,8 +603,6 @@
 		ED6F69242DBB8D40007BFE78 /* UpdateCheckView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateCheckView.swift; sourceTree = "<group>"; };
 		ED6F69272DBBC1CA007BFE78 /* UpdateCheckInfoCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateCheckInfoCard.swift; sourceTree = "<group>"; };
 		ED7DB14C2DC785DA007D5314 /* UpdateCheckTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateCheckTask.swift; sourceTree = "<group>"; };
-		ED4E1BA12DA72584001D704C /* TweakAuthManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TweakAuthManager.m; sourceTree = "<group>"; };
-		ED4E1BA42DA7259A001D704C /* TweakAuthManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TweakAuthManager.h; sourceTree = "<group>"; };
 		EDAFBFE82D9C0A4E00D7748B /* AriCellParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AriCellParser.swift; sourceTree = "<group>"; };
 		EDAFBFEB2D9C0A5600D7748B /* QmiCellParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QmiCellParser.swift; sourceTree = "<group>"; };
 		EDAFBFEE2D9C0A5E00D7748B /* SampleCellParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleCellParser.swift; sourceTree = "<group>"; };
@@ -763,8 +759,6 @@
 		CF2002EE2A2F9957000922E6 /* Tweaks */ = {
 			isa = PBXGroup;
 			children = (
-				ED4E1BA42DA7259A001D704C /* TweakAuthManager.h */,
-				ED4E1BA12DA72584001D704C /* TweakAuthManager.m */,
 				CFD023662961AB7E00AA5A1C /* Capture Cells */,
 				CF2002E62A2F2BB0000922E6 /* Capture Packets */,
 				CF2002EF2A2F996A000922E6 /* TweakClient.swift */,
@@ -1639,7 +1633,6 @@
 				CFB6CF7D2BD122FA00EAB7B4 /* TrackedUserLocation.swift in Sources */,
 				CFB6CF7E2BD122FA00EAB7B4 /* LocationDataManager.swift in Sources */,
 				CF7064F12CC5107600BF8AF9 /* TowerCellMap.swift in Sources */,
-				ED4E1BA32DA72584001D704C /* TweakAuthManager.m in Sources */,
 				CFB6CF7F2BD122FA00EAB7B4 /* QMIContentParser.swift in Sources */,
 				CF2FF68E2BF296EE006E2DF4 /* RiskInfoView.swift in Sources */,
 				CF0157C32CC3FFD1003ACAC4 /* CellIdentification.swift in Sources */,
@@ -1808,7 +1801,6 @@
 				CF0FDCCD296B480B00A6FFE2 /* TrackedUserLocation.swift in Sources */,
 				CFB8B2882963417B00503189 /* LocationDataManager.swift in Sources */,
 				CF7064F02CC5107600BF8AF9 /* TowerCellMap.swift in Sources */,
-				ED4E1BA22DA72584001D704C /* TweakAuthManager.m in Sources */,
 				CFD8DD262A715E8300954A25 /* QMIContentParser.swift in Sources */,
 				CF2FF68D2BF296EE006E2DF4 /* RiskInfoView.swift in Sources */,
 				CF0157C42CC3FFD1003ACAC4 /* CellIdentification.swift in Sources */,
