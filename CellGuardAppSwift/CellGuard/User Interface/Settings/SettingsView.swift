@@ -83,6 +83,8 @@ struct SettingsView: View {
                 }
             }
 
+            BackgroundTasksSection()
+
             Section(header: Text("Introduction"), footer: Text("View the introduction to learn how CellGuard works.")) {
                 Button("Restart Intro") {
                     introductionShown = false
@@ -167,6 +169,17 @@ private struct PermissionSection: View {
     private func openAppSettings() {
         if let appSettings = URL(string: UIApplication.openSettingsURLString), UIApplication.shared.canOpenURL(appSettings) {
             UIApplication.shared.open(appSettings)
+        }
+    }
+}
+
+private struct BackgroundTasksSection: View {
+
+    @AppStorage(UserDefaultsKeys.updateCheck.rawValue) private var isUpdateChecks: Bool = false
+
+    var body: some View {
+        Section(header: Text("Background Tasks"), footer: Text("If enabled, CellGuard regularly queries our backend server for update checks.")) {
+            Toggle("Update Checks", isOn: $isUpdateChecks)
         }
     }
 }

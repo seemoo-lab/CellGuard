@@ -376,6 +376,12 @@
 		CFFF19E32BC6D2D3004E40CE /* AcknowledgementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFFF19E22BC6D2D3004E40CE /* AcknowledgementView.swift */; };
 		CFFF19E52BC70E63004E40CE /* ImportResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFFF19E42BC70E63004E40CE /* ImportResult.swift */; };
 		CFFF19E72BC70E83004E40CE /* FirstLastDates.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFFF19E62BC70E83004E40CE /* FirstLastDates.swift */; };
+		ED6F69252DBB8D40007BFE78 /* UpdateCheckView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED6F69242DBB8D40007BFE78 /* UpdateCheckView.swift */; };
+		ED6F69262DBB8D40007BFE78 /* UpdateCheckView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED6F69242DBB8D40007BFE78 /* UpdateCheckView.swift */; };
+		ED6F69282DBBC1CC007BFE78 /* UpdateCheckInfoCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED6F69272DBBC1CA007BFE78 /* UpdateCheckInfoCard.swift */; };
+		ED6F69292DBBC1CC007BFE78 /* UpdateCheckInfoCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED6F69272DBBC1CA007BFE78 /* UpdateCheckInfoCard.swift */; };
+		ED7DB14D2DC785E8007D5314 /* UpdateCheckTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED7DB14C2DC785DA007D5314 /* UpdateCheckTask.swift */; };
+		ED7DB14E2DC785E8007D5314 /* UpdateCheckTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED7DB14C2DC785DA007D5314 /* UpdateCheckTask.swift */; };
 		EDAFBFE92D9C0A5300D7748B /* AriCellParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDAFBFE82D9C0A4E00D7748B /* AriCellParser.swift */; };
 		EDAFBFEA2D9C0A5300D7748B /* AriCellParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDAFBFE82D9C0A4E00D7748B /* AriCellParser.swift */; };
 		EDAFBFEC2D9C0A5A00D7748B /* QmiCellParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDAFBFEB2D9C0A5600D7748B /* QmiCellParser.swift */; };
@@ -594,6 +600,9 @@
 		CFFF19E22BC6D2D3004E40CE /* AcknowledgementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AcknowledgementView.swift; sourceTree = "<group>"; };
 		CFFF19E42BC70E63004E40CE /* ImportResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportResult.swift; sourceTree = "<group>"; };
 		CFFF19E62BC70E83004E40CE /* FirstLastDates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstLastDates.swift; sourceTree = "<group>"; };
+		ED6F69242DBB8D40007BFE78 /* UpdateCheckView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateCheckView.swift; sourceTree = "<group>"; };
+		ED6F69272DBBC1CA007BFE78 /* UpdateCheckInfoCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateCheckInfoCard.swift; sourceTree = "<group>"; };
+		ED7DB14C2DC785DA007D5314 /* UpdateCheckTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateCheckTask.swift; sourceTree = "<group>"; };
 		EDAFBFE82D9C0A4E00D7748B /* AriCellParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AriCellParser.swift; sourceTree = "<group>"; };
 		EDAFBFEB2D9C0A5600D7748B /* QmiCellParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QmiCellParser.swift; sourceTree = "<group>"; };
 		EDAFBFEE2D9C0A5E00D7748B /* SampleCellParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleCellParser.swift; sourceTree = "<group>"; };
@@ -663,6 +672,7 @@
 				45ECF5592BFAC6F000DD92CF /* SysDiagnoseView.swift */,
 				45ECF5532BFAB97A00DD92CF /* LocationPermissionView.swift */,
 				45ECF54D2BFAADAA00DD92CF /* NotificationPermissionView.swift */,
+				ED6F69242DBB8D40007BFE78 /* UpdateCheckView.swift */,
 			);
 			path = Introduction;
 			sourceTree = "<group>";
@@ -759,6 +769,7 @@
 		CF2A1C19297566CE00E8B61C /* Notifications */ = {
 			isa = PBXGroup;
 			children = (
+				ED7DB14C2DC785DA007D5314 /* UpdateCheckTask.swift */,
 				CF2A1C1A2975670000E8B61C /* CGNotificationManager.swift */,
 			);
 			path = Notifications;
@@ -767,6 +778,7 @@
 		CF2A1C1E2975CDBB00E8B61C /* Summary */ = {
 			isa = PBXGroup;
 			children = (
+				ED6F69272DBBC1CA007BFE78 /* UpdateCheckInfoCard.swift */,
 				CF0FDCB429698E1500A6FFE2 /* SummaryTabView.swift */,
 				CF2A1C1F2975CDD200E8B61C /* RiskIndicatorCard.swift */,
 				CF2FF68C2BF296EE006E2DF4 /* RiskInfoView.swift */,
@@ -1569,10 +1581,12 @@
 				CF2FF6942BF2A3DF006E2DF4 /* StudyClientSamples.swift in Sources */,
 				CFB6CF5B2BD122FA00EAB7B4 /* DataSummaryView.swift in Sources */,
 				CFB6CF5C2BD122FA00EAB7B4 /* CellReachOverlay.swift in Sources */,
+				ED6F69282DBBC1CC007BFE78 /* UpdateCheckInfoCard.swift in Sources */,
 				CF70A98C2BE6B51C00989FB5 /* QLocationUser.swift in Sources */,
 				45ECF5582BFAC62900DD92CF /* CellDetectionView.swift in Sources */,
 				CF70A9892BE6B01400989FB5 /* QNotifications.swift in Sources */,
 				CFB6CF5D2BD122FA00EAB7B4 /* CellGuardAppDelegate.swift in Sources */,
+				ED7DB14D2DC785E8007D5314 /* UpdateCheckTask.swift in Sources */,
 				CFB6CF5E2BD122FA00EAB7B4 /* MapTabView.swift in Sources */,
 				CFB6CF5F2BD122FA00EAB7B4 /* CellListView.swift in Sources */,
 				CFB6CF602BD122FA00EAB7B4 /* VerificationStateView.swift in Sources */,
@@ -1614,6 +1628,7 @@
 				CFB6CF782BD122FA00EAB7B4 /* DeleteView.swift in Sources */,
 				CFB6CF792BD122FA00EAB7B4 /* PersistenceError.swift in Sources */,
 				CFB6CF7A2BD122FA00EAB7B4 /* ARIDefinitions.swift in Sources */,
+				ED6F69262DBB8D40007BFE78 /* UpdateCheckView.swift in Sources */,
 				CFB6CF7B2BD122FA00EAB7B4 /* CPTCollector.swift in Sources */,
 				CFB6CF7D2BD122FA00EAB7B4 /* TrackedUserLocation.swift in Sources */,
 				CFB6CF7E2BD122FA00EAB7B4 /* LocationDataManager.swift in Sources */,
@@ -1686,6 +1701,7 @@
 				EDAFBFE92D9C0A5300D7748B /* AriCellParser.swift in Sources */,
 				45ECF56C2BFBEA5300DD92CF /* DeviceModel.swift in Sources */,
 				45ECF5512BFAAF1F00DD92CF /* CenteredTitleIconTextView.swift in Sources */,
+				ED7DB14E2DC785E8007D5314 /* UpdateCheckTask.swift in Sources */,
 				CFA83C9B2D9D78FC00239AB7 /* OperatorDetailsView.swift in Sources */,
 				CFDF5D6F297EF05D000708A8 /* MultiCellMap.swift in Sources */,
 				CF4E53962A31CE3F00AE2059 /* QMIDefinitions.swift in Sources */,
@@ -1734,6 +1750,7 @@
 				CF2FF6932BF2A3DF006E2DF4 /* StudyClientSamples.swift in Sources */,
 				CF73099A2A79122B00498BC3 /* DataSummaryView.swift in Sources */,
 				CF1FAFB32986B11200106930 /* CellReachOverlay.swift in Sources */,
+				ED6F69292DBBC1CC007BFE78 /* UpdateCheckInfoCard.swift in Sources */,
 				CF70A98B2BE6B51C00989FB5 /* QLocationUser.swift in Sources */,
 				45ECF5572BFAC62900DD92CF /* CellDetectionView.swift in Sources */,
 				CF70A9882BE6B01400989FB5 /* QNotifications.swift in Sources */,
@@ -1779,6 +1796,7 @@
 				CFF05F6D2A39AA3900DE6FB2 /* DeleteView.swift in Sources */,
 				CF0FDCCB296B466100A6FFE2 /* PersistenceError.swift in Sources */,
 				CF4E53982A31CE4600AE2059 /* ARIDefinitions.swift in Sources */,
+				ED6F69252DBB8D40007BFE78 /* UpdateCheckView.swift in Sources */,
 				CF54CCBC2A33093800961E4D /* CPTCollector.swift in Sources */,
 				CF0FDCCD296B480B00A6FFE2 /* TrackedUserLocation.swift in Sources */,
 				CFB8B2882963417B00503189 /* LocationDataManager.swift in Sources */,

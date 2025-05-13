@@ -42,6 +42,7 @@ struct WelcomeView: View {
             // WelcomeSheet
             //  -> CellDetectionView
             //  -> UserStudyView
+            //  -> UpdateCheckView (jailbroken)
             //  -> SysDiagnoseView (non-jailbroken)
             //  -> LocationPermissionView
             //  -> NotificationPermissionView

@@ -225,6 +225,15 @@ class CellGuardAppDelegate: NSObject, UIApplicationDelegate {
                 }
             }
 
+            Task {
+                try? await Task.sleep(nanoseconds: 3 * NSEC_PER_SEC)
+                var task = UpdateCheckTask()
+                while true {
+                    await task.run()
+                    try? await Task.sleep(nanoseconds: 3 * 3600 * NSEC_PER_SEC)
+                }
+            }
+
             await Self.logger.debug("Started all maintenance background tasks")
 
             // TODO: Add task to regularly delete old ALS cells (>= 90 days) to force a refresh

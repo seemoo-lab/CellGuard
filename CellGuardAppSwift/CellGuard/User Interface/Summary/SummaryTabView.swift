@@ -115,6 +115,11 @@ private struct CombinedRiskCellView: View {
         ScrollView {
             CalculatedRiskView()
 
+#if JAILBREAK
+            // jailbreak mode: show update check info
+            UpdateCheckInfoCard()
+#endif
+
             if let tweakCell = tweakCellsSlot1.first {
                 NavigationLink {
                     CellDetailsView(tweakCell: tweakCell)
@@ -144,8 +149,8 @@ private struct CombinedRiskCellView: View {
             // manual mode: show link to opening sysdiag settings
             SysdiagOpenSettingsCard()
 
-            // jailbreak mode: show tweak installation info
 #if JAILBREAK
+            // jailbreak mode: show tweak installation info
             TweakInstallInfoCard()
 #endif
         }

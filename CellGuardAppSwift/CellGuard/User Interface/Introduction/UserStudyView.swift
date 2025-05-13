@@ -105,7 +105,7 @@ While you can use CellGuard without participating in the study, your involvemen
 
             // navigation depends, show sysdiag instructions on non-jailbroken devices
             #if JAILBREAK
-            NavigationLink(destination: LocationPermissionView(), tag: 1, selection: $action) {}
+            NavigationLink(destination: UpdateCheckView(), tag: 1, selection: $action) {}
             #else
             NavigationLink(destination: SysDiagnoseView(), tag: 1, selection: $action) {}
             #endif
@@ -162,7 +162,7 @@ While you can use CellGuard without participating in the study, your involvemen
 
 // See: https://stackoverflow.com/a/65895802
 
-private struct CheckboxStyle: ToggleStyle {
+struct CheckboxStyle: ToggleStyle {
 
     func makeBody(configuration: Self.Configuration) -> some View {
         return HStack {
@@ -179,12 +179,12 @@ private struct CheckboxStyle: ToggleStyle {
 
 // Some hack as the big button is not resizable, so we're using a smaller button here
 
-private struct SmallButtonStyle: ButtonStyle {
+struct SmallButtonStyle: ButtonStyle {
 
     // We have to embed the button style in an extra, otherwise isEnabled is always true on iOS 14.4 and below.
     // See: https://stackoverflow.com/a/64255870
     // See: https://stackoverflow.com/q/69089886
-    private struct SmallButtonView: View {
+    struct SmallButtonView: View {
         @Environment(\.isEnabled) private var isEnabled: Bool
         let configuration: Configuration
 
