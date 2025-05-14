@@ -42,8 +42,8 @@
 		CFAFDC342DD390690098C822 = {
 			isa = PBXGroup;
 			children = (
-				CFAFDC762DD4910D0098C822 /* layout-arm64 */,
 				CFAFDC6F2DD490F70098C822 /* layout-arm */,
+				CFAFDC762DD4910D0098C822 /* layout-arm64 */,
 				CFAFDC582DD3B0FB0098C822 /* control */,
 				CFAFDC592DD3B0FB0098C822 /* entitlements.plist */,
 				CFAFDC5A2DD3B0FB0098C822 /* file.swift */,

@@ -5,8 +5,10 @@ TARGET := iphone:clang:latest:14.0
 # https://theos.dev/docs/variables
 ifeq ($(THEOS_PACKAGE_SCHEME),rootless)
   THEOS_LAYOUT_DIR = $(THEOS_PROJECT_DIR)/layout-arm64/
+  THEOS_LAYOUT_DIR_NAME = layout-arm64
 else
   THEOS_LAYOUT_DIR = $(THEOS_PROJECT_DIR)/layout-arm/
+  THEOS_LAYOUT_DIR_NAME = layout-arm
 endif
 
 include $(THEOS)/makefiles/common.mk
