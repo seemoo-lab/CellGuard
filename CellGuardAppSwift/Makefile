@@ -14,7 +14,7 @@ include $(THEOS)/makefiles/common.mk
 # The name of your Xcode project/workspace
 XCODEPROJ_NAME = CellGuard
 # The scheme of your app to compile 
-CellGuard_XCODE_SCHEME = CellGuard
+CellGuard_XCODE_SCHEME = CellGuard (Jailbreak)
 # The ldid flag to sign your app with, we will make this next
 # CellGuard_CODESIGN_FLAGS = -ScellGuardEntitlements.xml
 
