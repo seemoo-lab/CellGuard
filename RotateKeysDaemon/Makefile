@@ -13,7 +13,6 @@ include $(THEOS_MAKE_PATH)/tool.mk
 # update signing & developer configuration
 signing:
 	set -e ;\
-	cp ../CellGuardAppSwift/Config/Developer.xcconfig layout/usr/local/bin/RotateKeysDaemon.config ;\
 	DEVELOPMENT_TEAM=$$(grep -e 'DEVELOPMENT_TEAM' ../CellGuardAppSwift/Config/Developer.xcconfig | awk -F" = "  '{print $$2}') ;\
 	PRODUCT_BUNDLE_IDENTIFIER=$$(grep -e 'PRODUCT_BUNDLE_IDENTIFIER' ../CellGuardAppSwift/Config/Developer.xcconfig | awk -F" = "  '{print $$2}') ;\
 	defaults write "$$(pwd)/entitlements.plist" "com.apple.developer.team-identifier" "$$DEVELOPMENT_TEAM" ;\

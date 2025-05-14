@@ -2,20 +2,15 @@ import Foundation
 import Security
 
 func writeAppToken(_ token: String) -> Bool {
-    guard let config = readConfig() else {
-        return false
-    }
-
     // https://developer.apple.com/documentation/security/sharing-access-to-keychain-items-among-a-collection-of-apps
     // https://developer.apple.com/documentation/BundleResources/Entitlements/keychain-access-groups
-    let accessGroup = "\(config.developmentTeam).\(config.productBundleIdentifier)"
+    // We just use the app id (access group) defined in the entitlements.plist
 
     // https://developer.apple.com/documentation/security/searching-for-keychain-items
     let service = "capture-packets-token"
     let searchQuery: [String: Any] = [
         kSecClass as String: kSecClassGenericPassword,
         kSecAttrService as String: service,
-        kSecAttrAccessGroup as String: accessGroup,
         kSecMatchLimit as String: kSecMatchLimitOne,
         kSecReturnData as String: false
     ]
@@ -29,7 +24,6 @@ func writeAppToken(_ token: String) -> Bool {
         let addQuery: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: service,
-            kSecAttrAccessGroup as String: accessGroup,
             kSecValueData as String: token.data(using: .utf8)!
         ]
 
@@ -43,7 +37,7 @@ func writeAppToken(_ token: String) -> Bool {
             return false
         }
 
-        print("Inserted token into keychain \(accessGroup)")
+        print("Inserted token into keychain")
     } else if status == errSecSuccess {
         // Update the item as it is already in the keychain
 
@@ -51,7 +45,6 @@ func writeAppToken(_ token: String) -> Bool {
         let searchQuery: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: service,
-            kSecAttrAccessGroup as String: accessGroup,
         ]
         let updateQuery: [String: Any] = [
             kSecValueData as String: token.data(using: .utf8)!
@@ -66,7 +59,7 @@ func writeAppToken(_ token: String) -> Bool {
             return false
         }
 
-        print("Updated token in keychain \(accessGroup)")
+        print("Updated token in keychain")
     } else {
         let res = SecCopyErrorMessageString(status, nil)
         print("Keychain Error while fetching (\(status)) -> \(String(describing: res))")

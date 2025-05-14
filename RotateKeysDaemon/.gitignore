@@ -8,6 +8,3 @@ xcuserdata
 
 # macOS
 .DS_Store
-
-# daemon config
-layout/usr/local/bin/RotateKeysDaemon.config
