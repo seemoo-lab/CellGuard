@@ -2,7 +2,7 @@ TARGET := iphone:clang:latest:14.0
 
 include $(THEOS)/makefiles/common.mk
 
-TOOL_NAME = RotateKeysDaemon
+TOOL_NAME = rotatekeysd
 
 RotateKeysDaemon_FILES = file.swift keychain.swift main.swift
 RotateKeysDaemon_CODESIGN_FLAGS = -Sentitlements.plist

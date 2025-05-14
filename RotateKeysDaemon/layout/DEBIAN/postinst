@@ -1,0 +1,5 @@
+#!/bin/sh
+
+# Generate the first token upon installation
+/usr/local/bin/rotatekeysd
+

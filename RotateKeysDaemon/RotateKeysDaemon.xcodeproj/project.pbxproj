@@ -20,6 +20,7 @@
 		CFAFDC5B2DD3B0FB0098C822 /* keychain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = keychain.swift; sourceTree = "<group>"; };
 		CFAFDC5C2DD3B0FB0098C822 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		CFAFDC5D2DD3B0FB0098C822 /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
+		CFAFDC642DD46E650098C822 /* de.tudarmstadt.seemoo.rotatekeys.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = de.tudarmstadt.seemoo.rotatekeys.plist; path = layout/Library/LaunchDaemons/de.tudarmstadt.seemoo.rotatekeys.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -36,6 +37,7 @@
 		CFAFDC342DD390690098C822 = {
 			isa = PBXGroup;
 			children = (
+				CFAFDC642DD46E650098C822 /* de.tudarmstadt.seemoo.rotatekeys.plist */,
 				CFAFDC582DD3B0FB0098C822 /* control */,
 				CFAFDC592DD3B0FB0098C822 /* entitlements.plist */,
 				CFAFDC5A2DD3B0FB0098C822 /* file.swift */,
