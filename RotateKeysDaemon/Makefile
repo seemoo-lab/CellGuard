@@ -1,16 +1,30 @@
 TARGET := iphone:clang:latest:14.0
 
+# https://theos.dev/docs/packaging
+# https://theos.dev/docs/rootless
+# https://theos.dev/docs/variables
+ifeq ($(THEOS_PACKAGE_SCHEME),rootless)
+  THEOS_LAYOUT_DIR = $(THEOS_PROJECT_DIR)/layout-arm64/
+else
+  THEOS_LAYOUT_DIR = $(THEOS_PROJECT_DIR)/layout-arm/
+endif
+
 include $(THEOS)/makefiles/common.mk
 
 TOOL_NAME = rotatekeysd
 
-RotateKeysDaemon_FILES = file.swift keychain.swift main.swift
-RotateKeysDaemon_CODESIGN_FLAGS = -Sentitlements.plist
-RotateKeysDaemon_INSTALL_PATH = /usr/local/bin
+rotatekeysd_FILES = file.swift keychain.swift main.swift
+rotatekeysd_CODESIGN_FLAGS = -Sentitlements.plist
+ifeq ($(THEOS_PACKAGE_SCHEME),rootless)
+  rotatekeysd_INSTALL_PATH = /var/jb/usr/local/bin
+else
+  rotatekeysd_INSTALL_PATH = /usr/local/bin
+endif
 
 include $(THEOS_MAKE_PATH)/tool.mk
 
 # update signing & developer configuration
+# https://theos.dev/docs/configuration
 signing:
 	set -e ;\
 	DEVELOPMENT_TEAM=$$(grep -e 'DEVELOPMENT_TEAM' ../CellGuardAppSwift/Config/Developer.xcconfig | awk -F" = "  '{print $$2}') ;\

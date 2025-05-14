@@ -1,0 +1,7 @@
+#!/bin/bash
+
+if [ "$1" = remove ] || [ "$1" = purge ]; then
+  launchctl unload /Library/LaunchDaemons/de.tudarmstadt.seemoo.rotatekeys.plist &> /dev/null
+fi
+
+exit 0
