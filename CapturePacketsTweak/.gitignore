@@ -1,3 +1,10 @@
+# Theos
 .theos/
 packages/
+
+# XCode
+*.xcuserstate
+xcuserdata
+
+# macOS
 .DS_Store

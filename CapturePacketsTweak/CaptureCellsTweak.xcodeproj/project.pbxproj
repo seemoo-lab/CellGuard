@@ -1,0 +1,336 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		CFAFDC992DD4A7B00098C822 /* CPTBaseTweakManager.m in Sources */ = {isa = PBXBuildFile; fileRef = CFAFDC902DD4A7B00098C822 /* CPTBaseTweakManager.m */; };
+		CFAFDC9B2DD4A7B00098C822 /* CPTManager.m in Sources */ = {isa = PBXBuildFile; fileRef = CFAFDC922DD4A7B00098C822 /* CPTManager.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		CFAFDC7E2DD4A7760098C822 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		CFAFDC802DD4A7760098C822 /* libCaptureCellsTweak.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libCaptureCellsTweak.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		CFAFDC8D2DD4A7B00098C822 /* CapturePackets.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = CapturePackets.plist; sourceTree = "<group>"; };
+		CFAFDC8E2DD4A7B00098C822 /* control */ = {isa = PBXFileReference; lastKnownFileType = text; path = control; sourceTree = "<group>"; };
+		CFAFDC8F2DD4A7B00098C822 /* CPTBaseTweakManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CPTBaseTweakManager.h; sourceTree = "<group>"; };
+		CFAFDC902DD4A7B00098C822 /* CPTBaseTweakManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CPTBaseTweakManager.m; sourceTree = "<group>"; };
+		CFAFDC912DD4A7B00098C822 /* CPTManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CPTManager.h; sourceTree = "<group>"; };
+		CFAFDC922DD4A7B00098C822 /* CPTManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CPTManager.m; sourceTree = "<group>"; };
+		CFAFDC932DD4A7B00098C822 /* postinst */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = postinst; sourceTree = "<group>"; };
+		CFAFDC962DD4A7B00098C822 /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
+		CFAFDC972DD4A7B00098C822 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		CFAFDC982DD4A7B00098C822 /* Tweak.x */ = {isa = PBXFileReference; lastKnownFileType = text; path = Tweak.x; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		CFAFDC7D2DD4A7760098C822 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		CFAFDC772DD4A7760098C822 = {
+			isa = PBXGroup;
+			children = (
+				CFAFDC8D2DD4A7B00098C822 /* CapturePackets.plist */,
+				CFAFDC8E2DD4A7B00098C822 /* control */,
+				CFAFDC8F2DD4A7B00098C822 /* CPTBaseTweakManager.h */,
+				CFAFDC902DD4A7B00098C822 /* CPTBaseTweakManager.m */,
+				CFAFDC912DD4A7B00098C822 /* CPTManager.h */,
+				CFAFDC922DD4A7B00098C822 /* CPTManager.m */,
+				CFAFDC952DD4A7B00098C822 /* layout */,
+				CFAFDC962DD4A7B00098C822 /* Makefile */,
+				CFAFDC972DD4A7B00098C822 /* README.md */,
+				CFAFDC982DD4A7B00098C822 /* Tweak.x */,
+				CFAFDC812DD4A7760098C822 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		CFAFDC812DD4A7760098C822 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CFAFDC802DD4A7760098C822 /* libCaptureCellsTweak.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		CFAFDC942DD4A7B00098C822 /* DEBIAN */ = {
+			isa = PBXGroup;
+			children = (
+				CFAFDC932DD4A7B00098C822 /* postinst */,
+			);
+			path = DEBIAN;
+			sourceTree = "<group>";
+		};
+		CFAFDC952DD4A7B00098C822 /* layout */ = {
+			isa = PBXGroup;
+			children = (
+				CFAFDC942DD4A7B00098C822 /* DEBIAN */,
+			);
+			path = layout;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		CFAFDC7F2DD4A7760098C822 /* CaptureCellsTweak */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CFAFDC8A2DD4A7760098C822 /* Build configuration list for PBXNativeTarget "CaptureCellsTweak" */;
+			buildPhases = (
+				CFAFDC7C2DD4A7760098C822 /* Sources */,
+				CFAFDC7D2DD4A7760098C822 /* Frameworks */,
+				CFAFDC7E2DD4A7760098C822 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = CaptureCellsTweak;
+			packageProductDependencies = (
+			);
+			productName = CaptureCellsTweak;
+			productReference = CFAFDC802DD4A7760098C822 /* libCaptureCellsTweak.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		CFAFDC782DD4A7760098C822 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastUpgradeCheck = 1630;
+				TargetAttributes = {
+					CFAFDC7F2DD4A7760098C822 = {
+						CreatedOnToolsVersion = 16.3;
+					};
+				};
+			};
+			buildConfigurationList = CFAFDC7B2DD4A7760098C822 /* Build configuration list for PBXProject "CaptureCellsTweak" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = CFAFDC772DD4A7760098C822;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = CFAFDC812DD4A7760098C822 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				CFAFDC7F2DD4A7760098C822 /* CaptureCellsTweak */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		CFAFDC7C2DD4A7760098C822 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CFAFDC992DD4A7B00098C822 /* CPTBaseTweakManager.m in Sources */,
+				CFAFDC9B2DD4A7B00098C822 /* CPTManager.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		CFAFDC882DD4A7760098C822 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = RJXNW62ZYN;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		CFAFDC892DD4A7760098C822 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = RJXNW62ZYN;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		CFAFDC8B2DD4A7760098C822 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = RJXNW62ZYN;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		CFAFDC8C2DD4A7760098C822 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = RJXNW62ZYN;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		CFAFDC7B2DD4A7760098C822 /* Build configuration list for PBXProject "CaptureCellsTweak" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CFAFDC882DD4A7760098C822 /* Debug */,
+				CFAFDC892DD4A7760098C822 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CFAFDC8A2DD4A7760098C822 /* Build configuration list for PBXNativeTarget "CaptureCellsTweak" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CFAFDC8B2DD4A7760098C822 /* Debug */,
+				CFAFDC8C2DD4A7760098C822 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = CFAFDC782DD4A7760098C822 /* Project object */;
+}
