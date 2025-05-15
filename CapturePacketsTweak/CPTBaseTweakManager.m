@@ -10,6 +10,8 @@
 
 - (NSURL *)cacheFile;
 
+- (NSURL *)tokenFile;
+
 - (void)emptyCache;
 
 - (void)closeConnection;
@@ -228,6 +230,17 @@
     NSURL *cacheFile = [tweakDirectory URLByAppendingPathComponent:self.cacheFileName];
 
     return cacheFile;
+}
+
+- (NSURL *)tokenFile {
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    NSURL* documentsDirectory = [[fileManager URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
+    if (documentsDirectory == nil) {
+        return nil;
+    }
+    NSURL *tweakDirectory = [documentsDirectory URLByAppendingPathComponent:self.tweakName isDirectory:true];
+    NSURL *tokenFile = [tweakDirectory URLByAppendingPathComponent:@"token.txt"];
+    return tokenFile;
 }
 
 - (void)writeData:(NSString *)dataString {
