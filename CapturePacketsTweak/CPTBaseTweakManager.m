@@ -8,6 +8,8 @@
 
 - (void)handleInboundConnection:(nw_connection_t)connection;
 
+- (void)transmitCache;
+
 - (NSURL *)cacheFile;
 
 - (NSURL *)tokenFile;
@@ -19,6 +21,7 @@
 @property NSString *tweakName;
 @property NSString *cacheFileName;
 @property NSString *logPrefix;
+@property NSMutableData *receiveBuffer;
 @property nw_listener_t nw_listener;
 @property nw_connection_t nw_inbound_connection;
 
@@ -106,6 +109,108 @@
     });
     nw_connection_start(self.nw_inbound_connection);
 
+    // Read the token from its file
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    NSURL *tokenFile = self.tokenFile;
+    NSString *tokenSet = @"false";
+    NSString *token = NULL;
+    if ([fileManager fileExistsAtPath:tokenFile.path]) {
+        NSError *error;
+        token = [NSString stringWithContentsOfURL:tokenFile encoding:NSUTF8StringEncoding error:&error];
+        if (token == NULL) {
+            [self log:@"Can't read token from file %@: %@", tokenFile, error];
+        } else {
+            tokenSet = @"true";
+            #ifndef FINALPACKAGE
+            [self log:@"Successfully read token %@ from %@", token, tokenFile];
+            #endif
+        }
+    } else {
+        [self log:@"Token file does not exist at %@", tokenFile];
+    }
+
+    // Create empty receive buffer
+    self.receiveBuffer = [[NSMutableData alloc] init];
+
+    // Send the hello string
+    // Append the package version from the build flags: https://stackoverflow.com/a/67250587
+    NSString *helloString = [NSString stringWithFormat:@"Hello CellGuard,CaptureCellsTweak,%@,%@\n", @OS_STRINGIFY(PACKAGE_VERSION), tokenSet];
+    NSData *helloStringData = [helloString dataUsingEncoding:NSUTF8StringEncoding];
+    dispatch_data_t helloStringDispatchData = dispatch_data_create([helloStringData bytes], [helloStringData length], NULL, DISPATCH_DATA_DESTRUCTOR_DEFAULT);
+    nw_connection_send(self.nw_inbound_connection, helloStringDispatchData, NW_CONNECTION_DEFAULT_MESSAGE_CONTEXT, true, ^(nw_error_t  _Nullable error) {
+        if (error != NULL) {
+            [self log:@"Can't send the hello message: %@", error];
+            [self closeConnection];
+            return;
+        }
+
+        if (token != NULL) {
+            [self receiveAndCompare:token];
+        } else {
+            [self transmitCache];
+        }
+    });
+}
+
+- (void)receiveAndCompare:(NSString*) token {
+    [self log:@"Waiting for token response from client"];
+    nw_connection_receive(self.nw_inbound_connection, 0, 10 * 1024, ^(dispatch_data_t  _Nullable content, nw_content_context_t  _Nullable context, bool is_complete, nw_error_t  _Nullable error) {
+        if (error != NULL) {
+            [self log:@"Can't receive the hello message: %@", error];
+            [self closeConnection];
+            return;
+        }
+
+        if (self.receiveBuffer == NULL) {
+            [self log:@"Can't receive the hello message: receiveBuffer == NULL"];
+            [self closeConnection];
+            return;
+        }
+
+        if ([self.receiveBuffer length] > 20 * 1024) {
+            [self log:@"Can't receive the hello message: receiveBuffer.length > 20 KiB"];
+            [self closeConnection];
+            return;
+        }
+
+        if (content != NULL) {
+            // Add the received bytes to the buffer
+            // See: https://developer.apple.com/documentation/dispatch/dispatch_data_t?language=objc
+            [self.receiveBuffer appendData: (NSData*) content];
+        }
+
+        // The message is complete
+
+        // Find the newline and get the token before
+        // https://stackoverflow.com/a/21606737
+        NSData* newlinePattern = [@"\n" dataUsingEncoding:NSUTF8StringEncoding];
+        NSRange range = [self.receiveBuffer rangeOfData:newlinePattern options:0 range:NSMakeRange(0, self.receiveBuffer.length)];
+
+        if (range.location == NSNotFound) {
+            // Receive further data
+            [self receiveAndCompare:token];
+            return;
+        }
+
+        if (range.location >= self.receiveBuffer.length) {
+            [self log:@"Received message range is longer than buffer size: loc=%@ len=%@", range.location, range.length];
+            [self closeConnection];
+            return;
+        }
+
+        NSData* tokenStringData = [self.receiveBuffer subdataWithRange:NSMakeRange(0, range.location)];
+        NSString *providedToken = [[NSString alloc] initWithData:tokenStringData encoding:NSUTF8StringEncoding];
+        if ([providedToken isEqualToString:token]) {
+            [self log:@"Provided token (%@) is equal to token (%@)", providedToken, token];
+            [self transmitCache];
+        } else {
+            [self log:@"Provided token (%@) is not equal to token (%@)!", providedToken, token];
+            [self closeConnection];
+        }
+    });
+}
+
+- (void)transmitCache {
     // Get the path of the cache file
     NSURL *cacheFile = self.cacheFile;
     NSFileManager *fileManager = [NSFileManager defaultManager];
@@ -172,6 +277,7 @@
 
                 // In any case, close the connection
                 self.nw_inbound_connection = NULL;
+                self.receiveBuffer = NULL;
             });
 }
 
@@ -209,6 +315,7 @@
 
     // And reset the internal state
     self.nw_inbound_connection = NULL;
+    self.receiveBuffer = NULL;
 }
 
 - (void)close {

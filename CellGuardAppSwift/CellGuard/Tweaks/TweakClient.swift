@@ -9,8 +9,50 @@ import Foundation
 import Network
 import OSLog
 
-enum AuthTokenError: Error {
-    case gotNothing
+enum TweakClientError: Error {
+    case unexpectedHello(String)
+    case authTokenNotInKeychain
+}
+
+struct TweakHelloMessage: CustomStringConvertible {
+
+    private static let logger = Logger(
+        subsystem: Bundle.main.bundleIdentifier!,
+        category: String(describing: TweakHelloMessage.self)
+    )
+
+    let name: String
+    let version: String
+    let authToken: Bool
+
+    var description: String {
+        return "\(name) v\(version) [requiresAuthToken: \(authToken)]"
+    }
+
+    static func parse(_ content: Data) throws -> TweakHelloMessage? {
+        guard let str = String(data: content, encoding: .utf8) else {
+            Self.logger.info("Failed to decode hello message: \(content.base64EncodedString())")
+            return nil
+        }
+
+        // Self.logger.debug("Parsing hello message: \(str)")
+
+        guard str.hasPrefix("Hello CellGuard") else {
+            Self.logger.info("Failed to parse hello message with wrong prefix: \(str)")
+            return nil
+        }
+
+        let components = str.split(separator: ",")
+        guard components.count >= 4 else {
+            throw TweakClientError.unexpectedHello(str)
+        }
+
+        return TweakHelloMessage(
+            name: String(components[1]),
+            version: String(components[2]),
+            authToken: components[3].elementsEqual("true")
+        )
+    }
 }
 
 struct TweakClient {
@@ -39,7 +81,7 @@ struct TweakClient {
         var item: CFTypeRef?
         let status = SecItemCopyMatching(searchQuery as CFDictionary, &item)
         guard status != errSecItemNotFound else {
-            Self.logger.info("Auth key not in keychain")
+            Self.logger.info("Auth token not in keychain")
             return nil
         }
 
@@ -55,27 +97,26 @@ struct TweakClient {
             Self.logger.warning("Cannot extract token from keychain")
             return nil
         }
+
+        Self.logger.debug("Tweak Auth Token: \(token)")
         return token
 
     }
 
     /// Connects to the tweak, fetches all cells, and converts them into a dictionary structure.
     func query(completion: @escaping (Result<Data, Error>) -> Void, ready: @escaping () -> Void) {
-        guard let authToken = fetchAuthToken() else {
-            completion(.failure(AuthTokenError.gotNothing))
-            return
-        }
-        Self.logger.info("Tweak Auth Key: \(authToken)")
-
         // Create a connection to localhost on the given port
         let nwPort = NWEndpoint.Port(integerLiteral: UInt16(port))
         let connection = NWConnection(host: "127.0.0.1", port: nwPort, using: NWParameters.tcp)
 
+        let newlineChar = Data("\n".utf8)
+
         // Store the data sent over multiple messages
         var data = Data()
+        var firstNewlineReceived = false
 
         func receiveNextMessage() {
-            connection.receiveMessage { content, context, complete, error in
+            connection.receive(minimumIncompleteLength: 0, maximumLength: 10 * 1024) { content, context, complete, error in
                 Self.logger.trace("Received Message (\(self.port)): \(content?.debugDescription ?? "nil") - \(context.debugDescription) - \(complete) - \(context?.isFinal ?? false) - \(error)")
 
                 if let error = error {
@@ -89,21 +130,59 @@ struct TweakClient {
                 }
 
                 if let content = content {
-                    // We've got a full response with data and we'll append it to the cache
+                    // Append message data to the cache
                     data.append(contentsOf: content)
                 }
 
-                if context?.isFinal ?? false {
+                if !firstNewlineReceived, let range = data.firstRange(of: newlineChar) {
+                    // Handle complete message
+                    do {
+                        if let helloMsg = try TweakHelloMessage.parse(data.subdata(in: 0..<range.lowerBound)) {
+                            // We're communicating with a tweak >= 1.1.0
+                            Self.logger.info("Communicating with tweak \(helloMsg)")
+
+                            // Clear the already received data
+                            data.removeAll()
+
+                            // TODO: Store tweak info
+
+                            // Send auth token if required
+                            if helloMsg.authToken {
+                                guard let authToken = fetchAuthToken() else {
+                                    throw TweakClientError.authTokenNotInKeychain
+                                }
+                                connection.send(content: (authToken + "\n").data(using: .utf8), completion: .contentProcessed(authTokenSent))
+                            }
+                        }
+                    } catch {
+                        // Something failed during the parsing of the hello message
+                        completion(.failure(error))
+                        connection.cancel()
+                        return
+                    }
+                    firstNewlineReceived = true
+                }
+
+                // We'll wait for the next message (if not complete)
+                if !complete {
+                    receiveNextMessage()
+                } else {
                     // If it's the last message, we'll call the callback
                     completion(.success(data))
 
                     // Close the connection after a successful query to deregister the handlers
                     // See: https://stackoverflow.com/a/63599285
+                    Self.logger.info("Closing connection because context is final")
                     connection.cancel()
-                } else {
-                    // If it's not the last message, we'll wait for the next one
-                    receiveNextMessage()
                 }
+            }
+        }
+
+        func authTokenSent(error: NWError?) {
+            if let error = error {
+                Self.logger.error("Failed to send auth token: \(error)")
+            } else {
+                Self.logger.info("Successfully sent auth token")
             }
         }
 
