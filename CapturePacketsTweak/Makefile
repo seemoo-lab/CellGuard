@@ -7,11 +7,14 @@ include $(THEOS)/makefiles/common.mk
 TWEAK_NAME = CapturePackets
 
 CapturePackets_FILES = Tweak.x CPTManager.m CPTBaseTweakManager.m
-CapturePackets_CFLAGS = -fobjc-arc
+CapturePackets_OBJCFLAGS = -fobjc-arc
 
 ifeq ($(FINALPACKAGE), 1)
-CapturePackets_CFLAGS += -DFINALPACKAGE
+CapturePackets_OBJCFLAGS += -DFINALPACKAGE
 endif
+
+PACKAGE_VERSION = $(shell grep '^Version:' control | cut -d' ' -f2)
+CapturePackets_OBJCFLAGS += -DPACKAGE_VERSION=\"$(PACKAGE_VERSION)\"
 
 # The dynamic_lookup flag is very important, otherwise the tweak won't compile
 # $ man ld
