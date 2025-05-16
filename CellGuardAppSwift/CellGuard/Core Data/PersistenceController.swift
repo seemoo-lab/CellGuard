@@ -142,7 +142,7 @@ class PersistenceController {
         logger.info("Queried last history token")
 
         // Use a serial dispatch queue for persistent store change notifications
-        let queue = DispatchQueue(label: "Persistent Store Remote Change", qos: .utility, target: nil)
+        let queue = DispatchQueue(label: "Persistent Store Remote Change", qos: .utility)
         logger.info("Created dispatch queue")
 
         // We listen for remote store change notification which are sent from other queues.

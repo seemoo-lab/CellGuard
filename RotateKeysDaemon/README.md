@@ -14,7 +14,7 @@ gmake signing
 # Create .deb package (rootful)
 gmake package
 # Or create .deb package (rootless)
-THEOS_PACKAGE_SCHEME=rootless gmake package 
+THEOS_PACKAGE_SCHEME=rootless gmake package
 # Install .deb on connected iPhone
 gmake install
 ```
@@ -41,5 +41,5 @@ FINALPACKAGE=1 gmake package
 # Clean build cache
 gmake clean
 # Or create .deb package (rootless)
-FINALPACKAGE=1 THEOS_PACKAGE_SCHEME=rootless gmake package 
+FINALPACKAGE=1 THEOS_PACKAGE_SCHEME=rootless gmake package
 ```
