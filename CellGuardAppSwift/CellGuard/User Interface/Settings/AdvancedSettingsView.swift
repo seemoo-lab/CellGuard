@@ -87,14 +87,7 @@ private struct TweakSection: View {
     @ObservedObject var clientState = CPTClientState.shared
 
     var body: some View {
-        Section(header: Text("Capture Cells Tweak")) {
-            KeyValueListRow(key: "Queried") {
-                if let lastConnection = clientState.lastConnection {
-                    Text(mediumDateTimeFormatter.string(from: lastConnection))
-                } else {
-                    Text("Never")
-                }
-            }
+        Section(header: Text("Capture Cells Tweak"), footer: Text(footer)) {
             if let hello = clientState.lastHello {
                 KeyValueListRow(key: "Version", value: hello.version)
             } else {
@@ -104,6 +97,14 @@ private struct TweakSection: View {
                     KeyValueListRow(key: "Version", value: "???")
                 }
             }
+        }
+    }
+
+    var footer: String {
+        if let lastConnection = clientState.lastConnection {
+            return "Established a connection with the tweak on \(mediumDateTimeFormatter.string(from: lastConnection))."
+        } else {
+            return "Never established connection to the tweak."
         }
     }
 
