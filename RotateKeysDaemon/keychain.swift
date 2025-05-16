@@ -6,31 +6,40 @@ func writeAppToken(_ token: String) -> Bool {
     // https://developer.apple.com/documentation/BundleResources/Entitlements/keychain-access-groups
     // We just use the app id (access group) defined in the entitlements.plist
 
-    // https://developer.apple.com/documentation/security/searching-for-keychain-items
-    let service = "capture-packets-token"
+    // Define search and update query for the item
+    // https://developer.apple.com/documentation/security/updating-and-deleting-keychain-items
+    // https://developer.apple.com/documentation/security/item-attribute-keys-and-values
     let searchQuery: [String: Any] = [
         kSecClass as String: kSecClassGenericPassword,
-        kSecAttrService as String: service,
-        kSecMatchLimit as String: kSecMatchLimitOne,
-        kSecReturnData as String: false
+        kSecAttrService as String: "capture-packets-token",
+    ]
+    let updateQuery: [String: Any] = [
+        kSecValueData as String: token.data(using: .utf8)!
     ]
 
-    let status = SecItemCopyMatching(searchQuery as CFDictionary, nil)
+    // Attempt to update the token in the keychain
+    // https://developer.apple.com/documentation/security/security-framework-result-codes
+    // https://developer.apple.com/documentation/security/errsecmissingentitlement
+    let status = SecItemUpdate(searchQuery as CFDictionary, updateQuery as CFDictionary)
+
+    guard status == errSecSuccess || status == errSecItemNotFound else {
+        let res = SecCopyErrorMessageString(status, nil)
+        print("Keychain Error while updating (\(status)) -> \(String(describing: res))")
+        return false
+    }
+
+    // This might fail if the token does not already exist in the keychain
     if status == errSecItemNotFound {
-        // Add the new item
-
+        // Add the new item as it is not yet present in the keychain
         // https://developer.apple.com/documentation/security/adding-a-password-to-the-keychain
-        // https://developer.apple.com/documentation/security/item-attribute-keys-and-values
-        let addQuery: [String: Any] = [
-            kSecClass as String: kSecClassGenericPassword,
-            kSecAttrService as String: service,
-            kSecValueData as String: token.data(using: .utf8)!
-        ]
 
+        // Merge the search & update queries to form an add query
+        let addQuery: [String: Any] = searchQuery.merging(updateQuery) { current, _ in current }
+
+        // Add the item
         let status = SecItemAdd(addQuery as CFDictionary, nil)
 
-        // https://developer.apple.com/documentation/security/security-framework-result-codes
-        // https://developer.apple.com/documentation/security/errsecmissingentitlement
+        // And check the return code
         guard status == errSecSuccess else {
             let res = SecCopyErrorMessageString(status, nil)
             print("Keychain Error while adding (\(status)) -> \(String(describing: res))")
@@ -38,32 +47,8 @@ func writeAppToken(_ token: String) -> Bool {
         }
 
         print("Inserted token into keychain")
-    } else if status == errSecSuccess {
-        // Update the item as it is already in the keychain
-
-        // https://developer.apple.com/documentation/security/updating-and-deleting-keychain-items
-        let searchQuery: [String: Any] = [
-            kSecClass as String: kSecClassGenericPassword,
-            kSecAttrService as String: service,
-        ]
-        let updateQuery: [String: Any] = [
-            kSecValueData as String: token.data(using: .utf8)!
-        ]
-
-        let status = SecItemUpdate(searchQuery as CFDictionary, updateQuery as CFDictionary)
-
-        // TODO: Simplify function by checking first attempting update, if status == errSecItemNotFound -> insert
-        guard status == errSecSuccess else {
-            let res = SecCopyErrorMessageString(status, nil)
-            print("Keychain Error while updating (\(status)) -> \(String(describing: res))")
-            return false
-        }
-
-        print("Updated token in keychain")
     } else {
-        let res = SecCopyErrorMessageString(status, nil)
-        print("Keychain Error while fetching (\(status)) -> \(String(describing: res))")
-        return false
+        print("Updated token in keychain")
     }
 
     return true
