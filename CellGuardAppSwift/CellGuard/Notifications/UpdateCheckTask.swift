@@ -20,10 +20,12 @@ struct UpdateCheckTask {
         category: String(describing: SysdiagTask.self)
     )
 
-    @MainActor mutating func run() async {
+    func run() async {
         // Verify that the user has enabled the update check
         guard UserDefaults.standard.bool(forKey: UserDefaultsKeys.updateCheck.rawValue) else {
-            CheckUpdateData.shared.latestReleaseVersion = nil
+            await MainActor.run {
+                CheckUpdateData.shared.latestReleaseVersion = nil
+            }
             return
         }
 
@@ -54,7 +56,9 @@ struct UpdateCheckTask {
             let latestReleaseVersion = "\(releaseNameSplit))"
 
             if currentAppVersion != latestReleaseVersion {
-                CheckUpdateData.shared.latestReleaseVersion = latestReleaseVersion
+                await MainActor.run {
+                    CheckUpdateData.shared.latestReleaseVersion = latestReleaseVersion
+                }
             }
         } catch {
             Self.logger.warning("Request error: \(error.localizedDescription)")
