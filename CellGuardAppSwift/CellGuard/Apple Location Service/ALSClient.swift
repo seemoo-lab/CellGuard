@@ -15,6 +15,7 @@ enum ALSClientError: Error {
     case httpNoData(URLResponse?)
     case noCells(Data)
     case cellIdTooLarge
+    case invalidCell
 }
 
 struct ALSQueryLocation: Equatable, Hashable {
@@ -256,6 +257,8 @@ struct ALSClient {
         do {
             let protoRequest = try AlsProto_ALSLocationRequest.with {
                 switch origin.technology {
+                case .OFF:
+                    throw ALSClientError.invalidCell
                 case .GSM:
                     $0.gsmCells = [origin.toGsmProto()]
                 case .UMTS:

@@ -71,12 +71,14 @@ extension PersistenceController {
 
                 // Create a default verification state for each user-enabled pipeline
                 // If the user enables another pipeline afterward, it automatically creates its verification states as needed
-                for pipelineId in UserDefaults.standard.userEnabledVerificationPipelineIds() {
-                    let state = VerificationState(context: context)
-                    state.pipeline = pipelineId
-                    state.delayUntil = Date()
+                if cellProperties.technology != ALSTechnology.OFF {
+                    for pipelineId in UserDefaults.standard.userEnabledVerificationPipelineIds() {
+                        let state = VerificationState(context: context)
+                        state.pipeline = pipelineId
+                        state.delayUntil = Date()
 
-                    cell.addToVerifications(state)
+                        cell.addToVerifications(state)
+                    }
                 }
 
                 cell.imported = importedDate

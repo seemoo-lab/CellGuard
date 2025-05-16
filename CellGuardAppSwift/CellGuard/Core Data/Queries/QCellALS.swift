@@ -92,7 +92,7 @@ extension PersistenceController {
 
     static func queryCell(from cell: CellTweak) -> ALSQueryCell {
         return ALSQueryCell(
-            technology: ALSTechnology(rawValue: cell.technology ?? "") ?? .LTE,
+            technology: ALSTechnology(rawValue: cell.technology ?? "") ?? .OFF,
             country: cell.country,
             network: cell.network,
             area: cell.area,
