@@ -117,7 +117,8 @@ struct TweakClient {
 
         func receiveNextMessage() {
             connection.receive(minimumIncompleteLength: 0, maximumLength: 10 * 1024) { content, context, complete, error in
-                Self.logger.trace("Received Message (\(self.port)): \(content?.debugDescription ?? "nil") - \(context.debugDescription) - \(complete) - \(context?.isFinal ?? false) - \(error)")
+                // Uncomment the following for debugging the network conenction
+                // Self.logger.trace("Received Message (\(self.port)): \(content?.debugDescription ?? "nil") - \(context.debugDescription) - \(complete) - \(context?.isFinal ?? false) - \(error)")
 
                 if let error = error {
                     // We've got an error
