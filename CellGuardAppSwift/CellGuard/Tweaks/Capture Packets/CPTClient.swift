@@ -71,22 +71,6 @@ struct CPTClient {
         category: String(describing: CPTClient.self)
     )
 
-    /// The last timestamp of when a connection was ready to receive data
-    static var lastConnectionReady: Date {
-        get {
-            connectionReadyLock.lock()
-            defer { connectionReadyLock.unlock() }
-            return _lastConnectionReady
-        }
-        set {
-            connectionReadyLock.lock()
-            defer { connectionReadyLock.unlock() }
-            _lastConnectionReady = newValue
-        }
-    }
-    private static var _lastConnectionReady: Date = Date.distantPast
-    private static var connectionReadyLock = NSLock()
-
     /// The generic tweak client
     private let client: TweakClient
 
@@ -100,8 +84,17 @@ struct CPTClient {
             completion(.init {
                 try convert(data: try result.get())
             })
-        } ready: {
-            Self.lastConnectionReady = Date()
+        } ready: { (hello) in
+            // Can be called multiple times:
+            // - Once a connection is established (hello == nil)
+            // - Once a hello message from the tweak is received (hello != nil)
+
+            // Publish changes via the main thread
+            Task {
+                await MainActor.run {
+                    CPTClientState.shared.update(hello)
+                }
+            }
         }
     }
 
@@ -159,6 +152,22 @@ struct CPTClient {
         }
 
         return packets
+    }
+
+}
+
+class CPTClientState: ObservableObject {
+
+    static let shared = CPTClientState()
+
+    @Published var lastHello: TweakHelloMessage?
+    @Published var lastConnection: Date?
+
+    func update(_ hello: TweakHelloMessage?) {
+        if let hello = hello {
+            self.lastHello = hello
+        }
+        self.lastConnection = Date()
     }
 
 }

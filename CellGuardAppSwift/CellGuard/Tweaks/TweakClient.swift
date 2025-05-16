@@ -49,7 +49,7 @@ struct TweakHelloMessage: CustomStringConvertible {
 
         return TweakHelloMessage(
             name: String(components[1]),
-            version: String(components[2]),
+            version: String(components[2]).trimmingCharacters(in: CharacterSet(arrayLiteral: "\"")),
             authToken: components[3].elementsEqual("true")
         )
     }
@@ -104,7 +104,7 @@ struct TweakClient {
     }
 
     /// Connects to the tweak, fetches all cells, and converts them into a dictionary structure.
-    func query(completion: @escaping (Result<Data, Error>) -> Void, ready: @escaping () -> Void) {
+    func query(completion: @escaping (Result<Data, Error>) -> Void, ready: @escaping (TweakHelloMessage?) -> Void) {
         // Create a connection to localhost on the given port
         let nwPort = NWEndpoint.Port(integerLiteral: UInt16(port))
         let connection = NWConnection(host: "127.0.0.1", port: nwPort, using: NWParameters.tcp)
@@ -145,7 +145,8 @@ struct TweakClient {
                             // Clear the already received data
                             data.removeAll()
 
-                            // TODO: Store tweak info
+                            // Pass the hello message to the tweak client implementation
+                            ready(helloMsg)
 
                             // Send auth token if required
                             if helloMsg.authToken {
@@ -192,7 +193,7 @@ struct TweakClient {
             Self.logger.trace("Connection State (\(self.port)) : \(String(describing: state))")
 
             if state == .ready {
-                ready()
+                ready(nil)
                 receiveNextMessage()
             }
 
