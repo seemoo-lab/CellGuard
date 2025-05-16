@@ -19,14 +19,6 @@ enum SettingsCloseReason {
 
 struct SettingsView: View {
 
-    @StateObject private var profileData = ProfileData.shared
-
-    @AppStorage(UserDefaultsKeys.introductionShown.rawValue) var introductionShown: Bool = true
-    @AppStorage(UserDefaultsKeys.appMode.rawValue) var appMode: DataCollectionMode = .none
-    @AppStorage(UserDefaultsKeys.study.rawValue) var studyParticipationTimestamp: Double = 0
-
-    @State private var showQuitStudyAlert = false
-
     var body: some View {
         List {
             PermissionSection()
@@ -39,57 +31,13 @@ struct SettingsView: View {
             // - (TODO) Toggle for regular sysdiagnose import reminders
             // - (TODO) Toggle for profile expiry notification
 
-            // Only show the baseband profile setting in the manual mode
-            if appMode == .manual {
-                Section(header: Text("Baseband Profile"), footer: Text("Keep the baseband debug profile on your device up-to-date to collect logs for CellGuard.")) {
-                    NavigationLink {
-                        DebugProfileDetailedView()
-                    } label: {
-                        Text("Install Profile")
-                    }
+            BasebandProfileSection()
 
-                    if let installData = profileData.installDate {
-                        KeyValueListRow(key: "Installed", value: mediumDateTimeFormatter.string(for: installData) ?? "n/a")
-                    }
-                    if let removalDate = profileData.removalDate {
-                        KeyValueListRow(key: "Expires") {
-                            Text(mediumDateTimeFormatter.string(for: removalDate) ?? "n/a")
-                                .foregroundColor(profileData.installState == .expiringSoon ? .orange : .gray)
-                        }
-                    }
-                }
-            }
-
-            Section(header: Text("Study"), footer: Text("Join our study to improve CellGuard.")) {
-                if studyParticipationTimestamp == 0 {
-                    NavigationLink {
-                        // TODO: Why does
-                        UserStudyView(returnToPreviousView: true)
-                    } label: {
-                        Text("Participate")
-                    }
-                } else {
-                    Button {
-                        showQuitStudyAlert = true
-                    } label: {
-                        Text("End Participation")
-                    }
-                }
-
-                NavigationLink {
-                    StudyContributionsView()
-                } label: {
-                    Text("Your Contributions")
-                }
-            }
+            StudySection()
 
             BackgroundTasksSection()
 
-            Section(header: Text("Introduction"), footer: Text("View the introduction to learn how CellGuard works.")) {
-                Button("Restart Intro") {
-                    introductionShown = false
-                }
-            }
+            IntroductionSection()
 
             Section {
                 NavigationLink {
@@ -107,19 +55,6 @@ struct SettingsView: View {
         .listStyle(.insetGrouped)
         .navigationTitle(Text("Settings"))
         .navigationBarTitleDisplayMode(.inline)
-        .alert(isPresented: $showQuitStudyAlert) {
-            Alert(
-                title: Text("End Participation?"),
-                message: Text("You will no longer contribute data to the CellGuard study."),
-                primaryButton: .destructive(Text("End"), action: {
-                    studyParticipationTimestamp = 0
-                    showQuitStudyAlert = false
-                }),
-                secondaryButton: .default(Text("Continue"), action: {
-                    showQuitStudyAlert = false
-                })
-            )
-        }
     }
 }
 
@@ -173,6 +108,78 @@ private struct PermissionSection: View {
     }
 }
 
+private struct BasebandProfileSection: View {
+    @StateObject private var profileData = ProfileData.shared
+
+    @AppStorage(UserDefaultsKeys.appMode.rawValue) var appMode: DataCollectionMode = .none
+
+    var body: some View {
+        if appMode == .manual {
+            Section(header: Text("Baseband Profile"), footer: Text("Keep the baseband debug profile on your device up-to-date to collect logs for CellGuard.")) {
+                NavigationLink {
+                    DebugProfileDetailedView()
+                } label: {
+                    Text("Install Profile")
+                }
+
+                if let installData = profileData.installDate {
+                    KeyValueListRow(key: "Installed", value: mediumDateTimeFormatter.string(for: installData) ?? "n/a")
+                }
+                if let removalDate = profileData.removalDate {
+                    KeyValueListRow(key: "Expires") {
+                        Text(mediumDateTimeFormatter.string(for: removalDate) ?? "n/a")
+                            .foregroundColor(profileData.installState == .expiringSoon ? .orange : .gray)
+                    }
+                }
+            }
+        }
+    }
+}
+
+private struct StudySection: View {
+    @AppStorage(UserDefaultsKeys.study.rawValue) var studyParticipationTimestamp: Double = 0
+
+    @State private var showQuitStudyAlert = false
+
+    var body: some View {
+        Section(header: Text("Study"), footer: Text("Join our study to improve CellGuard.")) {
+            if studyParticipationTimestamp == 0 {
+                NavigationLink {
+                    // TODO: Why does
+                    UserStudyView(returnToPreviousView: true)
+                } label: {
+                    Text("Participate")
+                }
+            } else {
+                Button {
+                    showQuitStudyAlert = true
+                } label: {
+                    Text("End Participation")
+                }
+            }
+
+            NavigationLink {
+                StudyContributionsView()
+            } label: {
+                Text("Your Contributions")
+            }
+        }
+        .alert(isPresented: $showQuitStudyAlert) {
+            Alert(
+                title: Text("End Participation?"),
+                message: Text("You will no longer contribute data to the CellGuard study."),
+                primaryButton: .destructive(Text("End"), action: {
+                    studyParticipationTimestamp = 0
+                    showQuitStudyAlert = false
+                }),
+                secondaryButton: .default(Text("Continue"), action: {
+                    showQuitStudyAlert = false
+                })
+            )
+        }
+    }
+}
+
 private struct BackgroundTasksSection: View {
 
     @AppStorage(UserDefaultsKeys.updateCheck.rawValue) private var isUpdateChecks: Bool = false
@@ -180,6 +187,18 @@ private struct BackgroundTasksSection: View {
     var body: some View {
         Section(header: Text("Background Tasks"), footer: Text("If enabled, CellGuard regularly queries our backend server for update checks.")) {
             Toggle("Update Checks", isOn: $isUpdateChecks)
+        }
+    }
+}
+
+private struct IntroductionSection: View {
+    @AppStorage(UserDefaultsKeys.introductionShown.rawValue) var introductionShown: Bool = true
+
+    var body: some View {
+        Section(header: Text("Introduction"), footer: Text("View the introduction to learn how CellGuard works.")) {
+            Button("Restart Intro") {
+                introductionShown = false
+            }
         }
     }
 }
