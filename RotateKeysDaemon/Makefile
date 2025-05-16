@@ -17,11 +17,7 @@ TOOL_NAME = rotatekeysd
 
 rotatekeysd_FILES = file.swift keychain.swift main.swift
 rotatekeysd_CODESIGN_FLAGS = -Sentitlements.plist
-ifeq ($(THEOS_PACKAGE_SCHEME),rootless)
-  rotatekeysd_INSTALL_PATH = /var/jb/usr/local/bin
-else
-  rotatekeysd_INSTALL_PATH = /usr/local/bin
-endif
+rotatekeysd_INSTALL_PATH = /usr/local/bin
 
 include $(THEOS_MAKE_PATH)/tool.mk
 
