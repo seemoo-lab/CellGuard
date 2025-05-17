@@ -8,6 +8,7 @@
 import UIKit
 import MapKit
 import SwiftUI
+import Combine
 
 struct CellInformationCard: View {
 
@@ -63,7 +64,6 @@ private struct CellInfoCardOutline: View {
 }
 
 private struct DisconnectedCellInfoCard: View {
-    let dateFormatter = RelativeDateTimeFormatter()
     let cell: CellTweak
     let dualSim: Bool
 
@@ -86,17 +86,13 @@ private struct DisconnectedCellInfoCard: View {
 
         HStack {
             CellInformationItem(title: "Status", text: "Not connected")
-            CellInformationItem(
-                title: "Date",
-                text: dateFormatter.localizedString(for: cell.collected ?? cell.imported ?? Date(), relativeTo: Date())
-            )
+            CellInfoDateItem(cell: cell)
         }
         .padding(EdgeInsets(top: 5, leading: 20, bottom: cell.location == nil ? 25 : 10, trailing: 20))
     }
 }
 
 private struct ConnectedCellInfoCard: View {
-    let dateFormatter = RelativeDateTimeFormatter()
     let cell: CellTweak
     let dualSim: Bool
 
@@ -156,10 +152,7 @@ private struct ConnectedCellInfoCard: View {
             let technology = cell.supports5gNsa() ? "5G NSA" : cell.technology
             CellInformationItem(title: "Technology", text: technology)
             // CellInformationItem(title: techFormatter.frequency(), number: cell.frequency)
-            CellInformationItem(
-                title: "Date",
-                text: dateFormatter.localizedString(for: cell.collected ?? cell.imported ?? Date(), relativeTo: Date())
-            )
+            CellInfoDateItem(cell: cell)
         }
         .padding(EdgeInsets(top: 5, leading: 20, bottom: cell.location == nil ? 25 : 10, trailing: 20))
 
@@ -168,6 +161,35 @@ private struct ConnectedCellInfoCard: View {
                 .frame(height: 200)
                 .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
         }
+    }
+}
+
+private class TimeUpdater: ObservableObject {
+    static let shared = TimeUpdater()
+
+    @Published var currentDate: Date = Date()
+    private var timerCancellable: AnyCancellable?
+
+    private init() {
+        timerCancellable = Timer
+            .publish(every: 1, on: .main, in: .common)
+            .autoconnect()
+            .sink { [weak self] in self?.currentDate = $0 }
+    }
+}
+
+private struct CellInfoDateItem: View {
+
+    let cell: CellTweak
+    let dateFormatter = RelativeDateTimeFormatter()
+
+    @ObservedObject private var timeUpdater = TimeUpdater.shared
+
+    var body: some View {
+        CellInformationItem(
+            title: "Date",
+            text: dateFormatter.localizedString(for: cell.collected ?? cell.imported ?? timeUpdater.currentDate, relativeTo: timeUpdater.currentDate)
+        )
     }
 }
 
