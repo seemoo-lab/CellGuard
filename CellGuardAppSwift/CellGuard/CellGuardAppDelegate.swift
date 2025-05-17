@@ -218,10 +218,43 @@ class CellGuardAppDelegate: NSObject, UIApplicationDelegate {
 
             Task {
                 try? await Task.sleep(nanoseconds: 15 * NSEC_PER_SEC)
+
                 var task = SysdiagTask()
+                var lastScreenshotTaken: Date?
+                var currentSleepTask: Task<Void, Never>?
+
+                // Increase the Task frequency after an Screenshot
+                NotificationCenter.default.addObserver(
+                    forName: UIApplication.userDidTakeScreenshotNotification,
+                    object: nil,
+                    queue: OperationQueue.main
+                ) { _ in
+                    lastScreenshotTaken = Date()
+                    currentSleepTask?.cancel()
+                }
+
+                func didScreenshotRecently(_ lastScreenshotTaken: Date?) -> Bool {
+                    // We expect that the in-progress sysdiagnose directory is created within 15s after the screenshot, if at all.
+                    let sysdiagnoseCreationDelay: TimeInterval = 15
+                    guard let last = lastScreenshotTaken else {
+                        return false
+                    }
+                    return Date().timeIntervalSince(last) < sysdiagnoseCreationDelay
+                }
+
+                func sleepInterval(_ lastScreenshotTaken: Date?) -> UInt64 {
+                    let longInterval = 15 * NSEC_PER_SEC
+                    let shortInterval = 1 * NSEC_PER_SEC
+                    return didScreenshotRecently(lastScreenshotTaken) ? shortInterval : longInterval
+                }
+
                 while true {
-                    await task.run()
-                    try? await Task.sleep(nanoseconds: 15 * NSEC_PER_SEC)
+                    await task.run(didScreenshotRecently: didScreenshotRecently(lastScreenshotTaken))
+
+                    currentSleepTask = Task {
+                        try? await Task.sleep(nanoseconds: sleepInterval(lastScreenshotTaken))
+                    }
+                    await currentSleepTask?.value
                 }
             }
 

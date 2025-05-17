@@ -38,12 +38,13 @@ struct SysdiagTask {
 
     private var inProgress: Set<Int> = Set()
 
-    mutating func run() async {
+    mutating func run(didScreenshotRecently: Bool = false) async {
         let now = Date()
         Self.logger.info("Checking for active sysdiagnoses")
 
-        // We check for system diagnoses which were recently started (the task runs every 30s -> check last 45s)
-        for seconds in 0..<25 {
+        // We check for system diagnoses which were recently started
+        let secondsToScan = didScreenshotRecently ? 10 : 25
+        for seconds in 0..<secondsToScan {
             let captured = now.addingTimeInterval(Double(-seconds))
             let timestamp = Int(captured.timeIntervalSince1970)
             let fileName = await check(forDate: captured, inProgress: true)
