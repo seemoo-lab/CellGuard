@@ -179,7 +179,18 @@ private struct BackgroundTasksSection: View {
 
     var body: some View {
         Section(header: Text("Background Tasks"), footer: Text("If enabled, CellGuard regularly queries our backend server for update checks.")) {
-            Toggle("Update Checks", isOn: $isUpdateChecks)
+            Toggle("Update Checks", isOn: Binding(get: {
+                return isUpdateChecks
+            }, set: { value in
+                isUpdateChecks = value
+
+                // Perform an update check if the user enabled the setting
+                if value {
+                    Task.detached(priority: .background) {
+                        await UpdateCheckTask().run()
+                    }
+                }
+            }))
         }
     }
 }

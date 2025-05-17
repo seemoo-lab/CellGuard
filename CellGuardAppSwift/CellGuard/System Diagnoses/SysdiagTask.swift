@@ -38,7 +38,7 @@ struct SysdiagTask {
 
     private var inProgress: Set<Int> = Set()
 
-    @MainActor mutating func run() async {
+    mutating func run() async {
         let now = Date()
         Self.logger.info("Checking for active sysdiagnoses")
 
@@ -50,7 +50,9 @@ struct SysdiagTask {
             if fileName != nil, !inProgress.contains(timestamp) {
                 CGNotificationManager.shared.queueSysdiagStartedNotification(captured: captured)
                 inProgress.insert(timestamp)
-                Self.status.activeSysdiagnoses.insert(timestamp)
+                _ = await MainActor.run {
+                    Self.status.activeSysdiagnoses.insert(timestamp)
+                }
                 Self.logger.info("Found active sysdiagnose: \(captured)")
             }
         }
@@ -64,7 +66,9 @@ struct SysdiagTask {
             if let fileName = fileName {
                 CGNotificationManager.shared.queueSysdiagReadyNotification(fileName: fileName, captured: captured)
                 inProgress.remove(timestamp)
-                Self.status.activeSysdiagnoses.remove(timestamp)
+                _ = await MainActor.run {
+                    Self.status.activeSysdiagnoses.remove(timestamp)
+                }
                 Self.logger.info("Found completed sysdiagnose: \(captured)")
             }
         }

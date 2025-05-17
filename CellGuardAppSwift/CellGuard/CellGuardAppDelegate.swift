@@ -227,7 +227,7 @@ class CellGuardAppDelegate: NSObject, UIApplicationDelegate {
 
             Task {
                 try? await Task.sleep(nanoseconds: 3 * NSEC_PER_SEC)
-                var task = UpdateCheckTask()
+                let task = UpdateCheckTask()
                 while true {
                     await task.run()
                     try? await Task.sleep(nanoseconds: 3 * 3600 * NSEC_PER_SEC)
