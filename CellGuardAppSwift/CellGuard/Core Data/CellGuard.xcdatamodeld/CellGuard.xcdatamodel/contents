@@ -62,6 +62,7 @@
                 <constraint value="area"/>
                 <constraint value="cell"/>
                 <constraint value="collected"/>
+                <constraint value="simSlotID"/>
             </uniquenessConstraint>
         </uniquenessConstraints>
     </entity>
@@ -118,6 +119,7 @@
                 <constraint value="direction"/>
                 <constraint value="group"/>
                 <constraint value="type"/>
+                <constraint value="simSlotID"/>
             </uniquenessConstraint>
         </uniquenessConstraints>
     </entity>
@@ -169,6 +171,7 @@
                 <constraint value="indication"/>
                 <constraint value="message"/>
                 <constraint value="service"/>
+                <constraint value="simSlotID"/>
             </uniquenessConstraint>
         </uniquenessConstraints>
     </entity>
