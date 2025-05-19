@@ -360,12 +360,19 @@
     if (![fileManager fileExistsAtPath:cacheFile.path]) {
         NSURL *tmpDirectory = [cacheFile URLByDeletingLastPathComponent];
 
+        NSDictionary *directoryAttributes = @{
+            NSFilePosixPermissions: [NSNumber numberWithShort:0755] // rwxr-xr-x
+        };
+        NSDictionary *fileAttributes = @{
+            NSFilePosixPermissions: [NSNumber numberWithShort:0600] // rw-------
+        };
+
         if (![fileManager createDirectoryAtPath:tmpDirectory.path
-                    withIntermediateDirectories:YES attributes:nil error:&error]) {
+                    withIntermediateDirectories:YES attributes:directoryAttributes error:&error]) {
             [self log:@"Can't create temporary directory %@: %@", tmpDirectory.path, error];
             return;
         }
-        if (![fileManager createFileAtPath:cacheFile.path contents:[NSData data] attributes:nil]) {
+        if (![fileManager createFileAtPath:cacheFile.path contents:[NSData data] attributes:fileAttributes]) {
             [self log:@"Can't create temporary file %@. Does it already exists?", cacheFile.path];
             return;
         }

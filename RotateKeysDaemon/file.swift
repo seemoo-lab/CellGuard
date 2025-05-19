@@ -10,7 +10,7 @@ func writeWirelessToken(_ token: String) -> Bool {
         try fm.createDirectory(at: parent, withIntermediateDirectories: true, attributes: [
             .ownerAccountName: "_wireless",
             .groupOwnerAccountName: "_wireless",
-            .posixPermissions: 0o751 // rwxr-x--x
+            .posixPermissions: 0o755 // rwxr-x--x
         ])
         // Write the token
         let tokenData = Data(token.utf8)
