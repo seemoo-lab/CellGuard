@@ -14,6 +14,7 @@ private let logger = Logger(
 )
 
 enum ALSTechnology: String, CaseIterable, Identifiable {
+    case OFF
     case GSM
     case SCDMA
     case CDMA

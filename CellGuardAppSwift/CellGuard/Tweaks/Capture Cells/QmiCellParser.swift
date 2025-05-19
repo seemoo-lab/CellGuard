@@ -72,7 +72,12 @@ extension CCTParser {
         }
 
         if cells.isEmpty {
-            throw CCTParserError.missingRat(parsedPacket)
+            // We store empty cells to indicate that the baseband is disconnected.
+            var cell = CCTCellProperties()
+            cell.technology = ALSTechnology.OFF
+            cell.timestamp = timestamp
+            cell.simSlotID = simSlot
+            cells.append(cell)
         }
 
         return cells

@@ -51,6 +51,7 @@ struct CellTechnologyFormatter {
 
     public func frequency() -> String {
         switch technology {
+        case .OFF: return ""
         case .CDMA: return "Channel"
         case .GSM: return "ARFCN"
         case .UMTS: return "ARFCN"
@@ -77,6 +78,7 @@ struct CellTechnologyFormatter {
 
     public static func mapColor(_ technology: ALSTechnology) -> UIColor {
         switch technology {
+        case .OFF: return .systemRed
         case .GSM: return .systemPink
         case .CDMA: return .systemPurple
 
@@ -91,6 +93,7 @@ struct CellTechnologyFormatter {
 
     public static func userInfo(_ technology: ALSTechnology) -> String {
         switch technology {
+        case .OFF: return ALSTechnology.OFF.rawValue
         case .GSM: return "2G"
         case .CDMA: return "2G & 3G"
         case .UMTS: return "3G"

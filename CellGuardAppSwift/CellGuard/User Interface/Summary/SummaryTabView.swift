@@ -121,20 +121,10 @@ private struct CombinedRiskCellView: View {
 #endif
 
             if let tweakCell = tweakCellsSlot1.first {
-                NavigationLink {
-                    CellDetailsView(tweakCell: tweakCell)
-                } label: {
-                    CellInformationCard(cell: tweakCell, dualSim: !tweakCellsSlot2.isEmpty)
-                }
-                .buttonStyle(.plain)
+                CellInformationCard(cell: tweakCell, dualSim: !tweakCellsSlot2.isEmpty)
             }
             if let tweakCell = tweakCellsSlot2.first {
-                NavigationLink {
-                    CellDetailsView(tweakCell: tweakCell)
-                } label: {
-                    CellInformationCard(cell: tweakCell, dualSim: !tweakCellsSlot1.isEmpty)
-                }
-                .buttonStyle(.plain)
+                CellInformationCard(cell: tweakCell, dualSim: !tweakCellsSlot1.isEmpty)
             }
 
             // none mode: show warning, might not be intended

@@ -56,6 +56,9 @@ extension PersistenceController {
         let request = CellTweak.fetchRequest()
         var predicates: [NSPredicate] = []
 
+        // Ignore empty cells
+        predicates.append(NSPredicate(format: "technology != %@", ALSTechnology.OFF.rawValue as NSString))
+
         // Find a cell which has no verification state for this pipeline so far.
         // This can occur if the pipeline is activated only after the cell was imported.
         predicates.append(NSPredicate(format: "SUBQUERY(verifications, $ver, $ver.pipeline == %@).@count == 0", Int(pipelineId) as NSNumber))

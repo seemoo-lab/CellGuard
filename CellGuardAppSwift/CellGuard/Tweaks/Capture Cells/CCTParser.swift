@@ -62,7 +62,7 @@ struct CCTCellProperties {
         tweakCell.area = self.area ?? 0
         tweakCell.cell = self.cellId ?? 0
 
-        tweakCell.technology = (self.technology ?? .LTE).rawValue
+        tweakCell.technology = (self.technology ?? .OFF).rawValue
         tweakCell.preciseTechnology = self.preciseTechnology
 
         tweakCell.frequency = self.frequency ?? 0
