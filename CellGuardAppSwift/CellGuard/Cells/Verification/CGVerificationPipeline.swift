@@ -255,7 +255,7 @@ private struct RejectPacketVerificationStage: VerificationStage {
         // Maybe IBINetRegistrationInfoIndCb -> [3] IBINetRegistrationRejectCause
         // There are also numerous IBI_NET_REGISTRATION_REJECT strings in libARI.dylib
         // For a list of ARI packets, see: https://github.com/seemoo-lab/aristoteles/blob/master/types/structure/libari_dylib.lua
-        let localAriPackets = try persistence.fetchIndexedARIPackets(start: start, end: end, reject: true)
+        let localAriPackets = try persistence.fetchIndexedARIPackets(start: start, end: end, simSlotID: simSlotID, reject: true)
             .filter { (_, packet) in
                 guard let registrationStatus = packet.tlvs.first(where: { $0.type == 2 })?.uint() else {
                     return false
@@ -386,7 +386,7 @@ private struct SignalStrengthVerificationStage: VerificationStage {
         }
 
         // ARI: IBINetRadioSignalIndCb
-        let fetchedAriPackets = try persistence.fetchIndexedARIPackets(start: start, end: end, signal: true)
+        let fetchedAriPackets = try persistence.fetchIndexedARIPackets(start: start, end: end, simSlotID: simSlotID, signal: true)
         let ariSignalInfo = fetchedAriPackets
             .compactMap { (_, packet) -> ParsedARIRadioSignalIndication? in
                 do {
