@@ -7,7 +7,6 @@ func writeWirelessToken(_ token: String) -> Bool {
         // Create the directory (with permissions for _wireless user) if it does not exist
         let fm = FileManager()
         let parent = url.deletingLastPathComponent()
-        // TODO: Test
         try fm.createDirectory(at: parent, withIntermediateDirectories: true, attributes: [
             .ownerAccountName: "_wireless",
             .groupOwnerAccountName: "_wireless",
