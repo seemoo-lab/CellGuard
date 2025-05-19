@@ -1,0 +1,31 @@
+#!/bin/bash
+
+launchcfg=/var/jb/Library/LaunchDaemons/de.tudarmstadt.seemoo.rotatekeys.plist
+launchlog=$(mktemp)
+
+function dispose {
+  rm -f "$launchlog"
+}
+trap dispose EXIT
+
+if [ "$1" = upgrade ]; then
+  launchctl unload "$launchcfg" &> /dev/null
+fi
+
+if [ "$1" = install ] || [ "$1" = upgrade ]; then
+  launchctl load "$launchcfg" &> "$launchlog"
+  res=$?
+
+  if grep -q "Service cannot load in requested session" "$launchlog"; then
+    sed -ie "/LimitLoadToSessionType/,+1d" "$launchcfg"
+    launchctl load "$launchcfg" &> "$launchlog"
+    res=$?
+  fi
+
+  if [ $res -ne 0 ]; then
+    cat "$launchlog" > /dev/stderr
+    exit $res
+  fi
+fi
+
+exit 0

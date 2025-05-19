@@ -1,0 +1,9 @@
+Package: de.tudarmstadt.seemoo.rotatekeysdaemon
+Name: RotateKeysDaemon
+Version: 1.0.0
+Architecture: iphoneos-arm
+Description: Supplies exchange keys to CellGuard and CapturePacketsTweak
+Maintainer: Lukas Arnold
+Author: Lukas Arnold
+Section: System
+Depends: firmware (>= 12.2) | ${LIBSWIFT}

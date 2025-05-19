@@ -18,6 +18,8 @@ struct TweakInstallInfoCard: View {
     @AppStorage(UserDefaultsKeys.appMode.rawValue)
     private var appMode: DataCollectionMode = .none
 
+    @ObservedObject private var clientState = CPTClientState.shared
+
     init() {
         // https://www.hackingwithswift.com/quick-start/swiftui/how-to-limit-the-number-of-items-in-a-fetch-request
         let qmiRequest: NSFetchRequest<PacketQMI> = PacketQMI.fetchRequest()
@@ -34,8 +36,12 @@ struct TweakInstallInfoCard: View {
 
     var body: some View {
         let hasData = !qmiPackets.isEmpty || !ariPackets.isEmpty
-        if !hasData && appMode == .automatic {
-            TweakCard()
+        if appMode == .automatic {
+            if !hasData {
+                TweakCard(update: false)
+            } else if clientState.lastConnection != nil && clientState.lastHello == nil {
+                TweakCard(update: true)
+            }
         } else {
             EmptyView()
         }
@@ -47,13 +53,15 @@ private struct TweakCard: View {
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.openURL) private var openURL
 
+    let update: Bool
+
     var body: some View {
         Button {
             openURL(CellGuardURLs.installGuide)
         } label: {
             VStack {
                 HStack {
-                    Text("Install Tweak")
+                    Text("\(update ? "Update" : "Install") Tweak")
                         .font(.title2)
                         .bold()
                     Spacer()
@@ -68,9 +76,7 @@ private struct TweakCard: View {
                         .frame(maxWidth: 40, alignment: .center)
                         .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 10))
 
-                    Text("""
-        CellGuard requires an additional component modifying default system behavior to automatically collect baseband packets in jailbroken mode. Please install this component as per the instructions on our website. As of now CellGuard cannot read data from it.
-        """)
+                    Text(text)
                     .padding()
                     .multilineTextAlignment(.leading)
                 }
@@ -85,6 +91,18 @@ private struct TweakCard: View {
             )
             .foregroundColor(colorScheme == .dark ? .white : .black.opacity(0.8))
             .padding()
+        }
+    }
+
+    var text: String {
+        if update {
+            return """
+            Please update the tweak as per the instructions on our website. Your currently installed version is outdated.
+            """
+        } else {
+            return """
+        CellGuard requires an additional component modifying default system behavior to automatically collect baseband packets in jailbroken mode. Please install this component as per the instructions on our website. As of now CellGuard cannot read data from it.
+        """
         }
     }
 
