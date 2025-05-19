@@ -75,9 +75,11 @@ private struct DataCollectionSection: View {
             }
         }
 
+        #if JAILBREAK
         if appMode == .automatic {
             TweakSection()
         }
+        #endif
     }
 
 }
