@@ -56,6 +56,12 @@ extension PersistenceController {
             throw deleteError
         }
 
+        #if JAILBREAK
+        if categories.contains(.packets) {
+            UserDefaults.standard.removeObject(forKey: UserDefaultsKeys.mostRecentPacket.rawValue)
+        }
+        #endif
+
         cleanPersistentHistoryChanges()
     }
 

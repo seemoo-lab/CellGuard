@@ -15,8 +15,6 @@ struct CPTCollector {
         category: String(describing: CPTCollector.self)
     )
 
-    static var mostRecentPacket: Date = Date(timeIntervalSince1970: 0)
-
     private let client: CPTClient
 
     init(client: CPTClient) {
@@ -45,6 +43,8 @@ struct CPTCollector {
             var qmiPackets: [(CPTPacket, ParsedQMIPacket)] = []
             var ariPackets: [(CPTPacket, ParsedARIPacket)] = []
 
+            var mostRecentPacket: Date?
+
             for packet in packets {
                 do {
                     let parsedPacket = try packet.parse()
@@ -61,9 +61,13 @@ struct CPTCollector {
                     print(packet.description)
                     Self.logger.warning("Can't parse packet: \(error)\n\(packet)")
                 }
-                if CPTCollector.mostRecentPacket < packet.timestamp {
-                    CPTCollector.mostRecentPacket = packet.timestamp
+                if mostRecentPacket ?? Date.distantPast < packet.timestamp {
+                    mostRecentPacket = packet.timestamp
                 }
+            }
+
+            if let mostRecentPacket = mostRecentPacket {
+                UserDefaults.standard.set(mostRecentPacket, forKey: UserDefaultsKeys.mostRecentPacket.rawValue)
             }
 
             let (_, qmiCellPackets) = try PersistenceController.shared.importQMIPackets(from: qmiPackets)

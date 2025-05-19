@@ -20,6 +20,9 @@ enum UserDefaultsKeys: String {
     case profileExpiryNotification
     case shortcutInstalled
     case updateCheck
+    #if JAILBREAK
+    case mostRecentPacket
+    #endif
 }
 
 enum DataCollectionMode: String, CaseIterable, Identifiable {
