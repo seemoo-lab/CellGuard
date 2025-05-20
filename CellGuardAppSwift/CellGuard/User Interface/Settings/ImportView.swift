@@ -300,6 +300,7 @@ struct ImportView: View {
             Self.logger.info("Successfully imported \(counts.cells?.count ?? 0) cells, \(counts.alsCells?.count ?? 0) ALS cells, \(counts.locations?.count ?? 0) locations, and \(counts.packets?.count ?? 0) packets.")
         } catch {
             importError = error
+            importNotices = []
             Self.logger.info("Import failed due to \(error)")
 
         }
@@ -330,15 +331,24 @@ struct ImportView: View {
         }
 
         DispatchQueue.global(qos: .utility).async {
-            let fileSize = Self.fileSize(url: url)
+            let (fileSize, fileSizeStr) = Self.fileSize(url: url)
             let fileType = ImportFileType.guess(url: url)
 
             // TODO: Extract device name, CG version and count from backup and show them in the UI before importing
             /* let fromName = ""
              let fromCGVersion = "" */
 
+            var notices: [ImportNotice] = []
+
+            // Check that the sysdiagnose's size
+            if fileType == .sysdiagnose,
+                let fileSize = fileSize,
+                fileSize < 100 * 1024 * 1024  || fileSize > 1000 * 1024 * 1024 {
+                notices.append(.sysdiagnoseSize)
+            }
+
             DispatchQueue.main.async {
-                self.fileSize = fileSize
+                self.fileSize = fileSizeStr
                 self.fileType = fileType
 
                 self.importStatusUnarchive = .none
@@ -350,24 +360,27 @@ struct ImportView: View {
                 self.importStatusALSCells = .none
                 self.importStatusLocations = .none
                 self.importStatusPackets = .none
+
+                self.importNotices = notices
             }
         }
     }
 
-    private static func fileSize(url: URL) -> String? {
+    private static func fileSize(url: URL) -> (UInt64?, String?) {
         let securityScoped = url.startAccessingSecurityScopedResource()
         defer { if securityScoped { url.stopAccessingSecurityScopedResource() } }
 
         do {
             let attributes = try FileManager.default.attributesOfItem(atPath: url.path)
             if let size = attributes[FileAttributeKey.size] as? UInt64 {
-                return ByteCountFormatter().string(fromByteCount: Int64(size))
+                let str = ByteCountFormatter().string(fromByteCount: Int64(size))
+                return (size, str)
             }
         } catch {
             Self.logger.warning("Can't get file size of \(url)")
         }
 
-        return nil
+        return (nil, nil)
     }
 }
 
