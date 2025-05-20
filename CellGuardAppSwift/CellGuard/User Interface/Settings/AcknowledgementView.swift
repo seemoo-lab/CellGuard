@@ -7,6 +7,7 @@
 
 import SwiftUI
 import AcknowList
+import SwiftGzip
 
 struct CargoLicenseFile: Codable {
     var rootName: String
@@ -57,9 +58,11 @@ struct AcknowledgementView: View {
     private func loadRustAcknowledgements() {
         let jsonDecoder = JSONDecoder()
         jsonDecoder.keyDecodingStrategy = .convertFromSnakeCase
+        let decompressor = GzipDecompressor()
 
         guard let url = Bundle.main.url(forResource: "cargo-licenses.json", withExtension: "gz"),
-              let data = try? Data(contentsOf: url).gunzipped(),
+              let compressedData = try? Data(contentsOf: url),
+              let data = try? decompressor.unzip(data: compressedData),
               let json = try? jsonDecoder.decode(CargoLicenseFile.self, from: data) else {
             return
         }

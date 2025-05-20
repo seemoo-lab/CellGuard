@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import Gzip
+import SwiftGzip
 import SWCompression
 import OSLog
 import CSV
@@ -269,12 +269,13 @@ struct LogArchiveReader {
             }
         }
 
-        let unarchivedData = try Data(contentsOf: url).gunzipped()
-
-        Self.logger.debug("Writing gunzipped tar to FS")
         let tmpTarFile = tmpDir.appendingPathComponent("sysdiagnose.tar")
-        try unarchivedData.write(to: tmpTarFile)
-        Self.logger.debug("Wrote tar to \(tmpDir.absoluteString)")
+        Self.logger.debug("Writing gunzipped tar to FS: \(tmpTarFile)")
+
+        let decompressor = GzipDecompressor()
+        try decompressor.unzip(inputURL: url, outputURL: tmpTarFile)
+
+        Self.logger.debug("Successfully gunzipped tar to \(tmpDir.absoluteString)")
 
         return tmpTarFile
     }

@@ -175,6 +175,8 @@
 		CF9EEEE62B347A7000F9B6D8 /* Regex in Frameworks */ = {isa = PBXBuildFile; productRef = CF9EEEE52B347A7000F9B6D8 /* Regex */; };
 		CF9EEEE82B34B6A500F9B6D8 /* SysdiagOpenSettingsCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF9EEEE72B34B6A500F9B6D8 /* SysdiagOpenSettingsCard.swift */; };
 		CFA09CF92A73D4B000D16832 /* SwiftExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFA09CF82A73D4B000D16832 /* SwiftExtensions.swift */; };
+		CFA5C7E12DDCE39700A5F73C /* SwiftGzip in Frameworks */ = {isa = PBXBuildFile; productRef = CFA5C7E02DDCE39700A5F73C /* SwiftGzip */; };
+		CFA5C7E32DDCE3A200A5F73C /* SwiftGzip in Frameworks */ = {isa = PBXBuildFile; productRef = CFA5C7E22DDCE3A200A5F73C /* SwiftGzip */; };
 		CFA632552AB3501800D46025 /* CSV in Frameworks */ = {isa = PBXBuildFile; productRef = CFA632542AB3501800D46025 /* CSV */; };
 		CFA632582AB3503400D46025 /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = CFA632572AB3503400D46025 /* ZIPFoundation */; };
 		CFA83C942D9D467400239AB7 /* CellCountryNetworkSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFA83C932D9D467400239AB7 /* CellCountryNetworkSection.swift */; };
@@ -621,6 +623,7 @@
 				CFB6CF902BD122FA00EAB7B4 /* AcknowList in Frameworks */,
 				CFB6CF912BD122FA00EAB7B4 /* Atomics in Frameworks */,
 				CFB6CF922BD122FA00EAB7B4 /* Regex in Frameworks */,
+				CFA5C7E32DDCE3A200A5F73C /* SwiftGzip in Frameworks */,
 				CFB6CF932BD122FA00EAB7B4 /* CSV in Frameworks */,
 				CF90FE7F2C7E39AE0052A7AA /* NIOCore in Frameworks */,
 				CFB6CF942BD122FA00EAB7B4 /* ZIPFoundation in Frameworks */,
@@ -639,6 +642,7 @@
 				CFFF19E12BC6D045004E40CE /* AcknowList in Frameworks */,
 				CF8D33212AC194A4009CA3F0 /* Atomics in Frameworks */,
 				CF9EEEE62B347A7000F9B6D8 /* Regex in Frameworks */,
+				CFA5C7E12DDCE39700A5F73C /* SwiftGzip in Frameworks */,
 				CFA632552AB3501800D46025 /* CSV in Frameworks */,
 				CFB86D5A2C7C84FE0072BEFC /* NIOCore in Frameworks */,
 				CFA632582AB3503400D46025 /* ZIPFoundation in Frameworks */,
@@ -1210,6 +1214,7 @@
 				CFB6CF1A2BD122FA00EAB7B4 /* Regex */,
 				CFB6CF1C2BD122FA00EAB7B4 /* AcknowList */,
 				CF90FE7E2C7E39AE0052A7AA /* NIOCore */,
+				CFA5C7E22DDCE3A200A5F73C /* SwiftGzip */,
 			);
 			productName = CellGuard;
 			productReference = CFB6CFA42BD122FA00EAB7B4 /* CellGuard Jailbreak.app */;
@@ -1242,6 +1247,7 @@
 				CF9EEEE52B347A7000F9B6D8 /* Regex */,
 				CFFF19E02BC6D045004E40CE /* AcknowList */,
 				CFB86D592C7C84FE0072BEFC /* NIOCore */,
+				CFA5C7E02DDCE39700A5F73C /* SwiftGzip */,
 			);
 			productName = CellGuard;
 			productReference = CFD023332961A10D00AA5A1C /* CellGuard AppStore.app */;
@@ -1327,6 +1333,7 @@
 				CFFF19DD2BC6CF0A004E40CE /* XCRemoteSwiftPackageReference "AcknowList" */,
 				CFB86D582C7C84FE0072BEFC /* XCRemoteSwiftPackageReference "swift-nio" */,
 				CFE725152D8317DD0048C057 /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */,
+				CFA5C7DF2DDCE39700A5F73C /* XCRemoteSwiftPackageReference "swift-gzip" */,
 			);
 			productRefGroup = CFD023342961A10D00AA5A1C /* Products */;
 			projectDirPath = "";
@@ -2348,6 +2355,14 @@
 				minimumVersion = 2.1.1;
 			};
 		};
+		CFA5C7DF2DDCE39700A5F73C /* XCRemoteSwiftPackageReference "swift-gzip" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/lukbukkit/swift-gzip";
+			requirement = {
+				branch = ios14;
+				kind = branch;
+			};
+		};
 		CFA632532AB3501800D46025 /* XCRemoteSwiftPackageReference "CSV.swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/yaslab/CSV.swift.git";
@@ -2500,6 +2515,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = CF9EEEE42B347A7000F9B6D8 /* XCRemoteSwiftPackageReference "Regex" */;
 			productName = Regex;
+		};
+		CFA5C7E02DDCE39700A5F73C /* SwiftGzip */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CFA5C7DF2DDCE39700A5F73C /* XCRemoteSwiftPackageReference "swift-gzip" */;
+			productName = SwiftGzip;
+		};
+		CFA5C7E22DDCE3A200A5F73C /* SwiftGzip */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CFA5C7DF2DDCE39700A5F73C /* XCRemoteSwiftPackageReference "swift-gzip" */;
+			productName = SwiftGzip;
 		};
 		CFA632542AB3501800D46025 /* CSV */ = {
 			isa = XCSwiftPackageProductDependency;
