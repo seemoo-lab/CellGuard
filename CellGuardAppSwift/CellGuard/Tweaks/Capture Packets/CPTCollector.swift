@@ -66,9 +66,11 @@ struct CPTCollector {
                 }
             }
 
+            #if JAILBREAK
             if let mostRecentPacket = mostRecentPacket {
                 UserDefaults.standard.set(mostRecentPacket, forKey: UserDefaultsKeys.mostRecentPacket.rawValue)
             }
+            #endif
 
             let (_, qmiCellPackets) = try PersistenceController.shared.importQMIPackets(from: qmiPackets)
             let (_, ariCellPackets) = try PersistenceController.shared.importARIPackets(from: ariPackets)
