@@ -25,9 +25,19 @@ struct TweakInstallInfoCard: View {
         if appMode == .automatic {
             ActiveTweakCard(recentPacketReceived)
                 .onReceive(timer) { _ in
+                    // Skip the update of the risk status if the app is in the background
+                    if UIApplication.shared.applicationState == .background {
+                        return
+                    }
+
                     recentPacketReceived = checkRecentPacket()
                 }
                 .onChange(of: mostRecentPacket) { _ in
+                    // Skip the update of the risk status if the app is in the background
+                    if UIApplication.shared.applicationState == .background {
+                        return
+                    }
+
                     recentPacketReceived = checkRecentPacket()
                 }
                 .onAppear {
