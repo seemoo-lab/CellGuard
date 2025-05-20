@@ -89,41 +89,14 @@ extension PersistenceController {
             #if JAILBREAK
             // Only check data received from tweaks if the device is jailbroken
             if dataCollectionMode == .automatic {
-
-                // == Latest Measurement ==
-                let allFetchRequest: NSFetchRequest<VerificationState> = VerificationState.fetchRequest()
-                allFetchRequest.fetchLimit = 1
-                allFetchRequest.sortDescriptors = sortDescriptor
-                let all = try context.fetch(allFetchRequest)
-
-                // We've received no cells for 30 minutes from the tweak, so we warn the user
-                guard let latestTweakCell = all.first?.cell else {
-                    return .medium(cause: .tweakCells)
-                }
-                if latestTweakCell.collected ?? Date.distantPast < thirtyMinutesAgo {
+                // We've received no packets so far from the tweak
+                guard let mostRecentPacket = UserDefaults.standard.date(forKey: UserDefaultsKeys.mostRecentPacket.rawValue) else {
                     return .medium(cause: .tweakCells)
                 }
 
-                // == Latest Packet ==
-                let allQMIPacketsFetchRequest: NSFetchRequest<PacketQMI> = PacketQMI.fetchRequest()
-                allQMIPacketsFetchRequest.fetchLimit = 1
-                allQMIPacketsFetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \PacketQMI.collected, ascending: false)]
-                let qmiPackets = try context.fetch(allQMIPacketsFetchRequest)
-
-                let allARIPacketsFetchRequest: NSFetchRequest<PacketARI> = PacketARI.fetchRequest()
-                allARIPacketsFetchRequest.fetchLimit = 1
-                allARIPacketsFetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \PacketARI.collected, ascending: false)]
-                let ariPackets = try context.fetch(allARIPacketsFetchRequest)
-
-                let latestPacket = [qmiPackets.first as (any Packet)?, ariPackets.first as (any Packet)?]
-                    .compactMap { $0 }
-                    .sorted { return $0.collected ?? Date.distantPast < $1.collected ?? Date.distantPast }
-                    .last
-                guard let latestPacket = latestPacket else {
-                    return .medium(cause: .tweakPackets)
-                }
-                if latestPacket.collected ?? Date.distantPast < thirtyMinutesAgo {
-                    return .medium(cause: .tweakPackets)
+                // We've received no packets for 30 minutes from the tweak, so we warn the user
+                if mostRecentPacket < thirtyMinutesAgo {
+                    return .medium(cause: .tweakCells)
                 }
             }
             #endif

@@ -158,7 +158,6 @@ private struct CalculatedRiskView: View {
             .onAppear {
                 func computeRiskStatus() {
                     DispatchQueue.global(qos: .utility).async {
-                        // TODO: Can we reduce the CPU load of this check?
                         let risk = PersistenceController.basedOnEnvironment().determineDataRiskStatus()
                         DispatchQueue.main.async {
                             self.risk = risk

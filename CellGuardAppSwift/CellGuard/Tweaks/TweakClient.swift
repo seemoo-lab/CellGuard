@@ -12,6 +12,7 @@ import OSLog
 enum TweakClientError: Error {
     case unexpectedHello(String)
     case authTokenNotInKeychain
+    case tweakUnreachable
 }
 
 struct TweakHelloMessage: CustomStringConvertible {
@@ -201,6 +202,7 @@ struct TweakClient {
             // Otherwise CellGuard accumulates multiple waiting connections.
             if state == .waiting(.posix(.ECONNREFUSED)) {
                 connection.cancel()
+                completion(Result.failure(TweakClientError.tweakUnreachable))
             }
         }
 

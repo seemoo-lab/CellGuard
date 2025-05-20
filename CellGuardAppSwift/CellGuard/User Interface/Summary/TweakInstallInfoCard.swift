@@ -9,41 +9,75 @@ import CoreData
 import SwiftUI
 
 struct TweakInstallInfoCard: View {
-    @FetchRequest
-    private var qmiPackets: FetchedResults<PacketQMI>
 
-    @FetchRequest
-    private var ariPackets: FetchedResults<PacketARI>
+    // Update view every 5s: https://stackoverflow.com/a/56956224
+    let timer = Timer.publish(every: 5.0, on: .current, in: .common).autoconnect()
+
+    @State private var recentPacketReceived = false
+
+    @AppStorage(UserDefaultsKeys.mostRecentPacket.rawValue)
+    private var mostRecentPacket: Double?
 
     @AppStorage(UserDefaultsKeys.appMode.rawValue)
     private var appMode: DataCollectionMode = .none
 
+    var body: some View {
+        if appMode == .automatic {
+            ActiveTweakCard(recentPacketReceived)
+                .onReceive(timer) { _ in
+                    // Skip the update of the risk status if the app is in the background
+                    if UIApplication.shared.applicationState == .background {
+                        return
+                    }
+
+                    recentPacketReceived = checkRecentPacket()
+                }
+                .onChange(of: mostRecentPacket) { _ in
+                    // Skip the update of the risk status if the app is in the background
+                    if UIApplication.shared.applicationState == .background {
+                        return
+                    }
+
+                    recentPacketReceived = checkRecentPacket()
+                }
+                .onAppear {
+                    recentPacketReceived = checkRecentPacket()
+                }
+        }
+    }
+
+    func checkRecentPacket() -> Bool {
+        // Check if we've imported packets in the past from a tweak
+        guard let mostRecentPacket = mostRecentPacket else {
+            return false
+        }
+
+        // Check if we've imported a packet from the tweak in the last 30 minutes
+        let thirtyMinutesAgo = Date() - 30 * 60
+        if Date(timeIntervalSince1970: mostRecentPacket) < thirtyMinutesAgo {
+            return false
+        }
+
+        // We did it yay :party:
+        return true
+    }
+}
+
+private struct ActiveTweakCard: View {
+
+    let recentPacketReceived: Bool
+
     @ObservedObject private var clientState = CPTClientState.shared
 
-    init() {
-        // https://www.hackingwithswift.com/quick-start/swiftui/how-to-limit-the-number-of-items-in-a-fetch-request
-        let qmiRequest: NSFetchRequest<PacketQMI> = PacketQMI.fetchRequest()
-        qmiRequest.fetchBatchSize = 1
-        qmiRequest.sortDescriptors = [NSSortDescriptor(keyPath: \PacketQMI.collected, ascending: true)]
-
-        let ariRequest: NSFetchRequest<PacketARI> = PacketARI.fetchRequest()
-        ariRequest.fetchBatchSize = 1
-        ariRequest.sortDescriptors = [NSSortDescriptor(keyPath: \PacketARI.collected, ascending: true)]
-
-        self._qmiPackets = FetchRequest(fetchRequest: qmiRequest)
-        self._ariPackets = FetchRequest(fetchRequest: ariRequest)
+    init(_ recentPacketReceived: Bool) {
+        self.recentPacketReceived = recentPacketReceived
     }
 
     var body: some View {
-        let hasData = !qmiPackets.isEmpty || !ariPackets.isEmpty
-        if appMode == .automatic {
-            if !hasData {
-                TweakCard(update: false)
-            } else if clientState.lastConnection != nil && clientState.lastHello == nil {
-                TweakCard(update: true)
-            }
-        } else {
-            EmptyView()
+        if !recentPacketReceived {
+            TweakCard(update: false)
+        } else if clientState.lastConnection != nil && clientState.lastHello == nil {
+            TweakCard(update: true)
         }
     }
 }

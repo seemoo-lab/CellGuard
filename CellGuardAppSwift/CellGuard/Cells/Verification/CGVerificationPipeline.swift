@@ -236,7 +236,8 @@ private struct RejectPacketVerificationStage: VerificationStage {
 
         #if JAILBREAK
         // ... or if the latest batch of packets has not been received from the tweak
-        if appMode == .automatic && CPTCollector.mostRecentPacket < end {
+        let mostRecentPacket = UserDefaults.standard.date(forKey: UserDefaultsKeys.mostRecentPacket.rawValue) ?? Date.distantPast
+        if appMode == .automatic && mostRecentPacket < end {
             return .delay(seconds: 20)
         }
         #endif
@@ -318,7 +319,8 @@ private struct SignalStrengthVerificationStage: VerificationStage {
 
         #if JAILBREAK
         // ... or if the latest batch of packets has not been received from the tweak
-        if dataCollectionMode == .automatic && CPTCollector.mostRecentPacket < end {
+        let mostRecentPacket = UserDefaults.standard.date(forKey: UserDefaultsKeys.mostRecentPacket.rawValue) ?? Date.distantPast
+        if dataCollectionMode == .automatic && mostRecentPacket < end {
             return .delay(seconds: 20)
         }
         #endif
