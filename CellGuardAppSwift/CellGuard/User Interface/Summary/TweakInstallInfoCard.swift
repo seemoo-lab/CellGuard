@@ -27,6 +27,9 @@ struct TweakInstallInfoCard: View {
                 .onReceive(timer) { _ in
                     recentPacketReceived = checkRecentPacket()
                 }
+                .onChange(of: mostRecentPacket) { _ in
+                    recentPacketReceived = checkRecentPacket()
+                }
                 .onAppear {
                     recentPacketReceived = checkRecentPacket()
                 }
