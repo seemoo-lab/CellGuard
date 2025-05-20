@@ -14,6 +14,7 @@ enum ImportNotice: Identifiable {
     case profileUnknownStatus
     case logTruncatedDueToFullDisk
     case cellParserMisalignment
+    case sysdiagnoseSize
 
     var id: Self { self }
 
@@ -31,6 +32,8 @@ enum ImportNotice: Identifiable {
             return "Make sure you have enough free storage on your iPhone, otherwise logs are truncated more frequently."
         case .cellParserMisalignment:
             return "Please report this sysdiagnose. The Packet Cell Parser differs from the Log Cell Parser. Your imported data would help us to improve CellGuard. Please open an issue on github.com/seemoo-lab/CellGuard/issues to arrange a channel for reporting the sysdiagnose."
+        case .sysdiagnoseSize:
+            return "Make sure to import a valid system diagnose. Their usual file size is between 100 MB and 1 GB."
         }
     }
 }
