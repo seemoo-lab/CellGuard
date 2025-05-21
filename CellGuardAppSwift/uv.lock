@@ -40,7 +40,7 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "beautifulsoup4" },
-    { name = "luaparser" },
+    { name = "luaparser", git = "https://github.com/boolangery/py-lua-parser?rev=3.3.1" },
     { name = "lxml" },
     { name = "pandas" },
     { name = "requests" },
@@ -105,15 +105,11 @@ wheels = [
 
 [[package]]
 name = "luaparser"
-version = "3.3.0"
-source = { registry = "https://pypi.org/simple" }
+version = "3.3.1"
+source = { git = "https://github.com/boolangery/py-lua-parser?rev=3.3.1#615322f0d3f7a7a736955327bcf03a90595cebdd" }
 dependencies = [
     { name = "antlr4-python3-runtime" },
     { name = "multimethod" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/78/ee/3e3a26265dc7e3124c2ccef0bcf262dda2730f7bcf32b64ada99ed34f643/luaparser-3.3.0.tar.gz", hash = "sha256:923f1c07fffbec6d7883e903b82f7f3b700a277b1948221018410f578df9bb8f", size = 51911, upload-time = "2024-10-27T11:29:23.051Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/fc/02/896cf9587a3ce6139a5277cea8679d27fb9b49e0acf26b9a2bdcd6099cac/luaparser-3.3.0-py3-none-any.whl", hash = "sha256:d8cf3aa519a702d082a8492fb5d3ac65af88cc67066952ca23848d46e84dced6", size = 58585, upload-time = "2024-10-27T11:29:21.075Z" },
 ]
 
 [[package]]
