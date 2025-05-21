@@ -1,37 +1,28 @@
 use crate::ffi;
 use csv::Writer;
-use macos_unifiedlogs::dsc::SharedCacheStrings;
 use macos_unifiedlogs::filesystem::LogarchiveProvider;
 use macos_unifiedlogs::iterator::UnifiedLogIterator;
-use macos_unifiedlogs::parser::{
-    build_log, collect_shared_strings, collect_strings, collect_timesync,
-};
+use macos_unifiedlogs::parser::{build_log, collect_timesync};
 use macos_unifiedlogs::timesync::TimesyncBoot;
 use macos_unifiedlogs::traits::FileProvider;
 use macos_unifiedlogs::unified_log::{LogData, UnifiedLogData};
-use macos_unifiedlogs::uuidtext::UUIDText;
+use std::collections::HashMap;
 use std::fs::{File, OpenOptions};
 use std::io::Read;
 use std::path::Path;
 
 // Parse a provided directory path. Currently, expect the path to follow macOS log collect structure.
 pub fn parse_log_archive(path: &Path, output_path: &Path, high_volume_speedup: bool) -> u32 {
-    let provider = LogarchiveProvider::new(path);
+    let mut provider = LogarchiveProvider::new(path);
 
-    // Parse all UUID files which contain strings and other metadata
-    let string_results = collect_strings(&provider).unwrap();
-    // Parse UUID cache files which also contain strings and other metadata
-    let shared_strings_results = collect_shared_strings(&provider).unwrap();
     // Parse all timesync files
     let timesync_data = collect_timesync(&provider).unwrap();
 
     // Keep UUID, UUID cache, timesync files in memory while we parse all tracev3 files
     // Allows for faster lookups
     let log_count = parse_trace_logarchive(
-        &string_results,
-        &shared_strings_results,
         &timesync_data,
-        &provider,
+        &mut provider,
         output_path,
         high_volume_speedup,
     );
@@ -45,10 +36,8 @@ pub fn parse_log_archive(path: &Path, output_path: &Path, high_volume_speedup: b
 // Currently, expect the path to follow macOS log collect structure.
 // If speedup = true, only scan tracev3 files in the Persist & HighVolume folders as they are the only ones containing interesting cellular logs.
 fn parse_trace_logarchive(
-    string_results: &[UUIDText],
-    shared_strings_results: &[SharedCacheStrings],
-    timesync_data: &[TimesyncBoot],
-    provider: &dyn FileProvider,
+    timesync_data: &HashMap<String, TimesyncBoot>,
+    provider: &mut dyn FileProvider,
     output_path: &Path,
     speedup: bool,
 ) -> u32 {
@@ -94,8 +83,7 @@ fn parse_trace_logarchive(
 
         log_count += iterate_chunks(
             source.reader(),
-            string_results,
-            shared_strings_results,
+            provider,
             timesync_data,
             &mut missing_data,
             &mut oversize_strings,
@@ -115,13 +103,7 @@ fn parse_trace_logarchive(
 
         // If we fail to find any missing data its probably due to the logs rolling.
         // Ex: tracev3A rolls, tracev3B references Oversize entry in tracev3A will trigger missing data since tracev3A is gone.
-        let (results, _) = build_log(
-            &leftover_data,
-            string_results,
-            shared_strings_results,
-            timesync_data,
-            false,
-        );
+        let (results, _) = build_log(&leftover_data, provider, timesync_data, false);
 
         for result in results {
             if filter_cellular(&result) {
@@ -138,9 +120,8 @@ fn parse_trace_logarchive(
 fn iterate_chunks(
     mut reader: impl Read,
 
-    strings_data: &[UUIDText],
-    shared_strings: &[SharedCacheStrings],
-    timesync_data: &[TimesyncBoot],
+    provider: &mut dyn FileProvider,
+    timesync_data: &HashMap<String, TimesyncBoot>,
 
     missing: &mut Vec<UnifiedLogData>,
     oversize_strings: &mut UnifiedLogData,
@@ -165,13 +146,7 @@ fn iterate_chunks(
     let mut count = 0;
     for mut chunk in log_iterator {
         chunk.oversize.append(&mut oversize_strings.oversize);
-        let (results, missing_logs) = build_log(
-            &chunk,
-            strings_data,
-            shared_strings,
-            timesync_data,
-            exclude_missing,
-        );
+        let (results, missing_logs) = build_log(&chunk, provider, timesync_data, exclude_missing);
 
         for log_entry in results {
             if filter_cellular(&log_entry) {
