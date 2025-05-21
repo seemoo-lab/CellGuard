@@ -167,7 +167,6 @@
 		CF90EF1B2A30BDD200E7FDB0 /* QMIParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF90EF1A2A30BDD200E7FDB0 /* QMIParserTests.swift */; };
 		CF90EF1D2A30E7FD00E7FDB0 /* ARIParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF90EF1C2A30E7FD00E7FDB0 /* ARIParserTests.swift */; };
 		CF90FE7F2C7E39AE0052A7AA /* NIOCore in Frameworks */ = {isa = PBXBuildFile; productRef = CF90FE7E2C7E39AE0052A7AA /* NIOCore */; };
-		CF9237112A3E069D00FC7D21 /* Gzip in Frameworks */ = {isa = PBXBuildFile; productRef = CF9237102A3E069D00FC7D21 /* Gzip */; };
 		CF9237132A3E1BD300FC7D21 /* KeyValueListRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF9237122A3E1BD300FC7D21 /* KeyValueListRow.swift */; };
 		CF93B852297FFEF9003F9FFE /* URLIdentifiable.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF93B851297FFEF9003F9FFE /* URLIdentifiable.swift */; };
 		CF93B85629800451003F9FFE /* CellFileKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF93B85529800451003F9FFE /* CellFileKeys.swift */; };
@@ -175,6 +174,8 @@
 		CF9EEEE62B347A7000F9B6D8 /* Regex in Frameworks */ = {isa = PBXBuildFile; productRef = CF9EEEE52B347A7000F9B6D8 /* Regex */; };
 		CF9EEEE82B34B6A500F9B6D8 /* SysdiagOpenSettingsCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF9EEEE72B34B6A500F9B6D8 /* SysdiagOpenSettingsCard.swift */; };
 		CFA09CF92A73D4B000D16832 /* SwiftExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFA09CF82A73D4B000D16832 /* SwiftExtensions.swift */; };
+		CFA5C7E12DDCE39700A5F73C /* SwiftGzip in Frameworks */ = {isa = PBXBuildFile; productRef = CFA5C7E02DDCE39700A5F73C /* SwiftGzip */; };
+		CFA5C7E32DDCE3A200A5F73C /* SwiftGzip in Frameworks */ = {isa = PBXBuildFile; productRef = CFA5C7E22DDCE3A200A5F73C /* SwiftGzip */; };
 		CFA632552AB3501800D46025 /* CSV in Frameworks */ = {isa = PBXBuildFile; productRef = CFA632542AB3501800D46025 /* CSV */; };
 		CFA632582AB3503400D46025 /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = CFA632572AB3503400D46025 /* ZIPFoundation */; };
 		CFA83C942D9D467400239AB7 /* CellCountryNetworkSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFA83C932D9D467400239AB7 /* CellCountryNetworkSection.swift */; };
@@ -296,7 +297,6 @@
 		CFB6CF8C2BD122FA00EAB7B4 /* SWCompression in Frameworks */ = {isa = PBXBuildFile; productRef = CFB6CF182BD122FA00EAB7B4 /* SWCompression */; };
 		CFB6CF8D2BD122FA00EAB7B4 /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = CFB6CF0C2BD122FA00EAB7B4 /* SwiftProtobuf */; };
 		CFB6CF8E2BD122FA00EAB7B4 /* BinarySwift in Frameworks */ = {isa = PBXBuildFile; productRef = CFB6CF0E2BD122FA00EAB7B4 /* BinarySwift */; };
-		CFB6CF8F2BD122FA00EAB7B4 /* Gzip in Frameworks */ = {isa = PBXBuildFile; productRef = CFB6CF102BD122FA00EAB7B4 /* Gzip */; };
 		CFB6CF902BD122FA00EAB7B4 /* AcknowList in Frameworks */ = {isa = PBXBuildFile; productRef = CFB6CF1C2BD122FA00EAB7B4 /* AcknowList */; };
 		CFB6CF912BD122FA00EAB7B4 /* Atomics in Frameworks */ = {isa = PBXBuildFile; productRef = CFB6CF162BD122FA00EAB7B4 /* Atomics */; };
 		CFB6CF922BD122FA00EAB7B4 /* Regex in Frameworks */ = {isa = PBXBuildFile; productRef = CFB6CF1A2BD122FA00EAB7B4 /* Regex */; };
@@ -617,10 +617,10 @@
 				CFB6CF8C2BD122FA00EAB7B4 /* SWCompression in Frameworks */,
 				CFB6CF8D2BD122FA00EAB7B4 /* SwiftProtobuf in Frameworks */,
 				CFB6CF8E2BD122FA00EAB7B4 /* BinarySwift in Frameworks */,
-				CFB6CF8F2BD122FA00EAB7B4 /* Gzip in Frameworks */,
 				CFB6CF902BD122FA00EAB7B4 /* AcknowList in Frameworks */,
 				CFB6CF912BD122FA00EAB7B4 /* Atomics in Frameworks */,
 				CFB6CF922BD122FA00EAB7B4 /* Regex in Frameworks */,
+				CFA5C7E32DDCE3A200A5F73C /* SwiftGzip in Frameworks */,
 				CFB6CF932BD122FA00EAB7B4 /* CSV in Frameworks */,
 				CF90FE7F2C7E39AE0052A7AA /* NIOCore in Frameworks */,
 				CFB6CF942BD122FA00EAB7B4 /* ZIPFoundation in Frameworks */,
@@ -635,10 +635,10 @@
 				CF5756202B2F266700C7C60A /* SWCompression in Frameworks */,
 				CFD0236D2961AD1500AA5A1C /* SwiftProtobuf in Frameworks */,
 				CF2002ED2A2F3244000922E6 /* BinarySwift in Frameworks */,
-				CF9237112A3E069D00FC7D21 /* Gzip in Frameworks */,
 				CFFF19E12BC6D045004E40CE /* AcknowList in Frameworks */,
 				CF8D33212AC194A4009CA3F0 /* Atomics in Frameworks */,
 				CF9EEEE62B347A7000F9B6D8 /* Regex in Frameworks */,
+				CFA5C7E12DDCE39700A5F73C /* SwiftGzip in Frameworks */,
 				CFA632552AB3501800D46025 /* CSV in Frameworks */,
 				CFB86D5A2C7C84FE0072BEFC /* NIOCore in Frameworks */,
 				CFA632582AB3503400D46025 /* ZIPFoundation in Frameworks */,
@@ -1202,7 +1202,6 @@
 			packageProductDependencies = (
 				CFB6CF0C2BD122FA00EAB7B4 /* SwiftProtobuf */,
 				CFB6CF0E2BD122FA00EAB7B4 /* BinarySwift */,
-				CFB6CF102BD122FA00EAB7B4 /* Gzip */,
 				CFB6CF122BD122FA00EAB7B4 /* CSV */,
 				CFB6CF142BD122FA00EAB7B4 /* ZIPFoundation */,
 				CFB6CF162BD122FA00EAB7B4 /* Atomics */,
@@ -1210,6 +1209,7 @@
 				CFB6CF1A2BD122FA00EAB7B4 /* Regex */,
 				CFB6CF1C2BD122FA00EAB7B4 /* AcknowList */,
 				CF90FE7E2C7E39AE0052A7AA /* NIOCore */,
+				CFA5C7E22DDCE3A200A5F73C /* SwiftGzip */,
 			);
 			productName = CellGuard;
 			productReference = CFB6CFA42BD122FA00EAB7B4 /* CellGuard Jailbreak.app */;
@@ -1234,7 +1234,6 @@
 			packageProductDependencies = (
 				CFD0236C2961AD1500AA5A1C /* SwiftProtobuf */,
 				CF2002EC2A2F3244000922E6 /* BinarySwift */,
-				CF9237102A3E069D00FC7D21 /* Gzip */,
 				CFA632542AB3501800D46025 /* CSV */,
 				CFA632572AB3503400D46025 /* ZIPFoundation */,
 				CF8D33202AC194A4009CA3F0 /* Atomics */,
@@ -1242,6 +1241,7 @@
 				CF9EEEE52B347A7000F9B6D8 /* Regex */,
 				CFFF19E02BC6D045004E40CE /* AcknowList */,
 				CFB86D592C7C84FE0072BEFC /* NIOCore */,
+				CFA5C7E02DDCE39700A5F73C /* SwiftGzip */,
 			);
 			productName = CellGuard;
 			productReference = CFD023332961A10D00AA5A1C /* CellGuard AppStore.app */;
@@ -1318,7 +1318,6 @@
 			packageReferences = (
 				CFD0236B2961AD1500AA5A1C /* XCRemoteSwiftPackageReference "swift-protobuf" */,
 				CF2002EB2A2F3244000922E6 /* XCRemoteSwiftPackageReference "BinarySwift" */,
-				CF92370F2A3E069D00FC7D21 /* XCRemoteSwiftPackageReference "GzipSwift" */,
 				CFA632532AB3501800D46025 /* XCRemoteSwiftPackageReference "CSV.swift" */,
 				CFA632562AB3503400D46025 /* XCRemoteSwiftPackageReference "ZIPFoundation" */,
 				CF8D331F2AC194A4009CA3F0 /* XCRemoteSwiftPackageReference "swift-atomics" */,
@@ -1327,6 +1326,7 @@
 				CFFF19DD2BC6CF0A004E40CE /* XCRemoteSwiftPackageReference "AcknowList" */,
 				CFB86D582C7C84FE0072BEFC /* XCRemoteSwiftPackageReference "swift-nio" */,
 				CFE725152D8317DD0048C057 /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */,
+				CFA5C7DF2DDCE39700A5F73C /* XCRemoteSwiftPackageReference "swift-gzip" */,
 			);
 			productRefGroup = CFD023342961A10D00AA5A1C /* Products */;
 			projectDirPath = "";
@@ -2332,20 +2332,20 @@
 				minimumVersion = 1.1.0;
 			};
 		};
-		CF92370F2A3E069D00FC7D21 /* XCRemoteSwiftPackageReference "GzipSwift" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/1024jp/GzipSwift";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 6.0.0;
-			};
-		};
 		CF9EEEE42B347A7000F9B6D8 /* XCRemoteSwiftPackageReference "Regex" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/sharplet/Regex";
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 2.1.1;
+			};
+		};
+		CFA5C7DF2DDCE39700A5F73C /* XCRemoteSwiftPackageReference "swift-gzip" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/lukbukkit/swift-gzip";
+			requirement = {
+				branch = ios14;
+				kind = branch;
 			};
 		};
 		CFA632532AB3501800D46025 /* XCRemoteSwiftPackageReference "CSV.swift" */ = {
@@ -2378,14 +2378,6 @@
 			requirement = {
 				branch = master;
 				kind = branch;
-			};
-		};
-		CFB6CF112BD122FA00EAB7B4 /* XCRemoteSwiftPackageReference "GzipSwift" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/1024jp/GzipSwift";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 6.0.0;
 			};
 		};
 		CFB6CF132BD122FA00EAB7B4 /* XCRemoteSwiftPackageReference "CSV.swift" */ = {
@@ -2491,15 +2483,20 @@
 			package = CFB86D582C7C84FE0072BEFC /* XCRemoteSwiftPackageReference "swift-nio" */;
 			productName = NIOCore;
 		};
-		CF9237102A3E069D00FC7D21 /* Gzip */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = CF92370F2A3E069D00FC7D21 /* XCRemoteSwiftPackageReference "GzipSwift" */;
-			productName = Gzip;
-		};
 		CF9EEEE52B347A7000F9B6D8 /* Regex */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = CF9EEEE42B347A7000F9B6D8 /* XCRemoteSwiftPackageReference "Regex" */;
 			productName = Regex;
+		};
+		CFA5C7E02DDCE39700A5F73C /* SwiftGzip */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CFA5C7DF2DDCE39700A5F73C /* XCRemoteSwiftPackageReference "swift-gzip" */;
+			productName = SwiftGzip;
+		};
+		CFA5C7E22DDCE3A200A5F73C /* SwiftGzip */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CFA5C7DF2DDCE39700A5F73C /* XCRemoteSwiftPackageReference "swift-gzip" */;
+			productName = SwiftGzip;
 		};
 		CFA632542AB3501800D46025 /* CSV */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -2520,11 +2517,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = CFB6CF0F2BD122FA00EAB7B4 /* XCRemoteSwiftPackageReference "BinarySwift" */;
 			productName = BinarySwift;
-		};
-		CFB6CF102BD122FA00EAB7B4 /* Gzip */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = CFB6CF112BD122FA00EAB7B4 /* XCRemoteSwiftPackageReference "GzipSwift" */;
-			productName = Gzip;
 		};
 		CFB6CF122BD122FA00EAB7B4 /* CSV */ = {
 			isa = XCSwiftPackageProductDependency;

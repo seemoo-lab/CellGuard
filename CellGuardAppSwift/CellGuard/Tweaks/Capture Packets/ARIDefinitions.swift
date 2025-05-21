@@ -7,6 +7,7 @@
 
 import Foundation
 import OSLog
+import SwiftGzip
 
 struct ARIDefinitions {
 
@@ -25,7 +26,9 @@ struct ARIDefinitions {
         // Convert the file's content into Swift objects
         do {
             // Gunzip the compressed file
-            let data = try Data(contentsOf: url).gunzipped()
+            let decompressor = GzipDecompressor()
+            let compressedData = try Data(contentsOf: url)
+            let data = try decompressor.unzip(data: compressedData)
 
             // https://www.avanderlee.com/swift/json-parsing-decoding/
             let decoder = JSONDecoder()

@@ -10,6 +10,7 @@ import CoreData
 import OSLog
 import Dispatch
 import CoreLocation
+import SwiftGzip
 
 // TODO: Test if this refactored version of the pipeline works as intended
 // If yes, reenable the pipeline by removing the comment in VerificationPipeline (line 15)
@@ -290,7 +291,9 @@ private struct CheckDistanceOfCell: VerificationStage {
 
         let geoJson: Any
         do {
-            let data = try Data(contentsOf: URL(fileURLWithPath: path)).gunzipped()
+            let decompressor = GzipDecompressor()
+            let compressedData = try Data(contentsOf: URL(fileURLWithPath: path))
+            let data = try decompressor.unzip(data: compressedData)
             geoJson = try JSONSerialization.jsonObject(with: data, options: [])
         } catch {
             pipelineLogger.warning("Failed to load / parse countries.geojson.gz: \(error)")

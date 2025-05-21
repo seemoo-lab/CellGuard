@@ -8,6 +8,7 @@
 import CSV
 import Foundation
 import OSLog
+import SwiftGzip
 
 private let wikipediaUrlPrefix = "https://en.wikipedia.org"
 
@@ -139,7 +140,9 @@ struct OperatorDefinitions {
         }
 
         // Gunzip the compressed files
-        let data = try Data(contentsOf: url).gunzipped()
+        let decompressor = GzipDecompressor()
+        let compressedData = try Data(contentsOf: url)
+        let data = try decompressor.unzip(data: compressedData)
 
         // Convert to string
         guard let str = String(data: data, encoding: .utf8) else {

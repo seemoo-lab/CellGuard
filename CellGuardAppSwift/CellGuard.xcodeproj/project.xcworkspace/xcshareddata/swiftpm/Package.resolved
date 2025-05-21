@@ -1,5 +1,5 @@
 {
-  "originHash" : "d90840dcc42febe60d1085b4c2b8433267bee6d44a84d9bebba644fbbd00df71",
+  "originHash" : "68e36adc1f2fcfc02acf8cf312569d662cf0d464bd168e96853a8f04c6f425d4",
   "pins" : [
     {
       "identity" : "acknowlist",
@@ -38,15 +38,6 @@
       }
     },
     {
-      "identity" : "gzipswift",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/1024jp/GzipSwift",
-      "state" : {
-        "revision" : "56bf51fdd2fe4b2cf254b2cf34aede3d7caccc6c",
-        "version" : "6.1.0"
-      }
-    },
-    {
       "identity" : "regex",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/sharplet/Regex",
@@ -80,6 +71,15 @@
       "state" : {
         "revision" : "671108c96644956dddcd89dd59c203dcdb36cec7",
         "version" : "1.1.4"
+      }
+    },
+    {
+      "identity" : "swift-gzip",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/lukbukkit/swift-gzip",
+      "state" : {
+        "branch" : "ios14",
+        "revision" : "5f4b18dbdf32c4d851b25a6de4fa23faec8748f0"
       }
     },
     {
