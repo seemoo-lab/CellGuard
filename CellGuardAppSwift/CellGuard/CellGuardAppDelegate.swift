@@ -16,6 +16,7 @@ class CellGuardAppDelegate: NSObject, UIApplicationDelegate {
     // https://www.fivestars.blog/articles/app-delegate-scene-delegate-swiftui/
     // https://holyswift.app/new-backgroundtask-in-swiftui-and-how-to-test-it/
 
+    static let cellRefreshTaskIdentifier = "de.tudarmstadt.seemoo.CellGuard.refresh.cells"
     static let packetRefreshTaskIdentifier = "de.tudarmstadt.seemoo.CellGuard.refresh.packets"
     static let verifyTaskIdentifier = "de.tudarmstadt.seemoo.CellGuard.processing.verify"
 
@@ -60,6 +61,9 @@ class CellGuardAppDelegate: NSObject, UIApplicationDelegate {
         // Register a background refresh task to poll the tweak continuously in the background
         // https://developer.apple.com/documentation/uikit/app_and_environment/scenes/preparing_your_ui_to_run_in_the_background/using_background_tasks_to_update_your_app
 
+        // Unregister the unused cell fetch task
+        BGTaskScheduler.shared.cancel(taskRequestWithIdentifier: Self.cellRefreshTaskIdentifier)
+
         #if JAILBREAK
         BGTaskScheduler.shared.register(forTaskWithIdentifier: Self.packetRefreshTaskIdentifier, using: nil) { task in
             // Only collect cells in the background if the app runs on a jailbroken device
@@ -75,6 +79,9 @@ class CellGuardAppDelegate: NSObject, UIApplicationDelegate {
                 task.setTaskCompleted(success: count != nil)
             }
         }
+        #else
+        // Unregister the packet refresh task (required if a jailbroken build was installed before)
+        BGTaskScheduler.shared.cancel(taskRequestWithIdentifier: Self.packetRefreshTaskIdentifier)
         #endif
 
         BGTaskScheduler.shared.register(forTaskWithIdentifier: Self.verifyTaskIdentifier, using: nil) { _ in
