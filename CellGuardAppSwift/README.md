@@ -2,7 +2,7 @@
 
 Monitor and visualize cellular base stations collected by the accompanying tweak.
 
-iOS Versions: 14.0 - 18.3
+iOS Versions: 14.0 - 18.5
 
 ## Setup
 
@@ -74,12 +74,10 @@ References:
 
 The [`build-ipa.py`](./build_ipa.py) script automates all of these steps:
 ```sh
-# Install dependencies
-pipenv sync
 # Build .ipa 
-pipenv run python3 build_ipa.py
+uv run build_ipa.py
 # Build .tipa (TrollStore-friendly IPA)
-pipenv run python3 build_ipa.py -tipa
+uv run build_ipa.py -tipa
 ```
 
 ### .deb
@@ -122,6 +120,33 @@ Read more:
 - https://developer.apple.com/documentation/bundleresources/privacy_manifest_files
 - https://developer.apple.com/app-store/user-privacy-and-data-use/
 - https://developer.apple.com/app-store/app-privacy-details/
+
+### ARI Definitions
+
+```sh
+# Clone aristoteles
+git clone https://github.com/seemoo-lab/aristoteles.git
+
+# Generate JSON file
+uv run generate_ari_json.py aristoteles/types/structure/libari_dylib.lua
+
+# Minimize JSON file
+cd CellGuard/Tweaks/Capture\ Packets/ari-definitions.json
+jq -r tostring ari-definitions.json > ari-definitions-min.json
+mv ari-definitions-min.json file.json
+gzip file.json
+```
+
+### Network Operators
+
+```sh
+# Generate CSV files
+uv run generate_operators.py
+
+# Minimize CSV files
+gzip CellGuard/Cells/countries.csv
+gzip CellGuard/Cells/operators.csv
+```
 
 ### JSON files
 
