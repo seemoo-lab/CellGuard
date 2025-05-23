@@ -1,5 +1,5 @@
 {
-  "originHash" : "68e36adc1f2fcfc02acf8cf312569d662cf0d464bd168e96853a8f04c6f425d4",
+  "originHash" : "822157601b7a66b7f0bc6d221e3d773307986d950da368247f180154d2efd078",
   "pins" : [
     {
       "identity" : "acknowlist",
@@ -76,10 +76,10 @@
     {
       "identity" : "swift-gzip",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/lukbukkit/swift-gzip",
+      "location" : "https://github.com/mihai8804858/swift-gzip.git",
       "state" : {
-        "branch" : "ios14",
-        "revision" : "5f4b18dbdf32c4d851b25a6de4fa23faec8748f0"
+        "revision" : "a01e2bc547eabea00d42666df39d40b022de4983",
+        "version" : "1.2.0"
       }
     },
     {
