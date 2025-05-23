@@ -168,12 +168,14 @@ extension PersistenceController {
                         let index = PacketIndexARI(context: context)
                         index.reject = true
                         index.collected = ariPacket.collected
+                        index.simSlotID = ariPacket.simSlotID
                         ariPacket.index = index
                         added = true
                     } else if ariPacket.group == PacketConstants.ariSignalGroup && ariPacket.type == PacketConstants.ariSignalType {
                         let index = PacketIndexARI(context: context)
                         index.signal = true
                         index.collected = ariPacket.collected
+                        index.simSlotID = ariPacket.simSlotID
                         ariPacket.index = index
                         added = true
                     }
@@ -225,13 +227,13 @@ extension PersistenceController {
         } ?? [:]
     }
 
-    func fetchIndexedARIPackets(start: Date, end: Date, reject: Bool = false, signal: Bool = false) throws -> [NSManagedObjectID: ParsedARIPacket] {
+    func fetchIndexedARIPackets(start: Date, end: Date, simSlotID: UInt8, reject: Bool = false, signal: Bool = false) throws -> [NSManagedObjectID: ParsedARIPacket] {
         return try performAndWait(name: "fetchContext", author: "fetchIndexedARIPackets") { _ in
             let request = PacketIndexARI.fetchRequest()
 
             request.predicate = NSPredicate(
-                format: "reject = %@ and signal = %@ and %@ <= collected and collected <= %@",
-                NSNumber(booleanLiteral: reject), NSNumber(booleanLiteral: signal), start as NSDate, end as NSDate
+                format: "reject = %@ and signal = %@ and %@ <= collected and collected <= %@ and (simSlotID = 0 or simSlotID = %@)",
+                NSNumber(booleanLiteral: reject), NSNumber(booleanLiteral: signal), start as NSDate, end as NSDate, NSNumber(value: simSlotID)
             )
             request.sortDescriptors = [NSSortDescriptor(keyPath: \PacketIndexARI.collected, ascending: false)]
             request.includesSubentities = true
