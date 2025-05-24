@@ -523,13 +523,14 @@ struct LogArchiveReader {
     private func validatePacketCellParser(packetParserCells: [CCTCellProperties], controlCells: [CCTCellProperties],
                                           beforeImportTime: Date) -> Bool {
 
-        // We only focus on the cells that have not been stored in the database before.
-        let newCells = packetParserCells.filter { (cell: CCTCellProperties) in
-            return !(PersistenceController.shared.fetchCellExists(properties: cell, before: beforeImportTime) ?? false)
+        let packetFilter = { (cell: CCTCellProperties) in
+            // We only focus on the cells that have not been stored in the database before.
+            let isNew = !(PersistenceController.shared.fetchCellExists(properties: cell, before: beforeImportTime) ?? false)
+            // Exclude the OFF technology cells as the controlCells do not include such disconnected cell info
+            return isNew && cell.technology != .OFF
         }
-        let newControlCells = controlCells.filter { (cell: CCTCellProperties) in
-            return !(PersistenceController.shared.fetchCellExists(properties: cell, before: beforeImportTime) ?? false)
-        }
+        let newCells = packetParserCells.filter(packetFilter)
+        let newControlCells = controlCells.filter(packetFilter)
 
         // Compare the technologies of both cell lists. The control cells must not have more technologies.
         let cellTechnologies = Set(newCells.compactMap { $0.technology })
