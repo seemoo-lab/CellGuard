@@ -197,7 +197,7 @@ struct PersistenceCSVExporter {
         // https://stackoverflow.com/a/28153897
         let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "???"
         let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String  ?? "???"
-        let formatVersion = 1
+        let formatVersion = 2
 
         let info: [String: Any] = [
             "name": device.name,
@@ -278,11 +278,12 @@ struct PersistenceCSVExporter {
             url: url,
             category: .connectedCells,
             progress: progress,
-            header: ["collected", "json", "technology", "country", "network", "area", "cell", "verificationFinished", "verificationScore"],
+            header: ["collected", "json", "simSlot", "technology", "country", "network", "area", "cell", "verificationFinished", "verificationScore"],
             writers: [DatabaseFileElementWriter(CellTweak.fetchRequest) { csv, result in
                 try csv.write(row: [
                     csvDate(result.collected),
                     csvString(String(data: encoder.encode(result), encoding: .utf8)!),
+                    csvInt(result.simSlotID),
                     csvString(result.technology),
                     csvInt(result.country),
                     csvInt(result.network),
@@ -354,12 +355,13 @@ struct PersistenceCSVExporter {
             url: url,
             category: .packets,
             progress: progress,
-            header: ["collected", "direction", "proto", "data"],
+            header: ["collected", "direction", "simSlot", "proto", "data"],
             writers: [
                 DatabaseFileElementWriter(PacketQMI.fetchRequest) { csv, result in
                     try csv.write(row: [
                         csvDate(result.collected),
                         csvString(result.direction),
+                        csvInt(result.simSlotID),
                         csvString(result.proto),
                         csvString(result.data?.base64EncodedString())
                     ])
@@ -368,6 +370,7 @@ struct PersistenceCSVExporter {
                     try csv.write(row: [
                         csvDate(result.collected),
                         csvString(result.direction),
+                        csvInt(result.simSlotID),
                         csvString(result.proto),
                         csvString(result.data?.base64EncodedString())
                     ])

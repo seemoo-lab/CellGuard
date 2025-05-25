@@ -108,7 +108,7 @@ struct PersistenceCSVImporter {
         Self.logger.debug("Read \(locations?.count ?? 0) locations")
         let alsCells = try readAlsCells(directory: tmpDirectoryURL, infoData: infoData, progress: progress)
         Self.logger.debug("Read \(alsCells?.count ?? 0) ALS cells")
-        let (packets, userCells) = try readPackets(directory: tmpDirectoryURL, infoData: infoData, progress: progress)
+        let (packets, userCells) = try readPackets(directory: tmpDirectoryURL, infoData: infoData, version: formatVersion, progress: progress)
         Self.logger.debug("Read \(packets?.count ?? 0) packets")
         Self.logger.debug("Read \(userCells?.count ?? 0) user cells")
 
@@ -313,7 +313,7 @@ struct PersistenceCSVImporter {
         }
     }
 
-    private func readPackets(directory: URL, infoData: [String: Int], progress: CSVProgressFunc) throws -> (ImportCount?, ImportCount?) {
+    private func readPackets(directory: URL, infoData: [String: Int], version: Int, progress: CSVProgressFunc) throws -> (ImportCount?, ImportCount?) {
         // Set the packet retention time frame to infinite, so that older packets to-be-imported don't get deleted
         UserDefaults.standard.setValue(DeleteView.packetRetentionInfinite, forKey: UserDefaultsKeys.packetRetention.rawValue)
         UserDefaults.standard.setValue(DeleteView.locationRetentionInfinite, forKey: UserDefaultsKeys.locationRetention.rawValue)
@@ -323,15 +323,17 @@ struct PersistenceCSVImporter {
             let directionStr = try csvString(csv, "direction")
             let dataStr = try csvString(csv, "data")
             let collected = try csvDate(csv, "collected")
+            let simSlot: Int? = version >= 2 ? try? csvInt(csv, "simSlot") : nil
 
             let direction = CPTDirection(rawValue: directionStr)
+            let simSlotID = simSlot != nil ? UInt8(simSlot!) : nil
             let data = Data(base64Encoded: dataStr)
 
             guard let direction = direction, let data = data else {
                 throw PersistenceCSVImporterError.fieldParsing("direction")
             }
 
-            return try CPTPacket(direction: direction, data: data, timestamp: collected)
+            return try CPTPacket(direction: direction, data: data, timestamp: collected, simSlotID: simSlotID)
         } timestamp: { packet in
             packet.timestamp
         } bulkImport: { packets in
