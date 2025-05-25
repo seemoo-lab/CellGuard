@@ -92,7 +92,7 @@ extension PersistenceController {
         } ?? []
     }
 
-    func fetchCellExists(properties: CCTCellProperties) -> Bool? {
+    func fetchCellExists(properties: CCTCellProperties, before: Date?) -> Bool? {
         guard let technology = properties.technology,
               let country = properties.mcc,
               let network = properties.network,
@@ -104,9 +104,13 @@ extension PersistenceController {
         return try? performAndWait(name: "fetchContext", author: "fetchCell") { context in
             let existFetchRequest = CellTweak.fetchRequest()
             existFetchRequest.fetchLimit = 1
-            existFetchRequest.predicate = NSPredicate(
-                format: "technology = %@ and country = %@ and network = %@ and area = %@ and cell = %@",
-                technology.rawValue as NSString, country as NSNumber, network as NSNumber, area as NSNumber, cellId as NSNumber)
+            var predicates: [NSPredicate] = []
+            predicates.append(NSPredicate(format: "technology = %@ and country = %@ and network = %@ and area = %@ and cell = %@",
+                technology.rawValue as NSString, country as NSNumber, network as NSNumber, area as NSNumber, cellId as NSNumber))
+            if let before = before {
+                predicates.append(NSPredicate(format: "imported < %@", before as NSDate))
+            }
+            existFetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
             let cell = try context.fetch(existFetchRequest).first
             return cell != nil
         }

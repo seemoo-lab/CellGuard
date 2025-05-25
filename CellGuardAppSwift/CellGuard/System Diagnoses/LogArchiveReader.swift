@@ -491,12 +491,7 @@ struct LogArchiveReader {
             progress()
         }
 
-        // Check which of the control cells are not already in the database, before storing them.
-        let newControlCells = controlCells.filter { (cell: CCTCellProperties) in
-            let exists = PersistenceController.shared.fetchCellExists(properties: cell) ?? false
-            return !exists
-        }
-
+        let beforeImportTime = Date()
         var filteredCells: [CCTCellProperties] = []
         do {
             if packets.count > 0 {
@@ -506,24 +501,8 @@ struct LogArchiveReader {
             throw LogArchiveError.importError(error)
         }
 
-        // Compare filteredCells (packet parser) with the controlCells (log parser).
-        // Compare the technologies of both cell lists. The control cells must not have more technologies.
-        let cellTechnologies = Set(filteredCells.compactMap { $0.technology })
-        let controlCellTechnologies = Set(newControlCells.compactMap { $0.technology })
-        var erroneousCells = cellTechnologies != controlCellTechnologies
-
-        // Compare if all the cells have a matching control cell with the same values at the important attributes.
-        for cell in filteredCells {
-            let controlCellIsMissing = controlCells.filter { (controlCell: CCTCellProperties) in
-                return cell.mcc == controlCell.mcc && cell.network == controlCell.network && cell.area == controlCell.area &&
-                cell.cellId == controlCell.cellId && cell.frequency == controlCell.frequency &&
-                (cell.technology == .GSM || cell.band == controlCell.band) // The GSM band is not provided reliably by the CommCenter parsing
-            }.isEmpty
-            erroneousCells = erroneousCells || controlCellIsMissing
-        }
-
         var notices: [ImportNotice] = []
-        if erroneousCells {
+        if validatePacketCellParser(packetParserCells: filteredCells, controlCells: controlCells, beforeImportTime: beforeImportTime) {
             notices.append(.cellParserMisalignment)
         }
 
@@ -539,6 +518,36 @@ struct LogArchiveReader {
             packets: ImportCount(count: packets.count, first: packetDates.first, last: packetDates.last),
             notices: notices
         )
+    }
+
+    private func validatePacketCellParser(packetParserCells: [CCTCellProperties], controlCells: [CCTCellProperties],
+                                          beforeImportTime: Date) -> Bool {
+
+        let packetFilter = { (cell: CCTCellProperties) in
+            // We only focus on the cells that have not been stored in the database before.
+            let isNew = !(PersistenceController.shared.fetchCellExists(properties: cell, before: beforeImportTime) ?? false)
+            // Exclude the OFF technology cells as the controlCells do not include such disconnected cell info
+            return isNew && cell.technology != .OFF
+        }
+        let newCells = packetParserCells.filter(packetFilter)
+        let newControlCells = controlCells.filter(packetFilter)
+
+        // Compare the technologies of both cell lists. The control cells must not have more technologies.
+        let cellTechnologies = Set(newCells.compactMap { $0.technology })
+        let controlCellTechnologies = Set(newControlCells.compactMap { $0.technology })
+        var erroneousCells = cellTechnologies != controlCellTechnologies
+
+        // Compare if all the cells have a matching control cell with the same values at the important attributes.
+        for cell in newCells {
+            let controlCellIsMissing = controlCells.filter { (controlCell: CCTCellProperties) in
+                return cell.mcc == controlCell.mcc && cell.network == controlCell.network && cell.area == controlCell.area &&
+                cell.cellId == controlCell.cellId && cell.frequency == controlCell.frequency &&
+                (cell.technology == .GSM || cell.band == controlCell.band) // The GSM band is not provided reliably by the CommCenter parsing
+            }.isEmpty
+            erroneousCells = erroneousCells || controlCellIsMissing
+        }
+
+        return erroneousCells
     }
 
     private func readCSVPacketQMI(library: String, timestamp: Date, message: String) throws -> CPTPacket {
