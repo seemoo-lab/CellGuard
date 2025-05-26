@@ -26,6 +26,7 @@ The repository consists of five directories
 - [CapturePacketsTweak](./CapturePacketsTweak): A tweak injected into iOS collecting binary QMI and ARI packets
 - [CellGuardAppRust](./CellGuardAppRust): The Rust extension for the CellGuard iOS app
 - [CellGuardAppSwift](./CellGuardAppSwift): The CellGuard iOS app written in Swift
+- [RotateKeysDaemon](./RotateKeysDaemon): A daemon distributing tokens for communication between tweak and app  
 
 ## Publications
 

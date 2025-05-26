@@ -13,6 +13,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		CF32DCF92DE49F8B005A5D75 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		CFAFDC3D2DD390690098C822 /* libTest2.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTest2.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFAFDC582DD3B0FB0098C822 /* control */ = {isa = PBXFileReference; lastKnownFileType = text; path = control; sourceTree = "<group>"; };
 		CFAFDC592DD3B0FB0098C822 /* entitlements.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = entitlements.plist; sourceTree = "<group>"; };
@@ -50,6 +51,7 @@
 				CFAFDC5B2DD3B0FB0098C822 /* keychain.swift */,
 				CFAFDC5C2DD3B0FB0098C822 /* main.swift */,
 				CFAFDC5D2DD3B0FB0098C822 /* Makefile */,
+				CF32DCF92DE49F8B005A5D75 /* README.md */,
 				CFAFDC3E2DD390690098C822 /* Products */,
 			);
 			sourceTree = "<group>";
