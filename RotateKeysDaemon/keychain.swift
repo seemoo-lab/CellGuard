@@ -14,7 +14,9 @@ func writeAppToken(_ token: String) -> Bool {
         kSecAttrService as String: "capture-packets-token",
     ]
     let updateQuery: [String: Any] = [
-        kSecValueData as String: token.data(using: .utf8)!
+        kSecValueData as String: token.data(using: .utf8)!,
+        // The daemon must be able to rotate keys while the device is locked
+        kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
     ]
 
     // Attempt to update the token in the keychain
