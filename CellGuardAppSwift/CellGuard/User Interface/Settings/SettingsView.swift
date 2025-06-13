@@ -35,7 +35,9 @@ struct SettingsView: View {
 
             StudySection()
 
+            #if JAILBREAK
             BackgroundTasksSection()
+            #endif
 
             IntroductionSection()
 
@@ -185,7 +187,7 @@ private struct BackgroundTasksSection: View {
     @AppStorage(UserDefaultsKeys.updateCheck.rawValue) private var isUpdateChecks: Bool = false
 
     var body: some View {
-        Section(header: Text("Background Tasks"), footer: Text("If enabled, CellGuard regularly queries our backend server for update checks.")) {
+        Section(header: Text("Background Tasks"), footer: Text("If enabled, CellGuard regularly queries our backend server to check for updates.")) {
             Toggle("Update Checks", isOn: Binding(get: {
                 return isUpdateChecks
             }, set: { value in

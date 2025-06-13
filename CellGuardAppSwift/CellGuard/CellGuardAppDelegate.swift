@@ -265,6 +265,7 @@ class CellGuardAppDelegate: NSObject, UIApplicationDelegate {
                 }
             }
 
+            #if JAILBREAK
             Task {
                 try? await Task.sleep(nanoseconds: 3 * NSEC_PER_SEC)
                 let task = UpdateCheckTask()
@@ -273,6 +274,7 @@ class CellGuardAppDelegate: NSObject, UIApplicationDelegate {
                     try? await Task.sleep(nanoseconds: 3 * 3600 * NSEC_PER_SEC)
                 }
             }
+            #endif
 
             await Self.logger.debug("Started all maintenance background tasks")
 
