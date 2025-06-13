@@ -121,11 +121,21 @@ private struct PacketCellFooter: View {
 
     var body: some View {
         HStack {
-            Text(fullMediumDateTimeFormatter.string(from: packet.collected ?? Date(timeIntervalSince1970: 0)))
+            Text(text)
                 .font(.system(size: 14))
                 .foregroundColor(.gray)
             Spacer()
         }
+    }
+
+    var text: String {
+        var str = fullMediumDateTimeFormatter.string(from: packet.collected ?? Date(timeIntervalSince1970: 0))
+
+        if packet.simSlotID > 0 {
+            str += " (SIM\(packet.simSlotID))"
+        }
+
+        return str
     }
 }
 

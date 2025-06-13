@@ -13,6 +13,7 @@ public protocol Packet: NSFetchRequestResult, Identifiable {
     var data: Data? { get set }
     var direction: String? { get set }
     var imported: Date? { get set }
+    var simSlotID: Int16 { get set }
 }
 
 extension Packet {
