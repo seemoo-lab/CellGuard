@@ -317,7 +317,7 @@ private struct ListPacketCell: View {
                 + Text(" \(cell.technology ?? "")")
                     .foregroundColor(.gray)
 
-                if !simSlots.isEmpty {
+                if !simSlots.isEmpty && simSlots != [0] {
                     HStack(spacing: 2) {
                         Image(systemName: "simcard")
                             .font(.system(size: 12))
