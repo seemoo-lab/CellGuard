@@ -21,6 +21,7 @@ def build_rust_src():
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             shell=True,
+            cwd=Path(__file__).parent,
         )
         if process.returncode == 0:
             spinner.ok("🟢")
@@ -39,7 +40,10 @@ def get_build_settings() -> tuple[str, str]:
 
     with yaspin(text="Getting Build Settings...") as spinner:
         process = subprocess.run(
-            ['xcodebuild', '-showBuildSettings'], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+            ['xcodebuild', '-showBuildSettings'],
+            stdout=subprocess.PIPE, stderr=subprocess.DEVNULL,
+            cwd=Path(__file__).parent,
+        )
         if process.returncode == 0:
             spinner.ok("🟢")
         else:
@@ -66,7 +70,7 @@ def build_archive() -> Path:
             '-archivePath', 'build/CellGuard.xcarchive',
             '-configuration', 'Release',
             'CODE_SIGN_IDENTITY=', 'CODE_SIGNING_REQUIRED=NO', 'CODE_SINGING_ALLOWED=NO'
-        ], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        ], stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=Path(__file__).parent)
         if process.returncode == 0:
             spinner.ok("🟢")
         else:
@@ -75,8 +79,22 @@ def build_archive() -> Path:
             print("Hint: Run \"Product -> Archive\" in XCode to debug the issue, then run this command again")
             exit(1)
 
-    return Path('build', 'CellGuard.xcarchive')
+    return Path(__file__).parent.joinpath('build', 'CellGuard.xcarchive')
 
+
+def sign_executable(archive_path: Path):
+    with yaspin(text="Signing executable...") as spinner:
+        app_path = archive_path.joinpath('Products', 'Applications', 'CellGuard Jailbreak.app')
+        exe_path = app_path.joinpath('CellGuard Jailbreak')
+        process = subprocess.run([
+            'ldid', '-Sentitlements-trollstore.plist', f'{exe_path.absolute()}'
+        ], stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=Path(__file__).parent)
+        if process.returncode == 0:
+            spinner.ok("🟢")
+        else:
+            spinner.fail("🔴")
+            print(str(process.stderr).replace('\\n', '\n').replace('\\t', '\t'))
+            exit(1)
 
 def create_ipa(archive_path: Path, ipa_path: Path):
     # https://github.com/MrKai77/Export-unsigned-ipa-files
@@ -122,6 +140,7 @@ def main():
     version, build = get_build_settings()
     build_rust_src()
     archive_path = build_archive()
+    sign_executable(archive_path)
     ipa_extension = '.tipa' if args.tipa else '.ipa'
     ipa_path = Path('build', f'CellGuard-{version}-{build}{ipa_extension}')
     create_ipa(archive_path, ipa_path)

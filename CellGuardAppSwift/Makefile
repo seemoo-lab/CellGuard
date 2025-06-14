@@ -15,12 +15,11 @@ include $(THEOS)/makefiles/common.mk
 XCODEPROJ_NAME = CellGuard
 # The scheme of your app to compile 
 CellGuard_XCODE_SCHEME = CellGuard (Jailbreak)
-# The ldid flag to sign your app with, we will make this next
-# CellGuard_CODESIGN_FLAGS = -ScellGuardEntitlements.xml
 
+# The ldid flag to sign your app with, we will make this next
 # https://github.com/hbang/NewTerm/blob/main/Makefile
 CellGuard_XCODEFLAGS = INSTALL_PREFIX=$(INSTALL_PREFIX)
-CellGuard_CODESIGN_FLAGS = -Sentitlements.plist
+CellGuard_CODESIGN_FLAGS = -Sentitlements-deb.plist
 CellGuard_INSTALL_PATH = $(INSTALL_PREFIX)/Applications
 
 include $(THEOS_MAKE_PATH)/xcodeproj.mk
