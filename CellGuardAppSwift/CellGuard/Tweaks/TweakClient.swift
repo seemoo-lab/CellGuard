@@ -82,13 +82,13 @@ struct TweakClient {
         var item: CFTypeRef?
         let status = SecItemCopyMatching(searchQuery as CFDictionary, &item)
         guard status != errSecItemNotFound else {
-            Self.logger.info("Auth token not in keychain")
+            Self.logger.info("Auth token not in keychain (Status = \(status))")
             return nil
         }
 
         guard status == errSecSuccess else {
             let res = SecCopyErrorMessageString(status, nil)
-            Self.logger.warning("Error \(status) while fetching auth key from keychain: \(res)")
+            Self.logger.warning("Error \(status) while fetching auth key from keychain: \(res) (Status = \(status))")
             return nil
         }
 
