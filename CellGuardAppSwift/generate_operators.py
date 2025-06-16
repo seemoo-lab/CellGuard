@@ -74,8 +74,9 @@ def filter_urls(p: str, t: Optional[tuple[str, Optional[str]]]) -> Optional[tupl
         return None
 
     if t[1] is not None:
-        # We only allow Wikipedia URLs that start with /
-        if t[1].startswith('/'):
+        # We only allow Wikipedia URLs that start with '/wiki'.
+        # Some links '/w/index.php?title=Citymesh_Connect&action=edit&redlink=1' point to non-existent articles.
+        if t[1].startswith('/wiki'):
             return replace_nbsp(t[0]), t[1]
         # Or Wikipedia URLs that link to the page itself
         elif t[1].startswith('#'):
