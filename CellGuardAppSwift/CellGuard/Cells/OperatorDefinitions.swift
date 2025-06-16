@@ -12,13 +12,26 @@ import SwiftGzip
 
 private let wikipediaUrlPrefix = "https://en.wikipedia.org"
 
+private func trimCountryName(name: String) -> String {
+    if name.hasSuffix(", Federated States of") {
+        return name.split(separator: ",").first?.trimmingCharacters(in: .whitespaces) ?? name
+    }
+
+    if name.hasSuffix(")") {
+        return name.split(separator: "(").first?.trimmingCharacters(in: .whitespaces) ?? name
+    }
+
+    return name
+}
+
 struct NetworkCountry: Identifiable, Decodable {
     let mcc: String
     let name: String
     let iso: String
     let mncUrls: String?
 
-    var id: String { self.mcc }
+    // A MCC can be assigned to multiple countries / territories
+    var id: String { self.mcc + "_" + self.name }
 
     enum CodingKeys: String, CodingKey {
         case mcc
@@ -36,19 +49,7 @@ struct NetworkCountry: Identifiable, Decodable {
     }
 
     var shortName: String {
-        if name.hasSuffix(", Federated States of") {
-            return name.split(separator: ",").first?.trimmingCharacters(in: .whitespaces) ?? name
-        }
-
-        if name.hasSuffix(")") {
-            return name.split(separator: "(").first?.trimmingCharacters(in: .whitespaces) ?? name
-        }
-
-        return name
-    }
-
-    func listMccs() -> [NetworkCountry] {
-        OperatorDefinitions.shared.countriesByIso[self.iso] ?? []
+        trimCountryName(name: self.name)
     }
 }
 
@@ -70,6 +71,12 @@ enum NetworkOperatorStatus: Int, Decodable {
 }
 
 struct NetworkOperator: Decodable, Identifiable {
+
+    private static let logger = Logger(
+        subsystem: Bundle.main.bundleIdentifier!,
+        category: String(describing: NetworkOperator.self)
+    )
+
     let mcc: String
     let mnc: String
     let status: NetworkOperatorStatus
@@ -79,6 +86,13 @@ struct NetworkOperator: Decodable, Identifiable {
 
     let operatorName: String?
     let operatorUrl: String?
+
+    let countryName: String
+    // May be empty (international networks) or contain multiple ISOs separated with '/'
+    let isoString: String?
+    // If there are multiple ISOs defined, then this field contains more for information about them separated with '##'
+    let countryInclude: String?
+    let countryUrl: String
 
     var id: String { self.mcc + "-" + self.mnc }
 
@@ -90,6 +104,10 @@ struct NetworkOperator: Decodable, Identifiable {
         case brandUrl = "brand_url"
         case operatorName = "operator"
         case operatorUrl = "operator_url"
+        case countryName = "country_name"
+        case isoString = "iso"
+        case countryInclude = "country_include"
+        case countryUrl = "country_url"
     }
 
     var combinedName: String? {
@@ -112,13 +130,33 @@ struct NetworkOperator: Decodable, Identifiable {
         return URL(string: wikipediaUrlPrefix + operatorUrl)
     }
 
-    func country() -> NetworkCountry? {
-        guard let mccInt = Int32(mcc) else {
-            return nil
+    var wikipediaCountryUrl: URL? {
+        return URL(string: wikipediaUrlPrefix + countryUrl)
+    }
+
+    var isoList: [String] {
+        isoString?.split(separator: "/").map(String.init) ?? []
+    }
+
+    var countryIncludeList: [(name: String, iso: String)] {
+        var list: [(String, String)] = []
+
+        for countryString in countryInclude?.components(separatedBy: "##") ?? [] {
+            let split = countryString.components(separatedBy: " – ")
+            if split.count < 2 {
+                Self.logger.warning("Cannot process included country string \(countryString)")
+                continue
+            }
+            list.append((split[0], split[1]))
         }
 
-        return OperatorDefinitions.shared.translate(country: mccInt)
+        return list
     }
+
+    var shortCountryName: String {
+        trimCountryName(name: self.countryName)
+    }
+
 }
 
 enum OperatorDefinitionsError: Error {
@@ -177,7 +215,8 @@ struct OperatorDefinitions {
         return OperatorDefinitions(countries: countries, operators: operators)
     }()
 
-    let countriesByMcc: [Int: [NetworkCountry]]
+    // The number of preceding zeros is important to distinguish MCCs
+    let countriesByMcc: [String: [NetworkCountry]]
     let countriesByIso: [String: [NetworkCountry]]
     let networks: [Int: [Int: [NetworkOperator]]]
 
@@ -185,12 +224,8 @@ struct OperatorDefinitions {
         // We map the list of operators to a dictionary to allow for simple retrieval of operators by MCC & MNC
         self.networks = Dictionary(grouping: operators) { Int($0.mcc) ?? -1 }
             .mapValues { Dictionary(grouping: $0) { Int($0.mnc) ?? -1 } }
-        self.countriesByMcc = Dictionary(grouping: countries) { Int($0.mcc) ?? -1 }
+        self.countriesByMcc = Dictionary(grouping: countries) { $0.mcc }
         self.countriesByIso = Dictionary(grouping: countries) { $0.iso }
-    }
-
-    func translate(country: Int32) -> NetworkCountry? {
-        return countriesByMcc[Int(country)]?.first
     }
 
     func translate(country: Int32, network: Int32) -> NetworkOperator? {

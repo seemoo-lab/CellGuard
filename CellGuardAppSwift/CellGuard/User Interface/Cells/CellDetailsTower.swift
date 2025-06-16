@@ -18,8 +18,6 @@ struct CellDetailsTower: View {
     let bitCount: Int?
 
     private let techFormatter: CellTechnologyFormatter
-    private let netCountry: NetworkCountry?
-    private let netOperator: NetworkOperator?
 
     init(technology: ALSTechnology, country: Int32, network: Int32, area: Int32, baseStation: Int64, dissect: @escaping (Int64) -> (Int64, Int64), bitCount: Int? = nil) {
         self.technology = technology
@@ -31,8 +29,6 @@ struct CellDetailsTower: View {
         self.bitCount = bitCount
 
         self.techFormatter = CellTechnologyFormatter(technology: technology)
-        self.netCountry = OperatorDefinitions.shared.translate(country: country)
-        self.netOperator = OperatorDefinitions.shared.translate(country: country, network: network)
     }
 
     var baseStationIDSingle: String {

@@ -215,17 +215,17 @@ private struct CheckCorrectMCCStage: VerificationStage {
 
         switch await getCountryCode(latitude: latitude, longitude: longitude) {
         case let .found(cc):
-            let operatorCountry = OperatorDefinitions.shared.translate(country: queryCell.country)?.iso
-            guard let operatorCountry = operatorCountry else {
+            let network = OperatorDefinitions.shared.translate(country: queryCell.country, network: queryCell.network)
+            guard let network = network, !network.isoList.isEmpty else {
                 return .success()
             }
 
             // Checks wether the translated MCC corresponds to the user's country code
-            if operatorCountry.uppercased() == cc.uppercased() {
+            for iso in network.isoList where iso.uppercased() == cc.uppercased() {
                 return .success()
-            } else {
-                return .fail()
             }
+
+            return .fail()
         case .error:
             return .delay(seconds: 60)
         case .none:
@@ -251,18 +251,18 @@ private struct CheckCorrectMNCStage: VerificationStage {
 
         switch await getCountryCode(latitude: latitude, longitude: longitude) {
         case let .found(cc):
-            // TODO: Think if this stage is required or does it effectively perform the same check as the stage above?
-            // To do this look at the source code of the OperatorDefinitions
-            guard let country = OperatorDefinitions.shared.translate(country: queryCell.country)?.iso else {
+            // TODO: Is this stage required or does it effectively perform the same check as the stage above?
+            let network = OperatorDefinitions.shared.translate(country: queryCell.country, network: queryCell.network)
+            guard let network = network, !network.isoList.isEmpty else {
                 return .success()
             }
 
-            // Checks wether the translated MNC corresponds to the user's country code
-            if country.uppercased() == cc.uppercased() {
+            // Checks wether the translated MCC corresponds to the user's country code
+            for iso in network.isoList where iso.uppercased() == cc.uppercased() {
                 return .success()
-            } else {
-                return .fail()
             }
+
+            return .fail()
         case .error:
             return .delay(seconds: 60)
         case .none:
@@ -380,12 +380,16 @@ private struct CheckDistanceOfCell: VerificationStage {
             return .success()
         }
 
-        guard let cellCc = OperatorDefinitions.shared.translate(country: queryCell.country)?.iso.uppercased() else {
+        guard let network = OperatorDefinitions.shared.translate(country: queryCell.country, network: queryCell.network) else {
+            return .success()
+        }
+
+        guard !network.isoList.isEmpty else {
             return .success()
         }
 
         // Checks wether the translated MCC is corresponds to the user's country code
-        guard cellCc == cc else {
+        if !network.isoList.map({ $0.uppercased() }).contains(cc) {
             return .fail()
         }
 
@@ -406,7 +410,7 @@ private struct CheckDistanceOfCell: VerificationStage {
         var nearbyCountries = isCountryWithinDistance(start: startPoint, radius: radius, countryBorders: countryBorders)
         nearbyCountries.append(cc)
 
-        if nearbyCountries.contains(cellCc) {
+        if nearbyCountries.contains(cc) {
             logger.info("GEO: Countries within \(radius) km: \(nearbyCountries)")
             return .success()
         } else {

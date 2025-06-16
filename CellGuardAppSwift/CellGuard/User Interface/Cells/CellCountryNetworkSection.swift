@@ -11,14 +11,12 @@ struct CellCountryNetworkSection: View {
 
     let country: Int32
     let network: Int32
-    let netCountry: NetworkCountry?
     let netOperator: NetworkOperator?
     let techFormatter: CellTechnologyFormatter
 
     init(country: Int32, network: Int32, techFormatter: CellTechnologyFormatter) {
         self.country = country
         self.network = network
-        self.netCountry = OperatorDefinitions.shared.translate(country: country)
         self.netOperator = OperatorDefinitions.shared.translate(country: country, network: network)
         self.techFormatter = techFormatter
     }
@@ -26,11 +24,11 @@ struct CellCountryNetworkSection: View {
     var body: some View {
         Section(header: Text("Country & Network")) {
             CellDetailsRow(techFormatter.country(), country)
-            if let country = netCountry {
+            if let netOperator = netOperator {
                 NavigationLink {
-                    CountryDetailsView(country: country)
+                    CountryDetailsView(netOperator: netOperator)
                 } label: {
-                    CellDetailsRow("Country", country.shortName)
+                    CellDetailsRow("Country", netOperator.shortCountryName)
                 }
             }
             CellDetailsRow(techFormatter.network(), formatMNC(network))
