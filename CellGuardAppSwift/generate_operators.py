@@ -154,6 +154,13 @@ def strip_operator_table(p: str, df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
+def print_country_duplicates(countries: pd.DataFrame) -> None:
+    mcc_count: pd.Series = countries['mcc'].value_counts()
+    mcc_duplicates: pd.Series = mcc_count[mcc_count > 1]
+    if len(mcc_duplicates) > 0:
+        duplicates_str = ' '.join(mcc_duplicates.index.to_series().apply(str))
+        print(f'There are duplicate entries for MCCs: {duplicates_str}')
+
 def main():
     # Output two CSVs (one for countries, one for operators)
     countries, operators = fetch_countries()
@@ -163,6 +170,8 @@ def main():
         operators = pd.concat([operators, regional_operators])
 
     directory = path.join(path.dirname(__file__), 'CellGuard', 'Cells')
+
+    print_country_duplicates(countries)
 
     countries_path = path.join(directory, 'countries.csv')
     countries.to_csv(countries_path, index=False)
