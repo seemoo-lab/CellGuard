@@ -51,9 +51,9 @@ def fetch_countries() -> tuple[pd.DataFrame, pd.DataFrame]:
     operators = pd.read_html(WIKI_URL, attrs={'class': 'wikitable'}, extract_links='body')
     # We've hard coded this data as it's challenging to parse
     operator_countries = [
-        OperatorCountryInfo('Test', None, None),
-        OperatorCountryInfo('International', None, None),
-        OperatorCountryInfo('British Indian Ocean Territory (United Kingdom)', 'IO', None)
+        OperatorCountryInfo('Test', None, None, '/wiki/Mobile_country_code#Test_networks'),
+        OperatorCountryInfo('International', None, None, '/wiki/Mobile_country_code#International_operators'),
+        OperatorCountryInfo('British Indian Ocean Territory (United Kingdom)', 'IO', None, '/wiki/Mobile_country_code#British_Indian_Ocean_Territory_(United_Kingdom)_–_IO')
     ]
     assert len(operators) == len(operator_countries)
     operators_df = pd.concat([strip_operator_table(p, op, operator_countries[idx]) for idx, op in enumerate(operators)])
@@ -124,8 +124,11 @@ class OperatorCountryInfo:
     iso: Optional[str]
     # If there are multiple ISOs defined, then this contains more for information about them separated with '##'
     include_info: Optional[str]
+    # Links to the section of the operator on Wikipedia
+    heading_url: str
 
 def fetch_country_names(url: str) -> list[OperatorCountryInfo]:
+    p = urlparse(url).path
     region = url.split('_')[-1].strip('()')
     print(f'Fetching coutry names for operators of region {region} from Wikipedia...')
 
@@ -135,7 +138,13 @@ def fetch_country_names(url: str) -> list[OperatorCountryInfo]:
     soup = BeautifulSoup(page.text, 'lxml')
     headings = soup.find_all('div', attrs={'class': 'mw-heading mw-heading4'})
     for heading in headings:
-        name, iso = heading.text.removesuffix('[edit]').split(" – ")
+        text_h4 = heading.find('h4', recursive=False)
+        name, iso = text_h4.text.split(" – ")
+        heading_url = p
+        if text_h4.get('id') is not None:
+            heading_url += '#' + text_h4.get('id')
+        else:
+            print(f'Operator country {name} without reference id')
         include_info = None
         if '/' in iso:
             include_p = heading.next_sibling.next_sibling
@@ -145,8 +154,8 @@ def fetch_country_names(url: str) -> list[OperatorCountryInfo]:
             else:
                 print(f'Multiple ISO Codes for {name} but without include text!')
 
-        # print(f"{name}: {mcc} ({include_info})")
-        infos.append(OperatorCountryInfo(name, iso, include_info))
+        # print(f"{name}: {iso} [{include_info}]\n -> {heading_url}")
+        infos.append(OperatorCountryInfo(name, iso, include_info, heading_url))
 
     return infos
 
@@ -199,9 +208,10 @@ def strip_operator_table(p: str, df: pd.DataFrame, country_info: OperatorCountry
     df['status'] = df['status'].map(lambda x: map_operator_status(x).value)
 
     # Add country information to each operator
-    df['country'] = country_info.name
+    df['country_name'] = country_info.name
     df['iso'] = country_info.iso
     df['country_include'] = country_info.include_info
+    df['country_url'] = country_info.heading_url
 
     return df
 
