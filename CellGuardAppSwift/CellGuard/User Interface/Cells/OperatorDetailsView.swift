@@ -8,22 +8,18 @@
 import SwiftUI
 
 struct OperatorDetailsView: View {
-    let country: NetworkCountry?
     let netOperator: NetworkOperator
 
     init(netOperator: NetworkOperator) {
         self.netOperator = netOperator
-        self.country = netOperator.country()
     }
 
     var body: some View {
         List {
             Section(header: Text("Country")) {
                 CellDetailsRow("MCC", netOperator.mcc)
-                if let countryName = country?.shortName {
-                    CellDetailsRow("Name", countryName)
-                }
-                if let wikipediaUrl = country?.wikipediaMncUrls {
+                CellDetailsRow("Name", netOperator.shortCountryName)
+                if let wikipediaUrl = netOperator.wikipediaCountryUrl {
                     Link(destination: wikipediaUrl) {
                         KeyValueListRow(key: "View on Wikipedia") {
                             wikipediaIcon
