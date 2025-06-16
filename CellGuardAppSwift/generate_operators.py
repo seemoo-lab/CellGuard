@@ -1,3 +1,4 @@
+import urllib
 from dataclasses import dataclass
 from enum import Enum
 from os import path
@@ -53,7 +54,7 @@ def fetch_countries() -> tuple[pd.DataFrame, pd.DataFrame]:
     operator_countries = [
         OperatorCountryInfo('Test', None, None, '/wiki/Mobile_country_code#Test_networks'),
         OperatorCountryInfo('International', None, None, '/wiki/Mobile_country_code#International_operators'),
-        OperatorCountryInfo('British Indian Ocean Territory (United Kingdom)', 'IO', None, '/wiki/Mobile_country_code#British_Indian_Ocean_Territory_(United_Kingdom)_–_IO')
+        OperatorCountryInfo('British Indian Ocean Territory (United Kingdom)', 'IO', None, '/wiki/Mobile_country_code#British_Indian_Ocean_Territory_%28United_Kingdom%29_%E2%80%93_IO')
     ]
     assert len(operators) == len(operator_countries)
     operators_df = pd.concat([strip_operator_table(p, op, operator_countries[idx]) for idx, op in enumerate(operators)])
@@ -80,7 +81,8 @@ def filter_urls(p: str, t: Optional[tuple[str, Optional[str]]]) -> Optional[tupl
             return replace_nbsp(t[0]), t[1]
         # Or Wikipedia URLs that link to the page itself
         elif t[1].startswith('#'):
-            return replace_nbsp(t[0]), p + t[1]
+            # We require URL encoding, otherwise iOS 14 won't accept those URLs
+            return replace_nbsp(t[0]), p + '#' + urllib.parse.quote(t[1][1:])
 
     return replace_nbsp(t[0]), None
 
@@ -140,7 +142,7 @@ def fetch_country_names(url: str) -> list[OperatorCountryInfo]:
         name, iso = text_h4.text.split(" – ")
         heading_url = p
         if text_h4.get('id') is not None:
-            heading_url += '#' + text_h4.get('id')
+            heading_url += '#' + urllib.parse.quote(text_h4.get('id'))
         else:
             print(f'Operator country {name} without reference id')
         include_info = None
