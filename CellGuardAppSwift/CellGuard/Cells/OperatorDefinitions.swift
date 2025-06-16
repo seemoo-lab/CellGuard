@@ -28,7 +28,6 @@ struct NetworkCountry: Identifiable, Decodable {
     let mcc: String
     let name: String
     let iso: String
-    let mncUrls: String?
 
     // A MCC can be assigned to multiple countries / territories
     var id: String { self.mcc + "_" + self.name }
@@ -37,15 +36,6 @@ struct NetworkCountry: Identifiable, Decodable {
         case mcc
         case name
         case iso
-        case mncUrls = "mnc_urls"
-    }
-
-    var wikipediaMncUrls: URL? {
-        guard let mncUrls = mncUrls else {
-            return nil
-        }
-
-        return URL(string: wikipediaUrlPrefix + mncUrls)
     }
 
     var shortName: String {

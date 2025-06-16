@@ -103,17 +103,15 @@ def strip_country_table(p: str, df: pd.DataFrame) -> pd.DataFrame:
         'Mobile network codes', 'National MNC authority', 'Remarks'
     ]
 
-    df = df.drop(columns=['National MNC authority', 'Remarks'])
+    df = df.drop(columns=['Mobile network codes', 'National MNC authority', 'Remarks'])
     df = df.rename(columns={
         'Mobile country code': 'mcc',
         'Country': 'name',
         'ISO 3166': 'iso',
-        'Mobile network codes': 'mnc_urls',
     })
     df['mcc'] = df['mcc'].map(lambda x: x[0])
     df['name'] = df['name'].map(lambda x: filter_index_char(x[0]))
     df['iso'] = df['iso'].map(lambda x: x[0])
-    df['mnc_urls'] = df['mnc_urls'].map(lambda x: filter_urls(p, x)[1])
 
     return df
 
