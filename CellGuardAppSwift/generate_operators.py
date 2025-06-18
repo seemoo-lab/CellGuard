@@ -105,15 +105,17 @@ def strip_country_table(p: str, df: pd.DataFrame) -> pd.DataFrame:
         'Mobile network codes', 'National MNC authority', 'Remarks'
     ]
 
-    df = df.drop(columns=['Mobile network codes', 'National MNC authority', 'Remarks'])
+    df = df.drop(columns=['National MNC authority', 'Remarks'])
     df = df.rename(columns={
         'Mobile country code': 'mcc',
-        'Country': 'name',
+        'Country': 'country_name',
         'ISO 3166': 'iso',
+        'Mobile network codes': 'country_url'
     })
     df['mcc'] = df['mcc'].map(lambda x: x[0])
-    df['name'] = df['name'].map(lambda x: filter_index_char(x[0]))
+    df['country_name'] = df['country_name'].map(lambda x: filter_index_char(x[0]))
     df['iso'] = df['iso'].map(lambda x: x[0])
+    df['country_url'] = df['country_url'].map(lambda x: filter_urls(p, x)[1])
 
     return df
 
@@ -215,6 +217,29 @@ def strip_operator_table(p: str, df: pd.DataFrame, country_info: OperatorCountry
 
     return df
 
+def concat_countries(countries: pd.DataFrame, operators: pd.DataFrame) -> pd.DataFrame:
+    # Extract MCC / country info from operational operators
+    operators = operators[operators.status == OperatorStatus.OPERATIONAL.value]
+    operator_countries = operators[['mcc', 'country_name', 'iso', 'country_include', 'country_url']]
+    operator_countries = operator_countries.drop_duplicates(subset=['mcc', 'iso'], ignore_index=True)
+
+    # Remove entry for 340 GF, because it is already included in 340 BL/GF/GP/MF/MQ
+    # This additional entry appears because GF is separately listed on the page for South America,
+    # while is located on the page for North America.
+    operator_countries = operator_countries[(operator_countries.mcc != 340) & (operator_countries.iso != 'GF')]
+
+    # Filter MCCs from the country table which are not in the operator table
+    # They are often assigned MCCs, but not in active use
+    operator_countries_mccs = operator_countries['mcc'].drop_duplicates()
+    filtered_countries = countries[~countries.mcc.isin(operator_countries_mccs)]
+
+    print(f'Uses {len(operator_countries.index)} country entries from active operators and '
+          f'{len(filtered_countries.index)} entries from the country table: '
+          f'{' '.join(filtered_countries['mcc'].apply(str))}')
+
+    # Join both country tables
+    return pd.concat([operator_countries, filtered_countries], ignore_index=True)
+
 
 def print_country_duplicates(countries: pd.DataFrame) -> None:
     mcc_count: pd.Series = countries['mcc'].value_counts()
@@ -227,10 +252,9 @@ def print_country_duplicates(countries: pd.DataFrame) -> None:
 def main():
     # Output two CSVs (one for countries, one for operators)
     countries, operators = fetch_countries()
-
-    for region_url in WIKI_URL_REGIONS:
-        regional_operators = fetch_region(region_url)
-        operators = pd.concat([operators, regional_operators])
+    regional_operators = [fetch_region(region_url) for region_url in WIKI_URL_REGIONS]
+    operators = pd.concat([operators] + regional_operators)
+    countries = concat_countries(countries, operators)
 
     directory = path.join(path.dirname(__file__), 'CellGuard', 'Cells')
 
