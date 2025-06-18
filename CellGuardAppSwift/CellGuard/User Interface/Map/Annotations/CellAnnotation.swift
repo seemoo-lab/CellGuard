@@ -30,10 +30,12 @@ class CellAnnotation: NSObject, MKAnnotation, DatabaseAnnotation {
     }
 
     convenience init(cell: CellALS) {
-        let operatorName = OperatorDefinitions.shared.translate(country: cell.country, network: cell.network)?.combinedName
+        // Get the first available combined name
+        let netOperators = OperatorDefinitions.shared.translate(country: cell.country, network: cell.network)
+
         self.init(
             cell: cell,
-            title: operatorName ?? "Network \(formatMNC(cell.network))",
+            title: netOperators.firstCombinedName ?? "Network \(formatMNC(cell.network))",
             subtitle: "Area: \(cell.area) - Cell: \(cell.cell)"
         )
     }

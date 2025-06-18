@@ -103,6 +103,12 @@ private func queryLatLong(_ queryCellId: NSManagedObjectID) -> (Double, Double)?
     }
 }
 
+private func getIsoList(_ queryCell: ALSQueryCell) -> [String] {
+    let country: Int32 = queryCell.country
+    let network: Int32 = queryCell.network
+    return OperatorDefinitions.shared.translate(country: country, network: network).combinedIsoList
+}
+
 private struct NoConnectionDummyStage: VerificationStage {
 
     var id: Int16 = 1
@@ -215,13 +221,8 @@ private struct CheckCorrectMCCStage: VerificationStage {
 
         switch await getCountryCode(latitude: latitude, longitude: longitude) {
         case let .found(cc):
-            let network = OperatorDefinitions.shared.translate(country: queryCell.country, network: queryCell.network)
-            guard let network = network, !network.isoList.isEmpty else {
-                return .success()
-            }
-
             // Checks wether the translated MCC corresponds to the user's country code
-            for iso in network.isoList where iso.uppercased() == cc.uppercased() {
+            for iso in getIsoList(queryCell) where iso.uppercased() == cc.uppercased() {
                 return .success()
             }
 
@@ -252,13 +253,8 @@ private struct CheckCorrectMNCStage: VerificationStage {
         switch await getCountryCode(latitude: latitude, longitude: longitude) {
         case let .found(cc):
             // TODO: Is this stage required or does it effectively perform the same check as the stage above?
-            let network = OperatorDefinitions.shared.translate(country: queryCell.country, network: queryCell.network)
-            guard let network = network, !network.isoList.isEmpty else {
-                return .success()
-            }
-
             // Checks wether the translated MCC corresponds to the user's country code
-            for iso in network.isoList where iso.uppercased() == cc.uppercased() {
+            for iso in getIsoList(queryCell) where iso.uppercased() == cc.uppercased() {
                 return .success()
             }
 
@@ -380,16 +376,8 @@ private struct CheckDistanceOfCell: VerificationStage {
             return .success()
         }
 
-        guard let network = OperatorDefinitions.shared.translate(country: queryCell.country, network: queryCell.network) else {
-            return .success()
-        }
-
-        guard !network.isoList.isEmpty else {
-            return .success()
-        }
-
         // Checks wether the translated MCC is corresponds to the user's country code
-        if !network.isoList.map({ $0.uppercased() }).contains(cc) {
+        if !getIsoList(queryCell).map({ $0.uppercased() }).contains(cc) {
             return .fail()
         }
 

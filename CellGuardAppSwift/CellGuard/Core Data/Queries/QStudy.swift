@@ -161,9 +161,9 @@ extension PersistenceController {
                 let randomSeconds = Int.random(in: 0...(6 * 60 * 60))
                 let scheduledUploadDate = week.addingTimeInterval(Double(randomSeconds))
 
-                // Group the cells by country and create entries
+                // Group the cells by the ISO of the first country and create entries
                 let countryCells = Dictionary(grouping: cells, by: {
-                    OperatorDefinitions.shared.translate(country: $0.cell?.country ?? -1, network: $0.cell?.network ?? -1)?.isoString
+                    OperatorDefinitions.shared.translate(country: $0.cell?.country ?? -1, network: $0.cell?.network ?? -1).firstIsoString
                 })
 
                 for (country, cells) in countryCells {

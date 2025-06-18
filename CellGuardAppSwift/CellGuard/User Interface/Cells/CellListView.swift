@@ -301,7 +301,7 @@ private struct ListPacketCell: View {
 
     var body: some View {
         let cell = measurements.measurements.first!
-        let operatorDef = OperatorDefinitions.shared.translate(country: cell.country, network: cell.network)
+        let netOperators = OperatorDefinitions.shared.translate(country: cell.country, network: cell.network)
 
         let calendar = Calendar.current
         let sameDay = calendar.startOfDay(for: measurements.start) == calendar.startOfDay(for: measurements.end)
@@ -310,9 +310,9 @@ private struct ListPacketCell: View {
 
         VStack {
             HStack {
-                Text(operatorDef?.combinedName ?? formatMNC(cell.network))
+                Text(netOperators.firstCombinedName ?? formatMNC(cell.network))
                     .bold()
-                + Text(" (\(operatorDef?.isoString ?? "\(cell.country)"))")
+                + Text(" (\(netOperators.combinedIsoString ?? "\(cell.country)"))")
                 + Text(" \(cell.technology ?? "")")
                     .foregroundColor(.gray)
 

@@ -8,16 +8,22 @@
 import SwiftUI
 
 struct CountryDetailsView: View {
-    let netOperator: NetworkOperator
+    let country: NetworkCountryAttributes
+    let secondary: [NetworkCountry]?
+
+    init(country: NetworkCountryAttributes, secondary: [NetworkCountry]? = nil) {
+        self.country = country
+        self.secondary = secondary
+    }
 
     var body: some View {
         List {
             Section {
-                CellDetailsRow("Name", netOperator.countryName)
-                CellDetailsRow("ISO", netOperator.isoString ?? "-")
-                CellDetailsRow("MCC", netOperator.mcc)
+                CellDetailsRow("Name", country.countryName)
+                CellDetailsRow("ISO", country.isoString ?? "-")
+                CellDetailsRow("MCC", country.mcc)
 
-                if let wikipediaUrl = netOperator.wikipediaCountryUrl {
+                if let wikipediaUrl = country.wikipediaCountryUrl {
                     Link(destination: wikipediaUrl) {
                         KeyValueListRow(key: "View on Wikipedia") {
                             wikipediaIcon
@@ -26,11 +32,11 @@ struct CountryDetailsView: View {
                 }
             }
 
-            IncludeCountrySection(includeList: netOperator.countryIncludeList)
+            IncludeCountrySection(includeList: country.countryIncludeList)
 
-            SimilarMccSection(countries: OperatorDefinitions.shared.countriesByMcc[netOperator.mcc] ?? [])
+            SimilarMccSection(countries: secondary ?? country.similarMcc)
 
-            SimilarIsoSection(countries: OperatorDefinitions.shared.countriesByIso[netOperator.isoString ?? ""] ?? [])
+            SimilarIsoSection(countries: country.similarIso)
         }
         .listStyle(.insetGrouped)
         .navigationTitle("Country")
@@ -55,10 +61,10 @@ private struct SimilarMccSection: View {
     let countries: [NetworkCountry]
 
     var body: some View {
-        if countries.count > 1 {
+        if countries.count > 0 {
             Section(header: Text("Similar Mobile Country Code")) {
                 ForEach(countries) { country in
-                    KeyValueListRow(key: country.name, value: country.iso)
+                    KeyValueListRow(key: country.countryName, value: country.isoString ?? "-")
                 }
             }
         }
@@ -69,10 +75,10 @@ private struct SimilarIsoSection: View {
     let countries: [NetworkCountry]
 
     var body: some View {
-        if countries.count > 1 {
+        if countries.count > 0 {
             Section(header: Text("Similar ISO Code")) {
                 ForEach(countries) { country in
-                    KeyValueListRow(key: country.name, value: country.mcc)
+                    KeyValueListRow(key: country.countryName, value: country.mcc)
                 }
             }
         }
@@ -81,60 +87,60 @@ private struct SimilarIsoSection: View {
 
 #Preview("DE") {
     NavigationView {
-        CountryDetailsView(netOperator: OperatorDefinitions.shared.translate(country: 262, network: 01)!)
+        CountryDetailsView(country: OperatorDefinitions.shared.translate(country: 262, network: 01).first!)
     }
 }
 
 #Preview("US") {
     NavigationView {
-        CountryDetailsView(netOperator: OperatorDefinitions.shared.translate(country: 310, network: 04)!)
+        CountryDetailsView(country: OperatorDefinitions.shared.translate(country: 310, network: 04).first!)
     }
 }
 
 #Preview("UK") {
     NavigationView {
-        CountryDetailsView(netOperator: OperatorDefinitions.shared.translate(country: 234, network: 02)!)
+        CountryDetailsView(country: OperatorDefinitions.shared.translate(country: 234, network: 02).first!)
     }
 }
 
 #Preview("GG") {
     NavigationView {
-        CountryDetailsView(netOperator: OperatorDefinitions.shared.translate(country: 234, network: 03)!)
+        CountryDetailsView(country: OperatorDefinitions.shared.translate(country: 234, network: 03).first!)
     }
 }
 
 #Preview("AU") {
     NavigationView {
-        CountryDetailsView(netOperator: OperatorDefinitions.shared.translate(country: 505, network: 01)!)
+        CountryDetailsView(country: OperatorDefinitions.shared.translate(country: 505, network: 01).first!)
     }
 }
 
 #Preview("BQ/CW/SX") {
     NavigationView {
-        CountryDetailsView(netOperator: OperatorDefinitions.shared.translate(country: 362, network: 31)!)
+        CountryDetailsView(country: OperatorDefinitions.shared.translate(country: 362, network: 31).first!)
     }
 }
 
 #Preview("BL/GF/GP/MF/MQ") {
     NavigationView {
-        CountryDetailsView(netOperator: OperatorDefinitions.shared.translate(country: 340, network: 01)!)
+        CountryDetailsView(country: OperatorDefinitions.shared.translate(country: 340, network: 01).first!)
     }
 }
 
 #Preview("IN") {
     NavigationView {
-        CountryDetailsView(netOperator: OperatorDefinitions.shared.translate(country: 405, network: 813)!)
+        CountryDetailsView(country: OperatorDefinitions.shared.translate(country: 405, network: 813).first!)
     }
 }
 
 #Preview("Test") {
     NavigationView {
-        CountryDetailsView(netOperator: OperatorDefinitions.shared.translate(country: 001, network: 01)!)
+        CountryDetailsView(country: OperatorDefinitions.shared.translate(country: 001, network: 01).first!)
     }
 }
 
 #Preview("Int") {
     NavigationView {
-        CountryDetailsView(netOperator: OperatorDefinitions.shared.translate(country: 901, network: 10)!)
+        CountryDetailsView(country: OperatorDefinitions.shared.translate(country: 901, network: 10).first!)
     }
 }

@@ -7,6 +7,22 @@
 
 import SwiftUI
 
+struct OperatorDetailsListView: View {
+    let netOperators: [NetworkOperator]
+
+    var body: some View {
+        List(netOperators) { netOperator in
+            NavigationLink {
+                OperatorDetailsView(netOperator: netOperator)
+            } label: {
+                KeyValueListRow(key: netOperator.combinedName ?? netOperator.countryName, value: netOperator.isoString ?? "-")
+            }
+        }
+        .listStyle(.insetGrouped)
+        .navigationTitle("Network Operators")
+    }
+}
+
 struct OperatorDetailsView: View {
     let netOperator: NetworkOperator
 
@@ -66,12 +82,12 @@ struct OperatorDetailsView: View {
 
 #Preview("DE Telekom") {
     NavigationView {
-        OperatorDetailsView(netOperator: OperatorDefinitions.shared.translate(country: 262, network: 01)!)
+        OperatorDetailsView(netOperator: OperatorDefinitions.shared.translate(country: 262, network: 01).first!)
     }
 }
 
 #Preview("BA RS Telecom") {
     NavigationView {
-        OperatorDetailsView(netOperator: OperatorDefinitions.shared.translate(country: 218, network: 05)!)
+        OperatorDetailsView(netOperator: OperatorDefinitions.shared.translate(country: 218, network: 05).first!)
     }
 }
