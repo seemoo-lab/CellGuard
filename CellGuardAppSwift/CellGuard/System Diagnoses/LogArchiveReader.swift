@@ -116,6 +116,44 @@ enum LogArchiveError: Error, LocalizedError {
     }
 }
 
+struct VersionMetadata: Codable, CustomStringConvertible {
+    let buildId: String?
+    let productBuildVersion: String?
+    let productCopyright: String?
+    let productName: String?
+    let productVersion: String?
+    let releaseType: String?
+    let systemImageId: String?
+
+    private enum CodingKeys: String, CodingKey {
+        case buildId = "BuildID"
+        case productBuildVersion = "ProductBuildVersion"
+        case productCopyright = "ProductCopyright"
+        case productName = "ProductName"
+        case productVersion = "ProductVersion"
+        case releaseType = "ReleaseType"
+        case systemImageId = "SystemImageID"
+    }
+
+    var productVersionMajor: Int? {
+        guard let majorString = productVersion?.components(separatedBy: ".").first else {
+            return nil
+        }
+
+        return Int(majorString)
+    }
+
+    var description: String {
+        "buildId = \(buildId ?? "nil"), " +
+        "productBuildVersion = \(productBuildVersion ?? "nil"), " +
+        "productCopyright = \(productCopyright ?? "nil"), " +
+        "productName = \(productName ?? "nil"), " +
+        "productVersion = \(productVersion ?? "nil"), " +
+        "releaseType = \(releaseType ?? "nil"), " +
+        "systemImageId = \(systemImageId ?? "nil")"
+    }
+}
+
 typealias LogProgressFunc = (LogArchiveReadPhase, Int, Int) -> Void
 
 struct LogArchiveReader {
@@ -205,6 +243,11 @@ struct LogArchiveReader {
             throw LogArchiveError.extractLogArchiveFailed(error)
         }
 
+        let versionMetadata = parseVersionMetadata(tmpDir: tmpDir)
+        if let versionMetadata = versionMetadata {
+            Self.logger.info("Sysdiagnose originates from \(versionMetadata)")
+        }
+
         var currentFileCount = 0
         Self.logParseProgress = {
             progress(.parsingLogs, currentFileCount, fileCountTraceV3)
@@ -232,7 +275,7 @@ struct LogArchiveReader {
             Self.logger.debug("Total CSV Lines: \(totalCsvLines)")
 
             var currentCsvLine = 0
-            let out = try readCSV(csvFile: csvFile) {
+            let out = try readCSV(csvFile: csvFile, version: versionMetadata) {
                 currentCsvLine += 1
 
                 // Update the SwiftUI just 100 times to avoid DoS behavior, e.g. EXC_BAD_ACCESS.
@@ -298,6 +341,10 @@ struct LogArchiveReader {
             }
 
             // Extract all (other) files part of the logarchive
+            return true
+
+        } else if nameComponents.suffix(3) == ["logs", "SystemVersion", "SystemVersion.plist"] {
+            // Extract file with iOS version of the capturing device
             return true
         }
 
@@ -396,6 +443,22 @@ struct LogArchiveReader {
         return count
     }
 
+    private func parseVersionMetadata(tmpDir: URL) -> VersionMetadata? {
+        let versionFilePath = tmpDir
+            .appendingPathComponent("logs", conformingTo: .directory)
+            .appendingPathComponent("SystemVersion", conformingTo: .directory)
+            .appendingPathComponent("SystemVersion.plist", conformingTo: .propertyList)
+
+        do {
+            let data = try Data(contentsOf: versionFilePath)
+            let decoder = PropertyListDecoder()
+            return try decoder.decode(VersionMetadata.self, from: data)
+        } catch {
+            Self.logger.warning("Cannot read SystemVersion.plist: \(error)")
+            return nil
+        }
+    }
+
     private func parseLogArchive(tmpDir: URL, logArchiveDir: URL, speedup: Bool, rust: RustApp) throws -> URL {
         Self.logger.debug("Parsing extracted log archive using macos-unifiedlogs")
 
@@ -425,7 +488,7 @@ struct LogArchiveReader {
         return count
     }
 
-    private func readCSV(csvFile: URL, progress: () -> Void) throws -> ImportResult {
+    private func readCSV(csvFile: URL, version: VersionMetadata?, progress: () -> Void) throws -> ImportResult {
         if let fileAttributes = try? fileManager.attributesOfItem(atPath: csvFile.path) {
             Self.logger.debug("\(fileAttributes))")
         }
@@ -502,8 +565,13 @@ struct LogArchiveReader {
         }
 
         var notices: [ImportNotice] = []
-        if validatePacketCellParser(packetParserCells: filteredCells, controlCells: controlCells, beforeImportTime: beforeImportTime) {
-            notices.append(.cellParserMisalignment)
+
+        // iOS 26 changes some internals we use to gather control cells, thus we temporarily disable the parser verification for this iOS version, while we investigate the root cause of the change.
+        // See: https://dev.seemoo.tu-darmstadt.de/apple/cell-guard/-/issues/174
+        if let major = version?.productVersionMajor, major <= 18 {
+            if validatePacketCellParser(packetParserCells: filteredCells, controlCells: controlCells, beforeImportTime: beforeImportTime) {
+                notices.append(.cellParserMisalignment)
+            }
         }
 
         Self.logger.debug("Imported \(filteredCells.count) cells.")
