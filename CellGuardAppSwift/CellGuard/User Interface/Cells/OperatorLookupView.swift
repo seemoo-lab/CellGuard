@@ -32,6 +32,8 @@ struct OperatorLookupView: View {
                         techFormatter: CellTechnologyFormatter(technology: technology)
                     )
                 }
+                .listStyle(.insetGrouped)
+                .navigationTitle("Operator")
             } label: {
                 Text("Country & Network Data")
             }
