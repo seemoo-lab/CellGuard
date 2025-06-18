@@ -202,7 +202,6 @@ def strip_operator_table(p: str, df: pd.DataFrame, country_info: OperatorCountry
     })
 
     df['mcc'] = df['mcc'].map(lambda x: filter_mcc_names(x[0]))
-    # Sometimes 100 - 190
     df['mnc'] = df['mnc'].map(lambda x: x[0])
     df[['brand', 'brand_url']] = df.apply(lambda b: filter_urls(p, b['brand']), axis='columns', result_type='expand')
     df[['operator', 'operator_url']] = df.apply(lambda o: filter_urls(p, o['operator']), axis='columns',
@@ -249,6 +248,14 @@ def print_country_duplicates(countries: pd.DataFrame) -> None:
         print(f'There are duplicate entries for MCCs: {duplicates_str}')
 
 
+def print_operator_duplicates(operators: pd.DataFrame) -> None:
+    count_per_operator: pd.Series = operators[['mcc', 'mnc']].groupby(['mcc', 'mnc']).size()
+    operator_duplicates: pd.Series = count_per_operator[count_per_operator > 1]
+    if len(operator_duplicates) > 0:
+        print(f'There are duplicate entries for MCC + MNC:')
+        print(operator_duplicates)
+
+
 def main():
     # Output two CSVs (one for countries, one for operators)
     countries, operators = fetch_countries()
@@ -259,6 +266,7 @@ def main():
     directory = path.join(path.dirname(__file__), 'CellGuard', 'Cells')
 
     print_country_duplicates(countries)
+    print_operator_duplicates(operators)
 
     countries_path = path.join(directory, 'countries.csv')
     countries.to_csv(countries_path, index=False)
