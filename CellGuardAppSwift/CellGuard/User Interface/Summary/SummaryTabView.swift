@@ -29,6 +29,9 @@ struct SummaryTabView: View {
     #if STATS_VIEW
     @State private var showingStats = false
     #endif
+    #if DEBUG
+    @State private var showingTestOperators = false
+    #endif
     @State private var showingSettings = false
 
     var body: some View {
@@ -39,12 +42,22 @@ struct SummaryTabView: View {
                 } label: {
                     EmptyView()
                 }
+
                 #if STATS_VIEW
                 NavigationLink(isActive: $showingStats) {
                     DataSummaryView()
                 } label: {
                     EmptyView()
                 }
+                #endif
+
+                #if DEBUG
+                NavigationLink(isActive: $showingTestOperators) {
+                    OperatorLookupView()
+                } label: {
+                    EmptyView()
+                }
+
                 #endif
 
                 NavigationLink(isActive: $showingSettings) {
@@ -69,6 +82,13 @@ struct SummaryTabView: View {
                             showingStats = true
                         } label: {
                             Label("Stats", systemImage: "chart.bar.xaxis")
+                        }
+                        #endif
+                        #if DEBUG
+                        Button {
+                            showingTestOperators = true
+                        } label: {
+                            Label("Operators", systemImage: "globe")
                         }
                         #endif
                         Link(destination: CellGuardURLs.baseUrl) {

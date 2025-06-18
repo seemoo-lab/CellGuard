@@ -70,6 +70,10 @@
 		CF2002F02A2F996A000922E6 /* TweakClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2002EF2A2F996A000922E6 /* TweakClient.swift */; };
 		CF2002F22A2F9FB5000922E6 /* CPTClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2002F12A2F9FB5000922E6 /* CPTClient.swift */; };
 		CF208D9F2A387261003A73A7 /* PacketFilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF208D9E2A387261003A73A7 /* PacketFilterView.swift */; };
+		CF26102C2E02B49200F6440C /* LabelNumberField.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF26102B2E02B49200F6440C /* LabelNumberField.swift */; };
+		CF26102D2E02B49200F6440C /* LabelNumberField.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF26102B2E02B49200F6440C /* LabelNumberField.swift */; };
+		CF26102F2E02F6AD00F6440C /* OperatorLookupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF26102E2E02F6AD00F6440C /* OperatorLookupView.swift */; };
+		CF2610302E02F6AD00F6440C /* OperatorLookupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF26102E2E02F6AD00F6440C /* OperatorLookupView.swift */; };
 		CF2631D42C13127C0076AE33 /* AdvancedSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2631D32C13127C0076AE33 /* AdvancedSettingsView.swift */; };
 		CF2631D52C13127C0076AE33 /* AdvancedSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2631D32C13127C0076AE33 /* AdvancedSettingsView.swift */; };
 		CF2A1C182975562800E8B61C /* UserDefaultsKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2A1C172975562800E8B61C /* UserDefaultsKeys.swift */; };
@@ -449,6 +453,8 @@
 		CF2002EF2A2F996A000922E6 /* TweakClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TweakClient.swift; sourceTree = "<group>"; };
 		CF2002F12A2F9FB5000922E6 /* CPTClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPTClient.swift; sourceTree = "<group>"; };
 		CF208D9E2A387261003A73A7 /* PacketFilterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacketFilterView.swift; sourceTree = "<group>"; };
+		CF26102B2E02B49200F6440C /* LabelNumberField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelNumberField.swift; sourceTree = "<group>"; };
+		CF26102E2E02F6AD00F6440C /* OperatorLookupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperatorLookupView.swift; sourceTree = "<group>"; };
 		CF2631D32C13127C0076AE33 /* AdvancedSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvancedSettingsView.swift; sourceTree = "<group>"; };
 		CF2A1C172975562800E8B61C /* UserDefaultsKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsKeys.swift; sourceTree = "<group>"; };
 		CF2A1C1A2975670000E8B61C /* CGNotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CGNotificationManager.swift; sourceTree = "<group>"; };
@@ -693,6 +699,7 @@
 		CF0FDCBE2969A3DB00A6FFE2 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				CF26102B2E02B49200F6440C /* LabelNumberField.swift */,
 				45ECF55F2BFACE8400DD92CF /* LeadingTitleIconTextView.swift */,
 				45ECF5502BFAAF1F00DD92CF /* CenteredTitleIconTextView.swift */,
 				CF2A1C1C2975C71000E8B61C /* BackgroundState.swift */,
@@ -825,6 +832,7 @@
 				CF86C7962A6ACDAA002EC9B6 /* CellDetailsRow.swift */,
 				CF86C7982A6AD51D002EC9B6 /* GroupedMeasurements.swift */,
 				CFA83C932D9D467400239AB7 /* CellCountryNetworkSection.swift */,
+				CF26102E2E02F6AD00F6440C /* OperatorLookupView.swift */,
 				CFA83C962D9D78E300239AB7 /* CountryDetailsView.swift */,
 				CFA83C992D9D78FC00239AB7 /* OperatorDetailsView.swift */,
 			);
@@ -1535,6 +1543,7 @@
 				CFA83C9A2D9D78FC00239AB7 /* OperatorDetailsView.swift in Sources */,
 				CFB6CF362BD122FA00EAB7B4 /* QMIDefinitions.swift in Sources */,
 				CFB6CF372BD122FA00EAB7B4 /* TestDetection.swift in Sources */,
+				CF26102D2E02B49200F6440C /* LabelNumberField.swift in Sources */,
 				CFB6CF392BD122FA00EAB7B4 /* CellDetailsView.swift in Sources */,
 				CFB6CF3A2BD122FA00EAB7B4 /* LocationAnnotationView.swift in Sources */,
 				CFB6CF3B2BD122FA00EAB7B4 /* PortStatus.swift in Sources */,
@@ -1585,6 +1594,7 @@
 				CF70A98C2BE6B51C00989FB5 /* QLocationUser.swift in Sources */,
 				45ECF5582BFAC62900DD92CF /* CellDetectionView.swift in Sources */,
 				CF70A9892BE6B01400989FB5 /* QNotifications.swift in Sources */,
+				CF2610302E02F6AD00F6440C /* OperatorLookupView.swift in Sources */,
 				CFB6CF5D2BD122FA00EAB7B4 /* CellGuardAppDelegate.swift in Sources */,
 				ED7DB14D2DC785E8007D5314 /* UpdateCheckTask.swift in Sources */,
 				CFB6CF5E2BD122FA00EAB7B4 /* MapTabView.swift in Sources */,
@@ -1680,6 +1690,7 @@
 				CF0A5678298A7A910012B2A8 /* VerificationProgressView.swift in Sources */,
 				CF446754298D2A040083EE63 /* CellLocationDistance.swift in Sources */,
 				CF1DF87D2C175970008F6F40 /* StudyContributionsView.swift in Sources */,
+				CF26102F2E02F6AD00F6440C /* OperatorLookupView.swift in Sources */,
 				CFD023402961A10D00AA5A1C /* PersistenceController.swift in Sources */,
 				45ECF5752BFC025300DD92CF /* DebugProfileDetailedView.swift in Sources */,
 				CFCE7A8C29817E2500E28787 /* ALSTechnology.swift in Sources */,
@@ -1763,6 +1774,7 @@
 				CF70A97F2BE6AD8600989FB5 /* QCellALS.swift in Sources */,
 				CF2631D42C13127C0076AE33 /* AdvancedSettingsView.swift in Sources */,
 				CF0FDCC02969A3E500A6FFE2 /* LargeButton.swift in Sources */,
+				CF26102C2E02B49200F6440C /* LabelNumberField.swift in Sources */,
 				CFBEC84F2BC7F7CF0021C0B9 /* CellALS+CoreDataClass.swift in Sources */,
 				CFBEC8512BC7F7CF0021C0B9 /* CellTweak+CoreDataClass.swift in Sources */,
 				CFDF5D7D297EF76C000708A8 /* LocationClusterAnnotation.swift in Sources */,
