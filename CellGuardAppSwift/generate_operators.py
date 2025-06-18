@@ -34,12 +34,12 @@ class OperatorStatus(Enum):
 
 WIKI_URL = 'https://en.wikipedia.org/wiki/Mobile_country_code'
 WIKI_URL_REGIONS = [
-    'https://en.wikipedia.org/wiki/Mobile_Network_Codes_in_ITU_region_2xx_(Europe)',
-    'https://en.wikipedia.org/wiki/Mobile_Network_Codes_in_ITU_region_3xx_(North_America)',
-    'https://en.wikipedia.org/wiki/Mobile_Network_Codes_in_ITU_region_4xx_(Asia)',
-    'https://en.wikipedia.org/wiki/Mobile_Network_Codes_in_ITU_region_5xx_(Oceania)',
-    'https://en.wikipedia.org/wiki/Mobile_Network_Codes_in_ITU_region_6xx_(Africa)',
-    'https://en.wikipedia.org/wiki/Mobile_Network_Codes_in_ITU_region_7xx_(South_America)'
+    'https://en.wikipedia.org/wiki/Mobile_network_codes_in_ITU_region_2xx_(Europe)',
+    'https://en.wikipedia.org/wiki/Mobile_network_codes_in_ITU_region_3xx_(North_America)',
+    'https://en.wikipedia.org/wiki/Mobile_network_codes_in_ITU_region_4xx_(Asia)',
+    'https://en.wikipedia.org/wiki/Mobile_network_codes_in_ITU_region_5xx_(Oceania)',
+    'https://en.wikipedia.org/wiki/Mobile_network_codes_in_ITU_region_6xx_(Africa)',
+    'https://en.wikipedia.org/wiki/Mobile_network_codes_in_ITU_region_7xx_(South_America)'
 ]
 
 
