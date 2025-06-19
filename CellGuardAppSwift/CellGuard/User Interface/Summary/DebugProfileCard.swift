@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import NavigationBackport
 
 struct DebugProfileCard: View {
 
@@ -14,22 +15,10 @@ struct DebugProfileCard: View {
     @StateObject private var profileData = ProfileData.shared
 
     var body: some View {
-
-        NavigationLink(isActive: $showDebugProfileInstructions) {
-            DebugProfileDetailedView()
-        } label: {
-            EmptyView()
-        }
-
         if appMode == .manual && [.notPresent, .expiringSoon].contains(profileData.installState) {
-            Button {
-               // open instructions
-                showDebugProfileInstructions = true
-            } label: {
+            NBNavigationLink(value: SummaryNavigationPath.debugProfile) {
                 DebugProfileCardView()
             }
-        } else {
-            EmptyView()
         }
     }
 }

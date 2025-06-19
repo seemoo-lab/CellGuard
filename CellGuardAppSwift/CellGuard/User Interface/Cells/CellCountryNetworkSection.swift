@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import NavigationBackport
 
 struct CellCountryNetworkSection: View {
 
@@ -31,29 +32,19 @@ struct CellCountryNetworkSection: View {
             CellDetailsRow(techFormatter.country(), country)
             if let netOperator = netOperators.first, netOperators.count == 1 {
                 // If there's exactly one network, we show its country
-                NavigationLink {
-                    CountryDetailsView(country: netOperator)
-                } label: {
+                NBNavigationLink(value: CountryDetailsNavigation(country: netOperator)) {
                     CellDetailsRow("Country", netOperator.shortCountryName)
                 }
             } else if let (primary, secondary) = netCountries, let primary = primary {
                 // If there is no network or there are multiple ones, we use the generic country
-                NavigationLink {
-                    CountryDetailsView(country: primary, secondary: secondary)
-                } label: {
+                NBNavigationLink(value: CountryDetailsNavigation(country: primary, secondary: secondary)) {
                     // Show "+ X" if multiple countries refer to a MCC
                     CellDetailsRow("Country", secondary.isEmpty ? primary.shortCountryName : "\(primary.shortCountryName) + \(secondary.count)" )
                 }
             }
             CellDetailsRow(techFormatter.network(), formatMNC(network))
             if let netOperator = netOperators.first, let combinedName = netOperator.combinedName {
-                NavigationLink {
-                    if netOperators.count >= 2 {
-                        OperatorDetailsListView(netOperators: netOperators)
-                    } else {
-                        OperatorDetailsView(netOperator: netOperator)
-                    }
-                } label: {
+                NBNavigationLink(value: netOperators) {
                     CellDetailsRow("Network", netOperators.count >= 2 ? "\(combinedName) + \(netOperators.count - 1)" : combinedName)
                 }
             }

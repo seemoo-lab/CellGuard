@@ -7,6 +7,7 @@
 
 import SwiftUI
 import CoreData
+import NavigationBackport
 
 struct VerificationStateView: View {
 
@@ -70,9 +71,9 @@ private struct VerificationStateInternalView: View {
                 }
 
                 if let qmiPacket = measurement.packetQmi {
-                    NavigationLink { PacketQMIDetailsView(packet: qmiPacket) } label: { PacketCell(packet: qmiPacket) }
+                    NBNavigationLink(value: qmiPacket) { PacketCell(packet: qmiPacket) }
                 } else if let ariPacket = measurement.packetAri {
-                    NavigationLink { PacketARIDetailsView(packet: ariPacket) } label: { PacketCell(packet: ariPacket) }
+                    NBNavigationLink(value: ariPacket) { PacketCell(packet: ariPacket) }
                 }
             }
 

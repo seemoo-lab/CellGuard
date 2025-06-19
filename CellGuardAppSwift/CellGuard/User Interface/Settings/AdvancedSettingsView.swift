@@ -7,6 +7,7 @@
 
 import OSLog
 import SwiftUI
+import NavigationBackport
 
 struct AdvancedSettingsView: View {
 
@@ -25,19 +26,13 @@ struct AdvancedSettingsView: View {
             PipelineSection()
 
             Section(header: Text("Local Database")) {
-                NavigationLink {
-                    ImportView()
-                } label: {
+                NBNavigationLink(value: SummaryNavigationPath.dataImport) {
                     Text("Import Data")
                 }
-                NavigationLink {
-                    ExportView()
-                } label: {
+                NBNavigationLink(value: SummaryNavigationPath.dataExport) {
                     Text("Export Data")
                 }
-                NavigationLink {
-                    DeleteView()
-                } label: {
+                NBNavigationLink(value: SummaryNavigationPath.dataDelete) {
                     Text("Delete Data")
                 }
             }

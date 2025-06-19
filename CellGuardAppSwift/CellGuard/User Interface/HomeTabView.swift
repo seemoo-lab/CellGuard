@@ -8,6 +8,7 @@
 import CoreData
 import OSLog
 import SwiftUI
+import NavigationBackport
 
 private enum ShownTab: Identifiable {
     case summary

@@ -6,29 +6,17 @@
 //
 
 import SwiftUI
+import NavigationBackport
 
 struct SysdiagOpenSettingsCard: View {
 
-    @State private var showingSettingsInstructions = false
     @AppStorage(UserDefaultsKeys.appMode.rawValue) var appMode: DataCollectionMode = .none
 
     var body: some View {
-
-        NavigationLink(isActive: $showingSettingsInstructions) {
-            SysdiagOpenSettingsDetailedView()
-        } label: {
-            EmptyView()
-        }
-
         if appMode == .manual {
-            Button {
-                // open instructions
-                showingSettingsInstructions = true
-            } label: {
+            NBNavigationLink(value: SummaryNavigationPath.sysdiagOpenSettings) {
                 OpenCard()
             }
-        } else {
-            EmptyView()
         }
     }
 }

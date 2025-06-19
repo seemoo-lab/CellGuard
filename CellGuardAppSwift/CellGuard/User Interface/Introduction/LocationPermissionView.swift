@@ -6,10 +6,11 @@
 //
 
 import SwiftUI
+import NavigationBackport
 
 struct LocationPermissionView: View {
 
-    @State private var action: Int? = 0
+    @EnvironmentObject var navigator: PathNavigator
 
     var body: some View {
         VStack {
@@ -20,9 +21,6 @@ struct LocationPermissionView: View {
                     size: 120
                 )
             }
-
-            // Navigate to next permission, forward closing statement
-            NavigationLink(destination: NotificationPermissionView(), tag: 1, selection: $action) {}
 
             LargeButton(title: "Continue", backgroundColor: .blue) {
                 // Request permissions after the introduction sheet has been closed.
@@ -39,20 +37,23 @@ struct LocationPermissionView: View {
                         #endif
                     }
 
-                    self.action = 1
+                    next()
                 }
             }
             .padding()
         }
         .navigationTitle("Location Permission")
-        .toolbar(content: {
+        .toolbar {
             ToolbarItem {
                 Button("Skip") {
-                    self.action = 1
+                    next()
                 }
             }
-        })
+        }
+    }
 
+    func next() {
+        navigator.push(IntroductionState.notification)
     }
 }
 

@@ -9,6 +9,7 @@ import UIKit
 import MapKit
 import SwiftUI
 import Combine
+import NavigationBackport
 
 struct CellInformationCard: View {
 
@@ -26,9 +27,7 @@ struct CellInformationCard: View {
         if disconnected {
             CellInfoCardOutline(cell: cell, dualSim: dualSim, disconnected: disconnected)
         } else {
-            NavigationLink {
-                CellDetailsView(tweakCell: cell)
-            } label: {
+            NBNavigationLink(value: cell) {
                 CellInfoCardOutline(cell: cell, dualSim: dualSim, disconnected: disconnected)
             }
             .buttonStyle(.plain)

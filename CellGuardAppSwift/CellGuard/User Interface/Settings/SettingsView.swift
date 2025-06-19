@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import NavigationBackport
 
 private struct AlertIdentifiable: Identifiable {
     let id: String
@@ -42,14 +43,10 @@ struct SettingsView: View {
             IntroductionSection()
 
             Section {
-                NavigationLink {
-                    InformationContactView()
-                } label: {
+                NBNavigationLink(value: SummaryNavigationPath.informationContact) {
                     Text("Information & Contact")
                 }
-                NavigationLink {
-                    AdvancedSettingsView()
-                } label: {
+                NBNavigationLink(value: SummaryNavigationPath.settingsAdvanced) {
                     Text("Advanced Settings")
                 }
             }
@@ -118,9 +115,7 @@ private struct BasebandProfileSection: View {
     var body: some View {
         if appMode == .manual {
             Section(header: Text("Baseband Profile"), footer: Text("Keep the baseband debug profile on your device up-to-date to collect logs for CellGuard.")) {
-                NavigationLink {
-                    DebugProfileDetailedView()
-                } label: {
+                NBNavigationLink(value: SummaryNavigationPath.debugProfile) {
                     Text("Install Profile")
                 }
 
@@ -139,17 +134,14 @@ private struct BasebandProfileSection: View {
 }
 
 private struct StudySection: View {
-    @AppStorage(UserDefaultsKeys.study.rawValue) var studyParticipationTimestamp: Double = 0
 
+    @AppStorage(UserDefaultsKeys.study.rawValue) var studyParticipationTimestamp: Double = 0
     @State private var showQuitStudyAlert = false
 
     var body: some View {
         Section(header: Text("Study"), footer: Text("Join our study to improve CellGuard.")) {
             if studyParticipationTimestamp == 0 {
-                NavigationLink {
-                    // TODO: Why does
-                    UserStudyView(returnToPreviousView: true)
-                } label: {
+                NBNavigationLink(value: SummaryNavigationPath.userStudy) {
                     Text("Participate")
                 }
             } else {
@@ -160,9 +152,7 @@ private struct StudySection: View {
                 }
             }
 
-            NavigationLink {
-                StudyContributionsView()
-            } label: {
+            NBNavigationLink(value: SummaryNavigationPath.userStudyContributions) {
                 Text("Your Contributions")
             }
         }

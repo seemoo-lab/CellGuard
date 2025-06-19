@@ -6,15 +6,14 @@
 //
 
 import SwiftUI
+import NavigationBackport
 
 struct OperatorDetailsListView: View {
     let netOperators: [NetworkOperator]
 
     var body: some View {
         List(netOperators) { netOperator in
-            NavigationLink {
-                OperatorDetailsView(netOperator: netOperator)
-            } label: {
+            NBNavigationLink(value: netOperator) {
                 KeyValueListRow(key: netOperator.combinedName ?? netOperator.countryName, value: netOperator.isoString ?? "-")
             }
         }

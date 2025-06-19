@@ -6,23 +6,20 @@
 //
 
 import SwiftUI
+import NavigationBackport
 
 struct StudyContributionsView: View {
     var body: some View {
         List {
-            NavigationLink {
-                CellListView(settings: CellListFilterSettings(
-                    study: .submitted,
-                    timeFrame: .pastDays,
-                    date: Date.distantPast
-                ))
-            } label: {
+            NBNavigationLink(value: CellListFilterSettings(
+                study: .submitted,
+                timeFrame: .pastDays,
+                date: Date.distantPast
+            )) {
                 Text("Cells")
             }
 
-            NavigationLink {
-                StudyWeeklyScoresView()
-            } label: {
+            NBNavigationLink(value: SummaryNavigationPath.userStudyScoresWeekly) {
                 Text("Weekly Measurements")
             }
         }

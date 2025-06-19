@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import NavigationBackport
 
 private func doubleString(_ value: Double, maxDigits: Int = 2) -> String {
     return String(format: "%.\(maxDigits)f", value)
@@ -201,14 +202,14 @@ private struct LogRelatedPacketsView: View {
 
     var body: some View {
         List(packets, id: \.id) { packet in
-            NavigationLink {
-                if let qmiPacket = packet as? PacketQMI {
-                    PacketQMIDetailsView(packet: qmiPacket)
-                } else if let ariPacket = packet as? PacketARI {
-                    PacketARIDetailsView(packet: ariPacket)
+            if let qmiPacket = packet as? PacketQMI {
+                NBNavigationLink(value: qmiPacket) {
+                    PacketCell(packet: packet, customInfo: customInfo(packet))
                 }
-            } label: {
-                PacketCell(packet: packet, customInfo: customInfo(packet))
+            } else if let ariPacket = packet as? PacketARI {
+                NBNavigationLink(value: ariPacket) {
+                    PacketCell(packet: packet, customInfo: customInfo(packet))
+                }
             }
         }
         .navigationTitle("Related Packets")

@@ -74,6 +74,10 @@
 		CF26102D2E02B49200F6440C /* LabelNumberField.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF26102B2E02B49200F6440C /* LabelNumberField.swift */; };
 		CF26102F2E02F6AD00F6440C /* OperatorLookupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF26102E2E02F6AD00F6440C /* OperatorLookupView.swift */; };
 		CF2610302E02F6AD00F6440C /* OperatorLookupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF26102E2E02F6AD00F6440C /* OperatorLookupView.swift */; };
+		CF2610332E034C0700F6440C /* NavigationBackport in Frameworks */ = {isa = PBXBuildFile; productRef = CF2610322E034C0700F6440C /* NavigationBackport */; };
+		CF2610352E034C1200F6440C /* NavigationBackport in Frameworks */ = {isa = PBXBuildFile; productRef = CF2610342E034C1200F6440C /* NavigationBackport */; };
+		CF2610372E034F1C00F6440C /* SummaryNavigationPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2610362E034F1C00F6440C /* SummaryNavigationPath.swift */; };
+		CF2610382E034F1C00F6440C /* SummaryNavigationPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2610362E034F1C00F6440C /* SummaryNavigationPath.swift */; };
 		CF2631D42C13127C0076AE33 /* AdvancedSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2631D32C13127C0076AE33 /* AdvancedSettingsView.swift */; };
 		CF2631D52C13127C0076AE33 /* AdvancedSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2631D32C13127C0076AE33 /* AdvancedSettingsView.swift */; };
 		CF2A1C182975562800E8B61C /* UserDefaultsKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2A1C172975562800E8B61C /* UserDefaultsKeys.swift */; };
@@ -147,8 +151,8 @@
 		CF70A9942BE6B6D600989FB5 /* QCommonFetch.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF70A9932BE6B6D600989FB5 /* QCommonFetch.swift */; };
 		CF70A9952BE6B6D600989FB5 /* QCommonFetch.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF70A9932BE6B6D600989FB5 /* QCommonFetch.swift */; };
 		CF73099A2A79122B00498BC3 /* DataSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF7309992A79122B00498BC3 /* DataSummaryView.swift */; };
-		CF740C172CC3B10B0083418B /* CellDetailsTower.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF740C162CC3B10B0083418B /* CellDetailsTower.swift */; };
-		CF740C182CC3B10B0083418B /* CellDetailsTower.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF740C162CC3B10B0083418B /* CellDetailsTower.swift */; };
+		CF740C172CC3B10B0083418B /* CellDetailsTowerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF740C162CC3B10B0083418B /* CellDetailsTowerView.swift */; };
+		CF740C182CC3B10B0083418B /* CellDetailsTowerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF740C162CC3B10B0083418B /* CellDetailsTowerView.swift */; };
 		CF86C7912A6A9086002EC9B6 /* CellListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF86C7902A6A9086002EC9B6 /* CellListView.swift */; };
 		CF86C7932A6AC25D002EC9B6 /* CellDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF86C7922A6AC25D002EC9B6 /* CellDetailsView.swift */; };
 		CF86C7972A6ACDAA002EC9B6 /* CellDetailsRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF86C7962A6ACDAA002EC9B6 /* CellDetailsRow.swift */; };
@@ -468,6 +472,7 @@
 		CF208D9E2A387261003A73A7 /* PacketFilterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacketFilterView.swift; sourceTree = "<group>"; };
 		CF26102B2E02B49200F6440C /* LabelNumberField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelNumberField.swift; sourceTree = "<group>"; };
 		CF26102E2E02F6AD00F6440C /* OperatorLookupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperatorLookupView.swift; sourceTree = "<group>"; };
+		CF2610362E034F1C00F6440C /* SummaryNavigationPath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SummaryNavigationPath.swift; sourceTree = "<group>"; };
 		CF2631D32C13127C0076AE33 /* AdvancedSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvancedSettingsView.swift; sourceTree = "<group>"; };
 		CF2A1C172975562800E8B61C /* UserDefaultsKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsKeys.swift; sourceTree = "<group>"; };
 		CF2A1C1A2975670000E8B61C /* CGNotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CGNotificationManager.swift; sourceTree = "<group>"; };
@@ -527,7 +532,7 @@
 		CF70A9902BE6B64600989FB5 /* QCommonDeletion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QCommonDeletion.swift; sourceTree = "<group>"; };
 		CF70A9932BE6B6D600989FB5 /* QCommonFetch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QCommonFetch.swift; sourceTree = "<group>"; };
 		CF7309992A79122B00498BC3 /* DataSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSummaryView.swift; sourceTree = "<group>"; };
-		CF740C162CC3B10B0083418B /* CellDetailsTower.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellDetailsTower.swift; sourceTree = "<group>"; };
+		CF740C162CC3B10B0083418B /* CellDetailsTowerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellDetailsTowerView.swift; sourceTree = "<group>"; };
 		CF86C7902A6A9086002EC9B6 /* CellListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellListView.swift; sourceTree = "<group>"; };
 		CF86C7922A6AC25D002EC9B6 /* CellDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellDetailsView.swift; sourceTree = "<group>"; };
 		CF86C7962A6ACDAA002EC9B6 /* CellDetailsRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellDetailsRow.swift; sourceTree = "<group>"; };
@@ -646,6 +651,7 @@
 				CFB6CF902BD122FA00EAB7B4 /* AcknowList in Frameworks */,
 				CFB6CF912BD122FA00EAB7B4 /* Atomics in Frameworks */,
 				CFB6CF922BD122FA00EAB7B4 /* Regex in Frameworks */,
+				CF2610352E034C1200F6440C /* NavigationBackport in Frameworks */,
 				CFB6CF932BD122FA00EAB7B4 /* CSV in Frameworks */,
 				CF90FE7F2C7E39AE0052A7AA /* NIOCore in Frameworks */,
 				CFB6CF942BD122FA00EAB7B4 /* ZIPFoundation in Frameworks */,
@@ -664,6 +670,7 @@
 				CFFF19E12BC6D045004E40CE /* AcknowList in Frameworks */,
 				CF8D33212AC194A4009CA3F0 /* Atomics in Frameworks */,
 				CF9EEEE62B347A7000F9B6D8 /* Regex in Frameworks */,
+				CF2610332E034C0700F6440C /* NavigationBackport in Frameworks */,
 				CFA632552AB3501800D46025 /* CSV in Frameworks */,
 				CFB86D5A2C7C84FE0072BEFC /* NIOCore in Frameworks */,
 				CFA632582AB3503400D46025 /* ZIPFoundation in Frameworks */,
@@ -694,10 +701,10 @@
 				CF0FDCBC2969A21000A6FFE2 /* WelcomeView.swift */,
 				45ECF5562BFAC62800DD92CF /* CellDetectionView.swift */,
 				45ECF55C2BFACB7D00DD92CF /* UserStudyView.swift */,
+				ED6F69242DBB8D40007BFE78 /* UpdateCheckView.swift */,
 				45ECF5592BFAC6F000DD92CF /* SysDiagnoseView.swift */,
 				45ECF5532BFAB97A00DD92CF /* LocationPermissionView.swift */,
 				45ECF54D2BFAADAA00DD92CF /* NotificationPermissionView.swift */,
-				ED6F69242DBB8D40007BFE78 /* UpdateCheckView.swift */,
 			);
 			path = Introduction;
 			sourceTree = "<group>";
@@ -806,8 +813,8 @@
 		CF2A1C1E2975CDBB00E8B61C /* Summary */ = {
 			isa = PBXGroup;
 			children = (
-				ED6F69272DBBC1CA007BFE78 /* UpdateCheckInfoCard.swift */,
 				CF0FDCB429698E1500A6FFE2 /* SummaryTabView.swift */,
+				CF2610362E034F1C00F6440C /* SummaryNavigationPath.swift */,
 				CF2A1C1F2975CDD200E8B61C /* RiskIndicatorCard.swift */,
 				CF2FF68C2BF296EE006E2DF4 /* RiskInfoView.swift */,
 				CF2A1C212975DB8100E8B61C /* CellInformationCard.swift */,
@@ -822,6 +829,7 @@
 				45C3D4A72BFD092700B5CEF3 /* SysdiagOpenSettingsDetailedView.swift */,
 				45ECF5622BFBDB3800DD92CF /* SysdiagInstructionsCard.swift */,
 				45ECF5682BFBE44800DD92CF /* SysdiagInstructionsDetailedView.swift */,
+				ED6F69272DBBC1CA007BFE78 /* UpdateCheckInfoCard.swift */,
 			);
 			path = Summary;
 			sourceTree = "<group>";
@@ -849,7 +857,7 @@
 				CF6EC8B02A6D9F99004CF0AB /* CellListFilterView.swift */,
 				CF86C7922A6AC25D002EC9B6 /* CellDetailsView.swift */,
 				CF1AF5722C97344A004B519B /* CellDetailsIdentification.swift */,
-				CF740C162CC3B10B0083418B /* CellDetailsTower.swift */,
+				CF740C162CC3B10B0083418B /* CellDetailsTowerView.swift */,
 				CFB51833297AEFA80006C690 /* CellStatusIcon.swift */,
 				CF86C7962A6ACDAA002EC9B6 /* CellDetailsRow.swift */,
 				CF86C7982A6AD51D002EC9B6 /* GroupedMeasurements.swift */,
@@ -1251,6 +1259,7 @@
 				CFB6CF1C2BD122FA00EAB7B4 /* AcknowList */,
 				CF90FE7E2C7E39AE0052A7AA /* NIOCore */,
 				CFFF5F082DE097430086E62E /* SwiftGzip */,
+				CF2610342E034C1200F6440C /* NavigationBackport */,
 			);
 			productName = CellGuard;
 			productReference = CFB6CFA42BD122FA00EAB7B4 /* CellGuard Jailbreak.app */;
@@ -1283,6 +1292,7 @@
 				CFFF19E02BC6D045004E40CE /* AcknowList */,
 				CFB86D592C7C84FE0072BEFC /* NIOCore */,
 				CFFF5F0A2DE0974D0086E62E /* SwiftGzip */,
+				CF2610322E034C0700F6440C /* NavigationBackport */,
 			);
 			productName = CellGuard;
 			productReference = CFD023332961A10D00AA5A1C /* CellGuard AppStore.app */;
@@ -1368,6 +1378,7 @@
 				CFB86D582C7C84FE0072BEFC /* XCRemoteSwiftPackageReference "swift-nio" */,
 				CFE725152D8317DD0048C057 /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */,
 				CFE6C35C2DE080070056BE92 /* XCRemoteSwiftPackageReference "swift-gzip" */,
+				CF2610312E034C0700F6440C /* XCRemoteSwiftPackageReference "NavigationBackport" */,
 			);
 			productRefGroup = CFD023342961A10D00AA5A1C /* Products */;
 			projectDirPath = "";
@@ -1611,7 +1622,7 @@
 				CFB6CF4B2BD122FA00EAB7B4 /* SingleCellMap.swift in Sources */,
 				CFB6CF4C2BD122FA00EAB7B4 /* LocationSource.swift in Sources */,
 				CFB6CF4D2BD122FA00EAB7B4 /* PacketTabView.swift in Sources */,
-				CF740C182CC3B10B0083418B /* CellDetailsTower.swift in Sources */,
+				CF740C182CC3B10B0083418B /* CellDetailsTowerView.swift in Sources */,
 				CFB6CF4E2BD122FA00EAB7B4 /* CGNotificationManager.swift in Sources */,
 				CFB6CF4F2BD122FA00EAB7B4 /* PacketConstants.swift in Sources */,
 				CFB6CF502BD122FA00EAB7B4 /* ExportView.swift in Sources */,
@@ -1660,6 +1671,7 @@
 				CFB6CF6B2BD122FA00EAB7B4 /* ARIParser.swift in Sources */,
 				CFB6CF6C2BD122FA00EAB7B4 /* Formatters.swift in Sources */,
 				CFB6CF6D2BD122FA00EAB7B4 /* CommonParser.swift in Sources */,
+				CF2610382E034F1C00F6440C /* SummaryNavigationPath.swift in Sources */,
 				CFB6CF6E2BD122FA00EAB7B4 /* CPTClient.swift in Sources */,
 				CFB6CF6F2BD122FA00EAB7B4 /* CellMapDelegate.swift in Sources */,
 				CFEA68ED2C13B0B600F781BC /* InformationContactView.swift in Sources */,
@@ -1714,6 +1726,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CFDF5D73297EF0E4000708A8 /* CellAnnotationView.swift in Sources */,
+				CF2610372E034F1C00F6440C /* SummaryNavigationPath.swift in Sources */,
 				CF5EA78B29892F420061E9F1 /* CGTabBarAppearance.swift in Sources */,
 				CF0157CA2CC419DD003ACAC4 /* ExpandableMap.swift in Sources */,
 				CFDF5D7B297EF71F000708A8 /* CellClusterAnnotation.swift in Sources */,
@@ -1790,7 +1803,7 @@
 				CFDF5D7F297F05A0000708A8 /* SingleCellMap.swift in Sources */,
 				CF5EF92A2979B8D800C4F50A /* LocationSource.swift in Sources */,
 				CF4E53A22A321B3000AE2059 /* PacketTabView.swift in Sources */,
-				CF740C172CC3B10B0083418B /* CellDetailsTower.swift in Sources */,
+				CF740C172CC3B10B0083418B /* CellDetailsTowerView.swift in Sources */,
 				CF2A1C1B2975670000E8B61C /* CGNotificationManager.swift in Sources */,
 				CF2B94B32B0B676F00F24ED1 /* PacketConstants.swift in Sources */,
 				CF4E53A62A32225300AE2059 /* ExportView.swift in Sources */,
@@ -2374,6 +2387,14 @@
 				kind = branch;
 			};
 		};
+		CF2610312E034C0700F6440C /* XCRemoteSwiftPackageReference "NavigationBackport" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/johnpatrickmorgan/NavigationBackport";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.11.3;
+			};
+		};
 		CF57561E2B2F266700C7C60A /* XCRemoteSwiftPackageReference "SWCompression" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/tsolomko/SWCompression";
@@ -2525,6 +2546,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = CF2002EB2A2F3244000922E6 /* XCRemoteSwiftPackageReference "BinarySwift" */;
 			productName = BinarySwift;
+		};
+		CF2610322E034C0700F6440C /* NavigationBackport */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CF2610312E034C0700F6440C /* XCRemoteSwiftPackageReference "NavigationBackport" */;
+			productName = NavigationBackport;
+		};
+		CF2610342E034C1200F6440C /* NavigationBackport */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CF2610312E034C0700F6440C /* XCRemoteSwiftPackageReference "NavigationBackport" */;
+			productName = NavigationBackport;
 		};
 		CF57561F2B2F266700C7C60A /* SWCompression */ = {
 			isa = XCSwiftPackageProductDependency;

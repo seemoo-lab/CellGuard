@@ -9,10 +9,10 @@ import CoreData
 import Foundation
 import SwiftUI
 import OSLog
+import NavigationBackport
 
 struct CellListView: View {
 
-    @State private var isShowingFilterView = false
     @State private var isShowingDateSheet = false
     @State var settings: CellListFilterSettings
 
@@ -24,60 +24,24 @@ struct CellListView: View {
     }
 
     var body: some View {
-        VStack {
-            // A workaround for that the NavigationLink on iOS does not respect the isShowingFilterView variable if it's embedded into a ToolbarItem.
-            // See: https://www.hackingwithswift.com/quick-start/swiftui/how-to-use-programmatic-navigation-in-swiftui
-            // TODO: Upon pressing Apply the view sometimes forgets its origin (check view changes of the base NavigationView & this view)
-            NavigationLink(isActive: $isShowingFilterView) {
-                CellListFilterView(settingsBound: $settings) {
-                    // Somehow this does not work on iOS 14 if a sub navigation has been opened by the filter settings
-                    isShowingFilterView = false
-                }
-            } label: {
-                EmptyView()
-            }
-            FilteredCellView(settings: settings)
-        }
+        FilteredCellView(settings: settings)
         .navigationTitle("Cells")
         .toolbar {
-            // We hide the toolbar buttons on iOS 14 if the view is shown with the past day settings,
-            // because changing the date causes a the view to go rogue and forget its parent.
             ToolbarItem(placement: .navigationBarTrailing) {
-                if #available(iOS 15, *) {
-                    Button {
-                        sheetDate = settings.date
-                        isShowingDateSheet.toggle()
-                    } label: {
-                        Image(systemName: settings.timeFrame == .pastDays ? "calendar.badge.clock" : "calendar")
-                    }
-                } else {
-                    if settings.timeFrame != .pastDays {
-                        Button {
-                            sheetDate = settings.date
-                            isShowingDateSheet.toggle()
-                        } label: {
-                            Image(systemName: settings.timeFrame == .pastDays ? "calendar.badge.clock" : "calendar")
-                        }
-                    }
+                Button {
+                    sheetDate = settings.date
+                    isShowingDateSheet.toggle()
+                } label: {
+                    Image(systemName: settings.timeFrame == .pastDays ? "calendar.badge.clock" : "calendar")
                 }
             }
             ToolbarItem(placement: .navigationBarTrailing) {
-                if #available(iOS 15, *) {
-                    Button {
-                        isShowingFilterView = true
-                    } label: {
-                        // Starting with iOS 15: line.3.horizontal.decrease.circle
-                        Image(systemName: "line.horizontal.3.decrease.circle")
-                    }
-                } else {
-                    if settings.timeFrame != .pastDays {
-                        Button {
-                            isShowingFilterView = true
-                        } label: {
-                            // Starting with iOS 15: line.3.horizontal.decrease.circle
-                            Image(systemName: "line.horizontal.3.decrease.circle")
-                        }
-                    }
+                // TODO: Global state
+                Button {
+                    // isShowingFilterView = true
+                } label: {
+                    // Starting with iOS 15: line.3.horizontal.decrease.circle
+                    Image(systemName: "line.horizontal.3.decrease.circle")
                 }
             }
         }
@@ -272,14 +236,11 @@ private struct GroupedNavigationLink: View {
     let cellMeasurements: GroupedMeasurements
 
     var body: some View {
-        return NavigationLink {
+        NBNavigationLink(
             // The first entry should also update to include newer cell measurements
-            CellDetailsView(
-                // The init method of the GroupedMeasurement class guarantees that each instance contains at least one measurement
-                tweakCell: cellMeasurements.measurements.first!,
-                predicate: cellMeasurements.detailsPredicate()
-            )
-        } label: {
+            // The init method of the GroupedMeasurement class guarantees that each instance contains at least one measurement
+            value: CellDetailsNavigation(cell: cellMeasurements.measurements.first!, predicate: cellMeasurements.detailsPredicate())
+        ) {
             ListPacketCell(measurements: cellMeasurements)
         }
     }

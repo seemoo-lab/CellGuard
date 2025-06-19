@@ -8,7 +8,7 @@
 import CoreData
 import SwiftUI
 
-struct CellListFilterSettings {
+struct CellListFilterSettings: Hashable {
 
     var status: CellListFilterStatus = .all
     var study: CellListFilterStudyOptions = .all

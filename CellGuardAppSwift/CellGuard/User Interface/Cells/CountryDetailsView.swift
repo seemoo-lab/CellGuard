@@ -7,11 +7,21 @@
 
 import SwiftUI
 
-struct CountryDetailsView: View {
-    let country: NetworkCountryAttributes
+struct CountryDetailsNavigation<C: NetworkCountryAttributes>: Hashable {
+    let country: C
     let secondary: [NetworkCountry]?
 
-    init(country: NetworkCountryAttributes, secondary: [NetworkCountry]? = nil) {
+    init(country: C, secondary: [NetworkCountry]? = nil) {
+        self.country = country
+        self.secondary = secondary
+    }
+}
+
+struct CountryDetailsView<C: NetworkCountryAttributes>: View {
+    let country: C
+    let secondary: [NetworkCountry]?
+
+    init(country: C, secondary: [NetworkCountry]? = nil) {
         self.country = country
         self.secondary = secondary
     }

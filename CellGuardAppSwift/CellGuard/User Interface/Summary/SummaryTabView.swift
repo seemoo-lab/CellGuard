@@ -7,6 +7,7 @@
 
 import CoreData
 import SwiftUI
+import NavigationBackport
 
 // Do not attempt to use a SwiftUI Menu within a NavigationView ToolbarItem!
 // This is utterly broken in SwiftUI on iOS 14 as the menu always closes if a view gets any kind of update.
@@ -25,100 +26,33 @@ import SwiftUI
 
 struct SummaryTabView: View {
 
-    @State private var showingCellList = false
-    @State private var showingConnectivity = false
-    #if STATS_VIEW
-    @State private var showingStats = false
-    #endif
-    #if DEBUG
-    @State private var showingCellLab = false
-    @State private var showingTestOperators = false
-    #endif
-    @State private var showingSettings = false
+    @State var path = NBNavigationPath()
 
     var body: some View {
-        NavigationView {
-            VStack {
-                NavigationLink(isActive: $showingCellList) {
-                    CellListView()
-                } label: {
-                    EmptyView()
-                }
-
-                NavigationLink(isActive: $showingConnectivity) {
-                    ConnectivityView()
-                } label: {
-                    EmptyView()
-                }
-
-                #if STATS_VIEW
-                NavigationLink(isActive: $showingStats) {
-                    DataSummaryView()
-                } label: {
-                    EmptyView()
-                }
-                #endif
-
-                #if DEBUG
-                NavigationLink(isActive: $showingCellLab) {
-                    DebugAddCellView()
-                } label: {
-                    EmptyView()
-                }
-                NavigationLink(isActive: $showingTestOperators) {
-                    OperatorLookupView()
-                } label: {
-                    EmptyView()
-                }
-                #endif
-
-                NavigationLink(isActive: $showingSettings) {
-                    SettingsView()
-                } label: {
-                    EmptyView()
-                }
-                CombinedRiskCellView()
-            }
+        NBNavigationStack(path: $path) {
+            CombinedRiskCellView()
             .navigationTitle("Summary")
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Menu {
-                        Button {
-                            showingCellList = true
-                        } label: {
+                        NBNavigationLink(value: SummaryNavigationPath.cellList) {
                             Label("Cells", systemImage: "wave.3.left")
-                        }
-                        Button {
-                            showingConnectivity = true
-                        } label: {
-                            Label("Connectivity", systemImage: "bolt")
                         }
                         #if STATS_VIEW
                         // Disable stats for the beta test as it is not finished.
-                        Button {
-                            showingStats = true
-                        } label: {
+                        NBNavigationLink(value: SummaryNavigationPath.dataSummary) {
                             Label("Stats", systemImage: "chart.bar.xaxis")
                         }
                         #endif
                         #if DEBUG
-                        Button {
-                            showingCellLab = true
-                        } label: {
-                            Label("Cell Laboratory", systemImage: "leaf")
-                        }
-                        Button {
-                            showingTestOperators = true
-                        } label: {
+                        NBNavigationLink(value: SummaryNavigationPath.operatorLookup) {
                             Label("Operators", systemImage: "globe")
                         }
                         #endif
                         Link(destination: CellGuardURLs.baseUrl) {
                             Label("Help", systemImage: "book")
                         }
-                        Button {
-                            showingSettings = true
-                        } label: {
+                        NBNavigationLink(value: SummaryNavigationPath.settings) {
                             Label("Settings", systemImage: "gear")
                         }
                     } label: {
@@ -126,6 +60,44 @@ struct SummaryTabView: View {
                             .imageScale(.large)
                     }
                 }
+            }
+            .nbNavigationDestination(for: SummaryNavigationPath.self, destination: SummaryNavigationPath.navigate)
+            .nbNavigationDestination(for: CellTweak.self) { cell in
+                CellDetailsView(tweakCell: cell)
+            }
+            .nbNavigationDestination(for: CellALS.self) { cell in
+                CellDetailsView(alsCell: cell)
+            }
+            .nbNavigationDestination(for: CellDetailsNavigation.self) { nav in
+                CellDetailsView(tweakCell: nav.cell, predicate: nav.predicate)
+            }
+            .nbNavigationDestination(for: CellListFilterSettings.self) { settings in
+                CellListView(settings: settings)
+            }
+            .nbNavigationDestination(for: RiskLevel.self) { riskLevel in
+                RiskInfoView(risk: riskLevel)
+            }
+            .nbNavigationDestination(for: PacketARI.self) { packet in
+                PacketARIDetailsView(packet: packet)
+            }
+            .nbNavigationDestination(for: PacketQMI.self) { packet in
+                PacketQMIDetailsView(packet: packet)
+            }
+            .nbNavigationDestination(for: VerificationState.self) { state in
+                VerificationStateView(verificationState: state)
+            }
+            .nbNavigationDestination(for: [NetworkOperator].self) { ops in
+                if ops.count == 1, let op = ops.first {
+                    OperatorDetailsView(netOperator: op)
+                } else {
+                    OperatorDetailsListView(netOperators: ops)
+                }
+            }
+            .nbNavigationDestination(for: CountryDetailsNavigation<NetworkCountry>.self) { data in
+                CountryDetailsView(country: data.country, secondary: data.secondary)
+            }
+            .nbNavigationDestination(for: CountryDetailsNavigation<NetworkOperator>.self) { data in
+                CountryDetailsView(country: data.country, secondary: data.secondary)
             }
         }
         .background(Color.gray)
