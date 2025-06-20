@@ -145,7 +145,7 @@ private struct CellDetailsList: View {
     var body: some View {
         Section(header: Text("Cells")) {
             ForEach(filteredCells, id: \.id) { (cell: CellALS) in
-                NBNavigationLink(value: cell) {
+                NBNavigationLink(value: NavObjectId(object: cell)) {
                     Text(plainCellId(cell))
                 }
             }

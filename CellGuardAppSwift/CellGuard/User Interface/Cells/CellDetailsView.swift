@@ -10,10 +10,8 @@ import SwiftUI
 import NavigationBackport
 
 struct CellDetailsNavigation: Hashable {
-
-    let cell: CellTweak
+    let cell: NavObjectId<CellTweak>
     let predicate: NSPredicate?
-
 }
 
 struct CellDetailsView: View {
@@ -289,7 +287,7 @@ private struct TweakCellMeasurementNavLink: View {
 
     var body: some View {
         if let state = measurement.verifications?.compactMap({ $0 as? VerificationState }).first(where: { $0.pipeline == pipelineId }) {
-            NBNavigationLink(value: state) {
+            NBNavigationLink(value: NavObjectId(object: state)) {
                 label(score: state.finished ? state.score : nil, study: measurement.study != nil)
             }
         } else {

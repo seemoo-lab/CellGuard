@@ -29,6 +29,7 @@ struct SummaryTabView: View {
     @State var path = NBNavigationPath()
 
     var body: some View {
+        let _ = print(path)
         NBNavigationStack(path: $path) {
             CombinedRiskCellView()
             .navigationTitle("Summary")
@@ -62,14 +63,14 @@ struct SummaryTabView: View {
                 }
             }
             .nbNavigationDestination(for: SummaryNavigationPath.self, destination: SummaryNavigationPath.navigate)
-            .nbNavigationDestination(for: CellTweak.self) { cell in
-                CellDetailsView(tweakCell: cell)
+            .nbNavigationDestination(for: NavObjectId<CellTweak>.self) { cell in
+                CellDetailsView(tweakCell: cell.object)
             }
-            .nbNavigationDestination(for: CellALS.self) { cell in
-                CellDetailsView(alsCell: cell)
+            .nbNavigationDestination(for: NavObjectId<CellALS>.self) { cell in
+                CellDetailsView(alsCell: cell.object)
             }
             .nbNavigationDestination(for: CellDetailsNavigation.self) { nav in
-                CellDetailsView(tweakCell: nav.cell, predicate: nav.predicate)
+                CellDetailsView(tweakCell: nav.cell.object, predicate: nav.predicate)
             }
             .nbNavigationDestination(for: CellListFilterSettings.self) { settings in
                 CellListView(settings: settings)
@@ -77,21 +78,22 @@ struct SummaryTabView: View {
             .nbNavigationDestination(for: RiskLevel.self) { riskLevel in
                 RiskInfoView(risk: riskLevel)
             }
-            .nbNavigationDestination(for: PacketARI.self) { packet in
-                PacketARIDetailsView(packet: packet)
+            .nbNavigationDestination(for: NavObjectId<PacketARI>.self) { packet in
+                PacketARIDetailsView(packet: packet.object)
             }
-            .nbNavigationDestination(for: PacketQMI.self) { packet in
-                PacketQMIDetailsView(packet: packet)
+            .nbNavigationDestination(for: NavObjectId<PacketQMI>.self) { packet in
+                PacketQMIDetailsView(packet: packet.object)
             }
-            .nbNavigationDestination(for: VerificationState.self) { state in
-                VerificationStateView(verificationState: state)
+            .nbNavigationDestination(for: NavObjectId<VerificationState>.self) { state in
+                VerificationStateView(verificationState: state.object)
             }
-            .nbNavigationDestination(for: [NetworkOperator].self) { ops in
-                if ops.count == 1, let op = ops.first {
+            .nbNavigationDestination(for: NetworkOperator.self) { op in
+                OperatorDetailsView(netOperator: op)
+                /* if ops.count == 1, let op = ops.first {
                     OperatorDetailsView(netOperator: op)
                 } else {
                     OperatorDetailsListView(netOperators: ops)
-                }
+                } */
             }
             .nbNavigationDestination(for: CountryDetailsNavigation<NetworkCountry>.self) { data in
                 CountryDetailsView(country: data.country, secondary: data.secondary)
@@ -99,8 +101,10 @@ struct SummaryTabView: View {
             .nbNavigationDestination(for: CountryDetailsNavigation<NetworkOperator>.self) { data in
                 CountryDetailsView(country: data.country, secondary: data.secondary)
             }
+            .nbUseNavigationStack(.whenAvailable)
         }
         .background(Color.gray)
+        // .nbUseNavigationStack(.whenAvailable)
     }
 }
 

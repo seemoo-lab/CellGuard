@@ -94,6 +94,8 @@
 		CF2FF6942BF2A3DF006E2DF4 /* StudyClientSamples.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2FF6922BF2A3DF006E2DF4 /* StudyClientSamples.swift */; };
 		CF320F5529620B16009BAD18 /* CCTParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF320F5429620B16009BAD18 /* CCTParser.swift */; };
 		CF320F59296225F9009BAD18 /* CCTResponse.txt in Resources */ = {isa = PBXBuildFile; fileRef = CF320F582962208B009BAD18 /* CCTResponse.txt */; };
+		CF332F9E2E05531200BBA851 /* NavObjectId.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF332F9D2E05531200BBA851 /* NavObjectId.swift */; };
+		CF332F9F2E05531200BBA851 /* NavObjectId.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF332F9D2E05531200BBA851 /* NavObjectId.swift */; };
 		CF4445EC2C29700D00D0ABED /* StudyWeeklyScoresView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF4445EB2C29700D00D0ABED /* StudyWeeklyScoresView.swift */; };
 		CF4445ED2C29700D00D0ABED /* StudyWeeklyScoresView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF4445EB2C29700D00D0ABED /* StudyWeeklyScoresView.swift */; };
 		CF446754298D2A040083EE63 /* CellLocationDistance.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF446753298D2A040083EE63 /* CellLocationDistance.swift */; };
@@ -486,6 +488,7 @@
 		CF320F5429620B16009BAD18 /* CCTParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CCTParser.swift; sourceTree = "<group>"; };
 		CF320F582962208B009BAD18 /* CCTResponse.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CCTResponse.txt; sourceTree = "<group>"; };
 		CF320F5A29622B6D009BAD18 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		CF332F9D2E05531200BBA851 /* NavObjectId.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavObjectId.swift; sourceTree = "<group>"; };
 		CF4445EB2C29700D00D0ABED /* StudyWeeklyScoresView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudyWeeklyScoresView.swift; sourceTree = "<group>"; };
 		CF446753298D2A040083EE63 /* CellLocationDistance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellLocationDistance.swift; sourceTree = "<group>"; };
 		CF462B462C94315A00BA1BF4 /* MapInfoSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapInfoSheet.swift; sourceTree = "<group>"; };
@@ -739,6 +742,7 @@
 				45ECF56B2BFBEA5300DD92CF /* DeviceModel.swift */,
 				CFA83C9C2D9D7EBD00239AB7 /* Icons.swift */,
 				CF0591F22DBCF653003CB81C /* SysdiagUrls.swift */,
+				CF332F9D2E05531200BBA851 /* NavObjectId.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -1638,6 +1642,7 @@
 				CFB6CF592BD122FA00EAB7B4 /* FirstLastDates.swift in Sources */,
 				CF2FF6942BF2A3DF006E2DF4 /* StudyClientSamples.swift in Sources */,
 				CFB6CF5B2BD122FA00EAB7B4 /* DataSummaryView.swift in Sources */,
+				CF332F9F2E05531200BBA851 /* NavObjectId.swift in Sources */,
 				CFB6CF5C2BD122FA00EAB7B4 /* CellReachOverlay.swift in Sources */,
 				ED6F69282DBBC1CC007BFE78 /* UpdateCheckInfoCard.swift in Sources */,
 				CF70A98C2BE6B51C00989FB5 /* QLocationUser.swift in Sources */,
@@ -1756,6 +1761,7 @@
 				CF54CCC52A33680200961E4D /* PacketCommonDetails.swift in Sources */,
 				CFDF5D77297EF1E8000708A8 /* LocationAnnotation.swift in Sources */,
 				CF54CCC72A33699A00961E4D /* PacketARIDetailsView.swift in Sources */,
+				CF332F9E2E05531200BBA851 /* NavObjectId.swift in Sources */,
 				CF2A1C182975562800E8B61C /* UserDefaultsKeys.swift in Sources */,
 				45C3D4A82BFD092700B5CEF3 /* SysdiagOpenSettingsDetailedView.swift in Sources */,
 				CFC041122C1249F800BCD692 /* IntroductionView.swift in Sources */,

@@ -27,7 +27,7 @@ struct CellInformationCard: View {
         if disconnected {
             CellInfoCardOutline(cell: cell, dualSim: dualSim, disconnected: disconnected)
         } else {
-            NBNavigationLink(value: cell) {
+            NBNavigationLink(value: NavObjectId(object: cell)) {
                 CellInfoCardOutline(cell: cell, dualSim: dualSim, disconnected: disconnected)
             }
             .buttonStyle(.plain)
