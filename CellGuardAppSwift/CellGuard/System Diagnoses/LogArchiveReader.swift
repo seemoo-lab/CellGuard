@@ -673,22 +673,24 @@ struct LogArchiveReader {
         return try CPTPacket(direction: direction, data: packetData, timestamp: timestamp, knownProtocol: .ari)
     }
 
-    private let regexInt = Regex("kCTCellMonitor([\\w\\d]+) *= *(\\d+);")
+    private let regexInt = Regex("([\\w\\d]+) *= *(\\d+);")
     private let replaceInt = "\"$1\": $2,"
 
-    private let regexString = Regex("kCTCellMonitor([\\w]+) *= *kCTCellMonitor([a-zA-Z][\\w\\d]*);")
-    private let regexStringQuoted = Regex("kCTCellMonitor([\\w]+) *= *\\\\\"([\\S]+)\\\\\";")
-    private let regexSimSlotID = Regex("slotID=(?<slotID>.*?),")
+    private let regexString = Regex("([\\w]+) *= *([a-zA-Z][\\w\\d]*);")
+    private let regexStringQuoted = Regex("([\\w]+) *= *\\\\\"([\\S]+)\\\\\";")
     private let replaceString = "\"$1\": \"$2\","
 
-    private func readCSVCellMeasurement(timestamp: Date, message: String) throws -> CCTCellProperties {
+    private let regexSimSlotID = Regex("slotID=\\w{18}(?<slotID>.*?),")
+    private let regexSimSlotIDiOS26 = Regex("<SubscriptionContext *id=(?<slotID>.*?)>")
+
+    func readCSVCellMeasurement(timestamp: Date, message: String) throws -> CCTCellProperties {
         let messageBodySuffix = message.components(separatedBy: "info=(")
         if messageBodySuffix.count < 2 {
             throw LogArchiveError.wrongCellPrefixText
         }
         let messageHeaders = messageBodySuffix[0]
         // Remove the final closing parentheses
-        let messageBody = messageBodySuffix[1].trimmingCharacters(in: CharacterSet(charactersIn: "()"))
+        let messageBody = messageBodySuffix[1].trimmingCharacters(in: CharacterSet(charactersIn: "()<>"))
 
         // TODO:        kCTCellMonitorRSSI = \"-96\";
 
@@ -696,11 +698,14 @@ struct LogArchiveReader {
         // Escape all the existing quotes
         jsonMsg = jsonMsg.replacingOccurrences(of: "\"", with: "\\\"")
         // Convert the description format to JSON (while also removing the prefix kCT as the tweak does)
+
+        // Remove Legacy (<= iOS 18) Prefix
+        jsonMsg = jsonMsg.replacingOccurrences(of: "kCTCellMonitor", with: "")
         jsonMsg.replaceAll(matching: regexInt, with: replaceInt)
         jsonMsg.replaceAll(matching: regexString, with: replaceString)
         jsonMsg.replaceAll(matching: regexStringQuoted, with: replaceString)
         // Replace the sounding parentheses to convert it to a JSON array
-        jsonMsg = jsonMsg.trimmingCharacters(in: CharacterSet(charactersIn: "()"))
+        jsonMsg = jsonMsg.trimmingCharacters(in: CharacterSet(charactersIn: "()<>"))
         jsonMsg = "[\(jsonMsg)]"
         // Self.logger.debug("JSON-ready cell measurement: \(jsonMsg)")
 
@@ -717,8 +722,16 @@ struct LogArchiveReader {
 
         var metaInfos: [String: Any] = [:]
         metaInfos["timestamp"] = timestamp.timeIntervalSince1970
-        if let slotIDMatch = regexSimSlotID.firstMatch(in: messageHeaders), let slotIDCapture = slotIDMatch.captures[0]?.dropFirst(18) {
-            // The slots are named like "CTSubscriptionSlotOne", "CTSubscriptionSlotTwo", etc
+
+        // For iOS 18 and before, the SIM IDs are named like "CTSubscriptionSlotOne", "CTSubscriptionSlotTwo", etc
+        // For iOS 26, the SIM ID is just named like "one", "two"
+        var slotIDMatch: MatchResult?
+        if let match = regexSimSlotID.firstMatch(in: messageHeaders) {
+            slotIDMatch = match
+        } else {
+            slotIDMatch = regexSimSlotIDiOS26.firstMatch(in: messageHeaders)
+        }
+        if let slotIDCapture = slotIDMatch?.captures[0] {
             let slotIDSpelled = String(slotIDCapture).lowercased()
             let numberFormatter = NumberFormatter()
             numberFormatter.locale = Locale(identifier: "en_US_POSIX")
@@ -727,6 +740,7 @@ struct LogArchiveReader {
                 metaInfos["simSlotID"] = simSlotID
             }
         }
+
         // Append the timestamp and simSlotID
         json.append(metaInfos)
 
