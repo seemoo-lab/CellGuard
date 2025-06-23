@@ -605,7 +605,8 @@ struct LogArchiveReader {
             let controlCellIsMissing = controlCells.filter { (controlCell: CCTCellProperties) in
                 return cell.mcc == controlCell.mcc && cell.network == controlCell.network && cell.area == controlCell.area &&
                 cell.cellId == controlCell.cellId && cell.frequency == controlCell.frequency &&
-                (cell.technology == .GSM || cell.band == controlCell.band) // The GSM band is not provided reliably by the CommCenter parsing
+                (cell.technology == .GSM || cell.technology == .UMTS || cell.band == controlCell.band)
+                // The GSM and UMTS band is not provided reliably by the CommCenter parsing
             }.isEmpty
             erroneousCells = erroneousCells || controlCellIsMissing
         }
