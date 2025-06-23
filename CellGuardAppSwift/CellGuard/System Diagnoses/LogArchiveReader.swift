@@ -275,7 +275,7 @@ struct LogArchiveReader {
             Self.logger.debug("Total CSV Lines: \(totalCsvLines)")
 
             var currentCsvLine = 0
-            let out = try readCSV(csvFile: csvFile, version: versionMetadata) {
+            let out = try readCSV(csvFile: csvFile) {
                 currentCsvLine += 1
 
                 // Update the SwiftUI just 100 times to avoid DoS behavior, e.g. EXC_BAD_ACCESS.
@@ -488,7 +488,7 @@ struct LogArchiveReader {
         return count
     }
 
-    private func readCSV(csvFile: URL, version: VersionMetadata?, progress: () -> Void) throws -> ImportResult {
+    private func readCSV(csvFile: URL, progress: () -> Void) throws -> ImportResult {
         if let fileAttributes = try? fileManager.attributesOfItem(atPath: csvFile.path) {
             Self.logger.debug("\(fileAttributes))")
         }
@@ -565,13 +565,8 @@ struct LogArchiveReader {
         }
 
         var notices: [ImportNotice] = []
-
-        // iOS 26 changes some internals we use to gather control cells, thus we temporarily disable the parser verification for this iOS version, while we investigate the root cause of the change.
-        // See: https://dev.seemoo.tu-darmstadt.de/apple/cell-guard/-/issues/174
-        if let major = version?.productVersionMajor, major <= 18 {
-            if validatePacketCellParser(packetParserCells: filteredCells, controlCells: controlCells, beforeImportTime: beforeImportTime) {
-                notices.append(.cellParserMisalignment)
-            }
+        if validatePacketCellParser(packetParserCells: filteredCells, controlCells: controlCells, beforeImportTime: beforeImportTime) {
+            notices.append(.cellParserMisalignment)
         }
 
         Self.logger.debug("Imported \(filteredCells.count) cells.")
