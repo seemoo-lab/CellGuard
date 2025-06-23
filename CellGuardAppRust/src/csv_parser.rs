@@ -179,9 +179,9 @@ fn filter_cellular(log_data: &LogData) -> bool {
     ];
     // Remove reference to "com.apple.CommCenter" once we only use the packet-based cell extraction.
     const SUBSYSTEMS: [&str; 2] = ["com.apple.telephony.bb", "com.apple.CommCenter"];
-    // Remove reference to kCTCellMonitorCellRadioAccessTechnology once we only use
+    // Remove reference to CellInfo once we only use
     // the packet-based cell extraction.
-    const CONTENTS: [&str; 2] = ["kCTCellMonitorCellRadioAccessTechnology", "Bin="];
+    const CONTENTS: [&str; 2] = ["CellInfo", "Bin="];
 
     if !PROCESSES.contains(&log_data.process.as_str()) {
         return false;
