@@ -275,7 +275,7 @@ struct LogArchiveReader {
             Self.logger.debug("Total CSV Lines: \(totalCsvLines)")
 
             var currentCsvLine = 0
-            let out = try readCSV(csvFile: csvFile, version: versionMetadata) {
+            let out = try readCSV(csvFile: csvFile) {
                 currentCsvLine += 1
 
                 // Update the SwiftUI just 100 times to avoid DoS behavior, e.g. EXC_BAD_ACCESS.
@@ -488,7 +488,7 @@ struct LogArchiveReader {
         return count
     }
 
-    private func readCSV(csvFile: URL, version: VersionMetadata?, progress: () -> Void) throws -> ImportResult {
+    private func readCSV(csvFile: URL, progress: () -> Void) throws -> ImportResult {
         if let fileAttributes = try? fileManager.attributesOfItem(atPath: csvFile.path) {
             Self.logger.debug("\(fileAttributes))")
         }
@@ -565,13 +565,8 @@ struct LogArchiveReader {
         }
 
         var notices: [ImportNotice] = []
-
-        // iOS 26 changes some internals we use to gather control cells, thus we temporarily disable the parser verification for this iOS version, while we investigate the root cause of the change.
-        // See: https://dev.seemoo.tu-darmstadt.de/apple/cell-guard/-/issues/174
-        if let major = version?.productVersionMajor, major <= 18 {
-            if validatePacketCellParser(packetParserCells: filteredCells, controlCells: controlCells, beforeImportTime: beforeImportTime) {
-                notices.append(.cellParserMisalignment)
-            }
+        if validatePacketCellParser(packetParserCells: filteredCells, controlCells: controlCells, beforeImportTime: beforeImportTime) {
+            notices.append(.cellParserMisalignment)
         }
 
         Self.logger.debug("Imported \(filteredCells.count) cells.")
@@ -610,7 +605,8 @@ struct LogArchiveReader {
             let controlCellIsMissing = controlCells.filter { (controlCell: CCTCellProperties) in
                 return cell.mcc == controlCell.mcc && cell.network == controlCell.network && cell.area == controlCell.area &&
                 cell.cellId == controlCell.cellId && cell.frequency == controlCell.frequency &&
-                (cell.technology == .GSM || cell.band == controlCell.band) // The GSM band is not provided reliably by the CommCenter parsing
+                (cell.technology == .GSM || cell.technology == .UMTS || cell.band == controlCell.band)
+                // The GSM and UMTS band is not provided reliably by the CommCenter parsing
             }.isEmpty
             erroneousCells = erroneousCells || controlCellIsMissing
         }
@@ -673,22 +669,24 @@ struct LogArchiveReader {
         return try CPTPacket(direction: direction, data: packetData, timestamp: timestamp, knownProtocol: .ari)
     }
 
-    private let regexInt = Regex("kCTCellMonitor([\\w\\d]+) *= *(\\d+);")
+    private let regexInt = Regex("([\\w\\d]+) *= *(\\d+);")
     private let replaceInt = "\"$1\": $2,"
 
-    private let regexString = Regex("kCTCellMonitor([\\w]+) *= *kCTCellMonitor([a-zA-Z][\\w\\d]*);")
-    private let regexStringQuoted = Regex("kCTCellMonitor([\\w]+) *= *\\\\\"([\\S]+)\\\\\";")
-    private let regexSimSlotID = Regex("slotID=(?<slotID>.*?),")
+    private let regexString = Regex("([\\w]+) *= *([a-zA-Z][\\w\\d]*);")
+    private let regexStringQuoted = Regex("([\\w]+) *= *\\\\\"([\\S]+)\\\\\";")
     private let replaceString = "\"$1\": \"$2\","
 
-    private func readCSVCellMeasurement(timestamp: Date, message: String) throws -> CCTCellProperties {
+    private let regexSimSlotID = Regex("slotID=\\w{18}(?<slotID>.*?),")
+    private let regexSimSlotIDiOS26 = Regex("<SubscriptionContext *id=(?<slotID>.*?)>")
+
+    func readCSVCellMeasurement(timestamp: Date, message: String) throws -> CCTCellProperties {
         let messageBodySuffix = message.components(separatedBy: "info=(")
         if messageBodySuffix.count < 2 {
             throw LogArchiveError.wrongCellPrefixText
         }
         let messageHeaders = messageBodySuffix[0]
         // Remove the final closing parentheses
-        let messageBody = messageBodySuffix[1].trimmingCharacters(in: CharacterSet(charactersIn: "()"))
+        let messageBody = messageBodySuffix[1].trimmingCharacters(in: CharacterSet(charactersIn: "()<>"))
 
         // TODO:        kCTCellMonitorRSSI = \"-96\";
 
@@ -696,11 +694,14 @@ struct LogArchiveReader {
         // Escape all the existing quotes
         jsonMsg = jsonMsg.replacingOccurrences(of: "\"", with: "\\\"")
         // Convert the description format to JSON (while also removing the prefix kCT as the tweak does)
+
+        // Remove Legacy (<= iOS 18) Prefix
+        jsonMsg = jsonMsg.replacingOccurrences(of: "kCTCellMonitor", with: "")
         jsonMsg.replaceAll(matching: regexInt, with: replaceInt)
         jsonMsg.replaceAll(matching: regexString, with: replaceString)
         jsonMsg.replaceAll(matching: regexStringQuoted, with: replaceString)
         // Replace the sounding parentheses to convert it to a JSON array
-        jsonMsg = jsonMsg.trimmingCharacters(in: CharacterSet(charactersIn: "()"))
+        jsonMsg = jsonMsg.trimmingCharacters(in: CharacterSet(charactersIn: "()<>"))
         jsonMsg = "[\(jsonMsg)]"
         // Self.logger.debug("JSON-ready cell measurement: \(jsonMsg)")
 
@@ -717,8 +718,16 @@ struct LogArchiveReader {
 
         var metaInfos: [String: Any] = [:]
         metaInfos["timestamp"] = timestamp.timeIntervalSince1970
-        if let slotIDMatch = regexSimSlotID.firstMatch(in: messageHeaders), let slotIDCapture = slotIDMatch.captures[0]?.dropFirst(18) {
-            // The slots are named like "CTSubscriptionSlotOne", "CTSubscriptionSlotTwo", etc
+
+        // For iOS 18 and before, the SIM IDs are named like "CTSubscriptionSlotOne", "CTSubscriptionSlotTwo", etc
+        // For iOS 26, the SIM ID is just named like "one", "two"
+        var slotIDMatch: MatchResult?
+        if let match = regexSimSlotID.firstMatch(in: messageHeaders) {
+            slotIDMatch = match
+        } else {
+            slotIDMatch = regexSimSlotIDiOS26.firstMatch(in: messageHeaders)
+        }
+        if let slotIDCapture = slotIDMatch?.captures[0] {
             let slotIDSpelled = String(slotIDCapture).lowercased()
             let numberFormatter = NumberFormatter()
             numberFormatter.locale = Locale(identifier: "en_US_POSIX")
@@ -727,6 +736,7 @@ struct LogArchiveReader {
                 metaInfos["simSlotID"] = simSlotID
             }
         }
+
         // Append the timestamp and simSlotID
         json.append(metaInfos)
 

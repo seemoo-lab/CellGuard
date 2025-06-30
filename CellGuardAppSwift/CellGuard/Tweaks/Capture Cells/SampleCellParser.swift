@@ -47,55 +47,55 @@ extension CCTParser {
         // - IPSW: /System/Library/Frameworks/CoreTelephony.framework/CoreTelephony (dyld_cache)
         // - https://github.com/nahum365/CellularInfo/blob/master/CellInfoView.m#L32
 
-        let rat = info["CellRadioAccessTechnology"]
+        let rat = info["CellRadioAccessTechnology"] ?? info["rat"]
         guard let rat = rat as? String else {
             throw CCTParserError.missingRatOld(info)
         }
 
         var cell: CCTCellProperties
         switch rat {
-        case "RadioAccessTechnologyGSM":
+        case "RadioAccessTechnologyGSM", "GSM":
             cell = try parseGsm(info)
             cell.technology = .GSM
-        case "RadioAccessTechnologyUMTS":
+        case "RadioAccessTechnologyUMTS", "UMTS":
             cell = try parseUtms(info)
             cell.technology = .UMTS
-        case "RadioAccessTechnologyUTRAN":
+        case "RadioAccessTechnologyUTRAN", "UTRAN":
             // UMTS Terrestrial Radio Access Network
             // https://en.wikipedia.org/wiki/UMTS_Terrestrial_Radio_Access_Network
             cell = try parseUtms(info)
             cell.technology = .UMTS
-        case "RadioAccessTechnologyCDMA1x":
+        case "RadioAccessTechnologyCDMA1x", "CDMA1x":
             // https://en.wikipedia.org/wiki/CDMA2000
             cell = try parseCdma(info)
             cell.technology = .CDMA
-        case "RadioAccessTechnologyCDMAEVDO":
+        case "RadioAccessTechnologyCDMAEVDO", "CDMAEVDO":
             // CDMA2000 1x Evolution-Data Optimized
             cell = try parseCdma(info)
             cell.technology = .CDMA
-        case "RadioAccessTechnologyCDMAHybrid":
+        case "RadioAccessTechnologyCDMAHybrid", "CDMAHybrid":
             cell = try parseCdma(info)
             cell.technology = .CDMA
-        case "RadioAccessTechnologyLTE":
+        case "RadioAccessTechnologyLTE", "LTE":
             cell = try parseLte(info)
             cell.technology = .LTE
-        case "RadioAccessTechnologyTDSCDMA":
+        case "RadioAccessTechnologyTDSCDMA", "TDSCDMA":
             // Special version of UMTS WCDMA in China
             // https://www.electronics-notes.com/articles/connectivity/3g-umts/td-scdma.php
             cell = try parseUtms(info)
             cell.technology = .SCDMA
-        case "RadioAccessTechnologyNR":
+        case "RadioAccessTechnologyNR", "NR":
             cell = try parseNr(info)
             cell.technology = .NR
         default:
             throw CCTParserError.unknownRat(rat)
         }
 
-        let cellType = info["CellType"]
+        let cellType = info["CellType"] ?? info["type"]
         guard let cellType = cellType as? String else {
             throw CCTParserError.missingCellType(info)
         }
-        guard let cellType = CCTCellType(rawValue: cellType) else {
+        guard let cellType = CCTCellType(rawValue: cellType) ?? CCTCellType(rawValue: "CellType" + cellType.capitalized) else {
             throw CCTParserError.unknownCellType(cellType)
         }
 
@@ -108,13 +108,13 @@ extension CCTParser {
         var cell = CCTCellProperties()
         cell.technology = .GSM
 
-        cell.mcc = info["MCC"] as? Int32 ?? 0
-        cell.network = info["MNC"] as? Int32 ?? 0
-        cell.area = info["LAC"] as? Int32 ?? 0
-        cell.cellId = info["CellId"] as? Int64 ?? 0
+        cell.mcc = (info["MCC"] ?? info["mcc"]) as? Int32 ?? 0
+        cell.network = (info["MNC"] ?? info["mnc"]) as? Int32 ?? 0
+        cell.area = (info["LAC"] ?? info["lac"]) as? Int32 ?? 0
+        cell.cellId = (info["CellId"] ?? info["cellID"]) as? Int64 ?? 0
 
-        cell.frequency = info["ARFCN"] as? Int32 ?? 0
-        cell.band = info["BandInfo"] as? Int32 ?? 0
+        cell.frequency = (info["ARFCN"] ?? info["arfcn"]) as? Int32 ?? 0
+        cell.band = (info["BandInfo"] ?? info["band"]) as? Int32 ?? 0
 
         return cell
     }
@@ -131,13 +131,13 @@ extension CCTParser {
         // With some data collected in Austria, we could confirm this
         // There's also the field "SCN" which could be an abbreviation for sub-channel number
 
-        cell.mcc = info["MCC"] as? Int32 ?? 0
-        cell.network = info["MNC"] as? Int32 ?? 0
-        cell.area = info["LAC"] as? Int32 ?? 0
-        cell.cellId = info["CellId"] as? Int64 ?? 0
+        cell.mcc = (info["MCC"] ?? info["mcc"]) as? Int32 ?? 0
+        cell.network = (info["MNC"] ?? info["mnc"]) as? Int32 ?? 0
+        cell.area = (info["LAC"] ?? info["lac"]) as? Int32 ?? 0
+        cell.cellId = (info["CellId"] ?? info["cellID"]) as? Int64 ?? 0
 
-        cell.frequency = info["UARFCN"] as? Int32 ?? 0
-        cell.band = info["BandInfo"] as? Int32 ?? 0
+        cell.frequency = (info["UARFCN"] ?? info["uarfcn"]) as? Int32 ?? 0
+        cell.band = (info["BandInfo"] ?? info["band"]) as? Int32 ?? 0
 
         return cell
     }
@@ -159,7 +159,7 @@ extension CCTParser {
 
         var cell = CCTCellProperties()
 
-        cell.mcc = info["MCC"] as? Int32 ?? 0
+        cell.mcc = (info["MCC"] ?? info["mcc"]) as? Int32 ?? 0
         cell.network = info["SID"] as? Int32 ?? 0
         cell.area = info["PNOffset"] as? Int32 ?? 0
         cell.cellId = info["BaseStationId"] as? Int64 ?? 0
@@ -173,24 +173,24 @@ extension CCTParser {
     private func parseLte(_ info: CellInfo) throws -> CCTCellProperties {
         var cell = CCTCellProperties()
 
-        cell.mcc = info["MCC"] as? Int32 ?? 0
-        cell.network = info["MNC"] as? Int32 ?? 0
-        cell.area = info["TAC"] as? Int32 ?? 0
+        cell.mcc = (info["MCC"] ?? info["mcc"]) as? Int32 ?? 0
+        cell.network = (info["MNC"] ?? info["mnc"]) as? Int32 ?? 0
+        cell.area = (info["TAC"] ?? info["tac"]) as? Int32 ?? 0
         // See: https://dev.seemoo.tu-darmstadt.de/apple/cell-guard/-/issues/98
-        cell.cellId = info["CellId"] as? Int64 ?? 0
+        cell.cellId = (info["CellId"] ?? info["cellID"]) as? Int64 ?? 0
 
         // Although the correct name is EARFCN, here Apple still uses the name UARFCN from UMTS
         // See:
         // - https://en.wikipedia.org/wiki/UMTS#UARFCN
         // - https://de.wikipedia.org/wiki/UTRA_Absolute_Radio_Frequency_Channel_Number
-        cell.frequency = info["UARFCN"] as? Int32 ?? 0
-        cell.band = info["BandInfo"] as? Int32 ?? 0
-        cell.bandwidth = info["Bandwidth"] as? Int32 ?? 0
-        cell.physicalCellId = info["PID"] as? Int32 ?? 0
+        cell.frequency = (info["UARFCN"] ?? info["uarfcn"]) as? Int32 ?? 0
+        cell.band = (info["BandInfo"] ?? info["band"]) as? Int32 ?? 0
+        cell.bandwidth = (info["Bandwidth"] ?? info["bandwidth"]) as? Int32 ?? 0
+        cell.physicalCellId = (info["PID"] ?? info["pid"]) as? Int32 ?? 0
 
         // If a deployment type > 0 is set, the cell supports 5G NSA
         // SA+NSA = 3
-        cell.deploymentType = info["DeploymentType"] as? Int32 ?? 0
+        cell.deploymentType = (info["DeploymentType"] ?? info["deploymentType"]) as? Int32 ?? 0
 
         // kCTCellMonitorDeploymentType = 3 -> 5G NSA
         // From the field test mode (*3001#12345#*) on iOS 16
@@ -212,16 +212,16 @@ extension CCTParser {
 
         // Just a guess, based on the strings of CommCenter (extracted with Ghidra)
 
-        cell.mcc = info["MCC"] as? Int32 ?? 0
-        cell.network = info["MNC"] as? Int32 ?? 0
-        cell.area = info["TAC"] as? Int32 ?? 0
-        cell.cellId = info["CellId"] as? Int64 ?? 0
+        cell.mcc = (info["MCC"] ?? info["mcc"]) as? Int32 ?? 0
+        cell.network = (info["MNC"] ?? info["mnc"]) as? Int32 ?? 0
+        cell.area = (info["TAC"] ?? info["tac"]) as? Int32 ?? 0
+        cell.cellId = (info["CellId"] ?? info["cellID"]) as? Int64 ?? 0
 
         // Usually the frequency is called ARFCN, but Apple apparently appended a prefix NR to it
-        cell.frequency = info["NRARFCN"] as? Int32 ?? 0
-        cell.band = info["BandInfo"] as? Int32 ?? 0
-        cell.bandwidth = info["Bandwidth"] as? Int32 ?? 0
-        cell.physicalCellId = info["PID"] as? Int32 ?? 0
+        cell.frequency = (info["NRARFCN"] ?? info["nrarfcn"]) as? Int32 ?? 0
+        cell.band = (info["BandInfo"] ?? info["band"]) as? Int32 ?? 0
+        cell.bandwidth = (info["Bandwidth"] ?? info["bandwidth"]) as? Int32 ?? 0
+        cell.physicalCellId = (info["PID"] ?? info["pid"]) as? Int32 ?? 0
 
         return cell
     }
