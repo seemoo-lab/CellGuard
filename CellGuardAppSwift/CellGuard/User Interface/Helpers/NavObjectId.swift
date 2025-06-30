@@ -7,6 +7,7 @@
 
 import Foundation
 import CoreData
+import SwiftUI
 
 struct NavObjectId<T: NSManagedObject>: Hashable {
 
@@ -20,9 +21,18 @@ struct NavObjectId<T: NSManagedObject>: Hashable {
         self.id = object.objectID
     }
 
-    var object: T {
-        // TODO: The object might might not exist ?
-        PersistenceController.shared.container.viewContext.object(with: id) as! T
+    var object: T? {
+        // The object might got removed while the new view was built
+        PersistenceController.shared.container.viewContext.object(with: id) as? T
+    }
+
+    @ViewBuilder
+    func ensure<Children: View>(@ViewBuilder children: (_ object: T) -> Children) -> some View {
+        if let object = object {
+            children(object)
+        } else {
+            Text("Ojee")
+        }
     }
 
 }
