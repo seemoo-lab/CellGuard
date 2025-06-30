@@ -29,7 +29,6 @@ struct SummaryTabView: View {
     @State var path = NBNavigationPath()
 
     var body: some View {
-        let _ = print(path)
         NBNavigationStack(path: $path) {
             CombinedRiskCellView()
             .navigationTitle("Summary")

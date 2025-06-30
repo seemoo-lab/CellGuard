@@ -44,6 +44,8 @@
 		CF0591F42DBCF653003CB81C /* SysdiagUrls.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0591F22DBCF653003CB81C /* SysdiagUrls.swift */; };
 		CF07EFA52A3B4B56005B53ED /* OperatorDefinitions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF07EFA42A3B4B56005B53ED /* OperatorDefinitions.swift */; };
 		CF0A5678298A7A910012B2A8 /* VerificationProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0A5677298A7A910012B2A8 /* VerificationProgressView.swift */; };
+		CF0F2EF92E12A59C0053D7E8 /* NavigationBackport in Frameworks */ = {isa = PBXBuildFile; productRef = CF0F2EF82E12A59C0053D7E8 /* NavigationBackport */; };
+		CF0F2EFB2E12A5A70053D7E8 /* NavigationBackport in Frameworks */ = {isa = PBXBuildFile; productRef = CF0F2EFA2E12A5A70053D7E8 /* NavigationBackport */; };
 		CF0FDCB529698E1500A6FFE2 /* SummaryTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0FDCB429698E1500A6FFE2 /* SummaryTabView.swift */; };
 		CF0FDCB729699E5100A6FFE2 /* MapTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0FDCB629699E5100A6FFE2 /* MapTabView.swift */; };
 		CF0FDCBB29699E8A00A6FFE2 /* HomeTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0FDCBA29699E8A00A6FFE2 /* HomeTabView.swift */; };
@@ -74,8 +76,6 @@
 		CF26102D2E02B49200F6440C /* LabelNumberField.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF26102B2E02B49200F6440C /* LabelNumberField.swift */; };
 		CF26102F2E02F6AD00F6440C /* OperatorLookupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF26102E2E02F6AD00F6440C /* OperatorLookupView.swift */; };
 		CF2610302E02F6AD00F6440C /* OperatorLookupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF26102E2E02F6AD00F6440C /* OperatorLookupView.swift */; };
-		CF2610332E034C0700F6440C /* NavigationBackport in Frameworks */ = {isa = PBXBuildFile; productRef = CF2610322E034C0700F6440C /* NavigationBackport */; };
-		CF2610352E034C1200F6440C /* NavigationBackport in Frameworks */ = {isa = PBXBuildFile; productRef = CF2610342E034C1200F6440C /* NavigationBackport */; };
 		CF2610372E034F1C00F6440C /* SummaryNavigationPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2610362E034F1C00F6440C /* SummaryNavigationPath.swift */; };
 		CF2610382E034F1C00F6440C /* SummaryNavigationPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2610362E034F1C00F6440C /* SummaryNavigationPath.swift */; };
 		CF2631D42C13127C0076AE33 /* AdvancedSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2631D32C13127C0076AE33 /* AdvancedSettingsView.swift */; };
@@ -654,7 +654,7 @@
 				CFB6CF902BD122FA00EAB7B4 /* AcknowList in Frameworks */,
 				CFB6CF912BD122FA00EAB7B4 /* Atomics in Frameworks */,
 				CFB6CF922BD122FA00EAB7B4 /* Regex in Frameworks */,
-				CF2610352E034C1200F6440C /* NavigationBackport in Frameworks */,
+				CF0F2EFB2E12A5A70053D7E8 /* NavigationBackport in Frameworks */,
 				CFB6CF932BD122FA00EAB7B4 /* CSV in Frameworks */,
 				CF90FE7F2C7E39AE0052A7AA /* NIOCore in Frameworks */,
 				CFB6CF942BD122FA00EAB7B4 /* ZIPFoundation in Frameworks */,
@@ -673,7 +673,7 @@
 				CFFF19E12BC6D045004E40CE /* AcknowList in Frameworks */,
 				CF8D33212AC194A4009CA3F0 /* Atomics in Frameworks */,
 				CF9EEEE62B347A7000F9B6D8 /* Regex in Frameworks */,
-				CF2610332E034C0700F6440C /* NavigationBackport in Frameworks */,
+				CF0F2EF92E12A59C0053D7E8 /* NavigationBackport in Frameworks */,
 				CFA632552AB3501800D46025 /* CSV in Frameworks */,
 				CFB86D5A2C7C84FE0072BEFC /* NIOCore in Frameworks */,
 				CFA632582AB3503400D46025 /* ZIPFoundation in Frameworks */,
@@ -1263,7 +1263,7 @@
 				CFB6CF1C2BD122FA00EAB7B4 /* AcknowList */,
 				CF90FE7E2C7E39AE0052A7AA /* NIOCore */,
 				CFFF5F082DE097430086E62E /* SwiftGzip */,
-				CF2610342E034C1200F6440C /* NavigationBackport */,
+				CF0F2EFA2E12A5A70053D7E8 /* NavigationBackport */,
 			);
 			productName = CellGuard;
 			productReference = CFB6CFA42BD122FA00EAB7B4 /* CellGuard Jailbreak.app */;
@@ -1296,7 +1296,7 @@
 				CFFF19E02BC6D045004E40CE /* AcknowList */,
 				CFB86D592C7C84FE0072BEFC /* NIOCore */,
 				CFFF5F0A2DE0974D0086E62E /* SwiftGzip */,
-				CF2610322E034C0700F6440C /* NavigationBackport */,
+				CF0F2EF82E12A59C0053D7E8 /* NavigationBackport */,
 			);
 			productName = CellGuard;
 			productReference = CFD023332961A10D00AA5A1C /* CellGuard AppStore.app */;
@@ -1382,7 +1382,7 @@
 				CFB86D582C7C84FE0072BEFC /* XCRemoteSwiftPackageReference "swift-nio" */,
 				CFE725152D8317DD0048C057 /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */,
 				CFE6C35C2DE080070056BE92 /* XCRemoteSwiftPackageReference "swift-gzip" */,
-				CF2610312E034C0700F6440C /* XCRemoteSwiftPackageReference "NavigationBackport" */,
+				CF0F2EF72E12A59C0053D7E8 /* XCRemoteSwiftPackageReference "NavigationBackport" */,
 			);
 			productRefGroup = CFD023342961A10D00AA5A1C /* Products */;
 			projectDirPath = "";
@@ -2385,20 +2385,20 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		CF0F2EF72E12A59C0053D7E8 /* XCRemoteSwiftPackageReference "NavigationBackport" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/johnpatrickmorgan/NavigationBackport.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.11.4;
+			};
+		};
 		CF2002EB2A2F3244000922E6 /* XCRemoteSwiftPackageReference "BinarySwift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Szaq/BinarySwift";
 			requirement = {
 				branch = master;
 				kind = branch;
-			};
-		};
-		CF2610312E034C0700F6440C /* XCRemoteSwiftPackageReference "NavigationBackport" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/johnpatrickmorgan/NavigationBackport";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.11.3;
 			};
 		};
 		CF57561E2B2F266700C7C60A /* XCRemoteSwiftPackageReference "SWCompression" */ = {
@@ -2548,20 +2548,20 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		CF0F2EF82E12A59C0053D7E8 /* NavigationBackport */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CF0F2EF72E12A59C0053D7E8 /* XCRemoteSwiftPackageReference "NavigationBackport" */;
+			productName = NavigationBackport;
+		};
+		CF0F2EFA2E12A5A70053D7E8 /* NavigationBackport */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CF0F2EF72E12A59C0053D7E8 /* XCRemoteSwiftPackageReference "NavigationBackport" */;
+			productName = NavigationBackport;
+		};
 		CF2002EC2A2F3244000922E6 /* BinarySwift */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = CF2002EB2A2F3244000922E6 /* XCRemoteSwiftPackageReference "BinarySwift" */;
 			productName = BinarySwift;
-		};
-		CF2610322E034C0700F6440C /* NavigationBackport */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = CF2610312E034C0700F6440C /* XCRemoteSwiftPackageReference "NavigationBackport" */;
-			productName = NavigationBackport;
-		};
-		CF2610342E034C1200F6440C /* NavigationBackport */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = CF2610312E034C0700F6440C /* XCRemoteSwiftPackageReference "NavigationBackport" */;
-			productName = NavigationBackport;
 		};
 		CF57561F2B2F266700C7C60A /* SWCompression */ = {
 			isa = XCSwiftPackageProductDependency;
