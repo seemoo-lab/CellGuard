@@ -45,6 +45,8 @@ struct CellListView: View {
                 }
             }
         }
+        // TODO: https://stackoverflow.com/questions/76268363/navigationstack-push-animation-disappears-after-presenting-a-view-with-sheet-mo
+        // Fix by moving up
         .sheet(isPresented: $isShowingDateSheet) {
             SelectCellDateView(
                 settings: $settings,
@@ -236,7 +238,7 @@ private struct GroupedNavigationLink: View {
     let cellMeasurements: GroupedMeasurements
 
     var body: some View {
-        NBNavigationLink(
+        ListNavigationLink(
             // The first entry should also update to include newer cell measurements
             // The init method of the GroupedMeasurement class guarantees that each instance contains at least one measurement
             value: CellDetailsNavigation(cell: .init(object: cellMeasurements.measurements.first!), predicate: cellMeasurements.detailsPredicate())

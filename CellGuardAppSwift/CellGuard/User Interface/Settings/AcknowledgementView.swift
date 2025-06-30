@@ -32,10 +32,10 @@ struct AcknowledgementView: View {
 
     var body: some View {
         List {
-            NBNavigationLink(value: SummaryNavigationPath.acknowledgementsSwift) {
+            ListNavigationLink(value: SummaryNavigationPath.acknowledgementsSwift) {
                 Text("Swift")
             }
-            NBNavigationLink(value: SummaryNavigationPath.acknowledgementsRust) {
+            ListNavigationLink(value: SummaryNavigationPath.acknowledgementsRust) {
                 Text("Rust")
             }
         }

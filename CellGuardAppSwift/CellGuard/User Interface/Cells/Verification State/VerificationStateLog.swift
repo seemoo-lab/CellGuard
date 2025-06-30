@@ -203,11 +203,11 @@ private struct LogRelatedPacketsView: View {
     var body: some View {
         List(packets, id: \.id) { packet in
             if let qmiPacket = packet as? PacketQMI {
-                NBNavigationLink(value: NavObjectId(object: qmiPacket)) {
+                ListNavigationLink(value: NavObjectId(object: qmiPacket)) {
                     PacketCell(packet: packet, customInfo: customInfo(packet))
                 }
             } else if let ariPacket = packet as? PacketARI {
-                NBNavigationLink(value: NavObjectId(object: ariPacket)) {
+                ListNavigationLink(value: NavObjectId(object: ariPacket)) {
                     PacketCell(packet: packet, customInfo: customInfo(packet))
                 }
             }

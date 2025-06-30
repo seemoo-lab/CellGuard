@@ -43,10 +43,10 @@ struct SettingsView: View {
             IntroductionSection()
 
             Section {
-                NBNavigationLink(value: SummaryNavigationPath.informationContact) {
+                ListNavigationLink(value: SummaryNavigationPath.informationContact) {
                     Text("Information & Contact")
                 }
-                NBNavigationLink(value: SummaryNavigationPath.settingsAdvanced) {
+                ListNavigationLink(value: SummaryNavigationPath.settingsAdvanced) {
                     Text("Advanced Settings")
                 }
             }
@@ -115,7 +115,7 @@ private struct BasebandProfileSection: View {
     var body: some View {
         if appMode == .manual {
             Section(header: Text("Baseband Profile"), footer: Text("Keep the baseband debug profile on your device up-to-date to collect logs for CellGuard.")) {
-                NBNavigationLink(value: SummaryNavigationPath.debugProfile) {
+                ListNavigationLink(value: SummaryNavigationPath.debugProfile) {
                     Text("Install Profile")
                 }
 
@@ -141,7 +141,7 @@ private struct StudySection: View {
     var body: some View {
         Section(header: Text("Study"), footer: Text("Join our study to improve CellGuard.")) {
             if studyParticipationTimestamp == 0 {
-                NBNavigationLink(value: SummaryNavigationPath.userStudy) {
+                ListNavigationLink(value: SummaryNavigationPath.userStudy) {
                     Text("Participate")
                 }
             } else {
@@ -152,7 +152,7 @@ private struct StudySection: View {
                 }
             }
 
-            NBNavigationLink(value: SummaryNavigationPath.userStudyContributions) {
+            ListNavigationLink(value: SummaryNavigationPath.userStudyContributions) {
                 Text("Your Contributions")
             }
         }

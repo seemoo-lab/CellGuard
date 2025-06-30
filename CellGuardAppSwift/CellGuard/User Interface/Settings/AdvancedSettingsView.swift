@@ -26,13 +26,13 @@ struct AdvancedSettingsView: View {
             PipelineSection()
 
             Section(header: Text("Local Database")) {
-                NBNavigationLink(value: SummaryNavigationPath.dataImport) {
+                ListNavigationLink(value: SummaryNavigationPath.dataImport) {
                     Text("Import Data")
                 }
-                NBNavigationLink(value: SummaryNavigationPath.dataExport) {
+                ListNavigationLink(value: SummaryNavigationPath.dataExport) {
                     Text("Export Data")
                 }
-                NBNavigationLink(value: SummaryNavigationPath.dataDelete) {
+                ListNavigationLink(value: SummaryNavigationPath.dataDelete) {
                     Text("Delete Data")
                 }
             }

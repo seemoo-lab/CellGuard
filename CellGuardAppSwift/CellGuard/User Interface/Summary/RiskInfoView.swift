@@ -36,12 +36,19 @@ struct RiskInfoView: View {
             let subTwoWeeksFromCurrentDate = calendar.date(byAdding: .weekOfYear, value: -2, to: Date()) ?? Date()
             Section(header: Text("Affected Cells")) {
                 // We don't link trusted cells as this list would be too large and cause performance issues (?)
-                NBNavigationLink(value: CellListFilterSettings(status: .anomalous, timeFrame: .pastDays, date: subTwoWeeksFromCurrentDate)) {
+                ListNavigationLink(value: CellListFilterSettings(status: .anomalous, timeFrame: .pastDays, date: subTwoWeeksFromCurrentDate)) {
                     Text(Image(systemName: "shield")) + Text(" Anomalous Cells")
                 }
                 .disabled(!risk.isCausedByCells())
 
-                NBNavigationLink(value: CellListFilterSettings(status: .suspicious, timeFrame: .pastDays, date: subTwoWeeksFromCurrentDate)) {
+                NavigationLink {
+                    Text("test")
+                } label: {
+                    Text("huhu")
+                }
+                .disabled(true)
+
+                ListNavigationLink(value: CellListFilterSettings(status: .suspicious, timeFrame: .pastDays, date: subTwoWeeksFromCurrentDate)) {
                     Text(Image(systemName: "exclamationmark.shield")) + Text(" Suspicious Cells")
                 }
                 .disabled(risk < .high(cellCount: 1))
@@ -49,7 +56,7 @@ struct RiskInfoView: View {
 
             if studyParticipationTimestamp == 0 {
                 Section(header: Text("Study"), footer: Text("The CellGuard team researches the abuse of fake base stations. Please join our study to contribute suspicious cells and help us to improve our methodology for uncovering them!")) {
-                    NBNavigationLink(value: SummaryNavigationPath.userStudy) {
+                    ListNavigationLink(value: SummaryNavigationPath.userStudy) {
                         if #available(iOS 17, *) {
                             Text(Image(systemName: "pencil.and.list.clipboard")) + Text(" Participate")
                         } else {
@@ -60,7 +67,7 @@ struct RiskInfoView: View {
                 }
             } else {
                 Section(header: Text("Study"), footer: Text("Thank you for contributing to the CellGuard study. Your input will help us improve our metrics and uncover fake base station abuse.")) {
-                    NBNavigationLink(value: SummaryNavigationPath.userStudyContributions) {
+                    ListNavigationLink(value: SummaryNavigationPath.userStudyContributions) {
                         Text("Your Contributions")
                     }
                 }

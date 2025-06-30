@@ -11,7 +11,7 @@ import NavigationBackport
 struct StudyContributionsView: View {
     var body: some View {
         List {
-            NBNavigationLink(value: CellListFilterSettings(
+            ListNavigationLink(value: CellListFilterSettings(
                 study: .submitted,
                 timeFrame: .pastDays,
                 date: Date.distantPast
@@ -19,7 +19,7 @@ struct StudyContributionsView: View {
                 Text("Cells")
             }
 
-            NBNavigationLink(value: SummaryNavigationPath.userStudyScoresWeekly) {
+            ListNavigationLink(value: SummaryNavigationPath.userStudyScoresWeekly) {
                 Text("Weekly Measurements")
             }
         }

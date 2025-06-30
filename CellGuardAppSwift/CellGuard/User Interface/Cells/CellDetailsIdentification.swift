@@ -60,7 +60,7 @@ private struct CellIdentificationGSM: View {
 
             KeyValueListRow(key: "Antennas", value: sector == 0 ? "Omnidirectional" : "Bi- or tridirectional")
 
-            NBNavigationLink(value: CellDetailsTowerNavigation(technology: .GSM, country: country, network: network, area: area, baseStation: bts)) {
+            ListNavigationLink(value: CellDetailsTowerNavigation(technology: .GSM, country: country, network: network, area: area, baseStation: bts)) {
                 Text("Show Details")
             }
         }
@@ -84,7 +84,7 @@ private struct CellIdentificationUMTS: View {
             // Cell ID (CID) -> 16 Bits
             KeyValueListRow(key: "Cell ID", value: String(cellId))
 
-            NBNavigationLink(value: CellDetailsTowerNavigation(technology: .UMTS, country: country, network: network, area: area, baseStation: rnc)) {
+            ListNavigationLink(value: CellDetailsTowerNavigation(technology: .UMTS, country: country, network: network, area: area, baseStation: rnc)) {
                 Text("Show Details")
             }
         }
@@ -108,7 +108,7 @@ private struct CellIdentificationLTE: View {
             // Sector ID -> 8 Bits
             KeyValueListRow(key: "Sector ID", value: String(sector))
 
-            NBNavigationLink(value: CellDetailsTowerNavigation(technology: .LTE, country: country, network: network, area: area, baseStation: eNodeB)) {
+            ListNavigationLink(value: CellDetailsTowerNavigation(technology: .LTE, country: country, network: network, area: area, baseStation: eNodeB)) {
                 Text("Show Details")
             }
         }
@@ -156,7 +156,7 @@ private struct CellIdentificationNR: View {
                 )
             }
 
-            NBNavigationLink(value: CellDetailsTowerNavigation(technology: .NR, country: country, network: network, area: area, baseStation: gNodeB, bitCount: sectorIdLength)) {
+            ListNavigationLink(value: CellDetailsTowerNavigation(technology: .NR, country: country, network: network, area: area, baseStation: gNodeB, bitCount: sectorIdLength)) {
                 Text("Show Details")
             }
         }
