@@ -12,14 +12,14 @@ You'll need a Rust toolchain on your system to build the app's native libraries.
 # Install Rust using rustup (https://www.rust-lang.org/tools/install)
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 # Install additional iOS targets (64 bit for real device & simulator):
-rustup target add aarch64-apple-ios x86_64-apple-ios
+rustup target add aarch64-apple-ios aarch64-apple-ios-sim x86_64-apple-ios
 # Install cargo-lipo
 cargo install cargo-lipo cargo-bundle-licenses
 ```
 
 ## Update Dependencies
 
-To update the Rust dependencies run the following commands from this directory.
+To update the Rust dependencies run the following commands from this directory (i.e., `/CellGuardAppRust/`).
 ```sh
 # Update Rust dependencies with cargo package manager
 cargo update
