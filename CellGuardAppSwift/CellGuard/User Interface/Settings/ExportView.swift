@@ -96,6 +96,7 @@ struct ExportView: View {
             case .alsCells: exportProgressALSCells = progress
             case .locations: exportProgressLocations = progress
             case .packets: exportProgressPackets = progress
+            case .connectivityEvents: break
             case .info: break
             }
         } completion: { result in

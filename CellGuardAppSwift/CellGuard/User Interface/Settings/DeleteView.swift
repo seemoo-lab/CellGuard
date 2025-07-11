@@ -51,6 +51,7 @@ struct DeleteView: View {
     @State private var alsCells: Int = 0
     @State private var locations: Int = 0
     @State private var packets: Int = 0
+    @State private var connectivityEvents: Int = 0
 
     // We fetch the database size in intervals as live updates wouldn't be possible
     @State private var databaseSize: UInt64 = 0
@@ -59,6 +60,7 @@ struct DeleteView: View {
     @State private var doDeleteALSCache = true
     @State private var doDeleteLocations = true
     @State private var doDeletePackets = true
+    @State private var doDeleteConnectivityEvents = true
 
     @State private var isDeletionInProgress = false
     @State private var deleteAlert: DeleteAlert?
@@ -103,6 +105,11 @@ struct DeleteView: View {
                     Text("Packets (\(packets))")
                         .transition(.opacity)
                         .id("DeleteView-Packets-\(packets)")
+                }
+                Toggle(isOn: $doDeleteConnectivityEvents) {
+                    Text("Connectivity Events (\(connectivityEvents))")
+                        .transition(.opacity)
+                        .id("DeleteView-ConnectivityEvents-\(connectivityEvents)")
                 }
             }
             .disabled(isDeletionInProgress)
@@ -219,7 +226,8 @@ struct DeleteView: View {
             PersistenceCategory.connectedCells: doDeleteCells,
             PersistenceCategory.alsCells: doDeleteALSCache,
             PersistenceCategory.locations: doDeleteLocations,
-            PersistenceCategory.packets: doDeletePackets
+            PersistenceCategory.packets: doDeletePackets,
+            PersistenceCategory.connectivityEvents: doDeleteConnectivityEvents
         ].filter { $0.value }.map { $0.key }
 
         PersistenceController.shared.deleteDataInBackground(categories: deletionCategories) { result in
@@ -243,6 +251,7 @@ struct DeleteView: View {
             let alsCells = persistence.countEntitiesOf(CellALS.fetchRequest()) ?? self.alsCells
             let locations = persistence.countEntitiesOf(LocationUser.fetchRequest()) ?? self.locations
             let packets = (persistence.countEntitiesOf(PacketQMI.fetchRequest()) ?? 0) + (persistence.countEntitiesOf(PacketARI.fetchRequest()) ?? 0)
+            let connectivityEvents = persistence.countEntitiesOf(ConnectivityEvent.fetchRequest()) ?? self.connectivityEvents
 
             // Calculate the size
             let size = PersistenceController.shared.size()
@@ -254,6 +263,7 @@ struct DeleteView: View {
                     self.alsCells = alsCells
                     self.locations = locations
                     self.packets = packets
+                    self.connectivityEvents = connectivityEvents
                     self.databaseSize = size
                 }
             }
