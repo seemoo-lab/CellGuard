@@ -88,6 +88,7 @@ struct ImportView: View {
     @State private var importStatusALSCells: ImportStatus = .none
     @State private var importStatusLocations: ImportStatus = .none
     @State private var importStatusPackets: ImportStatus = .none
+    @State private var importStatusConnectivityEvents: ImportStatus = .none
 
     @State private var importStatusUnarchive: ImportStatus = .none
     @State private var importStatusExtract: ImportStatus = .none
@@ -147,6 +148,7 @@ struct ImportView: View {
                     ImportStatusRow("Cell Cache", $importStatusALSCells)
                     ImportStatusRow("Locations", $importStatusLocations)
                     ImportStatusRow("Packets", $importStatusPackets)
+                    ImportStatusRow("Connectivity Events", $importStatusConnectivityEvents)
                 }
             }
 
@@ -298,6 +300,7 @@ struct ImportView: View {
             importStatusALSCells = .count(counts.alsCells)
             importStatusLocations = .count(counts.locations)
             importStatusPackets = .count(counts.packets)
+            importStatusConnectivityEvents = .count(counts.connectivityEvents)
             importNotices = counts.notices
             Self.logger.info("Successfully imported \(counts.cells?.count ?? 0) cells, \(counts.alsCells?.count ?? 0) ALS cells, \(counts.locations?.count ?? 0) locations, and \(counts.packets?.count ?? 0) packets.")
         } catch {
@@ -362,6 +365,7 @@ struct ImportView: View {
                 self.importStatusALSCells = .none
                 self.importStatusLocations = .none
                 self.importStatusPackets = .none
+                self.importStatusConnectivityEvents = .none
 
                 self.importNotices = notices
             }

@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 70;
+	objectVersion = 56;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -387,6 +387,10 @@
 		ED6F69292DBBC1CC007BFE78 /* UpdateCheckInfoCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED6F69272DBBC1CA007BFE78 /* UpdateCheckInfoCard.swift */; };
 		ED7DB14D2DC785E8007D5314 /* UpdateCheckTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED7DB14C2DC785DA007D5314 /* UpdateCheckTask.swift */; };
 		ED7DB14E2DC785E8007D5314 /* UpdateCheckTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED7DB14C2DC785DA007D5314 /* UpdateCheckTask.swift */; };
+		EDA9FEBA2E1F9AEA00C52409 /* ConnectivityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDA9FEB92E1F9AEA00C52409 /* ConnectivityView.swift */; };
+		EDA9FEBB2E1F9AEA00C52409 /* ConnectivityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDA9FEB92E1F9AEA00C52409 /* ConnectivityView.swift */; };
+		EDA9FED72E1FEB8900C52409 /* ConnectivityFilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDA9FED62E1FEB8900C52409 /* ConnectivityFilterView.swift */; };
+		EDA9FED82E1FEB8900C52409 /* ConnectivityFilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDA9FED62E1FEB8900C52409 /* ConnectivityFilterView.swift */; };
 		EDAD7A042E1D7DA600EBB924 /* QConnectivityEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDAD7A032E1D7D9E00EBB924 /* QConnectivityEvent.swift */; };
 		EDAD7A052E1D7DA600EBB924 /* QConnectivityEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDAD7A032E1D7D9E00EBB924 /* QConnectivityEvent.swift */; };
 		EDAD7A072E1D7F4B00EBB924 /* ConnectivityEventParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDAD7A062E1D7F4100EBB924 /* ConnectivityEventParser.swift */; };
@@ -397,6 +401,10 @@
 		EDAFBFED2D9C0A5A00D7748B /* QmiCellParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDAFBFEB2D9C0A5600D7748B /* QmiCellParser.swift */; };
 		EDAFBFEF2D9C0A6800D7748B /* SampleCellParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDAFBFEE2D9C0A5E00D7748B /* SampleCellParser.swift */; };
 		EDAFBFF02D9C0A6800D7748B /* SampleCellParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDAFBFEE2D9C0A5E00D7748B /* SampleCellParser.swift */; };
+		EDD199112E2106850051424A /* GroupedConnectivityEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDD199102E21067D0051424A /* GroupedConnectivityEvents.swift */; };
+		EDD199122E2106850051424A /* GroupedConnectivityEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDD199102E21067D0051424A /* GroupedConnectivityEvents.swift */; };
+		EDD199142E211E600051424A /* ConnectivityDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDD199132E211E530051424A /* ConnectivityDetailsView.swift */; };
+		EDD199152E211E600051424A /* ConnectivityDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDD199132E211E530051424A /* ConnectivityDetailsView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -614,11 +622,15 @@
 		ED6F69242DBB8D40007BFE78 /* UpdateCheckView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateCheckView.swift; sourceTree = "<group>"; };
 		ED6F69272DBBC1CA007BFE78 /* UpdateCheckInfoCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateCheckInfoCard.swift; sourceTree = "<group>"; };
 		ED7DB14C2DC785DA007D5314 /* UpdateCheckTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateCheckTask.swift; sourceTree = "<group>"; };
+		EDA9FEB92E1F9AEA00C52409 /* ConnectivityView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectivityView.swift; sourceTree = "<group>"; };
+		EDA9FED62E1FEB8900C52409 /* ConnectivityFilterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectivityFilterView.swift; sourceTree = "<group>"; };
 		EDAD7A032E1D7D9E00EBB924 /* QConnectivityEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QConnectivityEvent.swift; sourceTree = "<group>"; };
 		EDAD7A062E1D7F4100EBB924 /* ConnectivityEventParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectivityEventParser.swift; sourceTree = "<group>"; };
 		EDAFBFE82D9C0A4E00D7748B /* AriCellParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AriCellParser.swift; sourceTree = "<group>"; };
 		EDAFBFEB2D9C0A5600D7748B /* QmiCellParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QmiCellParser.swift; sourceTree = "<group>"; };
 		EDAFBFEE2D9C0A5E00D7748B /* SampleCellParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleCellParser.swift; sourceTree = "<group>"; };
+		EDD199102E21067D0051424A /* GroupedConnectivityEvents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupedConnectivityEvents.swift; sourceTree = "<group>"; };
+		EDD199132E211E530051424A /* ConnectivityDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectivityDetailsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -923,6 +935,7 @@
 			isa = PBXGroup;
 			children = (
 				45ECF53F2BF98EB400DD92CF /* Introduction */,
+				EDA9FEC52E1FEB1800C52409 /* Baseband */,
 				CF54CCBF2A331E5400961E4D /* Packets */,
 				CF4EE5E0296C51C30069BA5A /* Cells */,
 				CF1DF87B2C175964008F6F40 /* Study */,
@@ -1195,6 +1208,17 @@
 				CF8F3E342BF3C4DE00FC9F43 /* StudyTask.swift */,
 			);
 			path = API;
+			sourceTree = "<group>";
+		};
+		EDA9FEC52E1FEB1800C52409 /* Baseband */ = {
+			isa = PBXGroup;
+			children = (
+				EDD199132E211E530051424A /* ConnectivityDetailsView.swift */,
+				EDD199102E21067D0051424A /* GroupedConnectivityEvents.swift */,
+				EDA9FED62E1FEB8900C52409 /* ConnectivityFilterView.swift */,
+				EDA9FEB92E1F9AEA00C52409 /* ConnectivityView.swift */,
+			);
+			path = Baseband;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1527,6 +1551,7 @@
 				CFB6CF252BD122FA00EAB7B4 /* URLIdentifiable.swift in Sources */,
 				CFEC5E772BD1816B004978FA /* CellGuardURLs.swift in Sources */,
 				CFB6CF262BD122FA00EAB7B4 /* VerificationProgressView.swift in Sources */,
+				EDD199142E211E600051424A /* ConnectivityDetailsView.swift in Sources */,
 				CFB6CF272BD122FA00EAB7B4 /* CellLocationDistance.swift in Sources */,
 				CF1DF87E2C17599D008F6F40 /* StudyContributionsView.swift in Sources */,
 				CFB6CF282BD122FA00EAB7B4 /* PersistenceController.swift in Sources */,
@@ -1582,6 +1607,7 @@
 				CFA83C9D2D9D7EBD00239AB7 /* Icons.swift in Sources */,
 				CFAE881B2C28B9C100092B15 /* StudyClient.swift in Sources */,
 				CF7064F72CC513B500BF8AF9 /* TowerAnnotationView.swift in Sources */,
+				EDA9FEBA2E1F9AEA00C52409 /* ConnectivityView.swift in Sources */,
 				CFB6CF4B2BD122FA00EAB7B4 /* SingleCellMap.swift in Sources */,
 				CFB6CF4C2BD122FA00EAB7B4 /* LocationSource.swift in Sources */,
 				CFB6CF4D2BD122FA00EAB7B4 /* PacketTabView.swift in Sources */,
@@ -1639,6 +1665,7 @@
 				CFEA68ED2C13B0B600F781BC /* InformationContactView.swift in Sources */,
 				CFB6CF702BD122FA00EAB7B4 /* PersistenceCategories.swift in Sources */,
 				CFB6CF712BD122FA00EAB7B4 /* PersistencePreview.swift in Sources */,
+				EDA9FED72E1FEB8900C52409 /* ConnectivityFilterView.swift in Sources */,
 				CFAE88152C2887C400092B15 /* VerificationStateLog.swift in Sources */,
 				CFB6CF722BD122FA00EAB7B4 /* PacketQMI+CoreDataClass.swift in Sources */,
 				CFB6CF732BD122FA00EAB7B4 /* PacketARI+CoreDataClass.swift in Sources */,
@@ -1655,6 +1682,7 @@
 				CFB6CF7D2BD122FA00EAB7B4 /* TrackedUserLocation.swift in Sources */,
 				CFB6CF7E2BD122FA00EAB7B4 /* LocationDataManager.swift in Sources */,
 				CF7064F12CC5107600BF8AF9 /* TowerCellMap.swift in Sources */,
+				EDD199122E2106850051424A /* GroupedConnectivityEvents.swift in Sources */,
 				CFB6CF7F2BD122FA00EAB7B4 /* QMIContentParser.swift in Sources */,
 				CF2FF68E2BF296EE006E2DF4 /* RiskInfoView.swift in Sources */,
 				CF0157C32CC3FFD1003ACAC4 /* CellIdentification.swift in Sources */,
@@ -1705,6 +1733,7 @@
 				CF26102F2E02F6AD00F6440C /* OperatorLookupView.swift in Sources */,
 				CFD023402961A10D00AA5A1C /* PersistenceController.swift in Sources */,
 				45ECF5752BFC025300DD92CF /* DebugProfileDetailedView.swift in Sources */,
+				EDD199112E2106850051424A /* GroupedConnectivityEvents.swift in Sources */,
 				CFCE7A8C29817E2500E28787 /* ALSTechnology.swift in Sources */,
 				CFDF5D85297F09D3000708A8 /* DatabaseAnnotation.swift in Sources */,
 				CF86C7992A6AD51D002EC9B6 /* GroupedMeasurements.swift in Sources */,
@@ -1743,8 +1772,10 @@
 				CFBEC8542BC7F7D70021C0B9 /* Cell.swift in Sources */,
 				CFA09CF92A73D4B000D16832 /* SwiftExtensions.swift in Sources */,
 				CF54CCC32A331ED300961E4D /* PacketCell.swift in Sources */,
+				EDA9FED82E1FEB8900C52409 /* ConnectivityFilterView.swift in Sources */,
 				CFA83C982D9D78E300239AB7 /* CountryDetailsView.swift in Sources */,
 				45ECF56F2BFBFDFB00DD92CF /* NoneModeCard.swift in Sources */,
+				EDD199152E211E600051424A /* ConnectivityDetailsView.swift in Sources */,
 				CF54CCC12A331E7100961E4D /* PacketQMIDetailsView.swift in Sources */,
 				45ED01B62D445ABA0023A090 /* ProfileTask.swift in Sources */,
 				CF53DB42297473E8005DCD10 /* CoreLocationALS.pb.swift in Sources */,
@@ -1754,6 +1785,7 @@
 				45ECF5722BFC00D100DD92CF /* DebugProfileCard.swift in Sources */,
 				CFA83C9E2D9D7EBD00239AB7 /* Icons.swift in Sources */,
 				CFAE881A2C28B9C100092B15 /* StudyClient.swift in Sources */,
+				EDA9FEBB2E1F9AEA00C52409 /* ConnectivityView.swift in Sources */,
 				CF7064F62CC513B500BF8AF9 /* TowerAnnotationView.swift in Sources */,
 				CFDF5D7F297F05A0000708A8 /* SingleCellMap.swift in Sources */,
 				CF5EF92A2979B8D800C4F50A /* LocationSource.swift in Sources */,

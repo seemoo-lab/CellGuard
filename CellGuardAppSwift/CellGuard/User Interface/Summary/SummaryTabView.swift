@@ -26,6 +26,7 @@ import SwiftUI
 struct SummaryTabView: View {
 
     @State private var showingCellList = false
+    @State private var showingConnectivity = false
     #if STATS_VIEW
     @State private var showingStats = false
     #endif
@@ -40,6 +41,12 @@ struct SummaryTabView: View {
             VStack {
                 NavigationLink(isActive: $showingCellList) {
                     CellListView()
+                } label: {
+                    EmptyView()
+                }
+
+                NavigationLink(isActive: $showingConnectivity) {
+                    ConnectivityView()
                 } label: {
                     EmptyView()
                 }
@@ -80,6 +87,11 @@ struct SummaryTabView: View {
                             showingCellList = true
                         } label: {
                             Label("Cells", systemImage: "wave.3.left")
+                        }
+                        Button {
+                            showingConnectivity = true
+                        } label: {
+                            Label("Baseband", systemImage: "iphone.radiowaves.left.and.right")
                         }
                         #if STATS_VIEW
                         // Disable stats for the beta test as it is not finished.

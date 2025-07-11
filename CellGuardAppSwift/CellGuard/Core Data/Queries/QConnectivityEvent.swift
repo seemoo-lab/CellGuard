@@ -42,7 +42,7 @@ extension PersistenceController {
             }
 
             try context.save()
-            
+
             logger.debug("Successfully inserted \(importCount) connectivity events.")
             return importCount
         } ?? 0

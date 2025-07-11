@@ -21,14 +21,14 @@ struct CPTCollector {
         self.client = client
     }
 
-    func collectAndStore() async throws -> (Int, Int, Int) {
+    func collectAndStore() async throws -> (Int, Int, Int, Int) {
         return try await withCheckedThrowingContinuation { completion in
             client.queryPackets { result in
                 do {
                     let packets = try result.get()
-                    let (qmiPackets, ariPackets, cells) = try Self.store(packets)
+                    let (qmiPackets, ariPackets, cells, connectivity) = try Self.store(packets)
                     Self.logger.debug("Imported \(qmiPackets) QMI, \(ariPackets) ARI packets, and \(cells.count) Cells")
-                    completion.resume(returning: (qmiPackets, ariPackets, cells.count))
+                    completion.resume(returning: (qmiPackets, ariPackets, cells.count, connectivity))
                 } catch {
                     // TODO: Count failures and if they exceed a given threshold, output a warning notification
                     Self.logger.warning("Can't request packets from tweak: \(error)")
@@ -38,7 +38,7 @@ struct CPTCollector {
         }
     }
 
-    public static func store(_ packets: [CPTPacket]) throws -> (Int, Int, [CCTCellProperties]) {
+    public static func store(_ packets: [CPTPacket]) throws -> (Int, Int, [CCTCellProperties], Int) {
         do {
             var qmiPackets: [(CPTPacket, ParsedQMIPacket)] = []
             var ariPackets: [(CPTPacket, ParsedARIPacket)] = []
@@ -79,7 +79,7 @@ struct CPTCollector {
             let connectivityPacketRefs = (qmiPacketRefs["connectivity"] ?? []) + (ariPacketRefs["connectivity"] ?? [])
             let importedConnectivityEvents = try PersistenceController.shared.importConnectivityEvents(from: connectivityPacketRefs)
 
-            return (qmiPackets.count, ariPackets.count, importedCells)
+            return (qmiPackets.count, ariPackets.count, importedCells, importedConnectivityEvents)
         } catch {
             Self.logger.warning("Can't import packets: \(error)")
             throw error
