@@ -79,6 +79,9 @@ struct PacketConstants {
     static let qmiConnectivitySetOperatingModeMessageId: UInt16 = 0x002e
     static let qmiConnectivitySetOperationModeTlvType: UInt8 = 0x01
 
+    static let ariGroupNetPlmn = 7
+    static let ariTypeRegistrationInfo = 769
+    static let ariRegistrationInfoTlvStatusType: UInt8 = 0x02
 }
 
 func ariMsgHasInstance(group: UInt8, type: UInt16) -> Bool {

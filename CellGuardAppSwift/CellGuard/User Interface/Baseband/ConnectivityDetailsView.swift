@@ -83,7 +83,12 @@ private struct ConnectivityDetails: View {
                 Section(header: Text("Connectivity Properties")) {
                     CellDetailsRow("Status", event.active ? "Connected" : "Disconnected")
                     CellDetailsRow("SIM Slot", Int(event.simSlot))
-                    CellDetailsRow("Baseband Mode", Int(event.basebandMode))
+                    if event.basebandMode >= 0 {
+                        CellDetailsRow("Baseband Mode", Int(event.basebandMode))
+                    }
+                    if event.registrationStatus >= 0 {
+                        CellDetailsRow("Registration Status", Int(event.registrationStatus))
+                    }
 
                     if let qmiPacket = event.packetQmi {
                         NavigationLink { PacketQMIDetailsView(packet: qmiPacket) } label: { PacketCell(packet: qmiPacket) }

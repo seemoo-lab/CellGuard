@@ -12,6 +12,8 @@ enum ConnectivityParserError: Error {
     case invalidDirection
     case invalidQmiMessage
     case missingQmiOperationMode
+    case invalidAriPacket
+    case missingRegistrationInfo
 }
 
 struct ParsedConnectivityEvent {
@@ -20,6 +22,7 @@ struct ParsedConnectivityEvent {
 
     var simSlot: UInt8?
     var basebandMode: UInt8?
+    var registrationStatus: UInt8?
 
     func applyTo(connectivityEvent: ConnectivityEvent) {
         connectivityEvent.active = self.active
@@ -27,6 +30,7 @@ struct ParsedConnectivityEvent {
 
         connectivityEvent.simSlot = self.simSlot != nil ? Int16(self.simSlot!) : 0
         connectivityEvent.basebandMode = self.basebandMode != nil ? Int16(self.basebandMode!) : -1
+        connectivityEvent.registrationStatus = self.registrationStatus != nil ? Int16(self.registrationStatus!) : -1
     }
 }
 
@@ -48,7 +52,7 @@ struct ConnectivityEventParser {
                 return false
             }
         } else if let ari = ari {
-            // ToDo
+            return ari.group == PacketConstants.ariGroupNetPlmn && ari.type == PacketConstants.ariTypeRegistrationInfo
         }
         return false
     }
@@ -108,5 +112,46 @@ struct ConnectivityEventParser {
         let mode: UInt8 = try data.get(0)
         let active = mode == 0
         return ParsedConnectivityEvent(active: active, timestamp: timestamp, simSlot: simSlot, basebandMode: mode)
+    }
+
+    /*
+     We currently just rely on a single ARI packet type to determine connectivity events:
+     1) "IBINetRegistrationInfoIndCb" packets: SIM-specific
+     */
+    func parseAriPacket(_ data: Data, timestamp: Date, simSlot: UInt8) throws -> ParsedConnectivityEvent {
+        let parsedPacket = try ParsedARIPacket(data: data)
+        return try parseAriRegistrationInfo(parsedPacket, timestamp: timestamp, simSlot: simSlot)
+    }
+
+    /*
+     See https://github.com/seemoo-lab/aristoteles
+     ["IBINetRegistrationStatus"] = {
+         [0] = "IBI_NET_REGISTRATION_STATUS_NORMAL_SERVICE",
+         [1] = "IBI_NET_REGISTRATION_STATUS_FAILURE",
+         [2] = "IBI_NET_REGISTRATION_STATUS_LIMITED_SERVICE",
+         [3] = "IBI_NET_REGISTRATION_STATUS_NO_SERVICE",
+         [4] = "IBI_NET_REGISTRATION_STATUS_AT_NOT_REGISTERED",
+         [5] = "IBI_NET_REGISTRATION_STATUS_SERVICE_DISABLED",
+         [6] = "IBI_NET_REGISTRATION_STATUS_SERVICE_DETACHED",
+         [7] = "IBI_NET_REGISTRATION_STATUS_PS_EMERGENCY",
+         [8] = "IBI_NET_REGISTRATION_STATUS_PS_EMERGENCY_LIMITED",
+         [9] = "IBI_NET_REGISTRATION_STATUS_REGISTERED_SMS_ONLY",
+         [10] = "IBI_NET_REGISTRATION_STATUS_REGISTRATION_IN_PROGRESS",
+     },
+     */
+    func parseAriRegistrationInfo(_ parsedPacket: ParsedARIPacket, timestamp: Date, simSlot: UInt8) throws -> ParsedConnectivityEvent {
+        if parsedPacket.header.group != PacketConstants.ariGroupNetPlmn || parsedPacket.header.type != PacketConstants.ariTypeRegistrationInfo {
+            throw ConnectivityParserError.invalidAriPacket
+        }
+
+        guard let statusTlv = parsedPacket.findTlvValue(type: PacketConstants.ariRegistrationInfoTlvStatusType) else {
+            throw ConnectivityParserError.missingRegistrationInfo
+        }
+
+        let data = BinaryData(data: statusTlv.data, bigEndian: false)
+        let status: UInt32 = try data.get(0)
+        let active = ![3, 5, 6].contains(status)
+
+        return ParsedConnectivityEvent(active: active, timestamp: timestamp, simSlot: simSlot, registrationStatus: UInt8(status))
     }
 }

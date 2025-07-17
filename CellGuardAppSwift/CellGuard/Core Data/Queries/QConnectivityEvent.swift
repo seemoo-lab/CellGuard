@@ -34,8 +34,11 @@ extension PersistenceController {
                    let event = try? eventParser.parseQmiPacket(packetData, timestamp: collectedTimestamp, simSlot: UInt8(qmiPacket.simSlotID)) {
                     event.applyTo(connectivityEvent: dbEvent)
                     dbEvent.packetQmi = qmiPacket
+                } else if let ariPacket = packet as? PacketARI,
+                          let event = try? eventParser.parseAriPacket(packetData, timestamp: collectedTimestamp, simSlot: UInt8(ariPacket.simSlotID)) {
+                    event.applyTo(connectivityEvent: dbEvent)
+                    dbEvent.packetAri = ariPacket
                 }
-                // ToDo: ARI
 
                 dbEvent.imported = importedDate
                 importCount += 1
