@@ -187,7 +187,7 @@ struct PersistenceCSVExporter {
         case .alsCells: return try writeAlsCells(url: url, progress: progress)
         case .locations: return try writeLocations(url: url, progress: progress)
         case .packets: return try writePackets(url: url, progress: progress)
-        case .connectivityEvents: return 0
+        case .connectivityEvents: return try writeConnectivityEvents(url: url, progress: progress)
         }
     }
 
@@ -374,6 +374,26 @@ struct PersistenceCSVExporter {
                         csvInt(result.simSlotID),
                         csvString(result.proto),
                         csvString(result.data?.base64EncodedString())
+                    ])
+                }
+            ]
+        )
+    }
+
+    private func writeConnectivityEvents(url: URL, progress: CSVProgressFunc) throws -> Int {
+        return try writeData(
+            url: url,
+            category: .connectivityEvents,
+            progress: progress,
+            header: ["collected", "simSlot", "active", "basebandMode", "registrationStatus"],
+            writers: [
+                DatabaseFileElementWriter(ConnectivityEvent.fetchRequest) { csv, result in
+                    try csv.write(row: [
+                        csvDate(result.collected),
+                        csvInt(result.simSlot),
+                        csvBool(result.active),
+                        csvInt(result.basebandMode),
+                        csvInt(result.registrationStatus)
                     ])
                 }
             ]
