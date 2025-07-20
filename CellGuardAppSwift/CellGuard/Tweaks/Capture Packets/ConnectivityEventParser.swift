@@ -10,10 +10,10 @@ import BinarySwift
 
 enum ConnectivityParserError: Error {
     case invalidDirection
-    case invalidQmiMessage
+    case invalidMessage
     case missingQmiOperationMode
     case invalidAriPacket
-    case missingRegistrationInfo
+    case missingRequiredTlv
 }
 
 struct ParsedConnectivityEvent {
@@ -52,7 +52,8 @@ struct ConnectivityEventParser {
                 return false
             }
         } else if let ari = ari {
-            return ari.group == PacketConstants.ariGroupNetPlmn && ari.type == PacketConstants.ariTypeRegistrationInfo
+            return (ari.group == PacketConstants.ariGroupNetPlmn && ari.type == PacketConstants.ariTypeRegistrationInfo) ||
+            (ari.group == PacketConstants.ariGroupBsp && ari.type == PacketConstants.ariTypeCsiModeSet)
         }
         return false
     }
@@ -78,7 +79,7 @@ struct ConnectivityEventParser {
         case (PacketConstants.qmiConnectivityDMSService, PacketConstants.qmiConnectivitySetOperatingModeMessageId):
             return try parseQMISetOperatingModeEvent(parsedPacket, timestamp: timestamp, simSlot: simSlot)
         default:
-            throw ConnectivityParserError.invalidQmiMessage
+            throw ConnectivityParserError.invalidMessage
         }
     }
 
@@ -115,12 +116,21 @@ struct ConnectivityEventParser {
     }
 
     /*
-     We currently just rely on a single ARI packet type to determine connectivity events:
+     We use two different ARI packet types to determine connectivity events:
      1) "IBINetRegistrationInfoIndCb" packets: SIM-specific
+     2) "CsiModeSetReq" packets: Hardware-related
      */
     func parseAriPacket(_ data: Data, timestamp: Date, simSlot: UInt8) throws -> ParsedConnectivityEvent {
         let parsedPacket = try ParsedARIPacket(data: data)
-        return try parseAriRegistrationInfo(parsedPacket, timestamp: timestamp, simSlot: simSlot)
+
+        switch (parsedPacket.header.group, parsedPacket.header.type) {
+        case (PacketConstants.ariGroupNetPlmn, PacketConstants.ariTypeRegistrationInfo):
+            return try parseAriRegistrationInfo(parsedPacket, timestamp: timestamp, simSlot: simSlot)
+        case (PacketConstants.ariGroupBsp, PacketConstants.ariTypeCsiModeSet):
+            return try parseAriCsiMode(parsedPacket, timestamp: timestamp, simSlot: simSlot)
+        default:
+            throw ConnectivityParserError.invalidMessage
+        }
     }
 
     /*
@@ -140,12 +150,8 @@ struct ConnectivityEventParser {
      },
      */
     func parseAriRegistrationInfo(_ parsedPacket: ParsedARIPacket, timestamp: Date, simSlot: UInt8) throws -> ParsedConnectivityEvent {
-        if parsedPacket.header.group != PacketConstants.ariGroupNetPlmn || parsedPacket.header.type != PacketConstants.ariTypeRegistrationInfo {
-            throw ConnectivityParserError.invalidAriPacket
-        }
-
         guard let statusTlv = parsedPacket.findTlvValue(type: PacketConstants.ariRegistrationInfoTlvStatusType) else {
-            throw ConnectivityParserError.missingRegistrationInfo
+            throw ConnectivityParserError.missingRequiredTlv
         }
 
         let data = BinaryData(data: statusTlv.data, bigEndian: false)
@@ -153,5 +159,32 @@ struct ConnectivityEventParser {
         let active = ![3, 5, 6].contains(status)
 
         return ParsedConnectivityEvent(active: active, timestamp: timestamp, simSlot: simSlot, registrationStatus: UInt8(status))
+    }
+
+    /*
+     See libBasebandCommandDrivers.dylib
+     [0] = "Online"
+     [1] = "LowPower", <- Used for Airplane mode
+     [2] = "FactoryTest",
+     [3] = "Offline",
+     [4] = "Reset",
+     [5] = "Shutdown",
+     [6] = "CampOnly",
+     [7] = "Stewie",
+     The OpMode is converted for sending it to the baseband. The conversion depends on the radio vendor. We use the following mapping:
+     0 -> 1, 1 -> 2, 2 -> 4, 3 -> 0, 4 -> 0, 5 -> 6, 6 -> 7
+
+     Internally, also a sub-mode is handled: "Minimal", "Normal", "Airplane", "Calibration", "ProductionTest", "Alarm", "ChargeOnly", "ForcedSleep".
+     */
+    func parseAriCsiMode(_ parsedPacket: ParsedARIPacket, timestamp: Date, simSlot: UInt8) throws -> ParsedConnectivityEvent {
+        guard let modeTlv = parsedPacket.findTlvValue(type: PacketConstants.ariTypeCsiModeSetTlvModeType) else {
+            throw ConnectivityParserError.missingRequiredTlv
+        }
+
+        let data = BinaryData(data: modeTlv.data, bigEndian: false)
+        let mode: UInt32 = try data.get(0)
+        let active = ![0, 2, 6].contains(mode)
+
+        return ParsedConnectivityEvent(active: active, timestamp: timestamp, simSlot: simSlot, basebandMode: UInt8(mode))
     }
 }
