@@ -115,7 +115,9 @@ private struct CellDetailsCell: View {
 
     var body: some View {
         let simSlotsSet = Set(verifyStates.compactMap { $0.cell?.simSlotID })
-        let simSlots = simSlotsSet.map { "\($0)" }.sorted().joined(separator: ",")
+        let simSlots = simSlotsSet
+            .map { $0 == 0 ? "None" : "\($0)" }
+            .sorted().joined(separator: ",")
         Group {
             CellCountryNetworkSection(country: cell.country, network: cell.network, techFormatter: techFormatter)
             Section(header: Text("Technology & Region")) {
