@@ -83,7 +83,8 @@ struct ALSQueryCell: CustomStringConvertible, Equatable, Hashable {
     }
 
     init(fromGsmProto proto: AlsProto_GsmCell) {
-        self.technology = .GSM
+        // If the cell has a Primary Scrambling Code (PSC), it's a UMTS cell
+        self.technology = proto.hasPsc ? .UMTS : .GSM
         self.country = proto.mcc
         self.network = proto.mnc
         self.area = proto.lacID
