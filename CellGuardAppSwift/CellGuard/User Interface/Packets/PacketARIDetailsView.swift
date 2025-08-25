@@ -43,7 +43,7 @@ private struct PacketARIDetailsList: View {
         return Group {
             Section(header: Text("Packet")) {
                 PacketDetailsRow("Protocol", packet.proto)
-                PacketDetailsRow("SIM Slot", String(packet.simSlotID))
+                PacketDetailsRow("SIM Slot", packet.simSlotID == 0 ? "None" : String(packet.simSlotID))
                 PacketDetailsRow("Direction", packet.direction ?? "???")
                 PacketDetailsRow("Timestamp", date: packet.collected)
                 PacketDetailsRow("Size", bytes: data.count)
