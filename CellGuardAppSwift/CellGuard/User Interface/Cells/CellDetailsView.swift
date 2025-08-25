@@ -50,14 +50,14 @@ struct CellDetailsView: View {
     private func alsFetchRequest() -> FetchRequest<CellALS> {
         return FetchRequest<CellALS>(
             sortDescriptors: [NSSortDescriptor(keyPath: \CellALS.imported, ascending: false)],
-            predicate: PersistenceController.shared.sameCellPredicate(cell: cell, mergeUMTS: true),
+            predicate: PersistenceController.shared.sameCellPredicate(cell: cell),
             animation: .default
         )
     }
 
     private func tweakFetchRequest() -> FetchRequest<VerificationState> {
         var predicates = [
-            PersistenceController.shared.sameCellPredicate(cell: cell, mergeUMTS: false, prefix: "cell.")
+            PersistenceController.shared.sameCellPredicate(cell: cell, prefix: "cell.")
         ]
 
         // Append custom predicates

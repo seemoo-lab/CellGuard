@@ -54,10 +54,10 @@ struct CellTechnologyFormatter {
         case .OFF: return ""
         case .CDMA: return "Channel"
         case .GSM: return "ARFCN"
-        case .UMTS: return "ARFCN"
+        case .UMTS: return "UARFCN"
         case .SCDMA: return "ARFCN"
         case .LTE: return "EARFCN"
-        case .NR: return "ARFCN"
+        case .NR: return "NR-ARFCN"
         }
     }
 

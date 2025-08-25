@@ -21,7 +21,7 @@ extension PersistenceController {
                 // Check if the ALS cell already exists and only update its attributes in that case
                 let existFetchRequest = CellALS.fetchRequest()
                 existFetchRequest.fetchLimit = 1
-                existFetchRequest.predicate = sameCellPredicate(queryCell: queryCell, mergeUMTS: true)
+                existFetchRequest.predicate = sameCellPredicate(queryCell: queryCell)
                 do {
                     // If the cell exists, we update its attributes but not its location.
                     // This is crucial for adding the PCI & EARFCN to an existing LTE cell.
@@ -79,7 +79,7 @@ extension PersistenceController {
         let fetchRequest = NSFetchRequest<CellALS>()
         fetchRequest.entity = CellALS.entity()
         fetchRequest.fetchLimit = 1
-        fetchRequest.predicate = sameCellPredicate(cell: tweakCell, mergeUMTS: true)
+        fetchRequest.predicate = sameCellPredicate(cell: tweakCell)
 
         do {
             let result = try fetchRequest.execute()
@@ -100,22 +100,18 @@ extension PersistenceController {
         )
     }
 
-    func sameCellPredicate(cell: Cell, mergeUMTS: Bool, prefix: String = "") -> NSPredicate {
-        let technology = mergeUMTS && cell.technology == ALSTechnology.UMTS.rawValue ? ALSTechnology.GSM.rawValue : cell.technology
-
+    func sameCellPredicate(cell: Cell, prefix: String = "") -> NSPredicate {
         return NSPredicate(
             format: "\(prefix)technology = %@ and \(prefix)country = %@ and \(prefix)network = %@ and \(prefix)area = %@ and \(prefix)cell = %@",
-            technology ?? "", cell.country as NSNumber, cell.network as NSNumber,
+            cell.technology ?? "", cell.country as NSNumber, cell.network as NSNumber,
             cell.area as NSNumber, cell.cell as NSNumber
         )
     }
 
-    func sameCellPredicate(queryCell cell: ALSQueryCell, mergeUMTS: Bool) -> NSPredicate {
-        let technology = mergeUMTS && cell.technology == ALSTechnology.UMTS ? ALSTechnology.GSM.rawValue : cell.technology.rawValue
-
+    func sameCellPredicate(queryCell cell: ALSQueryCell) -> NSPredicate {
         return NSPredicate(
             format: "technology = %@ and country = %@ and network = %@ and area = %@ and cell = %@",
-            technology, cell.country as NSNumber, cell.network as NSNumber,
+            cell.technology.rawValue, cell.country as NSNumber, cell.network as NSNumber,
             cell.area as NSNumber, cell.cell as NSNumber
         )
     }

@@ -108,12 +108,12 @@ private struct ConnectedCellInfoCard: View {
 
         self._alsCells = FetchRequest(
             sortDescriptors: [NSSortDescriptor(keyPath: \CellALS.imported, ascending: false)],
-            predicate: PersistenceController.shared.sameCellPredicate(cell: cell, mergeUMTS: true),
+            predicate: PersistenceController.shared.sameCellPredicate(cell: cell),
             animation: .default
         )
         self._tweakCells = FetchRequest(
             sortDescriptors: [NSSortDescriptor(keyPath: \CellTweak.collected, ascending: false)],
-            predicate: PersistenceController.shared.sameCellPredicate(cell: cell, mergeUMTS: false),
+            predicate: PersistenceController.shared.sameCellPredicate(cell: cell),
             animation: .default
         )
     }
