@@ -89,7 +89,6 @@
 		CF2FF6932BF2A3DF006E2DF4 /* StudyClientSamples.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2FF6922BF2A3DF006E2DF4 /* StudyClientSamples.swift */; };
 		CF2FF6942BF2A3DF006E2DF4 /* StudyClientSamples.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2FF6922BF2A3DF006E2DF4 /* StudyClientSamples.swift */; };
 		CF320F5529620B16009BAD18 /* CCTParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF320F5429620B16009BAD18 /* CCTParser.swift */; };
-		CF320F5729621C42009BAD18 /* CCTClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF320F5629621C42009BAD18 /* CCTClientTests.swift */; };
 		CF320F59296225F9009BAD18 /* CCTResponse.txt in Resources */ = {isa = PBXBuildFile; fileRef = CF320F582962208B009BAD18 /* CCTResponse.txt */; };
 		CF4445EC2C29700D00D0ABED /* StudyWeeklyScoresView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF4445EB2C29700D00D0ABED /* StudyWeeklyScoresView.swift */; };
 		CF4445ED2C29700D00D0ABED /* StudyWeeklyScoresView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF4445EB2C29700D00D0ABED /* StudyWeeklyScoresView.swift */; };
@@ -466,7 +465,6 @@
 		CF2FF68F2BF2A3D3006E2DF4 /* QStudy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QStudy.swift; sourceTree = "<group>"; };
 		CF2FF6922BF2A3DF006E2DF4 /* StudyClientSamples.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StudyClientSamples.swift; sourceTree = "<group>"; };
 		CF320F5429620B16009BAD18 /* CCTParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CCTParser.swift; sourceTree = "<group>"; };
-		CF320F5629621C42009BAD18 /* CCTClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CCTClientTests.swift; sourceTree = "<group>"; };
 		CF320F582962208B009BAD18 /* CCTResponse.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CCTResponse.txt; sourceTree = "<group>"; };
 		CF320F5A29622B6D009BAD18 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		CF4445EB2C29700D00D0ABED /* StudyWeeklyScoresView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudyWeeklyScoresView.swift; sourceTree = "<group>"; };
@@ -895,7 +893,6 @@
 			isa = PBXGroup;
 			children = (
 				CF320F582962208B009BAD18 /* CCTResponse.txt */,
-				CF320F5629621C42009BAD18 /* CCTClientTests.swift */,
 				CF5CBB8C29687CBB001CE9BE /* CCTParserTests.swift */,
 			);
 			path = "Capture Cells";
@@ -1850,7 +1847,6 @@
 				CFD0234D2961A10E00AA5A1C /* CellGuardTests.swift in Sources */,
 				CF5CBB8D29687CBB001CE9BE /* CCTParserTests.swift in Sources */,
 				CFD023742961DF7400AA5A1C /* ALSClientTests.swift in Sources */,
-				CF320F5729621C42009BAD18 /* CCTClientTests.swift in Sources */,
 				CF90EF1D2A30E7FD00E7FDB0 /* ARIParserTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
