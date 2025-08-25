@@ -19,7 +19,7 @@ lint_swiftformat:
 # See: https://github.com/realm/SwiftLint?tab=readme-ov-file
 lint_swiftlint:
   stage: lint
-  image: "ghcr.io/realm/swiftlint:latest"
+  image: "ghcr.io/realm/swiftlint:0.59.1"
   script:
     - swiftlint --config CellGuardAppSwift/.swiftlint.yml --reporter codeclimate --output swift-lint.json CellGuardAppSwift
   artifacts:
