@@ -274,7 +274,7 @@ struct ALSClient {
                 }
                 $0.numberOfSurroundingCells = 0
                 $0.numberOfSurroundingWifis = 1
-                $0.surroundingWifiBands = [1]
+                $0.surroundingWifiBands = [AlsProto_WifiBand.k2Dot4Ghz]
             }
 
             data = try protoRequest.serializedData()
