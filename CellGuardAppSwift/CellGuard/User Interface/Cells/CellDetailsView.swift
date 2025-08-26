@@ -122,7 +122,11 @@ private struct CellDetailsCell: View {
             CellCountryNetworkSection(country: cell.country, network: cell.network, techFormatter: techFormatter)
             Section(header: Text("Technology & Region")) {
                 CellDetailsRow("Technology", cell.technology ?? "Unknown")
-                CellDetailsRow("SIM Slot", simSlots)
+                // Only show SIM slots if some are available.
+                // There are none available for ALS-only cells.
+                if !simSlotsSet.isEmpty {
+                    CellDetailsRow("SIM Slot", simSlots)
+                }
                 if let tweakCell = cell as? CellTweak,
                    tweakCell.supports5gNsa() {
                     CellDetailsRow("5G NSA", "Supported")
