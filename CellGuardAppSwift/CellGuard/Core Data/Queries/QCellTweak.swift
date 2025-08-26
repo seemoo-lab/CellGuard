@@ -92,6 +92,30 @@ extension PersistenceController {
         } ?? []
     }
 
+    func importSingleTweakCell(cellProperties: CCTCellProperties, verify: Bool) throws {
+        try performAndWait(name: "importContext", author: "importSingleCellTweak") { context in
+            let cell = CellTweak(context: context)
+            cellProperties.applyTo(tweakCell: cell)
+
+            // Create a default verification state for each user-enabled pipeline
+            // If the user enables another pipeline afterward, it automatically creates its verification states as needed
+            if verify && cellProperties.technology != ALSTechnology.OFF {
+                for pipelineId in UserDefaults.standard.userEnabledVerificationPipelineIds() {
+                    let state = VerificationState(context: context)
+                    state.pipeline = pipelineId
+                    state.delayUntil = Date()
+
+                    cell.addToVerifications(state)
+                }
+            }
+
+            cell.imported = Date()
+
+            try context.save()
+            logger.debug("Successfully inserted one tweak cells for testing purposes.")
+        }
+    }
+
     func fetchCellExists(properties: CCTCellProperties, before: Date?) -> Bool? {
         guard let technology = properties.technology,
               let country = properties.mcc,

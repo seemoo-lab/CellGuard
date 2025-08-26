@@ -307,6 +307,8 @@
 		CFB6CF9B2BD122FA00EAB7B4 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CFE4A7A82B35991C00A37C7A /* LaunchScreen.storyboard */; };
 		CFB6CF9E2BD122FA00EAB7B4 /* Package.resolved in Resources */ = {isa = PBXBuildFile; fileRef = CFFF19DE2BC6CF47004E40CE /* Package.resolved */; };
 		CFB6CF9F2BD122FA00EAB7B4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CFD0233A2961A10D00AA5A1C /* Assets.xcassets */; };
+		CFB70B592E5DA28C00D2B5EA /* DebugAddCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB70B582E5DA28C00D2B5EA /* DebugAddCellView.swift */; };
+		CFB70B5A2E5DA28C00D2B5EA /* DebugAddCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB70B582E5DA28C00D2B5EA /* DebugAddCellView.swift */; };
 		CFB86D5A2C7C84FE0072BEFC /* NIOCore in Frameworks */ = {isa = PBXBuildFile; productRef = CFB86D592C7C84FE0072BEFC /* NIOCore */; };
 		CFB8B2882963417B00503189 /* LocationDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB8B2872963417B00503189 /* LocationDataManager.swift */; };
 		CFB8B28A2963498200503189 /* CellGuardAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB8B2892963498200503189 /* CellGuardAppDelegate.swift */; };
@@ -544,6 +546,7 @@
 		CFAE881C2C28BA4300092B15 /* StudyClientScores.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudyClientScores.swift; sourceTree = "<group>"; };
 		CFB51833297AEFA80006C690 /* CellStatusIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellStatusIcon.swift; sourceTree = "<group>"; };
 		CFB6CFA42BD122FA00EAB7B4 /* CellGuard Jailbreak.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "CellGuard Jailbreak.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		CFB70B582E5DA28C00D2B5EA /* DebugAddCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugAddCellView.swift; sourceTree = "<group>"; };
 		CFB8B2872963417B00503189 /* LocationDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationDataManager.swift; sourceTree = "<group>"; };
 		CFB8B2892963498200503189 /* CellGuardAppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellGuardAppDelegate.swift; sourceTree = "<group>"; };
 		CFB9541F2BF34DC500F87FF5 /* StudyPacketFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudyPacketFilter.swift; sourceTree = "<group>"; };
@@ -793,6 +796,7 @@
 				CF7309992A79122B00498BC3 /* DataSummaryView.swift */,
 				45ECF5712BFC00D100DD92CF /* DebugProfileCard.swift */,
 				45ECF5742BFC025300DD92CF /* DebugProfileDetailedView.swift */,
+				CFB70B582E5DA28C00D2B5EA /* DebugAddCellView.swift */,
 				45ECF56E2BFBFDFB00DD92CF /* NoneModeCard.swift */,
 				CF9EEEE72B34B6A500F9B6D8 /* SysdiagOpenSettingsCard.swift */,
 				45C3D4A72BFD092700B5CEF3 /* SysdiagOpenSettingsDetailedView.swift */,
@@ -1532,6 +1536,7 @@
 				CFB6CF332BD122FA00EAB7B4 /* CellInformationCard.swift in Sources */,
 				CFEA68E72C131F9400F781BC /* AppleURLs.swift in Sources */,
 				CFB6CF342BD122FA00EAB7B4 /* LogArchiveReader.swift in Sources */,
+				CFB70B5A2E5DA28C00D2B5EA /* DebugAddCellView.swift in Sources */,
 				CF70A9952BE6B6D600989FB5 /* QCommonFetch.swift in Sources */,
 				45ECF56D2BFBEA5300DD92CF /* DeviceModel.swift in Sources */,
 				EDAFBFEA2D9C0A5300D7748B /* AriCellParser.swift in Sources */,
@@ -1786,6 +1791,7 @@
 				CF208D9F2A387261003A73A7 /* PacketFilterView.swift in Sources */,
 				CF70A9822BE6AD8D00989FB5 /* QRiskStatus.swift in Sources */,
 				CF2A1C202975CDD200E8B61C /* RiskIndicatorCard.swift in Sources */,
+				CFB70B592E5DA28C00D2B5EA /* DebugAddCellView.swift in Sources */,
 				CF2002EA2A2F2BEA000922E6 /* ARIParser.swift in Sources */,
 				CF5EF9202977FACA00C4F50A /* Formatters.swift in Sources */,
 				CF54CCBE2A330E6D00961E4D /* CommonParser.swift in Sources */,
