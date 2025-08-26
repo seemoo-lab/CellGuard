@@ -536,7 +536,10 @@ struct LogArchiveReader {
                     packets.append(try readCSVPacketARI(library: library, timestamp: timestampDate, message: message))
                     packetDates.update(timestampDate)
                 } else if category == "ct.server" && subsystem == "com.apple.CommCenter" {
-                    controlCells.append(try readCSVCellMeasurement(timestamp: timestampDate, message: message))
+                    let measurement = try readCSVCellMeasurement(timestamp: timestampDate, message: message)
+                    if let measurement = measurement {
+                        controlCells.append(measurement)
+                    }
                 } else if subsystem == "com.apple.cache_delete" {
                     // TODO: Modify the function `output` in the file `src/csv_parser.rs` to include entries from this subsystem
                     readDeletedAction(timestamp: timestampDate, message: message)
@@ -679,7 +682,7 @@ struct LogArchiveReader {
     private let regexSimSlotID = Regex("slotID=\\w{18}(?<slotID>.*?),")
     private let regexSimSlotIDiOS26 = Regex("<SubscriptionContext *id=(?<slotID>.*?)>")
 
-    func readCSVCellMeasurement(timestamp: Date, message: String) throws -> CCTCellProperties {
+    func readCSVCellMeasurement(timestamp: Date, message: String) throws -> CCTCellProperties? {
         let messageBodySuffix = message.components(separatedBy: "info=(")
         if messageBodySuffix.count < 2 {
             throw LogArchiveError.wrongCellPrefixText
@@ -688,7 +691,12 @@ struct LogArchiveReader {
         // Remove the final closing parentheses
         let messageBody = messageBodySuffix[1].trimmingCharacters(in: CharacterSet(charactersIn: "()<>"))
 
-        // TODO:        kCTCellMonitorRSSI = \"-96\";
+        // Check if the cell info is simply not present (because the SIM is not inserted).
+        // For now, we do not capture that information, but it might interesting for future work.
+        // See: https://dev.seemoo.tu-darmstadt.de/apple/cell-guard/-/issues/69
+        if messageBody.hasPrefix("null") {
+            return nil
+        }
 
         var jsonMsg = messageBody
         // Escape all the existing quotes
