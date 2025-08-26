@@ -12,6 +12,7 @@ import UIKit
 
 struct SingleCellMap: UIViewRepresentable {
 
+    let locationInfo: LocationDataManagerPublished
     let alsCells: any BidirectionalCollection<CellALS>
     let tweakCells: any BidirectionalCollection<CellTweak>
 
@@ -37,8 +38,6 @@ struct SingleCellMap: UIViewRepresentable {
     func makeUIView(context: Context) -> MKMapView {
         let mapView = MKMapView(frame: .zero)
 
-        mapView.showsUserLocation = true
-
         mapView.isZoomEnabled = true
         mapView.isScrollEnabled = true
         mapView.isPitchEnabled = false
@@ -57,17 +56,25 @@ struct SingleCellMap: UIViewRepresentable {
         _ = CommonCellMap.updateLocationAnnotations(data: tweakCells, uiView: mapView)
         CommonCellMap.updateViewRegion(mapView, animated: false)
 
+        // Only show user location if the user has given authorization,
+        // otherwise the following error message is caused by MapKit:
+        // """This method can cause UI unresponsiveness if invoked on the main thread.
+        // Instead, consider waiting for the `-locationManagerDidChangeAuthorization:` callback and checking `authorizationStatus` first."""
+        mapView.showsUserLocation = locationInfo.authorized
+
         return mapView
     }
 
     func updateUIView(_ uiView: MKMapView, context: Context) {
         // Don't update map annotations if the app is in the background
         if UIApplication.shared.applicationState == .background {
+            uiView.showsUserLocation = false
             return
         }
 
         _ = CommonCellMap.updateCellAnnotations(data: alsCells, uiView: uiView)
         _ = CommonCellMap.updateLocationAnnotations(data: tweakCells, uiView: uiView)
+        uiView.showsUserLocation = locationInfo.authorized
 
         // TODO: Enable reach overlay if performance has been improved
         // CommonCellMap.updateCellReachOverlay(data: alsCells, uiView: uiView)        

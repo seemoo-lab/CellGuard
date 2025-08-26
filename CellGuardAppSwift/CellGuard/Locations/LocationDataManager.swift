@@ -9,7 +9,24 @@ import Combine
 import CoreLocation
 import OSLog
 
-class LocationDataManager: NSObject, CLLocationManagerDelegate, ObservableObject {
+class LocationDataManagerPublished: NSObject, ObservableObject {
+
+    public static var shared = LocationDataManagerPublished()
+
+    private override init() {
+        super.init()
+    }
+
+    @Published var authorizationStatus: CLAuthorizationStatus?
+    @Published var lastLocation: CLLocation?
+
+    var authorized: Bool {
+        authorizationStatus == .authorizedAlways || authorizationStatus == .authorizedWhenInUse
+    }
+
+}
+
+class LocationDataManager: NSObject, CLLocationManagerDelegate {
 
     private static let logger = Logger(
         subsystem: Bundle.main.bundleIdentifier!,
@@ -22,9 +39,6 @@ class LocationDataManager: NSObject, CLLocationManagerDelegate, ObservableObject
     private var authorizationCompletion: ((Bool) -> Void)?
     private var background = true
     private var verificationApproachSink: AnyCancellable?
-
-    @Published var authorizationStatus: CLAuthorizationStatus?
-    @Published var lastLocation: CLLocation?
 
     private override init() {
         super.init()
@@ -60,7 +74,7 @@ class LocationDataManager: NSObject, CLLocationManagerDelegate, ObservableObject
         Self.logger.log("Authorization: \(self.describe(authorizationStatus: manager.authorizationStatus))")
 
         DispatchQueue.main.async {
-            self.authorizationStatus = manager.authorizationStatus
+            LocationDataManagerPublished.shared.authorizationStatus = manager.authorizationStatus
         }
 
         if manager.authorizationStatus == .authorizedWhenInUse && authorizationCompletion != nil {
@@ -101,6 +115,7 @@ class LocationDataManager: NSObject, CLLocationManagerDelegate, ObservableObject
 
     func requestAuthorization(completion: @escaping (Bool) -> Void) {
         // If the user denied the authorization, return false
+        let authorizationStatus = LocationDataManagerPublished.shared.authorizationStatus
         if authorizationStatus == .denied || authorizationStatus == .restricted {
             completion(false)
             return
@@ -143,7 +158,7 @@ class LocationDataManager: NSObject, CLLocationManagerDelegate, ObservableObject
 
         if let localLastLocation = locations.max(by: { $0.timestamp < $1.timestamp }) {
             DispatchQueue.main.async {
-                self.lastLocation = localLastLocation
+                LocationDataManagerPublished.shared.lastLocation = localLastLocation
             }
 
             updateAccuracy(location: localLastLocation)
@@ -208,7 +223,7 @@ class LocationDataManager: NSObject, CLLocationManagerDelegate, ObservableObject
     }
 
     private func updateAccuracy() {
-        updateAccuracy(location: self.lastLocation)
+        updateAccuracy(location: LocationDataManagerPublished.shared.lastLocation)
     }
 
     private func updateAccuracy(location: CLLocation?) {

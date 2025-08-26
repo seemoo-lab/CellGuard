@@ -144,7 +144,7 @@ extension PersistenceController {
 
             // == Permissions ==
 
-            if (LocationDataManager.shared.authorizationStatus ?? .authorizedAlways) != .authorizedAlways ||
+            if (LocationDataManagerPublished.shared.authorizationStatus ?? .authorizedAlways) != .authorizedAlways ||
                 (CGNotificationManager.shared.authorizationStatus ?? .authorized) != .authorized {
                 return .medium(cause: .permissions)
             }

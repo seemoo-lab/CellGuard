@@ -18,12 +18,12 @@ import MapKit
 
 struct MultiCellMap: UIViewRepresentable {
 
+    let locationInfo: LocationDataManagerPublished
     let alsCells: any BidirectionalCollection<CellALS>
     let onTap: (NSManagedObjectID) -> Void
 
-    @ObservedObject private var locationManager = LocationDataManager.shared
-
-    init(alsCells: any BidirectionalCollection<CellALS>, onTap: @escaping (NSManagedObjectID) -> Void) {
+    init(locationInfo: LocationDataManagerPublished, alsCells: any BidirectionalCollection<CellALS>, onTap: @escaping (NSManagedObjectID) -> Void) {
+        self.locationInfo = locationInfo
         self.alsCells = alsCells
         self.onTap = onTap
     }
@@ -31,14 +31,14 @@ struct MultiCellMap: UIViewRepresentable {
     func makeUIView(context: Context) -> MKMapView {
         let mapView = MKMapView(frame: .zero)
 
-        mapView.showsUserLocation = true
+        // See SingleCellMap
+        mapView.showsUserLocation = locationInfo.authorized
         mapView.showsCompass = true
         // Limit the maximum zoom range of the camera to 200km, otherwise there are performance issues with too many annotations displayed
         // mapView.cameraZoomRange = MKMapView.CameraZoomRange(maxCenterCoordinateDistance: 500_000)
         // We don't require this limit if we only show cells the iPhone connected to (which also makes more sense for users).
 
-        // TODO: Extract lastLocation into sub struct of the LocationDataManger
-        let location = locationManager.lastLocation ?? CLLocation(latitude: 49.8726737, longitude: 8.6516291)
+        let location = locationInfo.lastLocation ?? CLLocation(latitude: 49.8726737, longitude: 8.6516291)
         let region = MKCoordinateRegion(
             center: location.coordinate,
             span: MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02)
@@ -58,10 +58,12 @@ struct MultiCellMap: UIViewRepresentable {
     func updateUIView(_ uiView: MKMapView, context: Context) {
         // Don't update map annotations if the app is in the background
         if UIApplication.shared.applicationState == .background {
+            uiView.showsUserLocation = false
             return
         }
 
         _ = CommonCellMap.updateCellAnnotations(data: alsCells, uiView: uiView)
+        uiView.showsUserLocation = locationInfo.authorized
     }
 
     func makeCoordinator() -> CellMapDelegate {

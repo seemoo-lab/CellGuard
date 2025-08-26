@@ -76,6 +76,7 @@ private struct CellDetailsTowerMap: View {
     let dissect: (Int64) -> (Int64, Int64)
 
     @FetchRequest private var cells: FetchedResults<CellALS>
+    @ObservedObject private var locationInfo = LocationDataManagerPublished.shared
 
     init(baseStation: Int64, dissect: @escaping (Int64) -> (Int64, Int64), fetchRequest: FetchRequest<CellALS>) {
         self.baseStation = baseStation
@@ -86,7 +87,7 @@ private struct CellDetailsTowerMap: View {
     var body: some View {
         // TODO: Show sector id instead of provider name / network
         ExpandableMap {
-            TowerCellMap(alsCells: cells.filter { dissect($0.cell).0 == baseStation }, dissect: dissect)
+            TowerCellMap(locationInfo: locationInfo, alsCells: cells.filter { dissect($0.cell).0 == baseStation }, dissect: dissect)
         }
     }
 

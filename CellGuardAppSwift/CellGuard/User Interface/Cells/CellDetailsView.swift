@@ -83,6 +83,8 @@ private struct TweakCellDetailsMap: View {
     @FetchRequest private var alsCells: FetchedResults<CellALS>
     @FetchRequest private var verifyStates: FetchedResults<VerificationState>
 
+    @ObservedObject private var locationInfo = LocationDataManagerPublished.shared
+
     init(alsCells: FetchRequest<CellALS>, verifyStates: FetchRequest<VerificationState>) {
         self._alsCells = alsCells
         self._verifyStates = verifyStates
@@ -93,7 +95,7 @@ private struct TweakCellDetailsMap: View {
 
         if SingleCellMap.hasAnyLocation(alsCells, tweakCells) {
             ExpandableMap {
-                SingleCellMap(alsCells: alsCells, tweakCells: tweakCells)
+                SingleCellMap(locationInfo: locationInfo, alsCells: alsCells, tweakCells: tweakCells)
             }
         }
     }

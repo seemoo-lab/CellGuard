@@ -62,7 +62,7 @@ struct SettingsView: View {
 
 private struct PermissionSection: View {
 
-    @ObservedObject private var locationManager = LocationDataManager.shared
+    @ObservedObject private var locationManager = LocationDataManagerPublished.shared
     @ObservedObject var notificationManager = CGNotificationManager.shared
 
     private var isPermissionNotifications: Binding<Bool> { Binding(
@@ -85,7 +85,7 @@ private struct PermissionSection: View {
         get: { locationManager.authorizationStatus == .authorizedAlways },
         set: { value in
             if value && locationManager.authorizationStatus == .notDetermined {
-                locationManager.requestAuthorization { result in
+                LocationDataManager.shared.requestAuthorization { result in
                     if !result {
                         openAppSettings()
                     }
@@ -221,7 +221,6 @@ struct SettingsSheet_Previews: PreviewProvider {
         NavigationView {
             SettingsView()
         }
-        .environmentObject(LocationDataManager.shared)
         .environmentObject(CGNotificationManager.shared)
     }
 }
