@@ -934,25 +934,16 @@ struct AlsProto_ALSLocationResponse: Sendable {
 fileprivate let _protobuf_package = "als_proto"
 
 extension AlsProto_AltitudeScale: SwiftProtobuf._ProtoNameProviding {
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "None"),
-    2: .same(proto: "Scale10toThe2"),
-  ]
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}None\0\u{1}Scale10toThe2\0")
 }
 
 extension AlsProto_WifiBand: SwiftProtobuf._ProtoNameProviding {
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "k2dot4GHZ"),
-    2: .same(proto: "k5GHZ"),
-  ]
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}k2dot4GHZ\0\u{1}k5GHZ\0")
 }
 
 extension AlsProto_Meta: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = _protobuf_package + ".Meta"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "softwareBuild"),
-    2: .same(proto: "productId"),
-  ]
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}softwareBuild\0\u{1}productId\0")
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
@@ -991,17 +982,7 @@ extension AlsProto_Meta: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementa
 
 extension AlsProto_Location: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = _protobuf_package + ".Location"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "latitude"),
-    2: .same(proto: "longitude"),
-    3: .same(proto: "accuracy"),
-    4: .same(proto: "locationType"),
-    5: .same(proto: "altitude"),
-    6: .same(proto: "verticalAccuracy"),
-    11: .same(proto: "reach"),
-    12: .same(proto: "score"),
-    13: .same(proto: "infoMask"),
-  ]
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}latitude\0\u{1}longitude\0\u{1}accuracy\0\u{1}locationType\0\u{1}altitude\0\u{1}verticalAccuracy\0\u{2}\u{5}reach\0\u{1}score\0\u{1}infoMask\0")
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
@@ -1075,12 +1056,7 @@ extension AlsProto_Location: SwiftProtobuf.Message, SwiftProtobuf._MessageImplem
 
 extension AlsProto_WirelessAP: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = _protobuf_package + ".WirelessAP"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "macID"),
-    2: .same(proto: "location"),
-    21: .same(proto: "channel"),
-    22: .same(proto: "numZAxisHarvestTraces"),
-  ]
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}macID\0\u{1}location\0\u{2}\u{13}channel\0\u{1}numZAxisHarvestTraces\0")
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
@@ -1129,14 +1105,7 @@ extension AlsProto_WirelessAP: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
 
 extension AlsProto_Nr5GCell: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = _protobuf_package + ".Nr5GCell"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "mcc"),
-    2: .same(proto: "mnc"),
-    3: .same(proto: "cellID"),
-    4: .same(proto: "tacID"),
-    5: .same(proto: "location"),
-    6: .same(proto: "nrarfcn"),
-  ]
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}mcc\0\u{1}mnc\0\u{1}cellID\0\u{1}tacID\0\u{1}location\0\u{1}nrarfcn\0")
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
@@ -1195,15 +1164,7 @@ extension AlsProto_Nr5GCell: SwiftProtobuf.Message, SwiftProtobuf._MessageImplem
 
 extension AlsProto_ScdmaCell: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = _protobuf_package + ".ScdmaCell"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "mcc"),
-    2: .same(proto: "mnc"),
-    3: .same(proto: "cellID"),
-    4: .same(proto: "lacID"),
-    5: .same(proto: "location"),
-    11: .same(proto: "arfcn"),
-    12: .same(proto: "psc"),
-  ]
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}mcc\0\u{1}mnc\0\u{1}cellID\0\u{1}lacID\0\u{1}location\0\u{2}\u{6}arfcn\0\u{1}psc\0")
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
@@ -1267,15 +1228,7 @@ extension AlsProto_ScdmaCell: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
 
 extension AlsProto_LteCell: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = _protobuf_package + ".LteCell"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "mcc"),
-    2: .same(proto: "mnc"),
-    3: .same(proto: "cellID"),
-    4: .same(proto: "tacID"),
-    5: .same(proto: "location"),
-    6: .same(proto: "uarfcn"),
-    7: .same(proto: "pid"),
-  ]
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}mcc\0\u{1}mnc\0\u{1}cellID\0\u{1}tacID\0\u{1}location\0\u{1}uarfcn\0\u{1}pid\0")
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
@@ -1339,15 +1292,7 @@ extension AlsProto_LteCell: SwiftProtobuf.Message, SwiftProtobuf._MessageImpleme
 
 extension AlsProto_GsmCell: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = _protobuf_package + ".GsmCell"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "mcc"),
-    2: .same(proto: "mnc"),
-    3: .same(proto: "cellID"),
-    4: .same(proto: "lacID"),
-    5: .same(proto: "location"),
-    11: .same(proto: "arfcn"),
-    12: .same(proto: "psc"),
-  ]
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}mcc\0\u{1}mnc\0\u{1}cellID\0\u{1}lacID\0\u{1}location\0\u{2}\u{6}arfcn\0\u{1}psc\0")
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
@@ -1411,17 +1356,7 @@ extension AlsProto_GsmCell: SwiftProtobuf.Message, SwiftProtobuf._MessageImpleme
 
 extension AlsProto_CdmaCell: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = _protobuf_package + ".CdmaCell"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "mcc"),
-    3: .same(proto: "sid"),
-    4: .same(proto: "nid"),
-    5: .same(proto: "bsid"),
-    6: .same(proto: "location"),
-    7: .same(proto: "zoneid"),
-    8: .same(proto: "bandclass"),
-    9: .same(proto: "channel"),
-    10: .same(proto: "pnoffset"),
-  ]
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}mcc\0\u{2}\u{2}sid\0\u{1}nid\0\u{1}bsid\0\u{1}location\0\u{1}zoneid\0\u{1}bandclass\0\u{1}channel\0\u{1}pnoffset\0")
 
   fileprivate class _StorageClass {
     var _mcc: Int32? = nil
@@ -1547,26 +1482,7 @@ extension AlsProto_CdmaCell: SwiftProtobuf.Message, SwiftProtobuf._MessageImplem
 
 extension AlsProto_ALSLocationRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = _protobuf_package + ".ALSLocationRequest"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "gsmCells"),
-    2: .same(proto: "wirelessAPs"),
-    3: .same(proto: "numberOfSurroundingCells"),
-    4: .same(proto: "numberOfSurroundingWifis"),
-    5: .same(proto: "appBundleId"),
-    21: .same(proto: "cdmaCells"),
-    22: .same(proto: "cdmaEvdoCells"),
-    23: .same(proto: "numberOfSurroundingCdmaCells"),
-    24: .same(proto: "numberOfSurroundingCdmaEvdoCells"),
-    25: .same(proto: "lteCells"),
-    26: .same(proto: "numberOfSurroundingLteCells"),
-    27: .same(proto: "scdmaCells"),
-    28: .same(proto: "numberOfSurroundingScdmaCells"),
-    29: .same(proto: "nr5GCells"),
-    30: .same(proto: "numberOfSurroundingNr5GCells"),
-    31: .same(proto: "surroundingWifiBands"),
-    32: .same(proto: "wifiAltitudeScale"),
-    33: .same(proto: "meta"),
-  ]
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}gsmCells\0\u{1}wirelessAPs\0\u{1}numberOfSurroundingCells\0\u{1}numberOfSurroundingWifis\0\u{1}appBundleId\0\u{2}\u{10}cdmaCells\0\u{1}cdmaEvdoCells\0\u{1}numberOfSurroundingCdmaCells\0\u{1}numberOfSurroundingCdmaEvdoCells\0\u{1}lteCells\0\u{1}numberOfSurroundingLteCells\0\u{1}scdmaCells\0\u{1}numberOfSurroundingScdmaCells\0\u{1}nr5GCells\0\u{1}numberOfSurroundingNr5GCells\0\u{1}surroundingWifiBands\0\u{1}wifiAltitudeScale\0\u{1}meta\0")
 
   fileprivate class _StorageClass {
     var _gsmCells: [AlsProto_GsmCell] = []
@@ -1755,14 +1671,7 @@ extension AlsProto_ALSLocationRequest: SwiftProtobuf.Message, SwiftProtobuf._Mes
 
 extension AlsProto_ALSLocationResponse: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = _protobuf_package + ".ALSLocationResponse"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "gsmCells"),
-    2: .same(proto: "wirelessAPs"),
-    21: .same(proto: "cdmaCells"),
-    22: .same(proto: "lteCells"),
-    23: .same(proto: "scdmaCells"),
-    24: .same(proto: "nr5GCells"),
-  ]
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}gsmCells\0\u{1}wirelessAPs\0\u{2}\u{13}cdmaCells\0\u{1}lteCells\0\u{1}scdmaCells\0\u{1}nr5GCells\0")
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
