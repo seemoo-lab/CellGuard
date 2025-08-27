@@ -13,45 +13,14 @@ import NavigationBackport
 
 struct MapTabView: View {
 
-    @Environment(\.managedObjectContext)
-    private var managedContext: NSManagedObjectContext
-
-    @ObservedObject private var locationManager = LocationDataManagerPublished.shared
-
-    @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \CellALS.imported, ascending: false)],
-        predicate: NSPredicate(format: "location != nil AND observedCells != nil")
-    )
-    private var alsCells: FetchedResults<CellALS>
-
-    @State private var navigationActive = false
-    @State private var navigationTarget: NSManagedObjectID?
+    @State private var path = NBNavigationPath()
     @State private var infoSheetShown = false
 
     var body: some View {
-        NavigationView {
+        NBNavigationStack {
             ZStack {
-                // Cell Details
-                // https://www.hackingwithswift.com/quick-start/swiftui/how-to-use-programmatic-navigation-in-swiftui
-                NavigationLink(isActive: $navigationActive) {
-                    if let target = navigationTarget,
-                       let cell = managedContext.object(with: target) as? CellALS {
-                        CellDetailsView(alsCell: cell)
-                    } else {
-                        Text("Cell not found")
-                    }
-                } label: {
-                    EmptyView()
-                }
-                .frame(width: 0, height: 0)
-                .hidden()
-
                 // Map
-                MultiCellMap(locationInfo: locationManager, alsCells: alsCells) { cellID in
-                    navigationTarget = cellID
-                    navigationActive = true
-                }
-                .ignoresSafeArea()
+                ConnectedCellMap()
 
                 // Info Button
                 HStack {
@@ -69,7 +38,58 @@ struct MapTabView: View {
             .sheet(isPresented: $infoSheetShown) {
                 MapInfoSheet()
             }
+            .nbNavigationDestination(for: NavObjectId<CellALS>.self) { id in
+                id.ensure { CellDetailsView(alsCell: $0) }
+            }
+            .nbNavigationDestination(for: [NetworkOperator].self) { ops in
+                if ops.count == 1, let op = ops.first {
+                    OperatorDetailsView(netOperator: op)
+                } else {
+                    OperatorDetailsListView(netOperators: ops)
+                }
+            }
+            .nbNavigationDestination(for: CountryDetailsNavigation<NetworkCountry>.self) { data in
+                CountryDetailsView(country: data.country, secondary: data.secondary)
+            }
+            .nbNavigationDestination(for: CountryDetailsNavigation<NetworkOperator>.self) { data in
+                CountryDetailsView(country: data.country, secondary: data.secondary)
+            }
+            .nbNavigationDestination(for: CellDetailsTowerNavigation.self) { data in
+                CellDetailsTowerView(nav: data)
+            }
+            .nbNavigationDestination(for: TweakCellMeasurementListNav.self) { data in
+                TweakCellMeasurementList(nav: data)
+            }
+            .nbNavigationDestination(for: NavObjectId<VerificationState>.self) { id in
+                id.ensure { VerificationStateView(verificationState: $0) }
+            }
+            .nbNavigationDestination(for: NavObjectId<PacketARI>.self) { id in
+                id.ensure { PacketARIDetailsView(packet: $0) }
+            }
+            .nbNavigationDestination(for: NavObjectId<PacketQMI>.self) { id in
+                id.ensure { PacketQMIDetailsView(packet: $0) }
+            }
         }
+    }
+}
+
+private struct ConnectedCellMap: View {
+
+    @FetchRequest(
+        sortDescriptors: [NSSortDescriptor(keyPath: \CellALS.imported, ascending: false)],
+        predicate: NSPredicate(format: "location != nil AND observedCells != nil")
+    )
+    private var alsCells: FetchedResults<CellALS>
+
+    @EnvironmentObject var navigator: PathNavigator
+    @ObservedObject private var locationManager = LocationDataManagerPublished.shared
+
+    var body: some View {
+        MultiCellMap(locationInfo: locationManager, alsCells: alsCells) { cellID in
+            print(cellID)
+            navigator.push(NavObjectId<CellALS>(id: cellID))
+        }
+        .ignoresSafeArea()
     }
 }
 

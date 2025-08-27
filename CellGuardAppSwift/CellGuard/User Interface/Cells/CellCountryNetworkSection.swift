@@ -44,7 +44,7 @@ struct CellCountryNetworkSection: View {
             }
             CellDetailsRow(techFormatter.network(), formatMNC(network))
             if let netOperator = netOperators.first, let combinedName = netOperator.combinedName {
-                ListNavigationLink(value: netOperator) {
+                ListNavigationLink(value: netOperators) {
                     CellDetailsRow("Network", netOperators.count >= 2 ? "\(combinedName) + \(netOperators.count - 1)" : combinedName)
                 }
             }

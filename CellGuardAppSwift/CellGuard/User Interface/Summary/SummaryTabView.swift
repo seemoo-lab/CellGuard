@@ -88,13 +88,12 @@ struct SummaryTabView: View {
             .nbNavigationDestination(for: NavObjectId<VerificationState>.self) { id in
                 id.ensure { VerificationStateView(verificationState: $0) }
             }
-            .nbNavigationDestination(for: NetworkOperator.self) { op in
-                OperatorDetailsView(netOperator: op)
-                /* if ops.count == 1, let op = ops.first {
+            .nbNavigationDestination(for: [NetworkOperator].self) { ops in
+                if ops.count == 1, let op = ops.first {
                     OperatorDetailsView(netOperator: op)
                 } else {
                     OperatorDetailsListView(netOperators: ops)
-                } */
+                }
             }
             .nbNavigationDestination(for: CountryDetailsNavigation<NetworkCountry>.self) { data in
                 CountryDetailsView(country: data.country, secondary: data.secondary)
