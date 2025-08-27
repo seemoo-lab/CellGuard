@@ -102,6 +102,12 @@ struct SummaryTabView: View {
             .nbNavigationDestination(for: CountryDetailsNavigation<NetworkOperator>.self) { data in
                 CountryDetailsView(country: data.country, secondary: data.secondary)
             }
+            .nbNavigationDestination(for: CellDetailsTowerNavigation.self) { data in
+                CellDetailsTowerView(nav: data)
+            }
+            .nbNavigationDestination(for: TweakCellMeasurementListNav.self) { data in
+                TweakCellMeasurementList(nav: data)
+            }
         }
         .background(Color.gray)
     }

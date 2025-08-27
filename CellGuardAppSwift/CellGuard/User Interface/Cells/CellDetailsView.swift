@@ -189,6 +189,7 @@ private struct TweakCellDetailsMeasurementCount: View {
 
     var body: some View {
         let count = countByStatus(verifyStates)
+        let detailObjectIds = TweakCellMeasurementListNav(measurements: verifyStates.compactMap { $0.cell })
 
         Section(header: Text("Measurements")) {
             // We query the measurements in descending order, so that's we have to replace last with first and so on
@@ -202,9 +203,7 @@ private struct TweakCellDetailsMeasurementCount: View {
             CellDetailsRow("Suspicious", count.untrusted)
             CellDetailsRow("Anomalous", count.suspicious)
             CellDetailsRow("Trusted", count.trusted)
-            NavigationLink {
-                TweakCellMeasurementList(measurements: verifyStates.compactMap { $0.cell })
-            } label: {
+            ListNavigationLink(value: detailObjectIds) {
                 Text("Show Details")
             }
             .disabled(verifyStates.count == 0)
@@ -238,10 +237,28 @@ private struct TweakCellDetailsMeasurementCount: View {
 
 }
 
-private struct TweakCellMeasurementList: View {
+struct TweakCellMeasurementListNav: Hashable {
+
+    let measurementIds: [NavObjectId<CellTweak>]
+
+    init(measurements: any RandomAccessCollection<CellTweak>) {
+        self.measurementIds = measurements.compactMap { NavObjectId(object: $0) }
+    }
+
+    var objects: [CellTweak] {
+        measurementIds.compactMap { $0.object }
+    }
+
+}
+
+struct TweakCellMeasurementList: View {
 
     @State private var pipelineId: Int16 = primaryVerificationPipeline.id
-    let measurements: any RandomAccessCollection<CellTweak>
+    private var measurements: [CellTweak]
+
+    init(nav: TweakCellMeasurementListNav) {
+        self.measurements = nav.objects
+    }
 
     var body: some View {
         List {
