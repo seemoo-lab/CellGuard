@@ -41,13 +41,6 @@ struct RiskInfoView: View {
                 }
                 .disabled(!risk.isCausedByCells())
 
-                NavigationLink {
-                    Text("test")
-                } label: {
-                    Text("huhu")
-                }
-                .disabled(true)
-
                 ListNavigationLink(value: CellListFilterSettings(status: .suspicious, timeFrame: .pastDays, date: subTwoWeeksFromCurrentDate)) {
                     Text(Image(systemName: "exclamationmark.shield")) + Text(" Suspicious Cells")
                 }
