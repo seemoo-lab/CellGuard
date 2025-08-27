@@ -31,7 +31,7 @@ struct NavObjectId<T: NSManagedObject>: Hashable {
         if let object = object {
             children(object)
         } else {
-            Text("Ojee")
+            Text("The referenced object is no longer available. That's not good!")
         }
     }
 
