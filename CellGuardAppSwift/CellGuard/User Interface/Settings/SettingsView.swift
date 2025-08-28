@@ -24,13 +24,7 @@ struct SettingsView: View {
         List {
             PermissionSection()
 
-            // TODO: Add notifications sections
-            // - Toggle for suspicious cell notifications
-            // - Toggle for anomalous cell notifications
-            // - Toggle for close notifications
-            // - (TODO) Toggle for regular sysdiagnose record reminders
-            // - (TODO) Toggle for regular sysdiagnose import reminders
-            // - (TODO) Toggle for profile expiry notification
+            NotificationsSection()
 
             BasebandProfileSection()
 
@@ -103,6 +97,27 @@ private struct PermissionSection: View {
     private func openAppSettings() {
         if let appSettings = URL(string: UIApplication.openSettingsURLString), UIApplication.shared.canOpenURL(appSettings) {
             UIApplication.shared.open(appSettings)
+        }
+    }
+}
+
+private struct NotificationsSection: View {
+    @ObservedObject var notificationManager = CGNotificationManager.shared
+    @AppStorage(UserDefaultsKeys.suspiciousCellNotification.rawValue) var suspiciousCell: Bool = true
+    @AppStorage(UserDefaultsKeys.anomalousCellNotification.rawValue) var anomalousCell: Bool = true
+    @AppStorage(UserDefaultsKeys.keepCGRunningNotification.rawValue) var keepCGRunning: Bool = true
+    @AppStorage(UserDefaultsKeys.profileExpiryNotification.rawValue) var profileExpiry: Bool = true
+    @AppStorage(UserDefaultsKeys.newSysdiagnoseNotification.rawValue) var newSysdiagnose: Bool = true
+
+    var body: some View {
+        if notificationManager.authorizationStatus == .authorized {
+            Section(header: Text("Notifications"), footer: Text("Check which notifications you want to receive.")) {
+                Toggle("Suspicious Cell", isOn: $suspiciousCell)
+                Toggle("Anomalous Cell", isOn: $anomalousCell)
+                Toggle("Profile Expiry", isOn: $profileExpiry)
+                Toggle("Sysdiagnose Status", isOn: $newSysdiagnose)
+                Toggle("Exit Warning", isOn: $keepCGRunning)
+            }
         }
     }
 }

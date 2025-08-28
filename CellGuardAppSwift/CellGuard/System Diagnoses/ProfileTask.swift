@@ -70,6 +70,10 @@ struct ProfileTask {
     private static let fm = FileManager.init()
 
     @MainActor func run() async {
+        guard CGNotificationManager.shared.isProfileExpiryNotificationActive() else {
+            return
+        }
+
         if let attributes = try? Self.fm.attributesOfItem(atPath: Self.profilePath),
            let lastMod = attributes[FileAttributeKey(rawValue: "NSFileModificationDate")] as? Date {
             ProfileData.shared.update(modificationDate: lastMod)

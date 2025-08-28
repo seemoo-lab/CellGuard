@@ -17,9 +17,15 @@ enum UserDefaultsKeys: String {
     case logArchiveSpeedup
     case study
     case activePipelines
-    case profileExpiryNotification
+    case pastProfileExpiryNotification
     case shortcutInstalled
     case updateCheck
+    case suspiciousCellNotification
+    case anomalousCellNotification
+    case keepCGRunningNotification
+    case profileExpiryNotification
+    case newSysdiagnoseNotification
+
     #if JAILBREAK
     case mostRecentPacket
     #endif

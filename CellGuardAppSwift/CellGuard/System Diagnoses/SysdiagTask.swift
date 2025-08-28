@@ -39,6 +39,10 @@ struct SysdiagTask {
     private var inProgress: Set<Int> = Set()
 
     mutating func run(didScreenshotRecently: Bool = false) async {
+        guard CGNotificationManager.shared.isNewSysdiagnoseNotificationActive() else {
+            return
+        }
+
         let now = Date()
         Self.logger.info("Checking for active sysdiagnoses")
 
