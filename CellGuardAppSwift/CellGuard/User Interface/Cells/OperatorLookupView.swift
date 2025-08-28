@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import NavigationBackport
 
 // This view is only intended to be used for testing various country & network values.
 struct OperatorLookupView: View {
@@ -24,17 +25,11 @@ struct OperatorLookupView: View {
                 }
             }
 
-            NavigationLink {
-                List {
-                    CellCountryNetworkSection(
-                        country: Int32(truncatingIfNeeded: country ?? 0),
-                        network: Int32(truncatingIfNeeded: network ?? 0),
-                        techFormatter: CellTechnologyFormatter(technology: technology)
-                    )
-                }
-                .listStyle(.insetGrouped)
-                .navigationTitle("Operator")
-            } label: {
+            ListNavigationLink(value: SingleCellCountryNetworkNav(
+                country: Int32(truncatingIfNeeded: country ?? 0),
+                network: Int32(truncatingIfNeeded: network ?? 0),
+                technology: technology)
+            ) {
                 Text("Country & Network Data")
             }
             .disabled(country == nil || network == nil)

@@ -96,6 +96,9 @@ struct SummaryTabView: View {
             .nbNavigationDestination(for: TweakCellMeasurementListNav.self) { data in
                 TweakCellMeasurementList(nav: data)
             }
+            .nbNavigationDestination(for: SingleCellCountryNetworkNav.self) { data in
+                SingleCellCountryNetworkView(nav: data)
+            }
         }
         .background(Color.gray)
         .environmentObject(cellFilterSettings)

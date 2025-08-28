@@ -52,6 +52,29 @@ struct CellCountryNetworkSection: View {
     }
 }
 
+struct SingleCellCountryNetworkNav: Hashable {
+    let country: Int32
+    let network: Int32
+    let technology: ALSTechnology
+}
+
+struct SingleCellCountryNetworkView: View {
+    let nav: SingleCellCountryNetworkNav
+
+    var body: some View {
+        List {
+            CellCountryNetworkSection(
+                country: nav.country,
+                network: nav.network,
+                techFormatter: CellTechnologyFormatter(technology: nav.technology)
+            )
+        }
+        .listStyle(.insetGrouped)
+        .navigationTitle("Operator")
+        .navigationBarTitleDisplayMode(.inline)
+    }
+}
+
 // Here are some test cases for country-only data (because there exists no operator with MNC 999).
 // Other test cases for countries (from specific network operators) are in the CountryDetailsView.swift.
 // Run the generate_operators.py script and use the "duplicate entries" as special test cases.
