@@ -357,6 +357,8 @@
 		CFD3F5DA2E60A22B007D6C3E /* ImportStatusRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD3F5D82E60A22B007D6C3E /* ImportStatusRow.swift */; };
 		CFD3F5DC2E60A27C007D6C3E /* ImportErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD3F5DB2E60A27C007D6C3E /* ImportErrorView.swift */; };
 		CFD3F5DD2E60A27C007D6C3E /* ImportErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD3F5DB2E60A27C007D6C3E /* ImportErrorView.swift */; };
+		CFD3F5DF2E60B190007D6C3E /* NavigationDestinations.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD3F5DE2E60B190007D6C3E /* NavigationDestinations.swift */; };
+		CFD3F5E02E60B190007D6C3E /* NavigationDestinations.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD3F5DE2E60B190007D6C3E /* NavigationDestinations.swift */; };
 		CFD5657A2BDFA82C00925FAA /* VerificationPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD565792BDFA82C00925FAA /* VerificationPipeline.swift */; };
 		CFD5657B2BDFA82C00925FAA /* VerificationPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD565792BDFA82C00925FAA /* VerificationPipeline.swift */; };
 		CFD5657D2BDFA90A00925FAA /* CGVerificationPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD5657C2BDFA90A00925FAA /* CGVerificationPipeline.swift */; };
@@ -612,6 +614,7 @@
 		CFD3F5D22E609768007D6C3E /* VerificationRelatedObjectId.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerificationRelatedObjectId.swift; sourceTree = "<group>"; };
 		CFD3F5D82E60A22B007D6C3E /* ImportStatusRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportStatusRow.swift; sourceTree = "<group>"; };
 		CFD3F5DB2E60A27C007D6C3E /* ImportErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportErrorView.swift; sourceTree = "<group>"; };
+		CFD3F5DE2E60B190007D6C3E /* NavigationDestinations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationDestinations.swift; sourceTree = "<group>"; };
 		CFD565792BDFA82C00925FAA /* VerificationPipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerificationPipeline.swift; sourceTree = "<group>"; };
 		CFD5657C2BDFA90A00925FAA /* CGVerificationPipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CGVerificationPipeline.swift; sourceTree = "<group>"; };
 		CFD8DD252A715E8300954A25 /* QMIContentParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QMIContentParser.swift; sourceTree = "<group>"; };
@@ -979,6 +982,7 @@
 				CF4EE5DF296C51A20069BA5A /* Settings */,
 				CF2A1C1E2975CDBB00E8B61C /* Summary */,
 				CF0FDCBA29699E8A00A6FFE2 /* HomeTabView.swift */,
+				CFD3F5DE2E60B190007D6C3E /* NavigationDestinations.swift */,
 				CFE4A7A82B35991C00A37C7A /* LaunchScreen.storyboard */,
 			);
 			path = "User Interface";
@@ -1606,6 +1610,7 @@
 				CFB6CF302BD122FA00EAB7B4 /* LocationAnnotation.swift in Sources */,
 				CFB6CF312BD122FA00EAB7B4 /* PacketARIDetailsView.swift in Sources */,
 				CFB6CF322BD122FA00EAB7B4 /* UserDefaultsKeys.swift in Sources */,
+				CFD3F5DF2E60B190007D6C3E /* NavigationDestinations.swift in Sources */,
 				CFC041142C126E1000BCD692 /* SysdiagOpenSettingsDetailedView.swift in Sources */,
 				CFB6CF332BD122FA00EAB7B4 /* CellInformationCard.swift in Sources */,
 				CFEA68E72C131F9400F781BC /* AppleURLs.swift in Sources */,
@@ -1834,6 +1839,7 @@
 				45ECF5722BFC00D100DD92CF /* DebugProfileCard.swift in Sources */,
 				CFA83C9E2D9D7EBD00239AB7 /* Icons.swift in Sources */,
 				CFAE881A2C28B9C100092B15 /* StudyClient.swift in Sources */,
+				CFD3F5E02E60B190007D6C3E /* NavigationDestinations.swift in Sources */,
 				EDA9FEBB2E1F9AEA00C52409 /* ConnectivityView.swift in Sources */,
 				CF7064F62CC513B500BF8AF9 /* TowerAnnotationView.swift in Sources */,
 				CFD3F5D92E60A22B007D6C3E /* ImportStatusRow.swift in Sources */,

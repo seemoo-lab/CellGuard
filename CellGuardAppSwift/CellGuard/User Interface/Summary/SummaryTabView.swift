@@ -53,52 +53,10 @@ struct SummaryTabView: View {
                     }
                 }
             }
-            .nbNavigationDestination(for: SummaryNavigationPath.self, destination: SummaryNavigationPath.navigate)
-            .nbNavigationDestination(for: NavObjectId<CellTweak>.self) { id in
-                id.ensure { CellDetailsView(tweakCell: $0) }
-            }
-            .nbNavigationDestination(for: NavObjectId<CellALS>.self) { id in
-                id.ensure { CellDetailsView(alsCell: $0) }
-            }
-            .nbNavigationDestination(for: CellDetailsNavigation.self) { nav in
-                nav.cell.ensure { cell in
-                    CellDetailsView(tweakCell: cell, predicate: nav.predicate)
-                }
-            }
-            .nbNavigationDestination(for: RiskLevel.self) { riskLevel in
-                RiskInfoView(risk: riskLevel)
-            }
-            .nbNavigationDestination(for: NavObjectId<PacketARI>.self) { id in
-                id.ensure { PacketARIDetailsView(packet: $0) }
-            }
-            .nbNavigationDestination(for: NavObjectId<PacketQMI>.self) { id in
-                id.ensure { PacketQMIDetailsView(packet: $0) }
-            }
-            .nbNavigationDestination(for: NavObjectId<VerificationState>.self) { id in
-                id.ensure { VerificationStateView(verificationState: $0) }
-            }
-            .nbNavigationDestination(for: [NetworkOperator].self) { ops in
-                if ops.count == 1, let op = ops.first {
-                    OperatorDetailsView(netOperator: op)
-                } else {
-                    OperatorDetailsListView(netOperators: ops)
-                }
-            }
-            .nbNavigationDestination(for: CountryDetailsNavigation<NetworkCountry>.self) { data in
-                CountryDetailsView(country: data.country, secondary: data.secondary)
-            }
-            .nbNavigationDestination(for: CountryDetailsNavigation<NetworkOperator>.self) { data in
-                CountryDetailsView(country: data.country, secondary: data.secondary)
-            }
-            .nbNavigationDestination(for: CellDetailsTowerNavigation.self) { data in
-                CellDetailsTowerView(nav: data)
-            }
-            .nbNavigationDestination(for: TweakCellMeasurementListNav.self) { data in
-                TweakCellMeasurementList(nav: data)
-            }
-            .nbNavigationDestination(for: SingleCellCountryNetworkNav.self) { data in
-                SingleCellCountryNetworkView(nav: data)
-            }
+            .cgNavigationDestinations(.summaryTab)
+            .cgNavigationDestinations(.cells)
+            .cgNavigationDestinations(.operators)
+            .cgNavigationDestinations(.packets)
         }
         .background(Color.gray)
         .environmentObject(cellFilterSettings)

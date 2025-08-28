@@ -38,37 +38,9 @@ struct MapTabView: View {
             .sheet(isPresented: $infoSheetShown) {
                 MapInfoSheet()
             }
-            .nbNavigationDestination(for: NavObjectId<CellALS>.self) { id in
-                id.ensure { CellDetailsView(alsCell: $0) }
-            }
-            .nbNavigationDestination(for: [NetworkOperator].self) { ops in
-                if ops.count == 1, let op = ops.first {
-                    OperatorDetailsView(netOperator: op)
-                } else {
-                    OperatorDetailsListView(netOperators: ops)
-                }
-            }
-            .nbNavigationDestination(for: CountryDetailsNavigation<NetworkCountry>.self) { data in
-                CountryDetailsView(country: data.country, secondary: data.secondary)
-            }
-            .nbNavigationDestination(for: CountryDetailsNavigation<NetworkOperator>.self) { data in
-                CountryDetailsView(country: data.country, secondary: data.secondary)
-            }
-            .nbNavigationDestination(for: CellDetailsTowerNavigation.self) { data in
-                CellDetailsTowerView(nav: data)
-            }
-            .nbNavigationDestination(for: TweakCellMeasurementListNav.self) { data in
-                TweakCellMeasurementList(nav: data)
-            }
-            .nbNavigationDestination(for: NavObjectId<VerificationState>.self) { id in
-                id.ensure { VerificationStateView(verificationState: $0) }
-            }
-            .nbNavigationDestination(for: NavObjectId<PacketARI>.self) { id in
-                id.ensure { PacketARIDetailsView(packet: $0) }
-            }
-            .nbNavigationDestination(for: NavObjectId<PacketQMI>.self) { id in
-                id.ensure { PacketQMIDetailsView(packet: $0) }
-            }
+            .cgNavigationDestinations(.cells)
+            .cgNavigationDestinations(.operators)
+            .cgNavigationDestinations(.packets)
         }
     }
 }
