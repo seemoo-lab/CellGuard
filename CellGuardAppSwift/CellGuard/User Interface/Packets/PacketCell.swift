@@ -175,7 +175,7 @@ struct PacketCell_Previews: PreviewProvider {
                     }
                 }
             }
-            .nbNavigationDestination(for: PacketContainer.self) { container in
+            .nbNavigationDestination(for: PacketContainer.self) { _ in
                 Text("Hello")
             }
         }
