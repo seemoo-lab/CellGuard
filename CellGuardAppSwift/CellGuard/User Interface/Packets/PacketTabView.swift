@@ -79,7 +79,7 @@ struct PacketTabView: View {
 
 private struct PauseContinueButton: View {
 
-    @ObservedObject var filter: PacketFilterSettings
+    @EnvironmentObject var filter: PacketFilterSettings
 
     var body: some View {
         Button {
