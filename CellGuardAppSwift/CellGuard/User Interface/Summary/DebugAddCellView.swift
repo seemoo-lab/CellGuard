@@ -77,8 +77,8 @@ struct DebugAddCellView: View {
                     }
                 }
             }
-
         }
+        .navigationTitle("Laboratory")
         .listStyle(.insetGrouped)
         .alert(item: $alert) { type in
             switch type {

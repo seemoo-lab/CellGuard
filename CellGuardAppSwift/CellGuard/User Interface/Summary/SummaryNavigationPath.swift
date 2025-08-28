@@ -14,6 +14,7 @@ enum SummaryNavigationPath: NBScreen {
     case cellList
     case cellListFilter
     case dataSummary
+    case cellLaboratory
     case operatorLookup
 
     case settings
@@ -43,6 +44,8 @@ enum SummaryNavigationPath: NBScreen {
             CellListFilterView()
         } else if path == .dataSummary {
             DataSummaryView()
+        } else if path == .cellLaboratory {
+            DebugAddCellView()
         } else if path == .operatorLookup {
             OperatorLookupView()
         } else if path == .settings {
