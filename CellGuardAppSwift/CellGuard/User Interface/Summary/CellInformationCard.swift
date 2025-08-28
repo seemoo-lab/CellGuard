@@ -99,6 +99,8 @@ private struct ConnectedCellInfoCard: View {
     @FetchRequest private var alsCells: FetchedResults<CellALS>
     @FetchRequest private var tweakCells: FetchedResults<CellTweak>
 
+    @ObservedObject private var locationInfo = LocationDataManagerPublished.shared
+
     private let techFormatter: CellTechnologyFormatter
 
     init(cell: CellTweak, dualSim: Bool = false) {
@@ -157,7 +159,7 @@ private struct ConnectedCellInfoCard: View {
         .padding(EdgeInsets(top: 5, leading: 20, bottom: cell.location == nil ? 25 : 10, trailing: 20))
 
         if SingleCellMap.hasAnyLocation(alsCells, tweakCells) {
-            SingleCellMap(alsCells: alsCells, tweakCells: tweakCells)
+            SingleCellMap(locationInfo: locationInfo, alsCells: alsCells, tweakCells: tweakCells)
                 .frame(height: 200)
                 .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
         }

@@ -12,16 +12,18 @@ import MapKit
 
 struct TowerCellMap: UIViewRepresentable {
 
+    let locationInfo: LocationDataManagerPublished
     let alsCells: any BidirectionalCollection<CellALS>
     let dissect: (Int64) -> (Int64, Int64)
 
     func makeUIView(context: Context) -> MKMapView {
         let mapView = MKMapView(frame: .zero)
 
-        mapView.showsUserLocation = true
+        // See SingleCellMap
+        mapView.showsUserLocation = locationInfo.authorized
         mapView.showsCompass = true
 
-        let location = LocationDataManager.shared.lastLocation ?? CLLocation(latitude: 49.8726737, longitude: 8.6516291)
+        let location = LocationDataManagerPublished.shared.lastLocation ?? CLLocation(latitude: 49.8726737, longitude: 8.6516291)
         let region = MKCoordinateRegion(
             center: location.coordinate,
             span: MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02)
@@ -41,10 +43,12 @@ struct TowerCellMap: UIViewRepresentable {
     func updateUIView(_ uiView: MKMapView, context: Context) {
         // Don't update map annotations if the app is in the background
         if UIApplication.shared.applicationState == .background {
+            uiView.showsUserLocation = false
             return
         }
 
         updateAnnotations(uiView)
+        uiView.showsUserLocation = locationInfo.authorized
     }
 
     private func updateAnnotations(_ uiView: MKMapView) {

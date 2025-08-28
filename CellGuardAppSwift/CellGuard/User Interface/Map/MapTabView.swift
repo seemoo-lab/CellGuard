@@ -15,7 +15,7 @@ struct MapTabView: View {
     @Environment(\.managedObjectContext)
     private var managedContext: NSManagedObjectContext
 
-    @ObservedObject private var locationManager = LocationDataManager.shared
+    @ObservedObject private var locationManager = LocationDataManagerPublished.shared
 
     @FetchRequest(
         sortDescriptors: [NSSortDescriptor(keyPath: \CellALS.imported, ascending: false)],
@@ -46,7 +46,7 @@ struct MapTabView: View {
                 .hidden()
 
                 // Map
-                MultiCellMap(alsCells: alsCells) { cellID in
+                MultiCellMap(locationInfo: locationManager, alsCells: alsCells) { cellID in
                     navigationTarget = cellID
                     navigationActive = true
                 }
@@ -99,6 +99,5 @@ struct MapView_Previews: PreviewProvider {
     static var previews: some View {
         MapTabView()
             .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
-            .environmentObject(LocationDataManager.shared)
     }
 }
