@@ -80,7 +80,10 @@ private struct WelcomeInformation: View {
 }
 
 #Preview {
-    NavigationView {
+    NBNavigationStack {
         WelcomeView()
+            .nbNavigationDestination(for: IntroductionState.self) { _ in
+                Text("No")
+            }
     }
 }

@@ -208,7 +208,7 @@ struct SmallButtonStyle: ButtonStyle {
 }
 
 #Preview {
-    NavigationView {
+    NBNavigationStack {
         UserStudyView { _ in
             // Doing nothing
         }

@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import NavigationBackport
 
 struct SysDiagnoseView: View {
 
@@ -28,7 +29,10 @@ struct SysDiagnoseView: View {
 }
 
 #Preview {
-    NavigationView {
+    NBNavigationStack {
         SysDiagnoseView()
+            .nbNavigationDestination(for: IntroductionState.self) { _ in
+                Text("No")
+            }
     }
 }

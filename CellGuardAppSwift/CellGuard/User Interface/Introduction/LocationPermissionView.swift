@@ -58,7 +58,10 @@ struct LocationPermissionView: View {
 }
 
 #Preview {
-    NavigationView {
+    NBNavigationStack {
         LocationPermissionView()
+            .nbNavigationDestination(for: IntroductionState.self) { _ in
+                Text("No")
+            }
     }
 }

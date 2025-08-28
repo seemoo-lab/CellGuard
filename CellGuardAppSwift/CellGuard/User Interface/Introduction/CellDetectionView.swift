@@ -44,7 +44,10 @@ In a few cases, these anomalies indicate an attack by a fake base station. Such 
 }
 
 #Preview {
-    NavigationView {
+    NBNavigationStack {
         CellDetectionView()
+            .nbNavigationDestination(for: IntroductionState.self) { _ in
+                Text("No")
+            }
     }
 }

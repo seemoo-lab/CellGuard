@@ -75,7 +75,10 @@ struct UpdateCheckView: View {
 }
 
 #Preview {
-    NavigationView {
+    NBNavigationStack {
         NotificationPermissionView()
+            .nbNavigationDestination(for: IntroductionState.self) { _ in
+                Text("No")
+            }
     }
 }
