@@ -75,46 +75,75 @@ struct SingleCellCountryNetworkView: View {
     }
 }
 
+private struct PreviewShellView<T: View>: View {
+
+    let view: T
+
+    init(@ViewBuilder _ builder: () -> T) {
+        self.view = builder()
+    }
+
+    var body: some View {
+        NBNavigationStack {
+            List {
+                view
+            }
+            .cgNavigationDestinations(.operators)
+        }
+    }
+
+}
+
 // Here are some test cases for country-only data (because there exists no operator with MNC 999).
 // Other test cases for countries (from specific network operators) are in the CountryDetailsView.swift.
 // Run the generate_operators.py script and use the "duplicate entries" as special test cases.
 // You can also build the app using debug mode and use the operator lookup (three dots -> operators) instead of the previews.
 #Preview("French Antilles") {
-    NavigationView {
-        List {
-            CellCountryNetworkSection(country: 340, network: 999, techFormatter: CellTechnologyFormatter(technology: .LTE))
-        }
+    PreviewShellView {
+        CellCountryNetworkSection(
+            country: 340,
+            network: 999,
+            techFormatter: CellTechnologyFormatter(technology: .LTE)
+        )
     }
 }
 
 #Preview("Former Netherlands Antilles") {
-    NavigationView {
-        List {
-            CellCountryNetworkSection(country: 362, network: 999, techFormatter: CellTechnologyFormatter(technology: .LTE))
-        }
+    PreviewShellView {
+        CellCountryNetworkSection(
+            country: 362,
+            network: 999,
+            techFormatter: CellTechnologyFormatter(technology: .LTE)
+        )
     }
 }
 
 #Preview("French Indian Ocean Territories") {
-    NavigationView {
-        List {
-            CellCountryNetworkSection(country: 647, network: 999, techFormatter: CellTechnologyFormatter(technology: .LTE))
-        }
+    PreviewShellView {
+        CellCountryNetworkSection(
+            country: 647,
+            network: 999,
+            techFormatter: CellTechnologyFormatter(technology: .LTE)
+        )
     }
 }
 
 #Preview("US") {
-    NavigationView {
-        List {
-            CellCountryNetworkSection(country: 310, network: 999, techFormatter: CellTechnologyFormatter(technology: .LTE))
-        }
+    PreviewShellView {
+        CellCountryNetworkSection(
+            country: 310,
+            network: 999,
+            techFormatter: CellTechnologyFormatter(technology: .LTE)
+        )
     }
 }
 
 #Preview("US") {
-    NavigationView {
-        List {
-            CellCountryNetworkSection(country: 310, network: 999, techFormatter: CellTechnologyFormatter(technology: .LTE))
-        }
+    PreviewShellView {
+        CellCountryNetworkSection(
+            country: 310,
+            network: 999,
+            techFormatter: CellTechnologyFormatter(technology: .LTE)
+        )
     }
 }

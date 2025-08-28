@@ -23,7 +23,7 @@ struct VerificationRelatedObjectId<T: NSManagedObject>: Hashable {
 
     var object: T? {
         // The object might got removed while the new view was built
-        PersistenceController.shared.container.viewContext.object(with: id) as? T
+        PersistenceController.basedOnEnvironment().container.viewContext.object(with: id) as? T
     }
 
     @ViewBuilder
@@ -47,7 +47,7 @@ struct VerificationRelatedDistance: Hashable {
 
     @ViewBuilder
     func ensure<Children: View>(@ViewBuilder children: (_ cell: CellALS, _ loc: LocationUser) -> Children) -> some View {
-        let viewContext =  PersistenceController.shared.container.viewContext
+        let viewContext =  PersistenceController.basedOnEnvironment().container.viewContext
         if let cellAls = viewContext.object(with: cellAlsId) as? CellALS,
            let userLocation = viewContext.object(with: userLocationId) as? LocationUser {
             children(cellAls, userLocation)
@@ -66,7 +66,7 @@ struct VerificationRelatedPackets: Hashable {
     }
 
     var packets: [any Packet] {
-        let viewContext = PersistenceController.shared.container.viewContext
+        let viewContext = PersistenceController.basedOnEnvironment().container.viewContext
         return packetIds.compactMap { id in
             viewContext.object(with: id) as? any Packet
         }

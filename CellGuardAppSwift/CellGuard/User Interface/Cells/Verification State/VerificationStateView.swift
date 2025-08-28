@@ -106,7 +106,7 @@ private struct VerificationStateInternalView: View {
                     Button {
                         let measurementId = measurement.objectID
                         Task(priority: .background) {
-                            try? PersistenceController.shared.clearVerificationData(tweakCellID: measurementId)
+                            try? PersistenceController.basedOnEnvironment().clearVerificationData(tweakCellID: measurementId)
                         }
                     } label: {
                         KeyValueListRow(key: "Clear Verification Data") {

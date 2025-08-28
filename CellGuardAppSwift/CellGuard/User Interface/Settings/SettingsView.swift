@@ -208,9 +208,16 @@ private struct IntroductionSection: View {
 
 struct SettingsSheet_Previews: PreviewProvider {
     static var previews: some View {
-        NavigationView {
+        @State var cellFilterSettings = CellListFilterSettings()
+
+        NBNavigationStack {
             SettingsView()
+                .cgNavigationDestinations(.summaryTab)
+                .cgNavigationDestinations(.cells)
+                .cgNavigationDestinations(.operators)
+                .cgNavigationDestinations(.packets)
         }
         .environmentObject(CGNotificationManager.shared)
+        .environmentObject(cellFilterSettings)
     }
 }

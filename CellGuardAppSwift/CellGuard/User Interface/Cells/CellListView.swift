@@ -326,9 +326,16 @@ private struct ListPacketCell: View {
 
 struct CellListView_Previews: PreviewProvider {
     static var previews: some View {
-        NavigationView {
+        @State var filter = CellListFilterSettings()
+
+        NBNavigationStack {
             CellListView()
+                .cgNavigationDestinations(.summaryTab)
+                .cgNavigationDestinations(.cells)
+                .cgNavigationDestinations(.operators)
+                .cgNavigationDestinations(.packets)
         }
         .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+        .environmentObject(filter)
     }
 }

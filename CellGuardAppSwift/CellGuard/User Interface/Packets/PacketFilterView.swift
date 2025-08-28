@@ -58,7 +58,7 @@ class PacketFilterSettings: ObservableObject {
             return
         }
 
-        PersistenceController.shared.countPacketsByType { result in
+        PersistenceController.basedOnEnvironment().countPacketsByType { result in
             // We're back in the MainActor
             do {
                 let (qmiPackets, ariPackets) = try result.get()

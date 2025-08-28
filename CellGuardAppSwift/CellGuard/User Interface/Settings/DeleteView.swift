@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import NavigationBackport
 
 private enum DeleteAlert: Hashable, Identifiable {
     case deletionFailed(String)
@@ -230,7 +231,7 @@ struct DeleteView: View {
             PersistenceCategory.connectivityEvents: doDeleteConnectivityEvents
         ].filter { $0.value }.map { $0.key }
 
-        PersistenceController.shared.deleteDataInBackground(categories: deletionCategories) { result in
+        PersistenceController.basedOnEnvironment().deleteDataInBackground(categories: deletionCategories) { result in
             updateCounts(first: false)
             isDeletionInProgress = false
             do {
@@ -254,7 +255,7 @@ struct DeleteView: View {
             let connectivityEvents = persistence.countEntitiesOf(ConnectivityEvent.fetchRequest()) ?? self.connectivityEvents
 
             // Calculate the size
-            let size = PersistenceController.shared.size()
+            let size = PersistenceController.basedOnEnvironment().size()
 
             // Set the size on the main queue
             DispatchQueue.main.async {
@@ -305,7 +306,7 @@ private struct DeleteOldButton: View {
 
 struct DeleteView_Previews: PreviewProvider {
     static var previews: some View {
-        NavigationView {
+        NBNavigationStack {
             DeleteView()
         }
         .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)

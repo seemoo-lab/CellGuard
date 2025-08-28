@@ -23,7 +23,7 @@ struct NavObjectId<T: NSManagedObject>: Hashable {
 
     var object: T? {
         // The object might got removed while the new view was built
-        PersistenceController.shared.container.viewContext.object(with: id) as? T
+        PersistenceController.basedOnEnvironment().container.viewContext.object(with: id) as? T
     }
 
     @ViewBuilder

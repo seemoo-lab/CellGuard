@@ -138,7 +138,7 @@ private struct BackendSection: View {
                     var calendar = Calendar(identifier: .gregorian)
                     calendar.timeZone = TimeZone(identifier: "UTC")!
                     let beginningOfWeek = calendar.dateComponents([.calendar, .yearForWeekOfYear, .weekOfYear], from: Date()).date!
-                    try PersistenceController.shared.deleteStudyScore(of: beginningOfWeek)
+                    try PersistenceController.basedOnEnvironment().deleteStudyScore(of: beginningOfWeek)
                 }
             } label: {
                 Text("Clear Weekly Scores")

@@ -56,14 +56,14 @@ struct CellDetailsView: View {
     private func alsFetchRequest() -> FetchRequest<CellALS> {
         return FetchRequest<CellALS>(
             sortDescriptors: [NSSortDescriptor(keyPath: \CellALS.imported, ascending: false)],
-            predicate: PersistenceController.shared.sameCellPredicate(cell: cell),
+            predicate: PersistenceController.basedOnEnvironment().sameCellPredicate(cell: cell),
             animation: .default
         )
     }
 
     private func tweakFetchRequest() -> FetchRequest<VerificationState> {
         var predicates = [
-            PersistenceController.shared.sameCellPredicate(cell: cell, prefix: "cell.")
+            PersistenceController.basedOnEnvironment().sameCellPredicate(cell: cell, prefix: "cell.")
         ]
 
         // Append custom predicates
@@ -357,19 +357,27 @@ struct CellDetailsView_Previews: PreviewProvider {
     static var previews: some View {
         let (alsCell, measurements) = prepareDB()
 
-        NavigationView {
+        NBNavigationStack {
             CellDetailsView(
                 tweakCell: measurements.first!,
                 predicate: NSPredicate(value: true)
             )
+            .cgNavigationDestinations(.summaryTab)
+            .cgNavigationDestinations(.cells)
+            .cgNavigationDestinations(.operators)
+            .cgNavigationDestinations(.packets)
         }
         .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
         .previewDisplayName("Tweak Measurement")
 
-        NavigationView {
+        NBNavigationStack {
             CellDetailsView(
                 alsCell: alsCell
             )
+            .cgNavigationDestinations(.summaryTab)
+            .cgNavigationDestinations(.cells)
+            .cgNavigationDestinations(.operators)
+            .cgNavigationDestinations(.packets)
         }
         .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
         .previewDisplayName("ALS Cell")

@@ -80,13 +80,13 @@ struct OperatorDetailsView: View {
 }
 
 #Preview("DE Telekom") {
-    NavigationView {
+    NBNavigationStack {
         OperatorDetailsView(netOperator: OperatorDefinitions.shared.translate(country: 262, network: 01).first!)
     }
 }
 
 #Preview("BA RS Telecom") {
-    NavigationView {
+    NBNavigationStack {
         OperatorDetailsView(netOperator: OperatorDefinitions.shared.translate(country: 218, network: 05).first!)
     }
 }
