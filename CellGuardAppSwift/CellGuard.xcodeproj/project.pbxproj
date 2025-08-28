@@ -353,6 +353,10 @@
 		CFD3F5CE2E6062D6007D6C3E /* PacketNavigationPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD3F5CC2E6062D6007D6C3E /* PacketNavigationPath.swift */; };
 		CFD3F5D32E609768007D6C3E /* VerificationRelatedObjectId.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD3F5D22E609768007D6C3E /* VerificationRelatedObjectId.swift */; };
 		CFD3F5D42E609768007D6C3E /* VerificationRelatedObjectId.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD3F5D22E609768007D6C3E /* VerificationRelatedObjectId.swift */; };
+		CFD3F5D92E60A22B007D6C3E /* ImportStatusRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD3F5D82E60A22B007D6C3E /* ImportStatusRow.swift */; };
+		CFD3F5DA2E60A22B007D6C3E /* ImportStatusRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD3F5D82E60A22B007D6C3E /* ImportStatusRow.swift */; };
+		CFD3F5DC2E60A27C007D6C3E /* ImportErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD3F5DB2E60A27C007D6C3E /* ImportErrorView.swift */; };
+		CFD3F5DD2E60A27C007D6C3E /* ImportErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD3F5DB2E60A27C007D6C3E /* ImportErrorView.swift */; };
 		CFD5657A2BDFA82C00925FAA /* VerificationPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD565792BDFA82C00925FAA /* VerificationPipeline.swift */; };
 		CFD5657B2BDFA82C00925FAA /* VerificationPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD565792BDFA82C00925FAA /* VerificationPipeline.swift */; };
 		CFD5657D2BDFA90A00925FAA /* CGVerificationPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD5657C2BDFA90A00925FAA /* CGVerificationPipeline.swift */; };
@@ -606,6 +610,8 @@
 		CFD023732961DF7400AA5A1C /* ALSClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ALSClientTests.swift; sourceTree = "<group>"; };
 		CFD3F5CC2E6062D6007D6C3E /* PacketNavigationPath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacketNavigationPath.swift; sourceTree = "<group>"; };
 		CFD3F5D22E609768007D6C3E /* VerificationRelatedObjectId.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerificationRelatedObjectId.swift; sourceTree = "<group>"; };
+		CFD3F5D82E60A22B007D6C3E /* ImportStatusRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportStatusRow.swift; sourceTree = "<group>"; };
+		CFD3F5DB2E60A27C007D6C3E /* ImportErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportErrorView.swift; sourceTree = "<group>"; };
 		CFD565792BDFA82C00925FAA /* VerificationPipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerificationPipeline.swift; sourceTree = "<group>"; };
 		CFD5657C2BDFA90A00925FAA /* CGVerificationPipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CGVerificationPipeline.swift; sourceTree = "<group>"; };
 		CFD8DD252A715E8300954A25 /* QMIContentParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QMIContentParser.swift; sourceTree = "<group>"; };
@@ -858,6 +864,8 @@
 				CF0FDCC12969AC1100A6FFE2 /* SettingsView.swift */,
 				CF2631D32C13127C0076AE33 /* AdvancedSettingsView.swift */,
 				CF15E1F92AA33EA200D440AD /* ImportView.swift */,
+				CFD3F5D82E60A22B007D6C3E /* ImportStatusRow.swift */,
+				CFD3F5DB2E60A27C007D6C3E /* ImportErrorView.swift */,
 				CF4E53A52A32225300AE2059 /* ExportView.swift */,
 				CFF05F6C2A39AA3900DE6FB2 /* DeleteView.swift */,
 				CFDF5D88297F340E000708A8 /* ActivityViewController.swift */,
@@ -1577,6 +1585,7 @@
 				CFB6CF232BD122FA00EAB7B4 /* ARIContentParser.swift in Sources */,
 				CFB6CF242BD122FA00EAB7B4 /* PersistenceCSVExporter.swift in Sources */,
 				CF70A97D2BE682F900989FB5 /* QVerification.swift in Sources */,
+				CFD3F5DC2E60A27C007D6C3E /* ImportErrorView.swift in Sources */,
 				EDAFBFEC2D9C0A5A00D7748B /* QmiCellParser.swift in Sources */,
 				CF8F3E362BF3C4DE00FC9F43 /* StudyTask.swift in Sources */,
 				CFB6CF252BD122FA00EAB7B4 /* URLIdentifiable.swift in Sources */,
@@ -1727,6 +1736,7 @@
 				CF0591F32DBCF653003CB81C /* SysdiagUrls.swift in Sources */,
 				CFD5657B2BDFA82C00925FAA /* VerificationPipeline.swift in Sources */,
 				CFB6CF812BD122FA00EAB7B4 /* CellGuardApp.swift in Sources */,
+				CFD3F5DA2E60A22B007D6C3E /* ImportStatusRow.swift in Sources */,
 				CFD3F5D32E609768007D6C3E /* VerificationRelatedObjectId.swift in Sources */,
 				45ECF55E2BFACB7D00DD92CF /* UserStudyView.swift in Sources */,
 				CFB6CF822BD122FA00EAB7B4 /* WelcomeView.swift in Sources */,
@@ -1826,6 +1836,7 @@
 				CFAE881A2C28B9C100092B15 /* StudyClient.swift in Sources */,
 				EDA9FEBB2E1F9AEA00C52409 /* ConnectivityView.swift in Sources */,
 				CF7064F62CC513B500BF8AF9 /* TowerAnnotationView.swift in Sources */,
+				CFD3F5D92E60A22B007D6C3E /* ImportStatusRow.swift in Sources */,
 				CFDF5D7F297F05A0000708A8 /* SingleCellMap.swift in Sources */,
 				CF5EF92A2979B8D800C4F50A /* LocationSource.swift in Sources */,
 				CF4E53A22A321B3000AE2059 /* PacketTabView.swift in Sources */,
@@ -1885,6 +1896,7 @@
 				CFF05F6F2A39ABF500DE6FB2 /* PersistenceCategories.swift in Sources */,
 				CF0FDCC9296B310400A6FFE2 /* PersistencePreview.swift in Sources */,
 				CFAE88142C2887C400092B15 /* VerificationStateLog.swift in Sources */,
+				CFD3F5DD2E60A27C007D6C3E /* ImportErrorView.swift in Sources */,
 				CFBEC8402BC7F6E80021C0B9 /* PacketQMI+CoreDataClass.swift in Sources */,
 				CFBEC8422BC7F6E80021C0B9 /* PacketARI+CoreDataClass.swift in Sources */,
 				CFFF19E32BC6D2D3004E40CE /* AcknowledgementView.swift in Sources */,
