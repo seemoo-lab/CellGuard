@@ -351,6 +351,8 @@
 		CFD023742961DF7400AA5A1C /* ALSClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD023732961DF7400AA5A1C /* ALSClientTests.swift */; };
 		CFD3F5CD2E6062D6007D6C3E /* PacketNavigationPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD3F5CC2E6062D6007D6C3E /* PacketNavigationPath.swift */; };
 		CFD3F5CE2E6062D6007D6C3E /* PacketNavigationPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD3F5CC2E6062D6007D6C3E /* PacketNavigationPath.swift */; };
+		CFD3F5D32E609768007D6C3E /* VerificationRelatedObjectId.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD3F5D22E609768007D6C3E /* VerificationRelatedObjectId.swift */; };
+		CFD3F5D42E609768007D6C3E /* VerificationRelatedObjectId.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD3F5D22E609768007D6C3E /* VerificationRelatedObjectId.swift */; };
 		CFD5657A2BDFA82C00925FAA /* VerificationPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD565792BDFA82C00925FAA /* VerificationPipeline.swift */; };
 		CFD5657B2BDFA82C00925FAA /* VerificationPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD565792BDFA82C00925FAA /* VerificationPipeline.swift */; };
 		CFD5657D2BDFA90A00925FAA /* CGVerificationPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD5657C2BDFA90A00925FAA /* CGVerificationPipeline.swift */; };
@@ -603,6 +605,7 @@
 		CFD023692961ABA100AA5A1C /* ALSClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ALSClient.swift; sourceTree = "<group>"; };
 		CFD023732961DF7400AA5A1C /* ALSClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ALSClientTests.swift; sourceTree = "<group>"; };
 		CFD3F5CC2E6062D6007D6C3E /* PacketNavigationPath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacketNavigationPath.swift; sourceTree = "<group>"; };
+		CFD3F5D22E609768007D6C3E /* VerificationRelatedObjectId.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerificationRelatedObjectId.swift; sourceTree = "<group>"; };
 		CFD565792BDFA82C00925FAA /* VerificationPipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerificationPipeline.swift; sourceTree = "<group>"; };
 		CFD5657C2BDFA90A00925FAA /* CGVerificationPipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CGVerificationPipeline.swift; sourceTree = "<group>"; };
 		CFD8DD252A715E8300954A25 /* QMIContentParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QMIContentParser.swift; sourceTree = "<group>"; };
@@ -1048,6 +1051,7 @@
 				CF86C79C2A6AE0E3002EC9B6 /* VerificationStateView.swift */,
 				CFAE88132C2887C400092B15 /* VerificationStateLog.swift */,
 				CFAE88162C2887F300092B15 /* VerificationStateStudy.swift */,
+				CFD3F5D22E609768007D6C3E /* VerificationRelatedObjectId.swift */,
 			);
 			path = "Verification State";
 			sourceTree = "<group>";
@@ -1723,6 +1727,7 @@
 				CF0591F32DBCF653003CB81C /* SysdiagUrls.swift in Sources */,
 				CFD5657B2BDFA82C00925FAA /* VerificationPipeline.swift in Sources */,
 				CFB6CF812BD122FA00EAB7B4 /* CellGuardApp.swift in Sources */,
+				CFD3F5D32E609768007D6C3E /* VerificationRelatedObjectId.swift in Sources */,
 				45ECF55E2BFACB7D00DD92CF /* UserStudyView.swift in Sources */,
 				CFB6CF822BD122FA00EAB7B4 /* WelcomeView.swift in Sources */,
 				CFEAB13B2D833C4500525C0C /* SysdiagTask.swift in Sources */,
@@ -1827,6 +1832,7 @@
 				CF740C172CC3B10B0083418B /* CellDetailsTowerView.swift in Sources */,
 				CF2A1C1B2975670000E8B61C /* CGNotificationManager.swift in Sources */,
 				CF2B94B32B0B676F00F24ED1 /* PacketConstants.swift in Sources */,
+				CFD3F5D42E609768007D6C3E /* VerificationRelatedObjectId.swift in Sources */,
 				CF4E53A62A32225300AE2059 /* ExportView.swift in Sources */,
 				CF6EC8AD2A6C4C88004CF0AB /* PreviewInfo.swift in Sources */,
 				CF0FDCB529698E1500A6FFE2 /* SummaryTabView.swift in Sources */,

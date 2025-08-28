@@ -14,6 +14,7 @@ public protocol Packet: NSFetchRequestResult, Identifiable {
     var direction: String? { get set }
     var imported: Date? { get set }
     var simSlotID: Int16 { get set }
+    var objectID: NSManagedObjectID { get }
 }
 
 extension Packet {
