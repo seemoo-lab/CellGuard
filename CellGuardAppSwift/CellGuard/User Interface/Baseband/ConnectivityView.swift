@@ -193,7 +193,7 @@ private struct FilteredConnectivityView: View {
     private func groupEvents() -> [GroupedConnectivityEvents] {
         var groups: [GroupedConnectivityEvents] = []
 
-        // Iterate through all measurements and start a new group upon encountering a new cell
+        // Iterate through all measurements and start a new group upon encountering a new event
         var groupEvents: [ConnectivityEvent] = []
         for event in events {
             if let lastEvent = groupEvents.last, settings.active != nil || lastEvent.active != event.active {
@@ -274,7 +274,7 @@ struct ConnectivityEventListEntry: View {
                     HStack(spacing: 2) {
                         Image(systemName: "simcard")
                             .font(.system(size: 12))
-                        Text(simSlots.map { "\($0)" }.sorted().joined(separator: ","))
+                        Text(simSlots.map { $0 == 0 ? "None" : "\($0)" }.sorted().joined(separator: ","))
                             .font(.system(size: 14))
                     }
                     .foregroundColor(.gray)

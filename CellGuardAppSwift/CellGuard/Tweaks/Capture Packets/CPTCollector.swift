@@ -74,9 +74,9 @@ struct CPTCollector {
 
             let (_, qmiPacketRefs) = try PersistenceController.shared.importQMIPackets(from: qmiPackets)
             let (_, ariPacketRefs) = try PersistenceController.shared.importARIPackets(from: ariPackets)
-            let cellPacketRefs = (qmiPacketRefs["cell"] ?? []) + (ariPacketRefs["cell"] ?? [])
+            let cellPacketRefs = qmiPacketRefs.cellInfo + ariPacketRefs.cellInfo
             let importedCells = try PersistenceController.shared.importCollectedCells(from: cellPacketRefs, filter: true)
-            let connectivityPacketRefs = (qmiPacketRefs["connectivity"] ?? []) + (ariPacketRefs["connectivity"] ?? [])
+            let connectivityPacketRefs = qmiPacketRefs.connectivityEvents + ariPacketRefs.connectivityEvents
             let importedConnectivityEvents = try PersistenceController.shared.importConnectivityEvents(from: connectivityPacketRefs)
 
             return (qmiPackets.count, ariPackets.count, importedCells, importedConnectivityEvents)

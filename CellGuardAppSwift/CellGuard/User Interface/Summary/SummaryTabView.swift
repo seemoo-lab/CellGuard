@@ -91,7 +91,7 @@ struct SummaryTabView: View {
                         Button {
                             showingConnectivity = true
                         } label: {
-                            Label("Baseband", systemImage: "iphone.radiowaves.left.and.right")
+                            Label("Connectivity", systemImage: "bolt")
                         }
                         #if STATS_VIEW
                         // Disable stats for the beta test as it is not finished.

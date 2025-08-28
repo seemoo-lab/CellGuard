@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23788.4" systemVersion="24F74" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23788.4" systemVersion="24G90" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="CellALS" representedClassName="CellALS" syncable="YES" codeGenerationType="category">
         <attribute name="area" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="cell" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
@@ -73,8 +73,8 @@
         <attribute name="imported" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="registrationStatus" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="simSlot" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
-        <relationship name="packetAri" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PacketARI"/>
-        <relationship name="packetQmi" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PacketQMI"/>
+        <relationship name="packetAri" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PacketARI" inverseName="connectivityEvent" inverseEntity="PacketARI"/>
+        <relationship name="packetQmi" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PacketQMI" inverseName="connectivityEvent" inverseEntity="PacketQMI"/>
     </entity>
     <entity name="LocationALS" representedClassName="LocationALS" syncable="YES" codeGenerationType="class">
         <attribute name="horizontalAccuracy" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
@@ -121,6 +121,7 @@
         <attribute name="simSlotID" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="type" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <relationship name="cells" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CellTweak" inverseName="packetAri" inverseEntity="CellTweak"/>
+        <relationship name="connectivityEvent" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ConnectivityEvent" inverseName="packetAri" inverseEntity="ConnectivityEvent"/>
         <relationship name="index" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="PacketIndexARI" inverseName="packet" inverseEntity="PacketIndexARI"/>
         <relationship name="verificationLogs" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="VerificationLog" inverseName="relatedPacketARI" inverseEntity="VerificationLog"/>
         <uniquenessConstraints>
@@ -173,6 +174,7 @@
         <attribute name="service" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="simSlotID" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <relationship name="cells" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CellTweak" inverseName="packetQmi" inverseEntity="CellTweak"/>
+        <relationship name="connectivityEvent" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ConnectivityEvent" inverseName="packetQmi" inverseEntity="ConnectivityEvent"/>
         <relationship name="index" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="PacketIndexQMI" inverseName="packet" inverseEntity="PacketIndexQMI"/>
         <relationship name="verificationLogs" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="VerificationLog" inverseName="relatedPacketQMI" inverseEntity="VerificationLog"/>
         <uniquenessConstraints>

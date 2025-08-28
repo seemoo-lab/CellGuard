@@ -8,13 +8,18 @@
 import CoreData
 import Foundation
 
+struct PacketImportRefs {
+    var cellInfo: [NSManagedObjectID] = []
+    var connectivityEvents: [NSManagedObjectID] = []
+}
+
 extension PersistenceController {
 
     /// Uses `NSBatchInsertRequest` (BIR) to import QMI packets into the Core Data store on a private queue.
     /// Returns the number of imported packets and references to packets with (a) cell information and (b) connectivity events.
-    func importQMIPackets(from packets: [(CPTPacket, ParsedQMIPacket)]) throws -> (Int, [String: [NSManagedObjectID]]) {
+    func importQMIPackets(from packets: [(CPTPacket, ParsedQMIPacket)]) throws -> (Int, PacketImportRefs) {
         if packets.isEmpty {
-            return (0, [:])
+            return (0, PacketImportRefs())
         }
 
         let objectIds: [NSManagedObjectID] = try performAndWait(name: "importContext", author: "importQMIPackets") { context in
@@ -54,7 +59,7 @@ extension PersistenceController {
             return batchInsertResult.result as? [NSManagedObjectID]
         } ?? []
 
-        var packetRefs: [String: [NSManagedObjectID]] = ["cell": [], "connectivity": []]
+        var packetRefs = PacketImportRefs()
         try performAndWait(name: "importContext", author: "importQMIPackets") { context in
             var added = false
             for objectId in objectIds {
@@ -63,10 +68,10 @@ extension PersistenceController {
                 }
 
                 if CCTParser.isCellPacket(qmi: qmiPacket, ari: nil) {
-                    packetRefs["cell"]!.append(qmiPacket.objectID)
+                    packetRefs.cellInfo.append(qmiPacket.objectID)
                 }
                 if ConnectivityEventParser.isConnectivityEventPacket(qmi: qmiPacket, ari: nil) {
-                    packetRefs["connectivity"]!.append(qmiPacket.objectID)
+                    packetRefs.connectivityEvents.append(qmiPacket.objectID)
                 }
 
                 if qmiPacket.indication == PacketConstants.qmiRejectIndication
@@ -108,9 +113,9 @@ extension PersistenceController {
 
     /// Uses `NSBatchInsertRequest` (BIR) to import ARI packets into the Core Data store on a private queue.
     /// Returns the number of imported packets and references to packets with (a) cell information and (b) connectivity events.
-    func importARIPackets(from packets: [(CPTPacket, ParsedARIPacket)]) throws -> (Int, [String: [NSManagedObjectID]]) {
+    func importARIPackets(from packets: [(CPTPacket, ParsedARIPacket)]) throws -> (Int, PacketImportRefs) {
         if packets.isEmpty {
-            return (0, [:])
+            return (0, PacketImportRefs())
         }
 
         let objectIds: [NSManagedObjectID] = try performAndWait(name: "importContext", author: "importARIPackets") { context in
@@ -149,7 +154,7 @@ extension PersistenceController {
             return batchInsertResult.result as? [NSManagedObjectID]
         } ?? []
 
-        var packetRefs: [String: [NSManagedObjectID]] = ["cell": [], "connectivity": []]
+        var packetRefs = PacketImportRefs()
         try performAndWait(name: "importContext", author: "importARIPackets") { context in
             var added = false
 
@@ -160,10 +165,10 @@ extension PersistenceController {
 
             for ariPacket in ariPackets {
                 if CCTParser.isCellPacket(qmi: nil, ari: ariPacket) {
-                    packetRefs["cell"]!.append(ariPacket.objectID)
+                    packetRefs.cellInfo.append(ariPacket.objectID)
                 }
                 if ConnectivityEventParser.isConnectivityEventPacket(qmi: nil, ari: ariPacket) {
-                    packetRefs["connectivity"]!.append(ariPacket.objectID)
+                    packetRefs.connectivityEvents.append(ariPacket.objectID)
                 }
 
                 if ariPacket.direction == PacketConstants.ariRejectDirection.rawValue {

@@ -124,8 +124,6 @@ private struct ConnectivityListFilterSettingsView: View {
     let save: () -> Void
 
     var body: some View {
-        // TODO: Somehow the Pickers that open a navigation selection menu pose an issue for the navigation bar on iOS 14
-        // If the "Apply" button is pressed afterwards, the "< Back" button vanishes from the navigation bar
         Form {
             Section(header: Text("Connectivity Events")) {
                 // See: https://stackoverflow.com/a/59348094

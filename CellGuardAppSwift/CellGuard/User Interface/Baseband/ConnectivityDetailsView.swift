@@ -82,7 +82,7 @@ private struct ConnectivityDetails: View {
 
                 Section(header: Text("Connectivity Properties")) {
                     CellDetailsRow("Status", event.active ? "Connected" : "Disconnected")
-                    CellDetailsRow("SIM Slot", Int(event.simSlot))
+                    CellDetailsRow("SIM Slot", event.simSlot == 0 ? "None" : String(event.simSlot))
                     if event.basebandMode >= 0 {
                         CellDetailsRow("Baseband Mode", Int(event.basebandMode))
                     }
