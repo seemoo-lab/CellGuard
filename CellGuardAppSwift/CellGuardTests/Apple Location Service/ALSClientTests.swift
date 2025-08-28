@@ -30,6 +30,7 @@ final class ALSClientTests: XCTestCase {
         print("Got \(cells.count) cells")
         print("First cell: \(cells[0])")
         XCTAssertGreaterThan(cells.count, 0)
+        XCTAssertEqual(cells.first!.technology, .LTE)
     }
 
     func testRequestGSMCell() async throws {
@@ -44,14 +45,16 @@ final class ALSClientTests: XCTestCase {
         print("Got \(cells.count) cells")
         print("First cell: \(cells[0])")
         XCTAssertGreaterThan(cells.count, 0)
+        XCTAssertEqual(cells.first!.technology, .GSM)
     }
 
     func testRequestUMTSCell() async throws {
         let client = ALSClient()
-        let cells = try await client.requestCells(origin: ALSQueryCell(technology: .UMTS, country: 232, network: 1, area: 4106, cell: 3403674))
+        let cells = try await client.requestCells(origin: ALSQueryCell(technology: .UMTS, country: 338, network: 5, area: 40023, cell: 869081))
         print("Got \(cells.count) cells")
         print("First cell: \(cells[0])")
         XCTAssertGreaterThan(cells.count, 0)
+        XCTAssertEqual(cells.first!.technology, .UMTS)
     }
 
 }

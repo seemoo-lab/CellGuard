@@ -111,11 +111,16 @@ private struct CellDetailsList: View {
         cells.filter { dissect($0.cell).0 == baseStation }
     }
 
+    func plainCellId(_ cell: CellALS) -> String {
+        let cellId = dissect(cell.cell).1 as NSNumber
+        return plainNumberFormatter.string(from: cellId) ?? "err"
+    }
+
     var body: some View {
         Section(header: Text("Cells")) {
             ForEach(filteredCells, id: \.id) { (cell: CellALS) in
                 NavigationLink(destination: CellDetailsView(alsCell: cell)) {
-                    Text("\(dissect(cell.cell).1)")
+                    Text(plainCellId(cell))
                 }
             }
         }

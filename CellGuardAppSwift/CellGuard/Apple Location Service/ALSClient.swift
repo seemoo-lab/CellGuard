@@ -83,7 +83,8 @@ struct ALSQueryCell: CustomStringConvertible, Equatable, Hashable {
     }
 
     init(fromGsmProto proto: AlsProto_GsmCell) {
-        self.technology = .GSM
+        // If the cell has a Primary Scrambling Code (PSC), it's a UMTS cell
+        self.technology = proto.hasPsc ? .UMTS : .GSM
         self.country = proto.mcc
         self.network = proto.mnc
         self.area = proto.lacID
@@ -239,13 +240,15 @@ struct ALSClient {
     )
 
     private let endpoint = URL(string: "https://gs-loc.apple.com/clls/wloc")!
+    // TODO: Dynamically build user agent & meta data based on device
+    // See: https://khorbushko.github.io/article/2021/06/05/user-agent.html#darwin-version
     private let headers = [
-        "User-Agent": "locationd/2420.8.11 CFNetwork/1206 Darwin/20.1.0",
+        "User-Agent": "locationd/2964.0.8 CFNetwork/3826.600.41 Darwin/24.6.0",
         "Accept": "*/*",
         "Accept-Language": "en-us"
     ]
     private let serviceIdentifier = "com.apple.locationd"
-    private let iOSVersion = "14.2.1.18B121"
+    private let iOSVersion = "18.6.2.22G100"
     private let locale = "en_US"
 
     /// Request nearby cellular cells from Apple's Location Service
@@ -274,7 +277,11 @@ struct ALSClient {
                 }
                 $0.numberOfSurroundingCells = 0
                 $0.numberOfSurroundingWifis = 1
-                $0.surroundingWifiBands = [1]
+                $0.surroundingWifiBands = [AlsProto_WifiBand.k2Dot4Ghz]
+                $0.meta = AlsProto_Meta.with {
+                    $0.softwareBuild = "iPhone OS18.6.2/22G100"
+                    $0.productID = "iPhone17,3"
+                }
             }
 
             data = try protoRequest.serializedData()

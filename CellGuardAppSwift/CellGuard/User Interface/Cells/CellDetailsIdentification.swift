@@ -196,8 +196,7 @@ private struct CellIdentificationNR: View {
             CellIdentificationGSM(country: 0, network: 0, area: 0, cellId: 20336)
         }
         Section(header: Text("UMTS")) {
-            // TODO: Find correct UMTS cell id
-            CellIdentificationUMTS(country: 0, network: 0, area: 0, lcid: 0)
+            CellIdentificationUMTS(country: 0, network: 0, area: 0, lcid: 869081)
         }
         Section(header: Text("LTE")) {
             CellIdentificationLTE(country: 0, network: 0, area: 0, eci: 27177984)

@@ -30,6 +30,7 @@ struct SummaryTabView: View {
     @State private var showingStats = false
     #endif
     #if DEBUG
+    @State private var showingCellLab = false
     @State private var showingTestOperators = false
     #endif
     @State private var showingSettings = false
@@ -52,12 +53,16 @@ struct SummaryTabView: View {
                 #endif
 
                 #if DEBUG
+                NavigationLink(isActive: $showingCellLab) {
+                    DebugAddCellView()
+                } label: {
+                    EmptyView()
+                }
                 NavigationLink(isActive: $showingTestOperators) {
                     OperatorLookupView()
                 } label: {
                     EmptyView()
                 }
-
                 #endif
 
                 NavigationLink(isActive: $showingSettings) {
@@ -85,6 +90,11 @@ struct SummaryTabView: View {
                         }
                         #endif
                         #if DEBUG
+                        Button {
+                            showingCellLab = true
+                        } label: {
+                            Label("Cell Laboratory", systemImage: "leaf")
+                        }
                         Button {
                             showingTestOperators = true
                         } label: {
