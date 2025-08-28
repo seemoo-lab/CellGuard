@@ -154,6 +154,8 @@
 		CF70A9922BE6B64600989FB5 /* QCommonDeletion.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF70A9902BE6B64600989FB5 /* QCommonDeletion.swift */; };
 		CF70A9942BE6B6D600989FB5 /* QCommonFetch.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF70A9932BE6B6D600989FB5 /* QCommonFetch.swift */; };
 		CF70A9952BE6B6D600989FB5 /* QCommonFetch.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF70A9932BE6B6D600989FB5 /* QCommonFetch.swift */; };
+		CF70F2AC2E5F9A9B00059960 /* ListNavigationButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF70F2AB2E5F9A9B00059960 /* ListNavigationButton.swift */; };
+		CF70F2AD2E5F9A9B00059960 /* ListNavigationButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF70F2AB2E5F9A9B00059960 /* ListNavigationButton.swift */; };
 		CF73099A2A79122B00498BC3 /* DataSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF7309992A79122B00498BC3 /* DataSummaryView.swift */; };
 		CF740C172CC3B10B0083418B /* CellDetailsTowerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF740C162CC3B10B0083418B /* CellDetailsTowerView.swift */; };
 		CF740C182CC3B10B0083418B /* CellDetailsTowerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF740C162CC3B10B0083418B /* CellDetailsTowerView.swift */; };
@@ -537,6 +539,7 @@
 		CF70A98D2BE6B57F00989FB5 /* QCellTweak.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QCellTweak.swift; sourceTree = "<group>"; };
 		CF70A9902BE6B64600989FB5 /* QCommonDeletion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QCommonDeletion.swift; sourceTree = "<group>"; };
 		CF70A9932BE6B6D600989FB5 /* QCommonFetch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QCommonFetch.swift; sourceTree = "<group>"; };
+		CF70F2AB2E5F9A9B00059960 /* ListNavigationButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListNavigationButton.swift; sourceTree = "<group>"; };
 		CF7309992A79122B00498BC3 /* DataSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSummaryView.swift; sourceTree = "<group>"; };
 		CF740C162CC3B10B0083418B /* CellDetailsTowerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellDetailsTowerView.swift; sourceTree = "<group>"; };
 		CF86C7902A6A9086002EC9B6 /* CellListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellListView.swift; sourceTree = "<group>"; };
@@ -747,6 +750,7 @@
 				CF0591F22DBCF653003CB81C /* SysdiagUrls.swift */,
 				CF332F9D2E05531200BBA851 /* NavObjectId.swift */,
 				CF0F2EFF2E12BCFB0053D7E8 /* ListNavigationLink.swift */,
+				CF70F2AB2E5F9A9B00059960 /* ListNavigationButton.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -1701,6 +1705,7 @@
 				ED6F69262DBB8D40007BFE78 /* UpdateCheckView.swift in Sources */,
 				CFB6CF7B2BD122FA00EAB7B4 /* CPTCollector.swift in Sources */,
 				CFB6CF7D2BD122FA00EAB7B4 /* TrackedUserLocation.swift in Sources */,
+				CF70F2AD2E5F9A9B00059960 /* ListNavigationButton.swift in Sources */,
 				CFB6CF7E2BD122FA00EAB7B4 /* LocationDataManager.swift in Sources */,
 				CF7064F12CC5107600BF8AF9 /* TowerCellMap.swift in Sources */,
 				EDD199122E2106850051424A /* GroupedConnectivityEvents.swift in Sources */,
@@ -1848,6 +1853,7 @@
 				CFBEC8512BC7F7CF0021C0B9 /* CellTweak+CoreDataClass.swift in Sources */,
 				CFDF5D7D297EF76C000708A8 /* LocationClusterAnnotation.swift in Sources */,
 				CF4E539C2A31E73F00AE2059 /* CommonDefinitions.swift in Sources */,
+				CF70F2AC2E5F9A9B00059960 /* ListNavigationButton.swift in Sources */,
 				CF1AF5732C97344A004B519B /* CellDetailsIdentification.swift in Sources */,
 				CFAE881D2C28BA4300092B15 /* StudyClientScores.swift in Sources */,
 				CFDF5D89297F340E000708A8 /* ActivityViewController.swift in Sources */,

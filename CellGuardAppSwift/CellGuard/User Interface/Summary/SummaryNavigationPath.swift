@@ -12,6 +12,7 @@ import SwiftUI
 enum SummaryNavigationPath: NBScreen {
 
     case cellList
+    case cellListFilter
     case dataSummary
     case operatorLookup
 
@@ -38,6 +39,8 @@ enum SummaryNavigationPath: NBScreen {
     static func navigate(_ path: SummaryNavigationPath) -> some View {
         if path == .cellList {
             CellListView()
+        } else if path == .cellListFilter {
+            CellListFilterView()
         } else if path == .dataSummary {
             DataSummaryView()
         } else if path == .operatorLookup {

@@ -14,14 +14,12 @@ import NavigationBackport
 struct CellListView: View {
 
     @State private var isShowingDateSheet = false
-    @State var settings: CellListFilterSettings
+    @State private var sheetRange = Date.distantPast...Date.distantFuture
 
-    @State private var sheetDate = Date()
-    @Environment(\.managedObjectContext) var managedObjectContext
-
-    init(settings: CellListFilterSettings = CellListFilterSettings()) {
-        self._settings = State(initialValue: settings)
-    }
+    @Environment(\.managedObjectContext) private var managedObjectContext
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    @EnvironmentObject private var navigator: PathNavigator
+    @EnvironmentObject private var settings: CellListFilterSettings
 
     var body: some View {
         FilteredCellView(settings: settings)
@@ -29,73 +27,87 @@ struct CellListView: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
-                    sheetDate = settings.date
-                    isShowingDateSheet.toggle()
+                    isShowingDateSheet = true
                 } label: {
                     Image(systemName: settings.timeFrame == .pastDays ? "calendar.badge.clock" : "calendar")
                 }
             }
             ToolbarItem(placement: .navigationBarTrailing) {
-                // TODO: Global state
                 Button {
-                    // isShowingFilterView = true
+                    navigator.push(SummaryNavigationPath.cellListFilter)
                 } label: {
                     // Starting with iOS 15: line.3.horizontal.decrease.circle
                     Image(systemName: "line.horizontal.3.decrease.circle")
                 }
             }
         }
-        // TODO: https://stackoverflow.com/questions/76268363/navigationstack-push-animation-disappears-after-presenting-a-view-with-sheet-mo
-        // Fix by moving up
         .sheet(isPresented: $isShowingDateSheet) {
-            SelectCellDateView(
-                settings: $settings,
-                sheetDate: $sheetDate,
-                isShowingDateSheet: $isShowingDateSheet
-            )
-            .environment(\.managedObjectContext, managedObjectContext)
+            if #available(iOS 16, *) {
+                CompactDateSheet(sheetRange: $sheetRange)
+                .environment(\.managedObjectContext, managedObjectContext)
+                .environmentObject(settings)
+                .presentationDetents([.height(horizontalSizeClass == .compact ? 400 : 500)])
+            } else {
+                ExtensiveDateSheet(sheetRange: $sheetRange)
+                .environment(\.managedObjectContext, managedObjectContext)
+                .environmentObject(settings)
+            }
         }
-        // Magic that prevents Pickers from closing
-        // See: https://stackoverflow.com/a/70307271
-        .navigationViewStyle(.stack)
+        .onAppear {
+            Task.detached {
+                if let range = await PersistenceController.basedOnEnvironment().fetchCellDateRange() {
+                    await MainActor.run {
+                        sheetRange = range
+                    }
+                }
+            }
+        }
     }
 }
 
-private struct SelectCellDateView: View {
+private func dateSheetDateBinding(settings: CellListFilterSettings, sheetRange: ClosedRange<Date>) -> Binding<Date> {
+    Binding {
+        settings.date
+    } set: { newDate in
+        let dateInBounds = newDate > sheetRange.upperBound ? sheetRange.upperBound : newDate
+        let startOfDate: Date = Calendar.current.startOfDay(for: dateInBounds)
+        let startOfToday = Calendar.current.startOfDay(for: Date())
 
-    @Binding var settings: CellListFilterSettings
-    @Binding var sheetDate: Date
-    @Binding var isShowingDateSheet: Bool
+        settings.timeFrame = startOfToday == startOfDate ? .live : .pastDay
+        settings.date = dateInBounds
+    }
+}
 
-    @FetchRequest
-    private var firstMeasurement: FetchedResults<CellTweak>
+private struct CompactDateSheet: View {
 
-    @FetchRequest
-    private var lastMeasurement: FetchedResults<CellTweak>
+    @EnvironmentObject private var settings: CellListFilterSettings
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
-    init(settings: Binding<CellListFilterSettings>, sheetDate: Binding<Date>, isShowingDateSheet: Binding<Bool>) {
-        self._settings = settings
-        self._sheetDate = sheetDate
-        self._isShowingDateSheet = isShowingDateSheet
+    @Binding var sheetRange: ClosedRange<Date>
 
-        let firstMeasurementRequest: NSFetchRequest<CellTweak> = CellTweak.fetchRequest()
-        firstMeasurementRequest.fetchLimit = 1
-        firstMeasurementRequest.sortDescriptors = [NSSortDescriptor(keyPath: \CellTweak.collected, ascending: true)]
-        firstMeasurementRequest.propertiesToFetch = ["collected"]
-        self._firstMeasurement = FetchRequest(fetchRequest: firstMeasurementRequest)
-
-        let lastMeasurementRequest: NSFetchRequest<CellTweak> = CellTweak.fetchRequest()
-        lastMeasurementRequest.fetchLimit = 1
-        lastMeasurementRequest.sortDescriptors = [NSSortDescriptor(keyPath: \CellTweak.collected, ascending: false)]
-        lastMeasurementRequest.propertiesToFetch = ["collected"]
-        self._lastMeasurement = FetchRequest(fetchRequest: lastMeasurementRequest)
+    var body: some View {
+        // We're using a uniform height for the DatePicker and the sheet
+        // See: https://stackoverflow.com/a/75544690
+        // We're adding a padding to fix a UICalendarView layout constraint warning
+        // See: https://stackoverflow.com/a/77669538
+        DatePicker("Cell Date", selection: dateBinding, in: sheetRange, displayedComponents: [.date])
+            .datePickerStyle(.graphical)
+            .frame(
+                maxHeight: horizontalSizeClass == .compact ? 400 : 500,
+            )
+            .padding()
     }
 
-    var dateRange: ClosedRange<Date> {
-        let start = firstMeasurement.first?.collected ?? Date.distantPast
-        let end = lastMeasurement.first?.collected ?? Date()
-        return start...end
+    var dateBinding: Binding<Date> {
+        dateSheetDateBinding(settings: settings, sheetRange: sheetRange)
     }
+}
+
+private struct ExtensiveDateSheet: View {
+
+    @EnvironmentObject private var settings: CellListFilterSettings
+
+    @Binding var sheetRange: ClosedRange<Date>
 
     var body: some View {
         VStack {
@@ -105,32 +117,15 @@ private struct SelectCellDateView: View {
                 .font(.subheadline)
                 .padding([.bottom], 40)
 
-            DatePicker("Cell Date", selection: $sheetDate, in: dateRange, displayedComponents: [.date])
+            DatePicker("Cell Date", selection: dateBinding, in: sheetRange, displayedComponents: [.date])
                 .datePickerStyle(.graphical)
-
-            Button {
-                let selectedDate: Date
-                if let lastDate = lastMeasurement.first?.collected {
-                    selectedDate = sheetDate > lastDate ? lastDate : sheetDate
-                } else {
-                    selectedDate = sheetDate
-                }
-
-                let startOfToday = Calendar.current.startOfDay(for: Date())
-                let startOfDate: Date = Calendar.current.startOfDay(for: selectedDate)
-
-                settings.timeFrame = startOfToday == startOfDate ? .live : .pastDay
-                settings.date = selectedDate
-                isShowingDateSheet.toggle()
-            } label: {
-                Text("Apply")
-                    .bold()
-            }
-            .padding([.top], 40)
         }
         .padding()
     }
 
+    var dateBinding: Binding<Date> {
+        dateSheetDateBinding(settings: settings, sheetRange: sheetRange)
+    }
 }
 
 private struct FilteredCellView: View {

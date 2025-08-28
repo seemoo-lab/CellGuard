@@ -26,7 +26,11 @@ import NavigationBackport
 
 struct SummaryTabView: View {
 
-    @State var path = NBNavigationPath()
+    @State private var path = NBNavigationPath()
+    @State private var cellFilterSettings = CellListFilterSettings()
+
+    init() {
+    }
 
     var body: some View {
         NBNavigationStack(path: $path) {
@@ -73,9 +77,6 @@ struct SummaryTabView: View {
                     CellDetailsView(tweakCell: cell, predicate: nav.predicate)
                 }
             }
-            .nbNavigationDestination(for: CellListFilterSettings.self) { settings in
-                CellListView(settings: settings)
-            }
             .nbNavigationDestination(for: RiskLevel.self) { riskLevel in
                 RiskInfoView(risk: riskLevel)
             }
@@ -109,6 +110,7 @@ struct SummaryTabView: View {
             }
         }
         .background(Color.gray)
+        .environmentObject(cellFilterSettings)
     }
 }
 

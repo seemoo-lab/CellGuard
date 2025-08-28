@@ -9,13 +9,22 @@ import SwiftUI
 import NavigationBackport
 
 struct StudyContributionsView: View {
+
+    @EnvironmentObject private var filter: CellListFilterSettings
+    @EnvironmentObject private var navigator: PathNavigator
+
     var body: some View {
         List {
-            ListNavigationLink(value: CellListFilterSettings(
-                study: .submitted,
-                timeFrame: .pastDays,
-                date: Date.distantPast
-            )) {
+            ListNavigationButton {
+                // Adjust the cell filter
+                filter.reset()
+                filter.study = .submitted
+                filter.timeFrame = .pastDays
+                filter.date = Date.distantPast
+
+                // Open the view
+                navigator.push(SummaryNavigationPath.cellList)
+            } label: {
                 Text("Cells")
             }
 

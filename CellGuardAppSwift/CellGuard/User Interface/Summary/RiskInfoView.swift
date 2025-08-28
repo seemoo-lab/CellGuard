@@ -13,6 +13,8 @@ struct RiskInfoView: View {
     let risk: RiskLevel
     @AppStorage(UserDefaultsKeys.study.rawValue) var studyParticipationTimestamp: Double = 0
 
+    @EnvironmentObject private var filter: CellListFilterSettings
+    @EnvironmentObject private var navigator: PathNavigator
     @Environment(\.colorScheme) private var colorScheme
 
     // Shows explanations of the app's function and the user's risk (based on the risk level).
@@ -36,12 +38,24 @@ struct RiskInfoView: View {
             let subTwoWeeksFromCurrentDate = calendar.date(byAdding: .weekOfYear, value: -2, to: Date()) ?? Date()
             Section(header: Text("Affected Cells")) {
                 // We don't link trusted cells as this list would be too large and cause performance issues (?)
-                ListNavigationLink(value: CellListFilterSettings(status: .anomalous, timeFrame: .pastDays, date: subTwoWeeksFromCurrentDate)) {
+                ListNavigationButton {
+                    filter.reset()
+                    filter.status = .anomalous
+                    filter.timeFrame = .pastDays
+                    filter.date = subTwoWeeksFromCurrentDate
+                    navigator.push(SummaryNavigationPath.cellList)
+                } label: {
                     Text(Image(systemName: "shield")) + Text(" Anomalous Cells")
                 }
                 .disabled(!risk.isCausedByCells())
 
-                ListNavigationLink(value: CellListFilterSettings(status: .suspicious, timeFrame: .pastDays, date: subTwoWeeksFromCurrentDate)) {
+                ListNavigationButton {
+                    filter.reset()
+                    filter.status = .suspicious
+                    filter.timeFrame = .pastDays
+                    filter.date = subTwoWeeksFromCurrentDate
+                    navigator.push(SummaryNavigationPath.cellList)
+                } label: {
                     Text(Image(systemName: "exclamationmark.shield")) + Text(" Suspicious Cells")
                 }
                 .disabled(risk < .high(cellCount: 1))

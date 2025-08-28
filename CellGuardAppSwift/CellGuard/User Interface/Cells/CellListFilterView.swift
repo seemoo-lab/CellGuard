@@ -7,21 +7,37 @@
 
 import CoreData
 import SwiftUI
+import NavigationBackport
 
-struct CellListFilterSettings: Hashable {
+class CellListFilterSettings: ObservableObject {
 
-    var status: CellListFilterStatus = .all
-    var study: CellListFilterStudyOptions = .all
+    @Published var status: CellListFilterStatus = .all
+    @Published var study: CellListFilterStudyOptions = .all
 
-    var timeFrame: CellListFilterTimeFrame = .live
-    var date: Date = Calendar.current.startOfDay(for: Date())
+    @Published var timeFrame: CellListFilterTimeFrame = .live
+    @Published var date: Date = Calendar.current.startOfDay(for: Date())
 
-    var technology: ALSTechnology?
-    var simSlot: CellListFilterSimSlot = .all
-    var country: Int?
-    var network: Int?
-    var area: Int?
-    var cell: Int?
+    @Published var technology: ALSTechnology?
+    @Published var simSlot: CellListFilterSimSlot = .all
+    @Published var country: Int?
+    @Published var network: Int?
+    @Published var area: Int?
+    @Published var cell: Int?
+
+    func reset() {
+        status = .all
+        study = .all
+
+        timeFrame = .live
+        date = Calendar.current.startOfDay(for: Date())
+
+        technology = nil
+        simSlot = .all
+        country = nil
+        network = nil
+        area = nil
+        cell = nil
+    }
 
     func predicates(startDate: Date?, endDate: Date?) -> [NSPredicate] {
         var predicateList: [NSPredicate] = [
@@ -160,45 +176,17 @@ enum CellListFilterSimSlot: UInt8, CaseIterable, Identifiable {
 }
 
 struct CellListFilterView: View {
-    let close: () -> Void
-
-    @Binding var settingsBound: CellListFilterSettings
-    @State var settings: CellListFilterSettings = CellListFilterSettings()
-
-    init(settingsBound: Binding<CellListFilterSettings>, close: @escaping () -> Void) {
-        self.close = close
-        self._settingsBound = settingsBound
-        self._settings = State(wrappedValue: self._settingsBound.wrappedValue)
-    }
 
     var body: some View {
-        CellListFilterSettingsView(settings: $settings, save: {
-            self.settingsBound = settings
-            self.close()
-        })
+        CellListFilterSettingsView()
         .navigationTitle("Filter")
         .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .confirmationAction) {
-                // TOOD: Somehow taps on it result in the navigation stack disappearing on iOS 14
-                if #available(iOS 15, *) {
-                    Button {
-                        self.settingsBound = settings
-                        self.close()
-                    } label: {
-                        Text("Apply")
-                    }
-                }
-            }
-        }
-        .listStyle(.insetGrouped)
     }
 }
 
 private struct CellListFilterSettingsView: View {
 
-    @Binding var settings: CellListFilterSettings
-    let save: () -> Void
+    @EnvironmentObject private var settings: CellListFilterSettings
 
     var body: some View {
         // TODO: Somehow the Pickers that open a navigation selection menu pose an issue for the navigation bar on iOS 14
@@ -240,16 +228,14 @@ private struct CellListFilterSettingsView: View {
                     Text("Submitted").tag(CellListFilterStudyOptions.submitted)
                 }
             }
-
-            if #unavailable(iOS 15) {
+        }
+        .listStyle(.insetGrouped)
+        .toolbar {
+            ToolbarItem {
                 Button {
-                    save()
+                    settings.reset()
                 } label: {
-                    HStack {
-                        Image(systemName: "tray.and.arrow.down")
-                        Text("Apply")
-                        Spacer()
-                    }
+                    Text("Reset")
                 }
             }
         }
@@ -261,10 +247,9 @@ struct CellListFilterView_Previews: PreviewProvider {
     static var previews: some View {
         @State var settings = CellListFilterSettings()
 
-        NavigationView {
-            CellListFilterView(settingsBound: $settings) {
-                // Doing nothing
-            }
+        NBNavigationStack {
+            CellListFilterView()
         }
+        .environmentObject(settings)
     }
 }
