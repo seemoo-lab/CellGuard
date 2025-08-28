@@ -103,6 +103,10 @@ private struct TweakCellDetailsMap: View {
             ExpandableMap {
                 SingleCellMap(locationInfo: locationInfo, alsCells: alsCells, tweakCells: tweakCells)
             }
+            .nbNavigationDestination(for: ExpandableMapInfo.self) { _ in
+                SingleCellMap(locationInfo: locationInfo, alsCells: alsCells, tweakCells: tweakCells)
+                    .ignoresSafeArea()
+            }
         }
     }
 

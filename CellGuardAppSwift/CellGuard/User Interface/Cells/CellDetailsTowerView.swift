@@ -114,6 +114,10 @@ private struct CellDetailsTowerMap: View {
         ExpandableMap {
             TowerCellMap(locationInfo: locationInfo, alsCells: cells.filter { dissect($0.cell).0 == baseStation }, dissect: dissect)
         }
+        .nbNavigationDestination(for: ExpandableMapInfo.self) { _ in
+            TowerCellMap(locationInfo: locationInfo, alsCells: cells.filter { dissect($0.cell).0 == baseStation }, dissect: dissect)
+                .ignoresSafeArea()
+        }
     }
 
 }
