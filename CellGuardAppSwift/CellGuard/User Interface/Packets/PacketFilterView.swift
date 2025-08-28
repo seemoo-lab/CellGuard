@@ -5,26 +5,93 @@
 //  Created by Lukas Arnold on 13.06.23.
 //
 
+import OSLog
 import CoreData
 import SwiftUI
+import NavigationBackport
 
-struct PacketFilterSettings {
-    var simSlotID: PacketFilterSimSlot = .all
-    var proto: PacketFilterProtocol = .qmi
-    var protoAutoSet: Bool = false
-    var direction: PacketFilterDirection = .all
+class PacketFilterSettings: ObservableObject {
+    private static let logger = Logger(
+        subsystem: Bundle.main.bundleIdentifier!,
+        category: String(describing: PacketFilterSettings.self)
+    )
 
-    var qmiType: PacketFilterQMIType = .all
-    var qmiServices: Set<UInt8> = Set(QMIDefinitions.shared.services.keys)
+    @Published var simSlotID: PacketFilterSimSlot = .all
+    @Published var proto: PacketFilterProtocol = .qmi
+    @Published var protoAutoSet: Bool = false
+    @Published var direction: PacketFilterDirection = .all
 
-    var ariGroups: Set<UInt8> = Set(ARIDefinitions.shared.groups.keys)
+    @Published var qmiType: PacketFilterQMIType = .all
+    @Published var qmiServices: Set<UInt8> = Set(QMIDefinitions.shared.services.keys)
 
-    var timeFrame: PacketFilterTimeFrame = .live
-    var livePacketCount: Double = 200
-    var startDate = Date().addingTimeInterval(-60*30)
-    var endDate = Date()
+    @Published var ariGroups: Set<UInt8> = Set(ARIDefinitions.shared.groups.keys)
 
-    var pauseDate: Date?
+    @Published var timeFrame: PacketFilterTimeFrame = .live
+    @Published var livePacketCount: Double = 200
+    @Published var startDate = Date().addingTimeInterval(-60*30)
+    @Published var endDate = Date()
+
+    @Published var pauseDate: Date?
+    @Published var pausedBeforeBackground = false
+
+    func reset() {
+        simSlotID = .all
+        // We're not overwriting the settings proto & protoAutoSet
+        direction = .all
+
+        qmiType = .all
+        qmiServices = Set(QMIDefinitions.shared.services.keys)
+
+        ariGroups = Set(ARIDefinitions.shared.groups.keys)
+
+        timeFrame = .live
+        livePacketCount = 200
+        startDate = Date().addingTimeInterval(-60*30)
+        endDate = Date()
+
+        pauseDate = nil
+        pausedBeforeBackground = false
+    }
+
+    func determineProtoAutomatically() {
+        if protoAutoSet {
+            return
+        }
+
+        PersistenceController.shared.countPacketsByType { result in
+            // We're back in the MainActor
+            do {
+                let (qmiPackets, ariPackets) = try result.get()
+                if qmiPackets == 0 && ariPackets == 0 {
+                    Self.logger.debug("No packets recorded so far, deciding what to show at a later point")
+                    return
+                }
+                if ariPackets > qmiPackets {
+                    Self.logger.debug("Switch to ARI packets")
+                    self.proto = .ari
+                } else {
+                    Self.logger.debug("Switch to QMI packets")
+                    self.proto = .qmi
+                }
+                self.protoAutoSet = true
+            } catch {
+                Self.logger.warning("Couldn't count QMI & ARI packets: \(error)")
+            }
+        }
+    }
+
+    func enterForeground() {
+        if !self.pausedBeforeBackground {
+            self.pauseDate = nil
+        }
+    }
+
+    func enterBackground() {
+        self.pausedBeforeBackground = self.pauseDate != nil
+        if !pausedBeforeBackground {
+            self.pauseDate = Date()
+        }
+    }
 
     func applyTo(qmi request: NSFetchRequest<PacketQMI>) {
         if proto != .qmi {
@@ -162,45 +229,14 @@ enum PacketFilterTimeFrame: String, CaseIterable, Identifiable {
 
 struct PacketFilterView: View {
 
-    let close: () -> Void
-
-    @Binding var settingsBound: PacketFilterSettings
-    @State var settings: PacketFilterSettings = PacketFilterSettings()
-
-    init(settingsBound: Binding<PacketFilterSettings>, close: @escaping () -> Void) {
-        self.close = close
-        self._settingsBound = settingsBound
-        self._settings = State(wrappedValue: self._settingsBound.wrappedValue)
-    }
-
     var body: some View {
-        PacketFilterListView(settings: $settings)
-        .navigationTitle("Filter")
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .confirmationAction) {
-                Button {
-                    self.settingsBound = settings
-                    self.close()
-                } label: {
-                    Text("Apply")
-                }
-            }
-        }
-        .listStyle(.insetGrouped)
-        // There's an evil bug in iOS 15.2, where onAppear is called multiple times
-        // See: https://developer.apple.com/forums/thread/666345
-        // Therefore we rely on the constructor and hope that is called every time
-        /*.onAppear() {
-            print("On Appear (changed)")
-            self.settings = settingsBound
-        } */
+        PacketFilterListView()
     }
 }
 
-private struct PacketFilterListView: View {
+struct PacketFilterListView: View {
 
-    @Binding var settings: PacketFilterSettings
+    @EnvironmentObject var settings: PacketFilterSettings
 
     var body: some View {
         Form {
@@ -218,22 +254,22 @@ private struct PacketFilterListView: View {
                     Picker("Type", selection: $settings.qmiType) {
                         ForEach(PacketFilterQMIType.allCases) { Text($0.rawValue.capitalized) }
                     }
-                    NavigationLink {
-                        PacketFilterQMIServicesView(
-                            all: QMIDefinitions.shared.services.values.sorted(by: {$0.id < $1.id}),
-                            selected: $settings.qmiServices
-                        )
-                    } label: {
-                        Text("Services")
+                    ListNavigationLink(value: PacketNavigationPath.filterServicesQmi) {
+                        HStack {
+                            Text("Services")
+                            Spacer()
+                            Text("\(settings.qmiServices.count)/\(allQmiServices.count)")
+                                .foregroundColor(.gray)
+                        }
                     }
                 } else {
-                    NavigationLink {
-                        PacketFilterARIGroupsView(
-                            all: ARIDefinitions.shared.groups.values.sorted(by: {$0.id < $1.id}),
-                            selected: $settings.ariGroups
-                        )
-                    } label: {
-                        Text("Groups")
+                    ListNavigationLink(value: PacketNavigationPath.filterGroupsAri) {
+                        HStack {
+                            Text("Groups")
+                            Spacer()
+                            Text("\(settings.ariGroups.count)/\(allAriGroups.count)")
+                                .foregroundColor(.gray)
+                        }
                     }
                 }
             }
@@ -265,44 +301,13 @@ private struct PacketFilterListView: View {
                 }
             }
         }
-        // The Picker Style menu is broken on iOS 14 & 15 if Pickers are in Sections.
-        // Therefore we use the default fallback to the navigation picker even if it looks not so nice and comes with its own set of bugs ):
-    }
-}
-
-private struct PacketFilterQMIServicesView: View {
-
-    let all: [QMIDefinitionService]
-    @Binding var selected: Set<UInt8>
-
-    var body: some View {
-        List(all) { element in
-            HStack {
-                Text(element.name)
-                Spacer()
-                Image(systemName: "checkmark")
-                    .foregroundColor(.blue)
-                    .opacity(selected.contains(element.id) ? 1 : 0)
-            }
-            .contentShape(Rectangle())
-            .onTapGesture {
-                if selected.contains(element.id) {
-                    selected.remove(element.id)
-                } else {
-                    selected.insert(element.id)
-                }
-            }
-        }
-        .navigationTitle("QMI Services")
+        .navigationTitle("Filter")
+        .navigationBarTitleDisplayMode(.inline)
+        .listStyle(.insetGrouped)
         .toolbar {
-            // Prevent the "< Filter" button from disappearing on iOS 14
-            // See: https://stackoverflow.com/a/72432154
-            ToolbarItem(placement: .navigationBarLeading) {
-                Text("")
-            }
             ToolbarItem {
                 Button {
-                    selected.formUnion(all.map {$0.id})
+                    settings.reset()
                 } label: {
                     Text("Reset")
                 }
@@ -311,26 +316,62 @@ private struct PacketFilterQMIServicesView: View {
     }
 }
 
-private struct PacketFilterARIGroupsView: View {
+private let allQmiServices = QMIDefinitions.shared.services.values.sorted(by: {$0.id < $1.id})
+struct PacketFilterQMIServicesView: View {
 
-    let all: [ARIDefinitionGroup]
-    @Binding var selected: Set<UInt8>
+    @EnvironmentObject private var settings: PacketFilterSettings
 
     var body: some View {
-        List(all) { element in
+        List(allQmiServices) { element in
             HStack {
                 Text(element.name)
                 Spacer()
                 Image(systemName: "checkmark")
                     .foregroundColor(.blue)
-                    .opacity(selected.contains(element.id) ? 1 : 0)
+                    .opacity(settings.qmiServices.contains(element.id) ? 1 : 0)
             }
             .contentShape(Rectangle())
             .onTapGesture {
-                if selected.contains(element.id) {
-                    selected.remove(element.id)
+                if settings.qmiServices.contains(element.id) {
+                    settings.qmiServices.remove(element.id)
                 } else {
-                    selected.insert(element.id)
+                    settings.qmiServices.insert(element.id)
+                }
+            }
+        }
+        .navigationTitle("QMI Services")
+        .toolbar {
+            ToolbarItem {
+                Button {
+                    settings.qmiServices.formUnion(allQmiServices.map {$0.id})
+                } label: {
+                    Text("Reset")
+                }
+            }
+        }
+    }
+}
+
+private let allAriGroups = ARIDefinitions.shared.groups.values.sorted(by: {$0.id < $1.id})
+struct PacketFilterARIGroupsView: View {
+
+    @EnvironmentObject private var settings: PacketFilterSettings
+
+    var body: some View {
+        List(allAriGroups) { element in
+            HStack {
+                Text(element.name)
+                Spacer()
+                Image(systemName: "checkmark")
+                    .foregroundColor(.blue)
+                    .opacity(settings.ariGroups.contains(element.id) ? 1 : 0)
+            }
+            .contentShape(Rectangle())
+            .onTapGesture {
+                if settings.ariGroups.contains(element.id) {
+                    settings.ariGroups.remove(element.id)
+                } else {
+                    settings.ariGroups.insert(element.id)
                 }
             }
         }
@@ -343,7 +384,7 @@ private struct PacketFilterARIGroupsView: View {
             }
             ToolbarItem {
                 Button {
-                    selected.formUnion(all.map {$0.id})
+                    settings.ariGroups.formUnion(allAriGroups.map {$0.id})
                 } label: {
                     Text("Reset")
                 }
@@ -354,12 +395,12 @@ private struct PacketFilterARIGroupsView: View {
 
 struct PacketFilterView_Previews: PreviewProvider {
     static var previews: some View {
+        @State var path = NBNavigationPath()
         @State var settings = PacketFilterSettings()
 
-        NavigationView {
-            PacketFilterView(settingsBound: $settings) {
-                // Doing nothing
-            }
+        NBNavigationStack(path: $path) {
+            PacketFilterView()
+                .environmentObject(settings)
         }
     }
 }

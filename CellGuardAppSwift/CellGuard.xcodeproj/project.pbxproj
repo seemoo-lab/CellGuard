@@ -349,6 +349,8 @@
 		CFD0236A2961ABA100AA5A1C /* ALSClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD023692961ABA100AA5A1C /* ALSClient.swift */; };
 		CFD0236D2961AD1500AA5A1C /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = CFD0236C2961AD1500AA5A1C /* SwiftProtobuf */; };
 		CFD023742961DF7400AA5A1C /* ALSClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD023732961DF7400AA5A1C /* ALSClientTests.swift */; };
+		CFD3F5CD2E6062D6007D6C3E /* PacketNavigationPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD3F5CC2E6062D6007D6C3E /* PacketNavigationPath.swift */; };
+		CFD3F5CE2E6062D6007D6C3E /* PacketNavigationPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD3F5CC2E6062D6007D6C3E /* PacketNavigationPath.swift */; };
 		CFD5657A2BDFA82C00925FAA /* VerificationPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD565792BDFA82C00925FAA /* VerificationPipeline.swift */; };
 		CFD5657B2BDFA82C00925FAA /* VerificationPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD565792BDFA82C00925FAA /* VerificationPipeline.swift */; };
 		CFD5657D2BDFA90A00925FAA /* CGVerificationPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD5657C2BDFA90A00925FAA /* CGVerificationPipeline.swift */; };
@@ -600,6 +602,7 @@
 		CFD023582961A10E00AA5A1C /* CellGuardUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellGuardUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		CFD023692961ABA100AA5A1C /* ALSClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ALSClient.swift; sourceTree = "<group>"; };
 		CFD023732961DF7400AA5A1C /* ALSClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ALSClientTests.swift; sourceTree = "<group>"; };
+		CFD3F5CC2E6062D6007D6C3E /* PacketNavigationPath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacketNavigationPath.swift; sourceTree = "<group>"; };
 		CFD565792BDFA82C00925FAA /* VerificationPipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerificationPipeline.swift; sourceTree = "<group>"; };
 		CFD5657C2BDFA90A00925FAA /* CGVerificationPipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CGVerificationPipeline.swift; sourceTree = "<group>"; };
 		CFD8DD252A715E8300954A25 /* QMIContentParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QMIContentParser.swift; sourceTree = "<group>"; };
@@ -885,6 +888,7 @@
 			isa = PBXGroup;
 			children = (
 				CF4E53A12A321B3000AE2059 /* PacketTabView.swift */,
+				CFD3F5CC2E6062D6007D6C3E /* PacketNavigationPath.swift */,
 				CF54CCC42A33680200961E4D /* PacketCommonDetails.swift */,
 				CF54CCC62A33699A00961E4D /* PacketARIDetailsView.swift */,
 				CF54CCC02A331E7100961E4D /* PacketQMIDetailsView.swift */,
@@ -1630,6 +1634,7 @@
 				CFA83C9D2D9D7EBD00239AB7 /* Icons.swift in Sources */,
 				CFAE881B2C28B9C100092B15 /* StudyClient.swift in Sources */,
 				CF7064F72CC513B500BF8AF9 /* TowerAnnotationView.swift in Sources */,
+				CFD3F5CE2E6062D6007D6C3E /* PacketNavigationPath.swift in Sources */,
 				EDA9FEBA2E1F9AEA00C52409 /* ConnectivityView.swift in Sources */,
 				CFB6CF4B2BD122FA00EAB7B4 /* SingleCellMap.swift in Sources */,
 				CFB6CF4C2BD122FA00EAB7B4 /* LocationSource.swift in Sources */,
@@ -1884,6 +1889,7 @@
 				CFF05F6D2A39AA3900DE6FB2 /* DeleteView.swift in Sources */,
 				CF0FDCCB296B466100A6FFE2 /* PersistenceError.swift in Sources */,
 				CF4E53982A31CE4600AE2059 /* ARIDefinitions.swift in Sources */,
+				CFD3F5CD2E6062D6007D6C3E /* PacketNavigationPath.swift in Sources */,
 				ED6F69252DBB8D40007BFE78 /* UpdateCheckView.swift in Sources */,
 				CF54CCBC2A33093800961E4D /* CPTCollector.swift in Sources */,
 				CF0FDCCD296B480B00A6FFE2 /* TrackedUserLocation.swift in Sources */,

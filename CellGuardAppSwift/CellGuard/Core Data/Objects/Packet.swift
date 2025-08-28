@@ -28,11 +28,19 @@ extension Packet {
     }
 }
 
-struct PacketContainer: Identifiable {
+struct PacketContainer: Identifiable, Hashable {
 
     let packet: any Packet
 
     var id: ObjectIdentifier {
         return packet.id
+    }
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(packet.hash)
+    }
+
+    static func == (lhs: PacketContainer, rhs: PacketContainer) -> Bool {
+        lhs.id == rhs.id
     }
 }
