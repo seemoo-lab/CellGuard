@@ -23,7 +23,7 @@ class ConnectivityFilterSettings: ObservableObject {
     }
 
     func showLatestData(range: ClosedRange<Date>) {
-        if !range.contains(date) {
+        if timeFrame == .live && !range.contains(date) {
             date = range.upperBound
             timeFrame = .pastDay
         }

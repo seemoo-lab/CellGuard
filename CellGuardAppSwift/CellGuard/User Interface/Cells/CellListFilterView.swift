@@ -40,7 +40,7 @@ class CellListFilterSettings: ObservableObject {
     }
 
     func showLatestDate(range: ClosedRange<Date>) {
-        if !range.contains(date) {
+        if timeFrame == .live && !range.contains(date) {
             date = range.upperBound
             timeFrame = .pastDay
         }
