@@ -37,6 +37,7 @@ struct ImportResult {
     let alsCells: ImportCount?
     let locations: ImportCount?
     let packets: ImportCount?
+    let connectivityEvents: ImportCount?
 
     let notices: [ImportNotice]
 }

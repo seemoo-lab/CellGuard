@@ -108,4 +108,17 @@ struct CCTCellProperties {
 struct CCTParser {
     // We currently support 3 Cell Parsers: ARI, QMI, and the Syslog text format.
     // You can find them in their individual files.
+
+    static func isCellPacket(qmi: PacketQMI?, ari: PacketARI?) -> Bool {
+        if let qmi = qmi {
+            return qmi.service == PacketConstants.qmiCellInfoService
+                && qmi.direction == PacketConstants.qmiCellInfoDirection.rawValue
+                && qmi.message == PacketConstants.qmiCellInfoMessage
+        } else if let ari = ari {
+            return ari.direction == PacketConstants.ariCellInfoDirection.rawValue
+                && ari.group == PacketConstants.ariCellInfoGroup
+                && PacketConstants.ariCellInfoTypes.contains(UInt16(ari.type))
+        }
+        return false
+    }
 }

@@ -12,6 +12,7 @@ struct ExportView: View {
     @State private var doExportALSCache = true
     @State private var doExportLocations = true
     @State private var doExportPackets = true
+    @State private var doExportConnectivityEvents = true
 
     @State private var isExportInProgress = false
     @State private var shareURL: URLIdentifiable?
@@ -22,6 +23,7 @@ struct ExportView: View {
     @State private var exportProgressALSCells: Float = 0
     @State private var exportProgressLocations: Float = 0
     @State private var exportProgressPackets: Float = 0
+    @State private var exportProgressConnectivityEvents: Float = 0
 
     @AppStorage(UserDefaultsKeys.lastExportDate.rawValue)
     var lastExportDate: Double = -1.0
@@ -33,6 +35,7 @@ struct ExportView: View {
                 ProgressToggle("Cell Cache", isOn: $doExportALSCache, processing: $isExportInProgress, progress: $exportProgressALSCells)
                 ProgressToggle("Locations", isOn: $doExportLocations, processing: $isExportInProgress, progress: $exportProgressLocations)
                 ProgressToggle("Packets", isOn: $doExportPackets, processing: $isExportInProgress, progress: $exportProgressPackets)
+                ProgressToggle("Connectivity Events", isOn: $doExportConnectivityEvents, processing: $isExportInProgress, progress: $exportProgressConnectivityEvents)
             }
             Section(header: Text("Actions"), footer: Text(exportDateDescription())) {
                 Button(action: export) {
@@ -81,13 +84,15 @@ struct ExportView: View {
             PersistenceCategory.connectedCells: doExportCells,
             PersistenceCategory.alsCells: doExportALSCache,
             PersistenceCategory.locations: doExportLocations,
-            PersistenceCategory.packets: doExportPackets
+            PersistenceCategory.packets: doExportPackets,
+            PersistenceCategory.connectivityEvents: doExportConnectivityEvents
         ].filter { $0.value }.map { $0.key }
 
         exportProgressUserCells = -1
         exportProgressALSCells = -1
         exportProgressLocations = -1
         exportProgressPackets = -1
+        exportProgressConnectivityEvents = -1
 
         PersistenceCSVExporter.exportInBackground(categories: exportCategories) { category, currentProgress, totalProgress in
             let progress = Float(currentProgress) / Float(totalProgress)
@@ -96,6 +101,7 @@ struct ExportView: View {
             case .alsCells: exportProgressALSCells = progress
             case .locations: exportProgressLocations = progress
             case .packets: exportProgressPackets = progress
+            case .connectivityEvents: exportProgressConnectivityEvents = progress
             case .info: break
             }
         } completion: { result in
@@ -103,6 +109,7 @@ struct ExportView: View {
             exportProgressALSCells = -1
             exportProgressLocations = -1
             exportProgressPackets = -1
+            exportProgressConnectivityEvents = -1
 
             do {
                 self.shareURL = URLIdentifiable(url: try result.get())

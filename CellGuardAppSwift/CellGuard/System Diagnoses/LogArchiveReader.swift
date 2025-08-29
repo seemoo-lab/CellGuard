@@ -495,7 +495,7 @@ struct LogArchiveReader {
 
         guard let inputStream = InputStream(url: csvFile) else {
             Self.logger.warning("No CSV input stream for \(csvFile)")
-            return ImportResult(cells: nil, alsCells: nil, locations: nil, packets: nil, notices: [])
+            return ImportResult(cells: nil, alsCells: nil, locations: nil, packets: nil, connectivityEvents: nil, notices: [])
         }
 
         let csvReader = try CSVReader(stream: inputStream, hasHeaderRow: true)
@@ -559,9 +559,10 @@ struct LogArchiveReader {
 
         let beforeImportTime = Date()
         var filteredCells: [CCTCellProperties] = []
+        var connectivityCount = 0
         do {
             if packets.count > 0 {
-                (_, _, filteredCells) = try CPTCollector.store(packets)
+                (_, _, filteredCells, connectivityCount) = try CPTCollector.store(packets)
             }
         } catch {
             throw LogArchiveError.importError(error)
@@ -582,6 +583,7 @@ struct LogArchiveReader {
             alsCells: nil,
             locations: nil,
             packets: ImportCount(count: packets.count, first: packetDates.first, last: packetDates.last),
+            connectivityEvents: ImportCount(count: connectivityCount, first: packetDates.first, last: packetDates.last),
             notices: notices
         )
     }
