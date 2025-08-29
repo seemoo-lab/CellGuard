@@ -39,7 +39,7 @@ struct SummaryTabView: View {
                         #endif
                         #if DEBUG
                         NBNavigationLink(value: SummaryNavigationPath.cellLaboratory) {
-                            Label("Cell Laboratory", systemImage: "leaf")
+                            Label("Laboratory", systemImage: "leaf")
                         }
                         NBNavigationLink(value: SummaryNavigationPath.operatorLookup) {
                             Label("Operators", systemImage: "globe")
