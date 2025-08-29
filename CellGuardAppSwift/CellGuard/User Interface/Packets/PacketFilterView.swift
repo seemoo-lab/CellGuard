@@ -16,7 +16,7 @@ class PacketFilterSettings: ObservableObject {
         category: String(describing: PacketFilterSettings.self)
     )
 
-    @Published var simSlotID: PacketFilterSimSlot = .all
+    @Published var simSlotID: FilterSimSlot = .all
     @Published var proto: PacketFilterProtocol = .qmi
     @Published var protoAutoSet: Bool = false
     @Published var direction: PacketFilterDirection = .all
@@ -168,25 +168,6 @@ class PacketFilterSettings: ObservableObject {
 
 }
 
-enum PacketFilterSimSlot: UInt8, CaseIterable, Identifiable {
-    case all, slot1, slot2, none
-
-    var id: Self { self }
-
-    var slotNumber: Int? {
-        switch self {
-        case .none:
-            return 0
-        case .slot1:
-            return 1
-        case .slot2:
-            return 2
-        default:
-            return nil
-        }
-    }
-}
-
 enum PacketFilterProtocol: String, CaseIterable, Identifiable {
     case qmi, ari
 
@@ -248,7 +229,7 @@ struct PacketFilterListView: View {
                     ForEach(PacketFilterDirection.allCases) { Text($0.rawValue.capitalized) }
                 }
                 Picker("SIM Slot", selection: $settings.simSlotID) {
-                    ForEach(PacketFilterSimSlot.allCases) { Text(String(describing: $0).capitalized) }
+                    ForEach(FilterSimSlot.allCases) { Text(String(describing: $0).capitalized) }
                 }
                 if settings.proto == .qmi {
                     Picker("Type", selection: $settings.qmiType) {

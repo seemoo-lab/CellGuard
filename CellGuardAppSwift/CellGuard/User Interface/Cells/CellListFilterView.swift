@@ -18,7 +18,7 @@ class CellListFilterSettings: ObservableObject {
     @Published var date: Date = Calendar.current.startOfDay(for: Date())
 
     @Published var technology: ALSTechnology?
-    @Published var simSlot: CellListFilterSimSlot = .all
+    @Published var simSlot: FilterSimSlot = .all
     @Published var country: Int?
     @Published var network: Int?
     @Published var area: Int?
@@ -158,23 +158,6 @@ enum CellListFilterStudyOptions: String, CaseIterable, Identifiable {
     var id: Self { self }
 }
 
-enum CellListFilterSimSlot: UInt8, CaseIterable, Identifiable {
-    case all, slot1, slot2
-
-    var id: Self { self }
-
-    var slotNumber: Int? {
-        switch self {
-        case .slot1:
-            return 1
-        case .slot2:
-            return 2
-        default:
-            return nil
-        }
-    }
-}
-
 struct CellListFilterView: View {
 
     var body: some View {
@@ -199,7 +182,7 @@ private struct CellListFilterSettingsView: View {
                     ForEach(ALSTechnology.allCases) { Text($0.rawValue).tag($0 as ALSTechnology?) }
                 }
                 Picker("SIM Slot", selection: $settings.simSlot) {
-                    ForEach(CellListFilterSimSlot.allCases) { Text(String(describing: $0).capitalized) }
+                    ForEach(FilterSimSlot.allCases) { Text(String(describing: $0).capitalized) }
                 }
 
                 LabelNumberField("Country", "MCC", $settings.country)
