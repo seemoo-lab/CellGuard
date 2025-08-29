@@ -14,7 +14,7 @@ class CellListFilterSettings: ObservableObject {
     @Published var status: CellListFilterStatus = .all
     @Published var study: CellListFilterStudyOptions = .all
 
-    @Published var timeFrame: CellListFilterTimeFrame = .live
+    @Published var timeFrame: FilterTimeFrame = .live
     @Published var date: Date = Calendar.current.startOfDay(for: Date())
 
     @Published var technology: ALSTechnology?
@@ -128,12 +128,6 @@ class CellListFilterSettings: ObservableObject {
 
 }
 
-enum CellListFilterTimeFrame: String, CaseIterable, Identifiable {
-    case live, pastDay, pastDays
-
-    var id: Self { self }
-}
-
 enum CellListFilterStatus: String, CaseIterable, Identifiable {
     case all, processing, trusted, anomalous, suspicious
 
@@ -172,8 +166,6 @@ private struct CellListFilterSettingsView: View {
     @EnvironmentObject private var settings: CellListFilterSettings
 
     var body: some View {
-        // TODO: Somehow the Pickers that open a navigation selection menu pose an issue for the navigation bar on iOS 14
-        // If the "Apply" button is pressed afterwards, the "< Back" button vanishes from the navigation bar
         Form {
             Section(header: Text("Cells")) {
                 // See: https://stackoverflow.com/a/59348094
@@ -197,8 +189,8 @@ private struct CellListFilterSettingsView: View {
             }
             Section(header: Text("Data")) {
                 Picker("Display", selection: $settings.timeFrame) {
-                    Text("Live").tag(CellListFilterTimeFrame.live)
-                    Text("Recorded").tag(CellListFilterTimeFrame.pastDay)
+                    Text("Live").tag(FilterTimeFrame.live)
+                    Text("Recorded").tag(FilterTimeFrame.pastDay)
                 }
                 if settings.timeFrame == .pastDay {
                     DatePicker("Day", selection: $settings.date, in: ...Date(), displayedComponents: [.date])

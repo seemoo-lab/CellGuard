@@ -16,8 +16,6 @@ struct CellListView: View {
     @State private var isShowingDateSheet = false
     @State private var sheetRange = Date.distantPast...Date.distantFuture
 
-    @Environment(\.managedObjectContext) private var managedObjectContext
-    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @EnvironmentObject private var navigator: PathNavigator
     @EnvironmentObject private var settings: CellListFilterSettings
 
@@ -42,16 +40,7 @@ struct CellListView: View {
             }
         }
         .sheet(isPresented: $isShowingDateSheet) {
-            if #available(iOS 16, *) {
-                CompactDateSheet(sheetRange: $sheetRange)
-                .environment(\.managedObjectContext, managedObjectContext)
-                .environmentObject(settings)
-                .presentationDetents([.height(horizontalSizeClass == .compact ? 400 : 500)])
-            } else {
-                ExtensiveDateSheet(sheetRange: $sheetRange)
-                .environment(\.managedObjectContext, managedObjectContext)
-                .environmentObject(settings)
-            }
+            SelectDateSheet(timeFrame: $settings.timeFrame, date: $settings.date, sheetRange: $sheetRange)
         }
         .onAppear {
             Task.detached {

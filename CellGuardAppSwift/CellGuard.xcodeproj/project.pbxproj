@@ -36,6 +36,8 @@
 		45ECF5762BFC025300DD92CF /* DebugProfileDetailedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45ECF5742BFC025300DD92CF /* DebugProfileDetailedView.swift */; };
 		45ED01B62D445ABA0023A090 /* ProfileTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45ED01B52D445AB40023A090 /* ProfileTask.swift */; };
 		45ED01B72D445ABA0023A090 /* ProfileTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45ED01B52D445AB40023A090 /* ProfileTask.swift */; };
+		CF010DC02E619E9200AB6FFD /* SelectDateSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF010DBF2E619E9200AB6FFD /* SelectDateSheet.swift */; };
+		CF010DC12E619E9200AB6FFD /* SelectDateSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF010DBF2E619E9200AB6FFD /* SelectDateSheet.swift */; };
 		CF0157C32CC3FFD1003ACAC4 /* CellIdentification.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0157C22CC3FFD1003ACAC4 /* CellIdentification.swift */; };
 		CF0157C42CC3FFD1003ACAC4 /* CellIdentification.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0157C22CC3FFD1003ACAC4 /* CellIdentification.swift */; };
 		CF0157C92CC419DD003ACAC4 /* ExpandableMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0157C82CC419DD003ACAC4 /* ExpandableMap.swift */; };
@@ -117,6 +119,10 @@
 		CF54CCC32A331ED300961E4D /* PacketCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF54CCC22A331ED300961E4D /* PacketCell.swift */; };
 		CF54CCC52A33680200961E4D /* PacketCommonDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF54CCC42A33680200961E4D /* PacketCommonDetails.swift */; };
 		CF54CCC72A33699A00961E4D /* PacketARIDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF54CCC62A33699A00961E4D /* PacketARIDetailsView.swift */; };
+		CF55C4BF2E61A1DE00C1808A /* FilterSimSlot.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF55C4BE2E61A1DB00C1808A /* FilterSimSlot.swift */; };
+		CF55C4C02E61A1DE00C1808A /* FilterSimSlot.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF55C4BE2E61A1DB00C1808A /* FilterSimSlot.swift */; };
+		CF55C4C52E61A7F100C1808A /* NavListIds.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF55C4C42E61A7EC00C1808A /* NavListIds.swift */; };
+		CF55C4C62E61A7F100C1808A /* NavListIds.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF55C4C42E61A7EC00C1808A /* NavListIds.swift */; };
 		CF5756152B2F232A00C7C60A /* cellguard.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5756122B2F232A00C7C60A /* cellguard.swift */; };
 		CF57561A2B2F25DB00C7C60A /* SwiftBridgeCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5756182B2F25DB00C7C60A /* SwiftBridgeCore.swift */; };
 		CF57561D2B2F263500C7C60A /* LogArchiveReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF57561C2B2F263500C7C60A /* LogArchiveReader.swift */; };
@@ -460,6 +466,7 @@
 		45ECF5712BFC00D100DD92CF /* DebugProfileCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugProfileCard.swift; sourceTree = "<group>"; };
 		45ECF5742BFC025300DD92CF /* DebugProfileDetailedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugProfileDetailedView.swift; sourceTree = "<group>"; };
 		45ED01B52D445AB40023A090 /* ProfileTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileTask.swift; sourceTree = "<group>"; };
+		CF010DBF2E619E9200AB6FFD /* SelectDateSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectDateSheet.swift; sourceTree = "<group>"; };
 		CF0157C22CC3FFD1003ACAC4 /* CellIdentification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellIdentification.swift; sourceTree = "<group>"; };
 		CF0157C82CC419DD003ACAC4 /* ExpandableMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpandableMap.swift; sourceTree = "<group>"; };
 		CF0591F22DBCF653003CB81C /* SysdiagUrls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SysdiagUrls.swift; sourceTree = "<group>"; };
@@ -521,6 +528,8 @@
 		CF54CCC22A331ED300961E4D /* PacketCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacketCell.swift; sourceTree = "<group>"; };
 		CF54CCC42A33680200961E4D /* PacketCommonDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacketCommonDetails.swift; sourceTree = "<group>"; };
 		CF54CCC62A33699A00961E4D /* PacketARIDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacketARIDetailsView.swift; sourceTree = "<group>"; };
+		CF55C4BE2E61A1DB00C1808A /* FilterSimSlot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterSimSlot.swift; sourceTree = "<group>"; };
+		CF55C4C42E61A7EC00C1808A /* NavListIds.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavListIds.swift; sourceTree = "<group>"; };
 		CF5672952A29E59000B6EA7C /* TweakInstallInfoCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TweakInstallInfoCard.swift; sourceTree = "<group>"; };
 		CF5756122B2F232A00C7C60A /* cellguard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = cellguard.swift; sourceTree = "<group>"; };
 		CF5756132B2F232A00C7C60A /* cellguard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cellguard.h; sourceTree = "<group>"; };
@@ -764,8 +773,11 @@
 				CFA83C9C2D9D7EBD00239AB7 /* Icons.swift */,
 				CF0591F22DBCF653003CB81C /* SysdiagUrls.swift */,
 				CF332F9D2E05531200BBA851 /* NavObjectId.swift */,
+				CF55C4C42E61A7EC00C1808A /* NavListIds.swift */,
 				CF0F2EFF2E12BCFB0053D7E8 /* ListNavigationLink.swift */,
 				CF70F2AB2E5F9A9B00059960 /* ListNavigationButton.swift */,
+				CF010DBF2E619E9200AB6FFD /* SelectDateSheet.swift */,
+				CF55C4BE2E61A1DB00C1808A /* FilterSimSlot.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -1652,6 +1664,7 @@
 				CFA83C9D2D9D7EBD00239AB7 /* Icons.swift in Sources */,
 				CFAE881B2C28B9C100092B15 /* StudyClient.swift in Sources */,
 				CF7064F72CC513B500BF8AF9 /* TowerAnnotationView.swift in Sources */,
+				CF55C4C52E61A7F100C1808A /* NavListIds.swift in Sources */,
 				CFD3F5CE2E6062D6007D6C3E /* PacketNavigationPath.swift in Sources */,
 				EDA9FEBA2E1F9AEA00C52409 /* ConnectivityView.swift in Sources */,
 				CFB6CF4B2BD122FA00EAB7B4 /* SingleCellMap.swift in Sources */,
@@ -1692,6 +1705,7 @@
 				CFB6CF612BD122FA00EAB7B4 /* LargeButton.swift in Sources */,
 				CFB6CF622BD122FA00EAB7B4 /* CellALS+CoreDataClass.swift in Sources */,
 				CFB6CF632BD122FA00EAB7B4 /* CellTweak+CoreDataClass.swift in Sources */,
+				CF010DC02E619E9200AB6FFD /* SelectDateSheet.swift in Sources */,
 				CFB6CF642BD122FA00EAB7B4 /* LocationClusterAnnotation.swift in Sources */,
 				CFB6CF652BD122FA00EAB7B4 /* CommonDefinitions.swift in Sources */,
 				CF1AF5742C97344A004B519B /* CellDetailsIdentification.swift in Sources */,
@@ -1710,6 +1724,7 @@
 				CF2610382E034F1C00F6440C /* SummaryNavigationPath.swift in Sources */,
 				CFB6CF6E2BD122FA00EAB7B4 /* CPTClient.swift in Sources */,
 				CFB6CF6F2BD122FA00EAB7B4 /* CellMapDelegate.swift in Sources */,
+				CF55C4C02E61A1DE00C1808A /* FilterSimSlot.swift in Sources */,
 				CFEA68ED2C13B0B600F781BC /* InformationContactView.swift in Sources */,
 				CFB6CF702BD122FA00EAB7B4 /* PersistenceCategories.swift in Sources */,
 				CFB6CF712BD122FA00EAB7B4 /* PersistencePreview.swift in Sources */,
@@ -1890,6 +1905,7 @@
 				CFE0B6A82BE96DEF004AB5E9 /* SNVerificationPipeline.swift in Sources */,
 				CFDF5D71297EF0C6000708A8 /* CellAnnotation.swift in Sources */,
 				CF208D9F2A387261003A73A7 /* PacketFilterView.swift in Sources */,
+				CF55C4BF2E61A1DE00C1808A /* FilterSimSlot.swift in Sources */,
 				CF70A9822BE6AD8D00989FB5 /* QRiskStatus.swift in Sources */,
 				CF2A1C202975CDD200E8B61C /* RiskIndicatorCard.swift in Sources */,
 				CFB70B592E5DA28C00D2B5EA /* DebugAddCellView.swift in Sources */,
@@ -1938,10 +1954,12 @@
 				CF86C7972A6ACDAA002EC9B6 /* CellDetailsRow.swift in Sources */,
 				45ECF5542BFAB97A00DD92CF /* LocationPermissionView.swift in Sources */,
 				CF5756152B2F232A00C7C60A /* cellguard.swift in Sources */,
+				CF55C4C62E61A7F100C1808A /* NavListIds.swift in Sources */,
 				CF5EF9222977FCF800C4F50A /* CellTechnologyFormatter.swift in Sources */,
 				45ECF5632BFBDB3800DD92CF /* SysdiagInstructionsCard.swift in Sources */,
 				CF93B85629800451003F9FFE /* CellFileKeys.swift in Sources */,
 				CFBEC8462BC7F7100021C0B9 /* Packet.swift in Sources */,
+				CF010DC12E619E9200AB6FFD /* SelectDateSheet.swift in Sources */,
 				45ECF5602BFACE8400DD92CF /* LeadingTitleIconTextView.swift in Sources */,
 				CF0F2F002E12BCFB0053D7E8 /* ListNavigationLink.swift in Sources */,
 			);
