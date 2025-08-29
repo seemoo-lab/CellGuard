@@ -46,6 +46,7 @@ struct ConnectivityView: View {
             Task.detached {
                 if let range = await PersistenceController.basedOnEnvironment().fetchConnectivityDateRange() {
                     await MainActor.run {
+                        settings.showLatestData(range: range)
                         sheetRange = range
                     }
                 }

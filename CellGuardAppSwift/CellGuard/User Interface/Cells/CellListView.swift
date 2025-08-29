@@ -46,6 +46,7 @@ struct CellListView: View {
             Task.detached {
                 if let range = await PersistenceController.basedOnEnvironment().fetchCellDateRange() {
                     await MainActor.run {
+                        settings.showLatestDate(range: range)
                         sheetRange = range
                     }
                 }

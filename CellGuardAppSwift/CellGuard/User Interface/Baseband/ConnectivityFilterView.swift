@@ -22,6 +22,13 @@ class ConnectivityFilterSettings: ObservableObject {
         active = nil
     }
 
+    func showLatestData(range: ClosedRange<Date>) {
+        if !range.contains(date) {
+            date = range.upperBound
+            timeFrame = .pastDay
+        }
+    }
+
     func predicates(startDate: Date?, endDate: Date?) -> [NSPredicate] {
         var predicateList: [NSPredicate] = []
 

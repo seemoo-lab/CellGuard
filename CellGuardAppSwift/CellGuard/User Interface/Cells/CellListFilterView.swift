@@ -39,6 +39,13 @@ class CellListFilterSettings: ObservableObject {
         cell = nil
     }
 
+    func showLatestDate(range: ClosedRange<Date>) {
+        if !range.contains(date) {
+            date = range.upperBound
+            timeFrame = .pastDay
+        }
+    }
+
     func predicates(startDate: Date?, endDate: Date?) -> [NSPredicate] {
         var predicateList: [NSPredicate] = [
             NSPredicate(format: "cell != nil"),
