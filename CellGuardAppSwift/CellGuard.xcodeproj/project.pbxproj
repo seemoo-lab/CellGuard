@@ -1265,10 +1265,10 @@
 		EDA9FEC52E1FEB1800C52409 /* Baseband */ = {
 			isa = PBXGroup;
 			children = (
+				EDA9FEB92E1F9AEA00C52409 /* ConnectivityView.swift */,
+				EDA9FED62E1FEB8900C52409 /* ConnectivityFilterView.swift */,
 				EDD199132E211E530051424A /* ConnectivityDetailsView.swift */,
 				EDD199102E21067D0051424A /* GroupedConnectivityEvents.swift */,
-				EDA9FED62E1FEB8900C52409 /* ConnectivityFilterView.swift */,
-				EDA9FEB92E1F9AEA00C52409 /* ConnectivityView.swift */,
 			);
 			path = Baseband;
 			sourceTree = "<group>";

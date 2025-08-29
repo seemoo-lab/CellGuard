@@ -13,6 +13,7 @@ struct SummaryTabView: View {
 
     @State private var path = NBNavigationPath()
     @State private var cellFilterSettings = CellListFilterSettings()
+    @State private var connectivityFilterSettings = ConnectivityFilterSettings()
 
     init() {
     }
@@ -26,6 +27,9 @@ struct SummaryTabView: View {
                     Menu {
                         NBNavigationLink(value: SummaryNavigationPath.cellList) {
                             Label("Cells", systemImage: "wave.3.left")
+                        }
+                        NBNavigationLink(value: SummaryNavigationPath.connectivity) {
+                            Label("Connectivity", systemImage: "bolt")
                         }
                         #if STATS_VIEW
                         // Disable stats for the beta test as it is not finished.
@@ -57,9 +61,11 @@ struct SummaryTabView: View {
             .cgNavigationDestinations(.cells)
             .cgNavigationDestinations(.operators)
             .cgNavigationDestinations(.packets)
+            .cgNavigationDestinations(.connectivity)
         }
         .background(Color.gray)
         .environmentObject(cellFilterSettings)
+        .environmentObject(connectivityFilterSettings)
     }
 }
 

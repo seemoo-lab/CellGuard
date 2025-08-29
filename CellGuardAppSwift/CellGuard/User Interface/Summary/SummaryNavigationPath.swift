@@ -13,6 +13,8 @@ enum SummaryNavigationPath: NBScreen {
 
     case cellList
     case cellListFilter
+    case connectivity
+    case connectivityFilter
     case dataSummary
     case cellLaboratory
     case operatorLookup
@@ -42,6 +44,10 @@ enum SummaryNavigationPath: NBScreen {
             CellListView()
         } else if path == .cellListFilter {
             CellListFilterView()
+        } else if path == .connectivity {
+            ConnectivityView()
+        } else if path == .connectivityFilter {
+            ConnectivityListFilterView()
         } else if path == .dataSummary {
             DataSummaryView()
         } else if path == .cellLaboratory {

@@ -7,12 +7,20 @@
 
 import CoreData
 import SwiftUI
+import NavigationBackport
 
-struct ConnectivityListFilterSettings {
-    var date: Date = Calendar.current.startOfDay(for: Date())
-    var timeFrame: ConnectivityListFilterTimeFrame = .live
-    var simSlot: ConnectivityListFilterSimSlot = .all
-    var active: Bool?
+class ConnectivityFilterSettings: ObservableObject {
+    @Published var date: Date = Calendar.current.startOfDay(for: Date())
+    @Published var timeFrame: FilterTimeFrame = .live
+    @Published var simSlot: FilterSimSlot = .all
+    @Published var active: Bool?
+
+    func reset() {
+        date = Calendar.current.startOfDay(for: Date())
+        timeFrame = .live
+        simSlot = .all
+        active = nil
+    }
 
     func predicates(startDate: Date?, endDate: Date?) -> [NSPredicate] {
         var predicateList: [NSPredicate] = []
@@ -57,71 +65,18 @@ struct ConnectivityListFilterSettings {
 
 }
 
-enum ConnectivityListFilterTimeFrame: String, CaseIterable, Identifiable {
-    case live, pastDay, pastDays
-
-    var id: Self { self }
-}
-
-enum ConnectivityListFilterSimSlot: UInt8, CaseIterable, Identifiable {
-    case all, slot1, slot2, none
-
-    var id: Self { self }
-
-    var slotNumber: Int? {
-        switch self {
-        case .slot1:
-            return 1
-        case .slot2:
-            return 2
-        case .none:
-            return 0
-        default:
-            return nil
-        }
-    }
-}
-
 struct ConnectivityListFilterView: View {
-    let close: () -> Void
-
-    @Binding var settingsBound: ConnectivityListFilterSettings
-    @State var settings: ConnectivityListFilterSettings = ConnectivityListFilterSettings()
-
-    init(settingsBound: Binding<ConnectivityListFilterSettings>, close: @escaping () -> Void) {
-        self.close = close
-        self._settingsBound = settingsBound
-        self._settings = State(wrappedValue: self._settingsBound.wrappedValue)
-    }
 
     var body: some View {
-        ConnectivityListFilterSettingsView(settings: $settings, save: {
-            self.settingsBound = settings
-            self.close()
-        })
+        ConnectivityListFilterSettingsView()
         .navigationTitle("Filter")
         .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .confirmationAction) {
-                // TOOD: Somehow taps on it result in the navigation stack disappearing on iOS 14
-                if #available(iOS 15, *) {
-                    Button {
-                        self.settingsBound = settings
-                        self.close()
-                    } label: {
-                        Text("Apply")
-                    }
-                }
-            }
-        }
-        .listStyle(.insetGrouped)
     }
 }
 
 private struct ConnectivityListFilterSettingsView: View {
 
-    @Binding var settings: ConnectivityListFilterSettings
-    let save: () -> Void
+    @EnvironmentObject var settings: ConnectivityFilterSettings
 
     var body: some View {
         Form {
@@ -133,18 +88,17 @@ private struct ConnectivityListFilterSettingsView: View {
                     Text("Disconnected").tag(false)
                 }
                 Picker("SIM Slot", selection: $settings.simSlot) {
-                    ForEach(ConnectivityListFilterSimSlot.allCases) { Text(String(describing: $0).capitalized) }
+                    ForEach(FilterSimSlot.allCases) { Text(String(describing: $0).capitalized) }
                 }
             }
-            if #unavailable(iOS 15) {
+        }
+        .listStyle(.insetGrouped)
+        .toolbar {
+            ToolbarItem {
                 Button {
-                    save()
+                    settings.reset()
                 } label: {
-                    HStack {
-                        Image(systemName: "tray.and.arrow.down")
-                        Text("Apply")
-                        Spacer()
-                    }
+                    Text("Reset")
                 }
             }
         }
@@ -156,10 +110,9 @@ struct ConnectivityListFilterView_Previews: PreviewProvider {
     static var previews: some View {
         @State var settings = CellListFilterSettings()
 
-        NavigationView {
-            CellListFilterView(settingsBound: $settings) {
-                // Doing nothing
-            }
+        NBNavigationStack {
+            CellListFilterView()
+                .environmentObject(settings)
         }
     }
 }

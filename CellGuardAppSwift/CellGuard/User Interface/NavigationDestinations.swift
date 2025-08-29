@@ -12,6 +12,7 @@ enum CGNavigationDestinations {
     case packets
     case cells
     case operators
+    case connectivity
     case summaryTab
 }
 
@@ -66,6 +67,14 @@ struct CGNavigationViewModifier: ViewModifier {
                 }
                 .nbNavigationDestination(for: SingleCellCountryNetworkNav.self) { data in
                     SingleCellCountryNetworkView(nav: data)
+                }
+        } else if destinations == .connectivity {
+            content
+                .nbNavigationDestination(for: NavObjectId<ConnectivityEvent>.self) { id in
+                    id.ensure { ConnectivityEventDetails(event: $0) }
+                }
+                .nbNavigationDestination(for: NavListIds<ConnectivityEvent>.self) { id in
+                    id.ensure { ConnectivityEventList(events: $0) }
                 }
         } else if destinations == .summaryTab {
             content
