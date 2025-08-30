@@ -103,6 +103,7 @@ struct ExportView: View {
             case .locations: exportProgressLocations = progress
             case .packets: exportProgressPackets = progress
             case .connectivityEvents: exportProgressConnectivityEvents = progress
+            case .sysdiagnoses: break
             case .info: break
             }
         } completion: { result in

@@ -188,6 +188,7 @@ struct PersistenceCSVExporter {
         case .locations: return try writeLocations(url: url, progress: progress)
         case .packets: return try writePackets(url: url, progress: progress)
         case .connectivityEvents: return try writeConnectivityEvents(url: url, progress: progress)
+        case .sysdiagnoses: return 0
         }
     }
 

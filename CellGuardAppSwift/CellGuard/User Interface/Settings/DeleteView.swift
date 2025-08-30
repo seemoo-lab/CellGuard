@@ -53,6 +53,7 @@ struct DeleteView: View {
     @State private var locations: Int = 0
     @State private var packets: Int = 0
     @State private var connectivityEvents: Int = 0
+    @State private var sysdiagnoses: Int = 0
 
     // We fetch the database size in intervals as live updates wouldn't be possible
     @State private var databaseSize: UInt64 = 0
@@ -62,6 +63,7 @@ struct DeleteView: View {
     @State private var doDeleteLocations = true
     @State private var doDeletePackets = true
     @State private var doDeleteConnectivityEvents = true
+    @State private var doDeleteSysdiagnoses = true
 
     @State private var isDeletionInProgress = false
     @State private var deleteAlert: DeleteAlert?
@@ -112,6 +114,11 @@ struct DeleteView: View {
                         .transition(.opacity)
                         .id("DeleteView-ConnectivityEvents-\(connectivityEvents)")
                 }
+                Toggle(isOn: $doDeleteSysdiagnoses) {
+                    Text("Sysdiagnoses (\(sysdiagnoses))")
+                        .transition(.opacity)
+                        .id("DeleteView-Sysdiagnoses-\(sysdiagnoses)")
+                }
             }
             .disabled(isDeletionInProgress)
 
@@ -158,7 +165,7 @@ struct DeleteView: View {
                         }
                     }
                 }
-                .disabled(!doDeleteCells && !doDeleteALSCache && !doDeleteLocations && !doDeletePackets)
+                .disabled(!doDeleteCells && !doDeleteALSCache && !doDeleteLocations && !doDeletePackets && !doDeleteConnectivityEvents && !doDeleteSysdiagnoses)
             }
             .disabled(isDeletionInProgress)
         }
@@ -228,7 +235,8 @@ struct DeleteView: View {
             PersistenceCategory.alsCells: doDeleteALSCache,
             PersistenceCategory.locations: doDeleteLocations,
             PersistenceCategory.packets: doDeletePackets,
-            PersistenceCategory.connectivityEvents: doDeleteConnectivityEvents
+            PersistenceCategory.connectivityEvents: doDeleteConnectivityEvents,
+            PersistenceCategory.sysdiagnoses: doDeleteSysdiagnoses
         ].filter { $0.value }.map { $0.key }
 
         PersistenceController.basedOnEnvironment().deleteDataInBackground(categories: deletionCategories) { result in
@@ -253,6 +261,7 @@ struct DeleteView: View {
             let locations = persistence.countEntitiesOf(LocationUser.fetchRequest()) ?? self.locations
             let packets = (persistence.countEntitiesOf(PacketQMI.fetchRequest()) ?? 0) + (persistence.countEntitiesOf(PacketARI.fetchRequest()) ?? 0)
             let connectivityEvents = persistence.countEntitiesOf(ConnectivityEvent.fetchRequest()) ?? self.connectivityEvents
+            let sysdiagnoses = persistence.countEntitiesOf(Sysdiagnose.fetchRequest()) ?? self.sysdiagnoses
 
             // Calculate the size
             let size = PersistenceController.basedOnEnvironment().size()
@@ -265,6 +274,7 @@ struct DeleteView: View {
                     self.locations = locations
                     self.packets = packets
                     self.connectivityEvents = connectivityEvents
+                    self.sysdiagnoses = sysdiagnoses
                     self.databaseSize = size
                 }
             }

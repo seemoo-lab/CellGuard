@@ -262,6 +262,8 @@ struct ImportView: View {
                     importStatusPackets = .progress(progress)
                 case .connectivityEvents:
                     break
+                case .sysdiagnoses:
+                    break
                 case .info:
                     break
                 }
