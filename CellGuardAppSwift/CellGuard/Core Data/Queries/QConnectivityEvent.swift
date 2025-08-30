@@ -11,12 +11,13 @@ import Foundation
 extension PersistenceController {
 
     /// Uses `NSBatchInsertRequest` (BIR) to import tweak cell properties into the Core Data store on a private queue.
-    func importConnectivityEvents(from packetRefs: [NSManagedObjectID]) throws -> Int {
+    func importConnectivityEvents(from packetRefs: [NSManagedObjectID], sysdiagnoseID: NSManagedObjectID?) throws -> Int {
         return try performAndWait(name: "importContext", author: "importConnectivityEvents") { context in
             context.mergePolicy = NSMergePolicy.rollback
 
             // Fetch the packets
             let packets = packetRefs.compactMap { context.object(with: $0) as? any Packet }
+            let sysdiagnose = sysdiagnoseID != nil ? context.object(with: sysdiagnoseID!) as? Sysdiagnose : nil
 
             // Parse the connectivity events from the parsed packets
             // Import the cells without Batch import to set the packet relationship
@@ -35,6 +36,7 @@ extension PersistenceController {
                         let dbEvent = ConnectivityEvent(context: context)
                         event.applyTo(connectivityEvent: dbEvent)
                         dbEvent.packetQmi = qmiPacket
+                        dbEvent.sysdiagnose = sysdiagnose
                         dbEvent.imported = importedDate
                         importCount += 1
                     }
@@ -43,6 +45,7 @@ extension PersistenceController {
                     let dbEvent = ConnectivityEvent(context: context)
                     event.applyTo(connectivityEvent: dbEvent)
                     dbEvent.packetAri = ariPacket
+                    dbEvent.sysdiagnose = sysdiagnose
                     dbEvent.imported = importedDate
                     importCount += 1
                 }

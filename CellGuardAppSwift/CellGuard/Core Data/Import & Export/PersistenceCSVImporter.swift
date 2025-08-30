@@ -340,7 +340,7 @@ struct PersistenceCSVImporter {
             packet.timestamp
         } bulkImport: { packets in
             if packets.count > 0 {
-                let (_, _, cells, connectivity) = try CPTCollector.store(packets)
+                let (_, _, cells, connectivity) = try CPTCollector.store(packets, sysdiagnose: nil)
                 cellCount = cells.count
                 connectivityCount = connectivity
             }

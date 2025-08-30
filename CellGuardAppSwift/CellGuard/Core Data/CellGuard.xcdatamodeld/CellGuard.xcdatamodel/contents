@@ -43,6 +43,7 @@
         <relationship name="packetAri" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PacketARI" inverseName="cells" inverseEntity="PacketARI"/>
         <relationship name="packetQmi" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PacketQMI" inverseName="cells" inverseEntity="PacketQMI"/>
         <relationship name="study" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="StudyCell" inverseName="cell" inverseEntity="StudyCell"/>
+        <relationship name="sysdiagnose" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Sysdiagnose" inverseName="cells" inverseEntity="Sysdiagnose"/>
         <relationship name="verifications" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="VerificationState" inverseName="cell" inverseEntity="VerificationState"/>
         <fetchIndex name="byTweakCellCollected">
             <fetchIndexElement property="collected" type="Binary" order="descending"/>
@@ -76,6 +77,7 @@
         <attribute name="simSlot" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <relationship name="packetAri" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PacketARI" inverseName="connectivityEvents" inverseEntity="PacketARI"/>
         <relationship name="packetQmi" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PacketQMI" inverseName="connectivityEvents" inverseEntity="PacketQMI"/>
+        <relationship name="sysdiagnose" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Sysdiagnose" inverseName="connectivityEvents" inverseEntity="Sysdiagnose"/>
     </entity>
     <entity name="LocationALS" representedClassName="LocationALS" syncable="YES" codeGenerationType="class">
         <attribute name="horizontalAccuracy" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
@@ -124,6 +126,7 @@
         <relationship name="cells" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CellTweak" inverseName="packetAri" inverseEntity="CellTweak"/>
         <relationship name="connectivityEvents" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ConnectivityEvent" inverseName="packetAri" inverseEntity="ConnectivityEvent"/>
         <relationship name="index" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="PacketIndexARI" inverseName="packet" inverseEntity="PacketIndexARI"/>
+        <relationship name="sysdiagnose" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Sysdiagnose" inverseName="packetsARI" inverseEntity="Sysdiagnose"/>
         <relationship name="verificationLogs" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="VerificationLog" inverseName="relatedPacketARI" inverseEntity="VerificationLog"/>
         <uniquenessConstraints>
             <uniquenessConstraint>
@@ -177,6 +180,7 @@
         <relationship name="cells" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CellTweak" inverseName="packetQmi" inverseEntity="CellTweak"/>
         <relationship name="connectivityEvents" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ConnectivityEvent" inverseName="packetQmi" inverseEntity="ConnectivityEvent"/>
         <relationship name="index" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="PacketIndexQMI" inverseName="packet" inverseEntity="PacketIndexQMI"/>
+        <relationship name="sysdiagnose" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Sysdiagnose" inverseName="packetsQMI" inverseEntity="Sysdiagnose"/>
         <relationship name="verificationLogs" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="VerificationLog" inverseName="relatedPacketQMI" inverseEntity="VerificationLog"/>
         <uniquenessConstraints>
             <uniquenessConstraint>
@@ -204,6 +208,23 @@
         <attribute name="scheduled" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="uploaded" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="week" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+    </entity>
+    <entity name="Sysdiagnose" representedClassName="Sysdiagnose" syncable="YES" codeGenerationType="class">
+        <attribute name="archiveIdentifier" optional="YES" attributeType="String"/>
+        <attribute name="basebandChipset" optional="YES" attributeType="String"/>
+        <attribute name="endTimeRef" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="filename" optional="YES" attributeType="String"/>
+        <attribute name="highVolumeSizeLimit" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="highVolumeTime" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="imported" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="persistSizeLimit" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="persistTime" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="productBuildVersion" optional="YES" attributeType="String"/>
+        <attribute name="sourceIdentifier" optional="YES" attributeType="String"/>
+        <relationship name="cells" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CellTweak" inverseName="sysdiagnose" inverseEntity="CellTweak"/>
+        <relationship name="connectivityEvents" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ConnectivityEvent" inverseName="sysdiagnose" inverseEntity="ConnectivityEvent"/>
+        <relationship name="packetsARI" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="PacketARI" inverseName="sysdiagnose" inverseEntity="PacketARI"/>
+        <relationship name="packetsQMI" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="PacketQMI" inverseName="sysdiagnose" inverseEntity="PacketQMI"/>
     </entity>
     <entity name="VerificationLog" representedClassName="VerificationLog" syncable="YES" codeGenerationType="class">
         <attribute name="duration" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>

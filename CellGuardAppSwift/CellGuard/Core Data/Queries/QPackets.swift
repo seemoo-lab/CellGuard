@@ -17,7 +17,7 @@ extension PersistenceController {
 
     /// Uses `NSBatchInsertRequest` (BIR) to import QMI packets into the Core Data store on a private queue.
     /// Returns the number of imported packets and references to packets with (a) cell information and (b) connectivity events.
-    func importQMIPackets(from packets: [(CPTPacket, ParsedQMIPacket)]) throws -> (Int, PacketImportRefs) {
+    func importQMIPackets(from packets: [(CPTPacket, ParsedQMIPacket)], sysdiagnoseID: NSManagedObjectID?) throws -> (Int, PacketImportRefs) {
         if packets.isEmpty {
             return (0, PacketImportRefs())
         }
@@ -61,11 +61,14 @@ extension PersistenceController {
 
         var packetRefs = PacketImportRefs()
         try performAndWait(name: "importContext", author: "importQMIPackets") { context in
+            let sysdiagnose = sysdiagnoseID != nil ? context.object(with: sysdiagnoseID!) as? Sysdiagnose : nil
+
             var added = false
             for objectId in objectIds {
                 guard let qmiPacket = context.object(with: objectId) as? PacketQMI else {
                     continue
                 }
+                qmiPacket.sysdiagnose = sysdiagnose
 
                 if CCTParser.isCellPacket(qmi: qmiPacket, ari: nil) {
                     packetRefs.cellInfo.append(qmiPacket.objectID)
@@ -113,7 +116,7 @@ extension PersistenceController {
 
     /// Uses `NSBatchInsertRequest` (BIR) to import ARI packets into the Core Data store on a private queue.
     /// Returns the number of imported packets and references to packets with (a) cell information and (b) connectivity events.
-    func importARIPackets(from packets: [(CPTPacket, ParsedARIPacket)]) throws -> (Int, PacketImportRefs) {
+    func importARIPackets(from packets: [(CPTPacket, ParsedARIPacket)], sysdiagnoseID: NSManagedObjectID?) throws -> (Int, PacketImportRefs) {
         if packets.isEmpty {
             return (0, PacketImportRefs())
         }
@@ -156,14 +159,17 @@ extension PersistenceController {
 
         var packetRefs = PacketImportRefs()
         try performAndWait(name: "importContext", author: "importARIPackets") { context in
-            var added = false
+            let sysdiagnose = sysdiagnoseID != nil ? context.object(with: sysdiagnoseID!) as? Sysdiagnose : nil
 
             // TODO: Can we do that in parallel?
             let ariPackets = objectIds
                 .compactMap { context.object(with: $0) as? PacketARI }
                 .sorted { $0.collected ?? Date.distantPast < $1.collected ?? Date.distantPast }
 
+            var added = false
             for ariPacket in ariPackets {
+                ariPacket.sysdiagnose = sysdiagnose
+
                 if CCTParser.isCellPacket(qmi: nil, ari: ariPacket) {
                     packetRefs.cellInfo.append(ariPacket.objectID)
                 }

@@ -411,6 +411,8 @@
 		CFFF19E72BC70E83004E40CE /* FirstLastDates.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFFF19E62BC70E83004E40CE /* FirstLastDates.swift */; };
 		CFFF5F092DE097430086E62E /* SwiftGzip in Frameworks */ = {isa = PBXBuildFile; productRef = CFFF5F082DE097430086E62E /* SwiftGzip */; };
 		CFFF5F0B2DE0974D0086E62E /* SwiftGzip in Frameworks */ = {isa = PBXBuildFile; productRef = CFFF5F0A2DE0974D0086E62E /* SwiftGzip */; };
+		ED3A28A02E62F9D700D0B6A9 /* QSysdiagnose.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED3A289F2E62F9D200D0B6A9 /* QSysdiagnose.swift */; };
+		ED3A28A12E62F9D700D0B6A9 /* QSysdiagnose.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED3A289F2E62F9D200D0B6A9 /* QSysdiagnose.swift */; };
 		ED6F69252DBB8D40007BFE78 /* UpdateCheckView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED6F69242DBB8D40007BFE78 /* UpdateCheckView.swift */; };
 		ED6F69262DBB8D40007BFE78 /* UpdateCheckView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED6F69242DBB8D40007BFE78 /* UpdateCheckView.swift */; };
 		ED6F69282DBBC1CC007BFE78 /* UpdateCheckInfoCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED6F69272DBBC1CA007BFE78 /* UpdateCheckInfoCard.swift */; };
@@ -665,6 +667,7 @@
 		CFFF19E22BC6D2D3004E40CE /* AcknowledgementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AcknowledgementView.swift; sourceTree = "<group>"; };
 		CFFF19E42BC70E63004E40CE /* ImportResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportResult.swift; sourceTree = "<group>"; };
 		CFFF19E62BC70E83004E40CE /* FirstLastDates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstLastDates.swift; sourceTree = "<group>"; };
+		ED3A289F2E62F9D200D0B6A9 /* QSysdiagnose.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QSysdiagnose.swift; sourceTree = "<group>"; };
 		ED6F69242DBB8D40007BFE78 /* UpdateCheckView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateCheckView.swift; sourceTree = "<group>"; };
 		ED6F69272DBBC1CA007BFE78 /* UpdateCheckInfoCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateCheckInfoCard.swift; sourceTree = "<group>"; };
 		ED7DB14C2DC785DA007D5314 /* UpdateCheckTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateCheckTask.swift; sourceTree = "<group>"; };
@@ -796,6 +799,7 @@
 			isa = PBXGroup;
 			children = (
 				EDAD7A032E1D7D9E00EBB924 /* QConnectivityEvent.swift */,
+				ED3A289F2E62F9D200D0B6A9 /* QSysdiagnose.swift */,
 				CF70A97E2BE6AD8600989FB5 /* QCellALS.swift */,
 				CF70A98D2BE6B57F00989FB5 /* QCellTweak.swift */,
 				CF70A9902BE6B64600989FB5 /* QCommonDeletion.swift */,
@@ -1646,6 +1650,7 @@
 				CF70A9952BE6B6D600989FB5 /* QCommonFetch.swift in Sources */,
 				45ECF56D2BFBEA5300DD92CF /* DeviceModel.swift in Sources */,
 				EDAFBFEA2D9C0A5300D7748B /* AriCellParser.swift in Sources */,
+				ED3A28A12E62F9D700D0B6A9 /* QSysdiagnose.swift in Sources */,
 				45ECF5522BFAAF1F00DD92CF /* CenteredTitleIconTextView.swift in Sources */,
 				CFB6CF352BD122FA00EAB7B4 /* MultiCellMap.swift in Sources */,
 				CFA83C9A2D9D78FC00239AB7 /* OperatorDetailsView.swift in Sources */,
@@ -1852,6 +1857,7 @@
 				CF2002F02A2F996A000922E6 /* TweakClient.swift in Sources */,
 				CFDF5D83297F0736000708A8 /* CommonCellMap.swift in Sources */,
 				CF7064F42CC5137600BF8AF9 /* TowerAnnotation.swift in Sources */,
+				ED3A28A02E62F9D700D0B6A9 /* QSysdiagnose.swift in Sources */,
 				CFE988DF2AA88A2B0039EDF9 /* CircularProgressView.swift in Sources */,
 				CFDF5D75297EF127000708A8 /* CellClusterAnnotationView.swift in Sources */,
 				CFB51834297AEFA80006C690 /* CellStatusIcon.swift in Sources */,
