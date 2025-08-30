@@ -108,12 +108,14 @@ struct PersistenceCSVImporter {
         Self.logger.debug("Read \(locations?.count ?? 0) locations")
         let alsCells = try readAlsCells(directory: tmpDirectoryURL, infoData: infoData, progress: progress)
         Self.logger.debug("Read \(alsCells?.count ?? 0) ALS cells")
+        let sysdiagnoses = try readSysdiagnoses(directory: tmpDirectoryURL, infoData: infoData, progress: progress)
+        Self.logger.debug("Read \(sysdiagnoses?.count ?? 0) sysdiagnoses")
         let (packets, userCells, connectivity) = try readPackets(directory: tmpDirectoryURL, infoData: infoData, version: formatVersion, progress: progress)
         Self.logger.debug("Read \(packets?.count ?? 0) packets")
         Self.logger.debug("Read \(userCells?.count ?? 0) user cells")
         Self.logger.debug("Read \(connectivity?.count ?? 0) connectivity events")
 
-        return ImportResult(cells: userCells, alsCells: alsCells, locations: locations, packets: packets, connectivityEvents: connectivity, notices: [])
+        return ImportResult(cells: userCells, alsCells: alsCells, locations: locations, packets: packets, connectivityEvents: connectivity, sysdiagnoses: sysdiagnoses, notices: [])
     }
 
     func fetchInfo(from url: URL) throws -> [String: Any] {
@@ -314,6 +316,41 @@ struct PersistenceCSVImporter {
         }
     }
 
+    private func readSysdiagnoses(directory: URL, infoData: [String: Int], progress: CSVProgressFunc) throws -> ImportCount? {
+        return try importData(directory: directory, category: .sysdiagnoses, infoData: infoData, progress: progress) { (csv: CSVReader) -> SysdiagnoseMetadata? in
+            let imported = try csvDate(csv, "imported")
+            let filename = try? csvString(csv, "filename")
+            let archiveIdentifier = try? csvString(csv, "archiveIdentifier")
+            let sourceIdentifier = try? csvString(csv, "sourceIdentifier")
+            let endTimeRef = try? csvDate(csv, "endTimeRef")
+            let highVolumeSizeLimit = try? csvInt(csv, "highVolumeSizeLimit")
+            let highVolumeTime = try? csvDate(csv, "highVolumeTime")
+            let persistSizeLimit = try? csvInt(csv, "persistSizeLimit")
+            let persistTime = try? csvDate(csv, "persistTime")
+            let productBuildVersion = try? csvString(csv, "productBuildVersion")
+            let basebandChipset = try? csvString(csv, "basebandChipset")
+
+            let systemLogsInfo = SystemLogsInfo(
+                archiveIdentifier: archiveIdentifier,
+                sourceIdentifier: sourceIdentifier,
+                highVolumeSizeLimit: highVolumeSizeLimit != nil ? Int64(highVolumeSizeLimit!) : nil,
+                persistSizeLimit: persistSizeLimit != nil ? Int64(persistSizeLimit!) : nil,
+                endTimeRef: endTimeRef != nil ? TimeRef(date: endTimeRef!) : nil,
+                highVolumeTime: highVolumeTime != nil ? OldestTimeRef(date: highVolumeTime!) : nil,
+                persistTime: persistTime != nil ? OldestTimeRef(date: persistTime!) : nil
+            )
+            let versionMetadata = VersionMetadata(buildId: nil, productBuildVersion: productBuildVersion, productCopyright: nil, productName: nil, productVersion: nil, releaseType: nil, systemImageId: nil)
+
+            return SysdiagnoseMetadata(imported: imported, filename: filename, basebandChipset: basebandChipset, systemLogsInfo: systemLogsInfo, versionMetadata: versionMetadata)
+        } timestamp: { sysdiagnose in
+            sysdiagnose.imported
+        } bulkImport: { sysdiagnoses in
+            for sysdiagnose in sysdiagnoses {
+                _ = try PersistenceController.shared.importSysdiagnoseMetadata(from: sysdiagnose)
+            }
+        }
+    }
+
     private func readPackets(directory: URL, infoData: [String: Int], version: Int, progress: CSVProgressFunc) throws -> (ImportCount?, ImportCount?, ImportCount?) {
         // Set the packet retention time frame to infinite, so that older packets to-be-imported don't get deleted
         UserDefaults.standard.setValue(DeleteView.packetRetentionInfinite, forKey: UserDefaultsKeys.packetRetention.rawValue)
@@ -321,11 +358,12 @@ struct PersistenceCSVImporter {
 
         var cellCount = 0
         var connectivityCount = 0
-        let packetImportCount = try importData(directory: directory, category: .packets, infoData: infoData, progress: progress) { (csv: CSVReader) -> CPTPacket? in
+        let packetImportCount = try importData(directory: directory, category: .packets, infoData: infoData, progress: progress) { (csv: CSVReader) -> (CPTPacket, String)? in
             let directionStr = try csvString(csv, "direction")
             let dataStr = try csvString(csv, "data")
             let collected = try csvDate(csv, "collected")
             let simSlot: Int? = version >= 2 ? try? csvInt(csv, "simSlot") : nil
+            let sysdiagnoseIdentifier = version >= 3 ? try csvString(csv, "sysdiagnoseIdentifier") : ""
 
             let direction = CPTDirection(rawValue: directionStr)
             let simSlotID = simSlot != nil ? UInt8(simSlot!) : nil
@@ -335,12 +373,16 @@ struct PersistenceCSVImporter {
                 throw PersistenceCSVImporterError.fieldParsing("direction")
             }
 
-            return try CPTPacket(direction: direction, data: data, timestamp: collected, simSlotID: simSlotID)
-        } timestamp: { packet in
+            return (try CPTPacket(direction: direction, data: data, timestamp: collected, simSlotID: simSlotID), sysdiagnoseIdentifier)
+        } timestamp: { (packet, _) in
             packet.timestamp
-        } bulkImport: { packets in
-            if packets.count > 0 {
-                let (_, _, cells, connectivity) = try CPTCollector.store(packets, sysdiagnose: nil)
+        } bulkImport: { packetsAndSysdiagnoses in
+            let groupedBySysdiagnose = Dictionary(grouping: packetsAndSysdiagnoses) { $0.1 }.mapValues { $0.map { $0.0 } }
+            for (sysdiagnoseIdentifier, packets) in groupedBySysdiagnose {
+                let sysdiagnose = sysdiagnoseIdentifier.isEmpty ? nil : try? PersistenceController.shared.fetchSysdiagnose(archiveIdentifier: sysdiagnoseIdentifier)
+                let sysdiagnoseID = sysdiagnose != nil ? sysdiagnose!.objectID : nil
+
+                let (_, _, cells, connectivity) = try CPTCollector.store(packets, sysdiagnose: sysdiagnoseID)
                 cellCount = cells.count
                 connectivityCount = connectivity
             }

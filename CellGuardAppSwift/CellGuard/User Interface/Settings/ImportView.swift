@@ -87,6 +87,7 @@ struct ImportView: View {
     @State private var importStatusLocations: ImportStatus = .none
     @State private var importStatusPackets: ImportStatus = .none
     @State private var importStatusConnectivityEvents: ImportStatus = .none
+    @State private var importStatusSysdiagnoses: ImportStatus = .none
 
     @State private var importStatusUnarchive: ImportStatus = .none
     @State private var importStatusExtract: ImportStatus = .none
@@ -140,13 +141,14 @@ struct ImportView: View {
                 }
             }
 
-            if importStatusUserCells != .none || importStatusALSCells != .none || importStatusLocations != .none || importStatusPackets != .none {
+            if importStatusUserCells != .none || importStatusALSCells != .none || importStatusLocations != .none || importStatusPackets != .none || importStatusConnectivityEvents != .none || importStatusSysdiagnoses != .none {
                 Section(header: Text("Datasets")) {
                     ImportStatusRow("Connected Cells", $importStatusUserCells)
                     ImportStatusRow("Cell Cache", $importStatusALSCells)
                     ImportStatusRow("Locations", $importStatusLocations)
                     ImportStatusRow("Packets", $importStatusPackets)
                     ImportStatusRow("Connectivity Events", $importStatusConnectivityEvents)
+                    ImportStatusRow("Sysdiagnoses", $importStatusSysdiagnoses)
                 }
             }
 
@@ -261,9 +263,9 @@ struct ImportView: View {
                 case .packets:
                     importStatusPackets = .progress(progress)
                 case .connectivityEvents:
-                    break
+                    importStatusConnectivityEvents = .progress(progress)
                 case .sysdiagnoses:
-                    break
+                    importStatusSysdiagnoses = .progress(progress)
                 case .info:
                     break
                 }
@@ -307,8 +309,9 @@ struct ImportView: View {
             importStatusLocations = .count(counts.locations)
             importStatusPackets = .count(counts.packets)
             importStatusConnectivityEvents = .count(counts.connectivityEvents)
+            importStatusSysdiagnoses = .count(counts.sysdiagnoses)
             importNotices = counts.notices
-            Self.logger.info("Successfully imported \(counts.cells?.count ?? 0) cells, \(counts.alsCells?.count ?? 0) ALS cells, \(counts.locations?.count ?? 0) locations, and \(counts.packets?.count ?? 0) packets.")
+            Self.logger.info("Successfully imported \(counts.cells?.count ?? 0) cells, \(counts.alsCells?.count ?? 0) ALS cells, \(counts.locations?.count ?? 0) locations, \(counts.connectivityEvents?.count ?? 0) connectivity events, \(counts.sysdiagnoses?.count ?? 0) sysdiagnoses, and \(counts.packets?.count ?? 0) packets.")
         } catch {
             importError = error
             importNotices = []
@@ -372,6 +375,7 @@ struct ImportView: View {
                 self.importStatusLocations = .none
                 self.importStatusPackets = .none
                 self.importStatusConnectivityEvents = .none
+                self.importStatusSysdiagnoses = .none
 
                 self.importNotices = notices
             }

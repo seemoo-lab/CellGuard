@@ -176,6 +176,11 @@ struct SystemLogsInfo: Codable {
 
 struct OldestTimeRef: Codable {
     var almost: TimeRef?
+
+    init(date: Date) {
+        self.almost = TimeRef(date: date)
+    }
+
     private enum CodingKeys: String, CodingKey {
         case almost = "OldestTimeRef"
     }
@@ -183,6 +188,11 @@ struct OldestTimeRef: Codable {
 
 struct TimeRef: Codable {
     var value: UInt64?
+
+    init(date: Date) {
+        self.value = UInt64(date.timeIntervalSince1970) * 1_000_000_000
+    }
+
     private enum CodingKeys: String, CodingKey {
         case value = "WallTime"
     }
@@ -329,6 +339,8 @@ struct LogArchiveReader {
         let csvFile = try parseLogArchive(tmpDir: tmpDir, logArchiveDir: logArchive, speedup: speedup, rust: rust)
 
         Self.logParseProgress = nil
+        // Parse Metadata before we remove the logArchive
+        let sysdiagnoseObjectID = storeSysdiagnoseMetadata(filename: url.lastPathComponent, tmpDir: tmpDir)
 
         do {
             try fileManager.removeItem(at: logArchive)
@@ -340,7 +352,6 @@ struct LogArchiveReader {
             let totalCsvLines = try countCSVLines(csvFile: csvFile)
             let updateFrequency = max(1, totalCsvLines / 100)
             Self.logger.debug("Total CSV Lines: \(totalCsvLines)")
-            let sysdiagnoseObjectID = storeSysdiagnoseMetadata(filename: url.lastPathComponent, tmpDir: tmpDir)
 
             var currentCsvLine = 0
             let out = try readCSV(csvFile: csvFile, sysdiagnose: sysdiagnoseObjectID) {
@@ -611,7 +622,7 @@ struct LogArchiveReader {
 
         guard let inputStream = InputStream(url: csvFile) else {
             Self.logger.warning("No CSV input stream for \(csvFile)")
-            return ImportResult(cells: nil, alsCells: nil, locations: nil, packets: nil, connectivityEvents: nil, notices: [])
+            return ImportResult(cells: nil, alsCells: nil, locations: nil, packets: nil, connectivityEvents: nil, sysdiagnoses: nil, notices: [])
         }
 
         let csvReader = try CSVReader(stream: inputStream, hasHeaderRow: true)
@@ -700,6 +711,7 @@ struct LogArchiveReader {
             locations: nil,
             packets: ImportCount(count: packets.count, first: packetDates.first, last: packetDates.last),
             connectivityEvents: ImportCount(count: connectivityCount, first: packetDates.first, last: packetDates.last),
+            sysdiagnoses: sysdiagnose != nil ? ImportCount(count: 1, first: packetDates.last, last: packetDates.last) : nil,
             notices: notices
         )
     }
