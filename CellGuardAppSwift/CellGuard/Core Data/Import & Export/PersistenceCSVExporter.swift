@@ -188,7 +188,7 @@ struct PersistenceCSVExporter {
         case .locations: return try writeLocations(url: url, progress: progress)
         case .packets: return try writePackets(url: url, progress: progress)
         case .connectivityEvents: return try writeConnectivityEvents(url: url, progress: progress)
-        case .sysdiagnoses: return 0
+        case .sysdiagnoses: return try writeSysdiagnoses(url: url, progress: progress)
         }
     }
 
@@ -395,6 +395,36 @@ struct PersistenceCSVExporter {
                         csvBool(result.active),
                         csvInt(result.basebandMode),
                         csvInt(result.registrationStatus)
+                    ])
+                }
+            ]
+        )
+    }
+
+    private func writeSysdiagnoses(url: URL, progress: CSVProgressFunc) throws -> Int {
+        return try writeData(
+            url: url,
+            category: .sysdiagnoses,
+            progress: progress,
+            header: ["imported", "filename", "archiveIdentifier", "sourceIdentifier", "endTimeRef", "highVolumeSizeLimit", "highVolumeTime", "persistSizeLimit", "persistTime", "productBuildVersion", "basebandChipset", "cellCount", "connectivityEventCount", "packetCount"],
+            writers: [
+                DatabaseFileElementWriter(Sysdiagnose.fetchRequest) { csv, result in
+                    try csv.write(row: [
+                        csvDate(result.imported),
+                        csvString(result.filename),
+                        csvString(result.archiveIdentifier),
+                        csvString(result.sourceIdentifier),
+                        csvDate(result.endTimeRef),
+                        csvInt(result.highVolumeSizeLimit),
+                        csvDate(result.highVolumeTime),
+                        csvInt(result.persistSizeLimit),
+                        csvDate(result.persistTime),
+                        csvString(result.productBuildVersion),
+                        csvString(result.basebandChipset),
+
+                        csvInt(result.cellCount),
+                        csvInt(result.connectivityEventCount),
+                        csvInt(result.packetCount)
                     ])
                 }
             ]

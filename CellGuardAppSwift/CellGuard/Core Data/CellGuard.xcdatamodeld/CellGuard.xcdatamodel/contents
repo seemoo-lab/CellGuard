@@ -209,7 +209,7 @@
         <attribute name="uploaded" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="week" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
     </entity>
-    <entity name="Sysdiagnose" representedClassName="Sysdiagnose" syncable="YES" codeGenerationType="class">
+    <entity name="Sysdiagnose" representedClassName="Sysdiagnose" syncable="YES" codeGenerationType="category">
         <attribute name="archiveIdentifier" optional="YES" attributeType="String"/>
         <attribute name="basebandChipset" optional="YES" attributeType="String"/>
         <attribute name="endTimeRef" optional="YES" attributeType="Date" usesScalarValueType="NO"/>

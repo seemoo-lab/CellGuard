@@ -413,6 +413,8 @@
 		CFFF5F0B2DE0974D0086E62E /* SwiftGzip in Frameworks */ = {isa = PBXBuildFile; productRef = CFFF5F0A2DE0974D0086E62E /* SwiftGzip */; };
 		ED3A28A02E62F9D700D0B6A9 /* QSysdiagnose.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED3A289F2E62F9D200D0B6A9 /* QSysdiagnose.swift */; };
 		ED3A28A12E62F9D700D0B6A9 /* QSysdiagnose.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED3A289F2E62F9D200D0B6A9 /* QSysdiagnose.swift */; };
+		ED3A28A72E63221000D0B6A9 /* Sysdiagnose+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED3A28A62E63221000D0B6A9 /* Sysdiagnose+CoreDataClass.swift */; };
+		ED3A28A82E63221000D0B6A9 /* Sysdiagnose+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED3A28A62E63221000D0B6A9 /* Sysdiagnose+CoreDataClass.swift */; };
 		ED6F69252DBB8D40007BFE78 /* UpdateCheckView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED6F69242DBB8D40007BFE78 /* UpdateCheckView.swift */; };
 		ED6F69262DBB8D40007BFE78 /* UpdateCheckView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED6F69242DBB8D40007BFE78 /* UpdateCheckView.swift */; };
 		ED6F69282DBBC1CC007BFE78 /* UpdateCheckInfoCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED6F69272DBBC1CA007BFE78 /* UpdateCheckInfoCard.swift */; };
@@ -668,6 +670,7 @@
 		CFFF19E42BC70E63004E40CE /* ImportResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportResult.swift; sourceTree = "<group>"; };
 		CFFF19E62BC70E83004E40CE /* FirstLastDates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstLastDates.swift; sourceTree = "<group>"; };
 		ED3A289F2E62F9D200D0B6A9 /* QSysdiagnose.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QSysdiagnose.swift; sourceTree = "<group>"; };
+		ED3A28A62E63221000D0B6A9 /* Sysdiagnose+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sysdiagnose+CoreDataClass.swift"; sourceTree = "<group>"; };
 		ED6F69242DBB8D40007BFE78 /* UpdateCheckView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateCheckView.swift; sourceTree = "<group>"; };
 		ED6F69272DBBC1CA007BFE78 /* UpdateCheckInfoCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateCheckInfoCard.swift; sourceTree = "<group>"; };
 		ED7DB14C2DC785DA007D5314 /* UpdateCheckTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateCheckTask.swift; sourceTree = "<group>"; };
@@ -1122,6 +1125,7 @@
 				CFBEC8532BC7F7D70021C0B9 /* Cell.swift */,
 				CFBEC84B2BC7F7CF0021C0B9 /* CellALS+CoreDataClass.swift */,
 				CFBEC84D2BC7F7CF0021C0B9 /* CellTweak+CoreDataClass.swift */,
+				ED3A28A62E63221000D0B6A9 /* Sysdiagnose+CoreDataClass.swift */,
 			);
 			path = Objects;
 			sourceTree = "<group>";
@@ -1757,6 +1761,7 @@
 				CFB6CF752BD122FA00EAB7B4 /* OperatorDefinitions.swift in Sources */,
 				CFD5657E2BDFA90A00925FAA /* CGVerificationPipeline.swift in Sources */,
 				CFB6CF762BD122FA00EAB7B4 /* PersistenceCSVImporter.swift in Sources */,
+				ED3A28A82E63221000D0B6A9 /* Sysdiagnose+CoreDataClass.swift in Sources */,
 				CFB6CF772BD122FA00EAB7B4 /* ALSClient.swift in Sources */,
 				CFB6CF782BD122FA00EAB7B4 /* DeleteView.swift in Sources */,
 				CFB6CF792BD122FA00EAB7B4 /* PersistenceError.swift in Sources */,
@@ -1932,6 +1937,7 @@
 				CF70A9822BE6AD8D00989FB5 /* QRiskStatus.swift in Sources */,
 				CF2A1C202975CDD200E8B61C /* RiskIndicatorCard.swift in Sources */,
 				CFB70B592E5DA28C00D2B5EA /* DebugAddCellView.swift in Sources */,
+				ED3A28A72E63221000D0B6A9 /* Sysdiagnose+CoreDataClass.swift in Sources */,
 				CF2002EA2A2F2BEA000922E6 /* ARIParser.swift in Sources */,
 				CF5EF9202977FACA00C4F50A /* Formatters.swift in Sources */,
 				CF54CCBE2A330E6D00961E4D /* CommonParser.swift in Sources */,
