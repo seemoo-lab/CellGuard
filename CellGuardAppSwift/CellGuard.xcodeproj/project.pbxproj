@@ -999,7 +999,7 @@
 			isa = PBXGroup;
 			children = (
 				45ECF53F2BF98EB400DD92CF /* Introduction */,
-				EDA9FEC52E1FEB1800C52409 /* Baseband */,
+				EDA9FEC52E1FEB1800C52409 /* Connectivity */,
 				CF54CCBF2A331E5400961E4D /* Packets */,
 				CF4EE5E0296C51C30069BA5A /* Cells */,
 				CF1DF87B2C175964008F6F40 /* Study */,
@@ -1278,7 +1278,7 @@
 			path = API;
 			sourceTree = "<group>";
 		};
-		EDA9FEC52E1FEB1800C52409 /* Baseband */ = {
+		EDA9FEC52E1FEB1800C52409 /* Connectivity */ = {
 			isa = PBXGroup;
 			children = (
 				EDA9FEB92E1F9AEA00C52409 /* ConnectivityView.swift */,
@@ -1286,7 +1286,7 @@
 				EDD199132E211E530051424A /* ConnectivityDetailsView.swift */,
 				EDD199102E21067D0051424A /* GroupedConnectivityEvents.swift */,
 			);
-			path = Baseband;
+			path = Connectivity;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
