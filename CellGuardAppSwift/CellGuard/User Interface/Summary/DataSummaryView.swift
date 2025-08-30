@@ -39,35 +39,35 @@ struct DataSummaryView: View {
                 .disabled(updateInProgress)
             }
             Section(header: Text("Collected Measurements")) {
-                CellDetailsRow("First", dateStringOrNil(date: measurements.first))
-                CellDetailsRow("Last", dateStringOrNil(date: measurements.last))
+                DetailsRow("First", dateStringOrNil(date: measurements.first))
+                DetailsRow("Last", dateStringOrNil(date: measurements.last))
                 if let first = measurements.first, let last = measurements.last {
-                    CellDetailsRow("Days", Calendar.current.dateComponents([.day], from: first, to: last).day ?? 0)
+                    DetailsRow("Days", Calendar.current.dateComponents([.day], from: first, to: last).day ?? 0)
                 }
-                CellDetailsRow("Pending", measurements.pending ?? 0)
-                CellDetailsRow("Untrusted", measurements.untrusted ?? 0)
-                CellDetailsRow("Suspicious", measurements.suspicious ?? 0)
-                CellDetailsRow("Trusted", measurements.trusted ?? 0)
+                DetailsRow("Pending", measurements.pending ?? 0)
+                DetailsRow("Untrusted", measurements.untrusted ?? 0)
+                DetailsRow("Suspicious", measurements.suspicious ?? 0)
+                DetailsRow("Trusted", measurements.trusted ?? 0)
             }
             Section(header: Text("Collected Cells")) {
-                CellDetailsRow("Pending", cells.pending ?? 0)
-                CellDetailsRow("Untrusted", cells.untrusted ?? 0)
-                CellDetailsRow("Suspicious", cells.suspicious ?? 0)
-                CellDetailsRow("Trusted", cells.trusted ?? 0)
+                DetailsRow("Pending", cells.pending ?? 0)
+                DetailsRow("Untrusted", cells.untrusted ?? 0)
+                DetailsRow("Suspicious", cells.suspicious ?? 0)
+                DetailsRow("Trusted", cells.trusted ?? 0)
             }
             Section(header: Text("ALS Cells")) {
-                CellDetailsRow("Count", alsCellsCount ?? 0)
+                DetailsRow("Count", alsCellsCount ?? 0)
             }
             Section(header: Text("Packets")) {
-                CellDetailsRow("First", dateStringOrNil(date: packets.first))
-                CellDetailsRow("Last", dateStringOrNil(date: packets.last))
-                CellDetailsRow("QMI Packets", packets.qmi ?? 0)
-                CellDetailsRow("ARI Packets", packets.ari ?? 0)
+                DetailsRow("First", dateStringOrNil(date: packets.first))
+                DetailsRow("Last", dateStringOrNil(date: packets.last))
+                DetailsRow("QMI Packets", packets.qmi ?? 0)
+                DetailsRow("ARI Packets", packets.ari ?? 0)
             }
             Section(header: Text("Locations")) {
-                CellDetailsRow("First", dateStringOrNil(date: locations.first))
-                CellDetailsRow("Last", dateStringOrNil(date: locations.last))
-                CellDetailsRow("Count", locations.count ?? 0)
+                DetailsRow("First", dateStringOrNil(date: locations.first))
+                DetailsRow("Last", dateStringOrNil(date: locations.last))
+                DetailsRow("Count", locations.count ?? 0)
             }
         }
         .listStyle(.insetGrouped)

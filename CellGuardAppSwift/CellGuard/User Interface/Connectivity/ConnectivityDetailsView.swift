@@ -60,24 +60,24 @@ struct ConnectivityEventDetails: View {
         List {
             Section(header: Text("Date & Time")) {
                 if let collectedDate = event.collected {
-                    CellDetailsRow("Collected", fullMediumDateTimeFormatter.string(from: collectedDate))
+                    DetailsRow("Collected", fullMediumDateTimeFormatter.string(from: collectedDate))
                 }
                 if let importedDate = event.imported {
-                    CellDetailsRow("Imported", fullMediumDateTimeFormatter.string(from: importedDate))
+                    DetailsRow("Imported", fullMediumDateTimeFormatter.string(from: importedDate))
                 }
             }
 
             Section(header: Text("Connectivity Properties")) {
-                CellDetailsRow("Status", event.active ? "Connected" : "Disconnected")
-                CellDetailsRow("SIM Slot", event.simSlot == 0 ? "None" : String(event.simSlot))
+                DetailsRow("Status", event.active ? "Connected" : "Disconnected")
+                DetailsRow("SIM Slot", event.simSlot == 0 ? "None" : String(event.simSlot))
                 if event.basebandMode >= 0 {
-                    CellDetailsRow("Baseband Mode", Int(event.basebandMode))
+                    DetailsRow("Baseband Mode", Int(event.basebandMode))
                 }
                 if event.registrationStatus >= 0 {
-                    CellDetailsRow("Registration Status", Int(event.registrationStatus))
+                    DetailsRow("Registration Status", Int(event.registrationStatus))
                 }
                 if event.simUnlocked != nil {
-                    PacketDetailsRow("SIM Unlocked", bool: event.simUnlocked!)
+                    DetailsRow("SIM Unlocked", bool: event.simUnlocked!)
                 }
 
                 if let qmiPacket = event.packetQmi {

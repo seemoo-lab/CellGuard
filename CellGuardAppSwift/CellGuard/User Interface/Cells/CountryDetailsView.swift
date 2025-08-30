@@ -30,9 +30,9 @@ struct CountryDetailsView<C: NetworkCountryAttributes>: View {
     var body: some View {
         List {
             Section {
-                CellDetailsRow("Name", country.countryName)
-                CellDetailsRow("ISO", country.isoString ?? "-")
-                CellDetailsRow("MCC", country.mcc)
+                DetailsRow("Name", country.countryName)
+                DetailsRow("ISO", country.isoString ?? "-")
+                DetailsRow("MCC", country.mcc)
 
                 if let wikipediaUrl = country.wikipediaCountryUrl {
                     Link(destination: wikipediaUrl) {

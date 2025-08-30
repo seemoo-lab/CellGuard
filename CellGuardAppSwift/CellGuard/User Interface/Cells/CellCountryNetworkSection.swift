@@ -29,23 +29,23 @@ struct CellCountryNetworkSection: View {
 
     var body: some View {
         Section(header: Text("Country & Network")) {
-            CellDetailsRow(techFormatter.country(), country)
+            DetailsRow(techFormatter.country(), country)
             if let netOperator = netOperators.first, netOperators.count == 1 {
                 // If there's exactly one network, we show its country
                 ListNavigationLink(value: CountryDetailsNavigation(country: netOperator)) {
-                    CellDetailsRow("Country", netOperator.shortCountryName)
+                    DetailsRow("Country", netOperator.shortCountryName)
                 }
             } else if let (primary, secondary) = netCountries, let primary = primary {
                 // If there is no network or there are multiple ones, we use the generic country
                 ListNavigationLink(value: CountryDetailsNavigation(country: primary, secondary: secondary)) {
                     // Show "+ X" if multiple countries refer to a MCC
-                    CellDetailsRow("Country", secondary.isEmpty ? primary.shortCountryName : "\(primary.shortCountryName) + \(secondary.count)" )
+                    DetailsRow("Country", secondary.isEmpty ? primary.shortCountryName : "\(primary.shortCountryName) + \(secondary.count)" )
                 }
             }
-            CellDetailsRow(techFormatter.network(), formatMNC(network))
+            DetailsRow(techFormatter.network(), formatMNC(network))
             if let netOperator = netOperators.first, let combinedName = netOperator.combinedName {
                 ListNavigationLink(value: netOperators) {
-                    CellDetailsRow("Network", netOperators.count >= 2 ? "\(combinedName) + \(netOperators.count - 1)" : combinedName)
+                    DetailsRow("Network", netOperators.count >= 2 ? "\(combinedName) + \(netOperators.count - 1)" : combinedName)
                 }
             }
         }

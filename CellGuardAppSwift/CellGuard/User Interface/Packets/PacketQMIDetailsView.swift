@@ -44,42 +44,35 @@ private struct PacketQMIDetailsList: View {
         let messageDef = parsed.transactionHeader.indication ? serviceDef?.indications[messageId] : serviceDef?.messages[messageId]
 
         Group {
-            Section(header: Text("Packet")) {
-                PacketDetailsRow("Protocol", packet.proto)
-                PacketDetailsRow("SIM Slot", packet.simSlotID == 0 ? "None" : String(packet.simSlotID))
-                PacketDetailsRow("Direction", packet.direction ?? "???")
-                PacketDetailsRow("Timestamp", date: packet.collected)
-                PacketDetailsRow("Size", bytes: data.count)
-                PacketDetailsDataRow("Data", data: data)
-            }
+            PacketDetailsSection(packet: packet, data: data)
             Section(header: Text("QMux Header")) {
-                PacketDetailsRow("Packet Length", bytes: Int(parsed.qmuxHeader.length))
-                PacketDetailsRow("Flag", hex: parsed.qmuxHeader.flag)
-                PacketDetailsRow("Service ID", hex: parsed.qmuxHeader.serviceId)
+                DetailsRow("Packet Length", bytes: Int(parsed.qmuxHeader.length))
+                DetailsRow("Flag", hex: parsed.qmuxHeader.flag)
+                DetailsRow("Service ID", hex: parsed.qmuxHeader.serviceId)
                 if let serviceDef = serviceDef {
-                    PacketDetailsRow("Service Short Name", serviceDef.shortName)
-                    PacketDetailsRow("Service Name", serviceDef.longName)
+                    DetailsRow("Service Short Name", serviceDef.shortName)
+                    DetailsRow("Service Name", serviceDef.longName)
                 }
-                PacketDetailsRow("Client ID", hex: parsed.qmuxHeader.clientId)
+                DetailsRow("Client ID", hex: parsed.qmuxHeader.clientId)
             }
             Section(header: Text("Transaction Header")) {
-                PacketDetailsRow("Compound", bool: parsed.transactionHeader.compound)
-                PacketDetailsRow("Response", bool: parsed.transactionHeader.response)
-                PacketDetailsRow("Indication", bool: parsed.transactionHeader.indication)
-                PacketDetailsRow("Transaction ID", hex: parsed.transactionHeader.transactionId)
+                DetailsRow("Compound", bool: parsed.transactionHeader.compound)
+                DetailsRow("Response", bool: parsed.transactionHeader.response)
+                DetailsRow("Indication", bool: parsed.transactionHeader.indication)
+                DetailsRow("Transaction ID", hex: parsed.transactionHeader.transactionId)
             }
             Section(header: Text("Message Header")) {
-                PacketDetailsRow("Message ID", hex: parsed.messageHeader.messageId)
+                DetailsRow("Message ID", hex: parsed.messageHeader.messageId)
                 if let messageDef = messageDef {
-                    PacketDetailsRow("Message Name", messageDef.name)
+                    DetailsRow("Message Name", messageDef.name)
                 }
-                PacketDetailsRow("Message Length", bytes: Int(parsed.messageHeader.messageLength))
+                DetailsRow("Message Length", bytes: Int(parsed.messageHeader.messageLength))
             }
 
             ForEach(parsed.tlvs, id: \.type) { tlv in
                 Section(header: Text("TLV")) {
-                    PacketDetailsRow("ID", hex: tlv.type)
-                    PacketDetailsRow("Length", bytes: Int(tlv.length))
+                    DetailsRow("ID", hex: tlv.type)
+                    DetailsRow("Length", bytes: Int(tlv.length))
                     PacketDetailsDataRow("Data", data: tlv.data)
                 }
             }

@@ -82,11 +82,11 @@ struct CellDetailsTowerView: View {
 
             CellCountryNetworkSection(country: country, network: network, techFormatter: techFormatter)
             Section(header: Text("Technology & Region")) {
-                CellDetailsRow("Technology", technology.rawValue)
-                CellDetailsRow(techFormatter.area(), area)
+                DetailsRow("Technology", technology.rawValue)
+                DetailsRow(techFormatter.area(), area)
             }
             Section(header: Text("Tower"), footer: Text("The tower's approximate position is the center of its cell's locations. Connect to more cells to improve the position's accuracy.")) {
-                CellDetailsRow(baseStationIDSingle, baseStation)
+                DetailsRow(baseStationIDSingle, baseStation)
             }
             CellDetailsList(technology: technology, baseStation: baseStation, dissect: dissect, fetchRequest: fetchRequest)
         }

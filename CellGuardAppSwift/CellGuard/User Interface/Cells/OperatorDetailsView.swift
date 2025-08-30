@@ -32,8 +32,8 @@ struct OperatorDetailsView: View {
     var body: some View {
         List {
             Section(header: Text("Country")) {
-                CellDetailsRow("MCC", netOperator.mcc)
-                CellDetailsRow("Name", netOperator.shortCountryName)
+                DetailsRow("MCC", netOperator.mcc)
+                DetailsRow("Name", netOperator.shortCountryName)
                 if let wikipediaUrl = netOperator.wikipediaCountryUrl {
                     Link(destination: wikipediaUrl) {
                         KeyValueListRow(key: "View on Wikipedia") {
@@ -44,8 +44,8 @@ struct OperatorDetailsView: View {
             }
 
             Section(header: Text("Network")) {
-                CellDetailsRow("MNC", netOperator.mnc)
-                CellDetailsRow("Status", netOperator.status.humanString())
+                DetailsRow("MNC", netOperator.mnc)
+                DetailsRow("Status", netOperator.status.humanString())
             }
 
             if let brandName = netOperator.brandName {
