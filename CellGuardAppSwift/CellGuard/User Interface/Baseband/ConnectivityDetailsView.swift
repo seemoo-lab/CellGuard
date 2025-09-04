@@ -76,6 +76,9 @@ struct ConnectivityEventDetails: View {
                 if event.registrationStatus >= 0 {
                     CellDetailsRow("Registration Status", Int(event.registrationStatus))
                 }
+                if event.simUnlocked != nil {
+                    PacketDetailsRow("SIM Unlocked", bool: event.simUnlocked!)
+                }
 
                 if let qmiPacket = event.packetQmi {
                     ListNavigationLink(value: NavObjectId<PacketQMI>(object: qmiPacket)) {
@@ -89,7 +92,7 @@ struct ConnectivityEventDetails: View {
             }
         }
         .listStyle(.insetGrouped)
-        .navigationTitle("Connectivity Event")
+        .navigationTitle(event.title)
     }
 
 }

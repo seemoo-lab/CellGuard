@@ -29,19 +29,23 @@ extension PersistenceController {
                     continue
                 }
 
-                let dbEvent = ConnectivityEvent(context: context)
                 if let qmiPacket = packet as? PacketQMI,
-                   let event = try? eventParser.parseQmiPacket(packetData, timestamp: collectedTimestamp, simSlot: UInt8(qmiPacket.simSlotID)) {
-                    event.applyTo(connectivityEvent: dbEvent)
-                    dbEvent.packetQmi = qmiPacket
+                   let events = try? eventParser.parseQmiPacket(packetData, timestamp: collectedTimestamp, simSlot: UInt8(qmiPacket.simSlotID)) {
+                    for event in events {
+                        let dbEvent = ConnectivityEvent(context: context)
+                        event.applyTo(connectivityEvent: dbEvent)
+                        dbEvent.packetQmi = qmiPacket
+                        dbEvent.imported = importedDate
+                        importCount += 1
+                    }
                 } else if let ariPacket = packet as? PacketARI,
                           let event = try? eventParser.parseAriPacket(packetData, timestamp: collectedTimestamp, simSlot: UInt8(ariPacket.simSlotID)) {
+                    let dbEvent = ConnectivityEvent(context: context)
                     event.applyTo(connectivityEvent: dbEvent)
                     dbEvent.packetAri = ariPacket
+                    dbEvent.imported = importedDate
+                    importCount += 1
                 }
-
-                dbEvent.imported = importedDate
-                importCount += 1
             }
 
             try context.save()

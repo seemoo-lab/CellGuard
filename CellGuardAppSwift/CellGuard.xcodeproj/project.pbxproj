@@ -413,6 +413,8 @@
 		ED6F69292DBBC1CC007BFE78 /* UpdateCheckInfoCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED6F69272DBBC1CA007BFE78 /* UpdateCheckInfoCard.swift */; };
 		ED7DB14D2DC785E8007D5314 /* UpdateCheckTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED7DB14C2DC785DA007D5314 /* UpdateCheckTask.swift */; };
 		ED7DB14E2DC785E8007D5314 /* UpdateCheckTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED7DB14C2DC785DA007D5314 /* UpdateCheckTask.swift */; };
+		EDA0EE8F2E69B9E600D2B0C6 /* ConnectivityEvent+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDA0EE8E2E69B9E500D2B0C6 /* ConnectivityEvent+CoreDataClass.swift */; };
+		EDA0EE902E69B9E600D2B0C6 /* ConnectivityEvent+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDA0EE8E2E69B9E500D2B0C6 /* ConnectivityEvent+CoreDataClass.swift */; };
 		EDA9FEBA2E1F9AEA00C52409 /* ConnectivityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDA9FEB92E1F9AEA00C52409 /* ConnectivityView.swift */; };
 		EDA9FEBB2E1F9AEA00C52409 /* ConnectivityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDA9FEB92E1F9AEA00C52409 /* ConnectivityView.swift */; };
 		EDA9FED72E1FEB8900C52409 /* ConnectivityFilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDA9FED62E1FEB8900C52409 /* ConnectivityFilterView.swift */; };
@@ -660,6 +662,7 @@
 		ED6F69242DBB8D40007BFE78 /* UpdateCheckView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateCheckView.swift; sourceTree = "<group>"; };
 		ED6F69272DBBC1CA007BFE78 /* UpdateCheckInfoCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateCheckInfoCard.swift; sourceTree = "<group>"; };
 		ED7DB14C2DC785DA007D5314 /* UpdateCheckTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateCheckTask.swift; sourceTree = "<group>"; };
+		EDA0EE8E2E69B9E500D2B0C6 /* ConnectivityEvent+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConnectivityEvent+CoreDataClass.swift"; sourceTree = "<group>"; };
 		EDA9FEB92E1F9AEA00C52409 /* ConnectivityView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectivityView.swift; sourceTree = "<group>"; };
 		EDA9FED62E1FEB8900C52409 /* ConnectivityFilterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectivityFilterView.swift; sourceTree = "<group>"; };
 		EDAD7A032E1D7D9E00EBB924 /* QConnectivityEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QConnectivityEvent.swift; sourceTree = "<group>"; };
@@ -1101,6 +1104,7 @@
 		CFBEC8442BC7F7060021C0B9 /* Objects */ = {
 			isa = PBXGroup;
 			children = (
+				EDA0EE8E2E69B9E500D2B0C6 /* ConnectivityEvent+CoreDataClass.swift */,
 				CFBEC8452BC7F7100021C0B9 /* Packet.swift */,
 				CFBEC83C2BC7F6E80021C0B9 /* PacketQMI+CoreDataClass.swift */,
 				CFBEC83E2BC7F6E80021C0B9 /* PacketARI+CoreDataClass.swift */,
@@ -1610,6 +1614,7 @@
 				EDD199142E211E600051424A /* ConnectivityDetailsView.swift in Sources */,
 				CFB6CF272BD122FA00EAB7B4 /* CellLocationDistance.swift in Sources */,
 				CF1DF87E2C17599D008F6F40 /* StudyContributionsView.swift in Sources */,
+				EDA0EE8F2E69B9E600D2B0C6 /* ConnectivityEvent+CoreDataClass.swift in Sources */,
 				CFB6CF282BD122FA00EAB7B4 /* PersistenceController.swift in Sources */,
 				45ECF5762BFC025300DD92CF /* DebugProfileDetailedView.swift in Sources */,
 				CFB6CF292BD122FA00EAB7B4 /* ALSTechnology.swift in Sources */,
@@ -1791,6 +1796,7 @@
 				CFD8DD282A7175AF00954A25 /* ARIContentParser.swift in Sources */,
 				CF9626C32AB7474500C46953 /* PersistenceCSVExporter.swift in Sources */,
 				CF1CD4752BE16C1C009A3582 /* QVerification.swift in Sources */,
+				EDA0EE902E69B9E600D2B0C6 /* ConnectivityEvent+CoreDataClass.swift in Sources */,
 				EDAFBFED2D9C0A5A00D7748B /* QmiCellParser.swift in Sources */,
 				CF8F3E352BF3C4DE00FC9F43 /* StudyTask.swift in Sources */,
 				CF93B852297FFEF9003F9FFE /* URLIdentifiable.swift in Sources */,
