@@ -168,6 +168,11 @@ class CGNotificationManager: ObservableObject {
         return userDefaultsIsUnsetOrTrue(forKey: UserDefaultsKeys.profileExpiryNotification.rawValue)
     }
 
+    func cancelProfileExpiryNotification() {
+        let notificationCenter = UNUserNotificationCenter.current()
+        notificationCenter.removePendingNotificationRequests(withIdentifiers: ["profile-expiry"])
+    }
+
     func queueProfileExpiryNotification(removalDate: Date) {
         let notificationCenter = UNUserNotificationCenter.current()
 

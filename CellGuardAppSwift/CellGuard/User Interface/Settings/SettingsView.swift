@@ -118,9 +118,12 @@ private struct NotificationsSection: View {
                     profileExpiry
                 }, set: { newValue in
                     profileExpiry = newValue
-                    // Refresh the profile data if the user enables this setting
                     if newValue {
+                        // Refresh the profile data if the user enables this setting
                         scanForProfile()
+                    } else {
+                        // Cancel all pending profile expiry notifications if the user disables it
+                        CGNotificationManager.shared.cancelProfileExpiryNotification()
                     }
                 }))
                 Toggle("Sysdiagnose Status", isOn: $newSysdiagnose)
