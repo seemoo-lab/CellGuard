@@ -14,6 +14,7 @@ struct SummaryTabView: View {
     @State private var path = NBNavigationPath()
     @StateObject private var cellFilterSettings = CellListFilterSettings()
     @StateObject private var connectivityFilterSettings = ConnectivityFilterSettings()
+    @StateObject private var sysdiagnoseFilterSettings = SysdiagnoseFilterSettings()
 
     init() {
     }
@@ -31,6 +32,10 @@ struct SummaryTabView: View {
                         NBNavigationLink(value: SummaryNavigationPath.connectivity) {
                             Label("Connectivity", systemImage: "bolt")
                         }
+                        NBNavigationLink(value: SummaryNavigationPath.sysdiagList) {
+                            Label("Sysdiagnoses", systemImage: "lock.square.stack")
+                        }
+
                         #if STATS_VIEW
                         // Disable stats for the beta test as it is not finished.
                         NBNavigationLink(value: SummaryNavigationPath.dataSummary) {
@@ -62,10 +67,12 @@ struct SummaryTabView: View {
             .cgNavigationDestinations(.operators)
             .cgNavigationDestinations(.packets)
             .cgNavigationDestinations(.connectivity)
+            .cgNavigationDestinations(.sysdiagnoses)
         }
         .background(Color.gray)
         .environmentObject(cellFilterSettings)
         .environmentObject(connectivityFilterSettings)
+        .environmentObject(sysdiagnoseFilterSettings)
     }
 }
 

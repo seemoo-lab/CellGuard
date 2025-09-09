@@ -115,10 +115,10 @@ private struct ConnectivityListFilterSettingsView: View {
 
 struct ConnectivityListFilterView_Previews: PreviewProvider {
     static var previews: some View {
-        @State var settings = CellListFilterSettings()
+        @State var settings = ConnectivityFilterSettings()
 
         NBNavigationStack {
-            CellListFilterView()
+            ConnectivityListFilterView()
                 .environmentObject(settings)
         }
     }

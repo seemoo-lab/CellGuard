@@ -9,19 +9,23 @@ import SwiftUI
 
 struct SysdiagnoseCell: View {
     let sysdiagnose: Sysdiagnose
+    let showArchiveIdentifier: Bool
 
     var body: some View {
         VStack {
-            SysdiagnoseCellBody()
+            SysdiagnoseCellBody(sysdiagnose: sysdiagnose, showArchiveIdentifier: showArchiveIdentifier)
             SysdiagnoseCellFooter(sysdiagnose: sysdiagnose)
         }
     }
 }
 
 private struct SysdiagnoseCellBody: View {
+    let sysdiagnose: Sysdiagnose
+    let showArchiveIdentifier: Bool
+
     var body: some View {
         HStack {
-            Text("Sysdiagnose")
+            Text(showArchiveIdentifier ? sysdiagnose.archiveIdentifier ?? "" : "Sysdiagnose")
             Spacer()
         }
     }

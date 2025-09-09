@@ -41,4 +41,30 @@ extension PersistenceController {
             }
         }
     }
+
+    func fetchSysdiagnoseDateRange() async -> ClosedRange<Date>? {
+        return try? performAndWait(name: "fetchContext", author: "fetchSysdiagnoseDateRange") {_ in
+            let firstReq: NSFetchRequest<Sysdiagnose> = Sysdiagnose.fetchRequest()
+            firstReq.fetchLimit = 1
+            firstReq.sortDescriptors = [NSSortDescriptor(keyPath: \Sysdiagnose.imported, ascending: true)]
+            firstReq.propertiesToFetch = ["imported"]
+            firstReq.includesSubentities = false
+
+            let lastReq: NSFetchRequest<Sysdiagnose> = Sysdiagnose.fetchRequest()
+            lastReq.fetchLimit = 1
+            lastReq.sortDescriptors = [NSSortDescriptor(keyPath: \Sysdiagnose.imported, ascending: false)]
+            lastReq.propertiesToFetch = ["imported"]
+            lastReq.includesSubentities = false
+
+            let firstEvent = try firstReq.execute()
+            let lastEvent = try lastReq.execute()
+
+            guard let firstEvent = firstEvent.first, let lastEvent = lastEvent.first else {
+                return Date.distantPast...Date.distantFuture
+            }
+
+            return (firstEvent.imported ?? Date.distantPast)...(lastEvent.imported ?? Date.distantFuture)
+        }
+    }
+
 }
