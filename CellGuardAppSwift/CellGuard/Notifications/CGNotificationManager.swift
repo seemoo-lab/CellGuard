@@ -59,7 +59,31 @@ class CGNotificationManager: ObservableObject {
 
     // TODO: Clear notification upon starting CellGuard
 
+    func isCellNotificationActive() -> Bool {
+        return isSuspiciousCellNotificationActive() || isAnomalousCellNotificationActive()
+    }
+
+    private func isSuspiciousCellNotificationActive() -> Bool {
+        guard CGNotificationManager.shared.authorizationStatus == .authorized else {
+            return false
+        }
+
+        return userDefaultsIsUnsetOrTrue(forKey: UserDefaultsKeys.suspiciousCellNotification.rawValue)
+    }
+
+    private func isAnomalousCellNotificationActive() -> Bool {
+        guard CGNotificationManager.shared.authorizationStatus == .authorized else {
+            return false
+        }
+
+        return userDefaultsIsUnsetOrTrue(forKey: UserDefaultsKeys.anomalousCellNotification.rawValue)
+    }
+
     func queueCellNotification() {
+        guard CGNotificationManager.shared.isCellNotificationActive() else {
+            return
+        }
+
         guard let counts = PersistenceController.shared.fetchNotificationCellCounts() else {
             Self.logger.warning("Couldn't fetch the count of untrusted and suspicious measurements not yet sent as notifications")
             return
@@ -70,18 +94,26 @@ class CGNotificationManager: ObservableObject {
             return
         }
 
+        let isSuspicious = counts.untrusted > 0
+        let isAnomalous = counts.suspicious > 0
+        if !isAnomalous && !isSuspiciousCellNotificationActive() {
+            return
+        } else if !isSuspicious && !isAnomalousCellNotificationActive() {
+            return
+        }
+
         // https://developer.apple.com/documentation/usernotifications/scheduling_a_notification_locally_from_your_app
         // https://www.hackingwithswift.com/books/ios-swiftui/scheduling-local-notifications
 
         // Set the notification text
         let content = UNMutableNotificationContent()
-        content.title = counts.untrusted > 0 ? "Found Suspicious Cells" : "Found Anomalous Cells"
-        content.sound = counts.untrusted > 0 ? .default : nil
+        content.title = isSuspicious ? "Found Suspicious Cells" : "Found Anomalous Cells"
+        content.sound = isSuspicious ? .default : nil
 
         var body = "Your iPhone recently connected to "
-        if counts.untrusted > 0 && counts.suspicious > 0 {
+        if isSuspicious && isAnomalous {
             body.append("\(counts.untrusted) suspicious and \(counts.suspicious) anomalous cell" + ((counts.untrusted + counts.suspicious != 1 ? "s" : "")))
-        } else if counts.untrusted > 0 {
+        } else if isSuspicious {
             body.append("\(counts.untrusted) suspicious cell" + (counts.untrusted != 1 ? "s" : ""))
         } else {
             body.append("\(counts.suspicious) anomalous cell" + (counts.suspicious != 1 ? "s" : ""))
@@ -101,7 +133,19 @@ class CGNotificationManager: ObservableObject {
         }
     }
 
+    func isKeepOpenNotificationActive() -> Bool {
+        guard CGNotificationManager.shared.authorizationStatus == .authorized else {
+            return false
+        }
+
+        return userDefaultsIsUnsetOrTrue(forKey: UserDefaultsKeys.keepCGRunningNotification.rawValue)
+    }
+
     func queueKeepOpenNotification() {
+        guard isKeepOpenNotificationActive() else {
+            return
+        }
+
         let content = UNMutableNotificationContent()
         content.title = "Keep CellGuard running"
         content.sound = nil
@@ -114,6 +158,19 @@ class CGNotificationManager: ObservableObject {
                 Self.logger.warning("Failed to schedule keep open notification: \(error)")
             }
         }
+    }
+
+    func isProfileExpiryNotificationActive() -> Bool {
+        guard CGNotificationManager.shared.authorizationStatus == .authorized else {
+            return false
+        }
+
+        return userDefaultsIsUnsetOrTrue(forKey: UserDefaultsKeys.profileExpiryNotification.rawValue)
+    }
+
+    func cancelProfileExpiryNotification() {
+        let notificationCenter = UNUserNotificationCenter.current()
+        notificationCenter.removePendingNotificationRequests(withIdentifiers: ["profile-expiry"])
     }
 
     func queueProfileExpiryNotification(removalDate: Date) {
@@ -137,7 +194,7 @@ class CGNotificationManager: ObservableObject {
         }
 
         // Do not queue another notification if there was already a (scheduled) notification
-        let pastNotifyRemovalDate = UserDefaults.standard.date(forKey: UserDefaultsKeys.profileExpiryNotification.rawValue)
+        let pastNotifyRemovalDate = UserDefaults.standard.date(forKey: UserDefaultsKeys.pastProfileExpiryNotification.rawValue)
         // We can't compare date using == due to floating point issues: https://stackoverflow.com/a/59107589
         if let pastNotifyRemovalDate = pastNotifyRemovalDate, calendar.isDate(pastNotifyRemovalDate, equalTo: removalDate, toGranularity: .second) {
             return
@@ -159,7 +216,7 @@ class CGNotificationManager: ObservableObject {
         }
 
         // Store that a notification is queue or was sent
-        UserDefaults.standard.set(removalDate, forKey: UserDefaultsKeys.profileExpiryNotification.rawValue)
+        UserDefaults.standard.set(removalDate, forKey: UserDefaultsKeys.pastProfileExpiryNotification.rawValue)
 
         // Schedule a new notification
         let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
@@ -197,6 +254,14 @@ class CGNotificationManager: ObservableObject {
 
     private func sysdiagNotificationId(captured: Date) -> String {
         return "capturing-sysdiag-\(captured.timeIntervalSince1970.rounded(.up))"
+    }
+
+    func isNewSysdiagnoseNotificationActive() -> Bool {
+        guard CGNotificationManager.shared.authorizationStatus == .authorized else {
+            return false
+        }
+
+        return userDefaultsIsUnsetOrTrue(forKey: UserDefaultsKeys.newSysdiagnoseNotification.rawValue)
     }
 
     func queueSysdiagStartedNotification(captured: Date) {
@@ -243,4 +308,7 @@ class CGNotificationManager: ObservableObject {
         UNUserNotificationCenter.current().removeAllDeliveredNotifications()
     }
 
+    private func userDefaultsIsUnsetOrTrue(forKey key: String) -> Bool {
+        return UserDefaults.standard.object(forKey: key) == nil || UserDefaults.standard.bool(forKey: key)
+    }
 }
