@@ -102,7 +102,6 @@ class CGNotificationManager: ObservableObject {
             return
         }
 
-
         // https://developer.apple.com/documentation/usernotifications/scheduling_a_notification_locally_from_your_app
         // https://www.hackingwithswift.com/books/ios-swiftui/scheduling-local-notifications
 
