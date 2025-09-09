@@ -114,10 +114,25 @@ private struct NotificationsSection: View {
             Section(header: Text("Notifications"), footer: Text("Check which notifications you want to receive.")) {
                 Toggle("Suspicious Cell", isOn: $suspiciousCell)
                 Toggle("Anomalous Cell", isOn: $anomalousCell)
-                Toggle("Profile Expiry", isOn: $profileExpiry)
+                Toggle("Profile Expiry", isOn: Binding(get: {
+                    profileExpiry
+                }, set: { newValue in
+                    profileExpiry = newValue
+                    // Refresh the profile data if the user enables this setting
+                    if newValue {
+                        scanForProfile()
+                    }
+                }))
                 Toggle("Sysdiagnose Status", isOn: $newSysdiagnose)
                 Toggle("Exit Warning", isOn: $keepCGRunning)
             }
+        }
+    }
+
+    private func scanForProfile() {
+        Task.detached {
+            let task = ProfileTask()
+            await task.run()
         }
     }
 }
@@ -125,25 +140,39 @@ private struct NotificationsSection: View {
 private struct BasebandProfileSection: View {
     @StateObject private var profileData = ProfileData.shared
 
+    @AppStorage(UserDefaultsKeys.profileExpiryNotification.rawValue) var profileExpiry: Bool = true
     @AppStorage(UserDefaultsKeys.appMode.rawValue) var appMode: DataCollectionMode = .none
 
     var body: some View {
         if appMode == .manual {
-            Section(header: Text("Baseband Profile"), footer: Text("Keep the baseband debug profile on your device up-to-date to collect logs for CellGuard.")) {
+            Section(header: Text("Baseband Profile"), footer: Text(footer)) {
                 ListNavigationLink(value: SummaryNavigationPath.debugProfile) {
                     Text("Install Profile")
                 }
 
-                if let installData = profileData.installDate {
-                    KeyValueListRow(key: "Installed", value: mediumDateTimeFormatter.string(for: installData) ?? "n/a")
-                }
-                if let removalDate = profileData.removalDate {
-                    KeyValueListRow(key: "Expires") {
-                        Text(mediumDateTimeFormatter.string(for: removalDate) ?? "n/a")
-                            .foregroundColor(profileData.installState == .expiringSoon ? .orange : .gray)
+                // Only show the data if the setting is enabled as otherwise the scan may be outdated.
+                if profileExpiry {
+                    if let installData = profileData.installDate {
+                        KeyValueListRow(key: "Installed", value: mediumDateTimeFormatter.string(for: installData) ?? "n/a")
+                    }
+                    if let removalDate = profileData.removalDate {
+                        KeyValueListRow(key: "Expires") {
+                            Text(mediumDateTimeFormatter.string(for: removalDate) ?? "n/a")
+                                .foregroundColor(profileData.installState == .expiringSoon ? .orange : .gray)
+                        }
                     }
                 }
             }
+        }
+    }
+
+    var footer: String {
+        let text = "Keep the baseband debug profile on your device up-to-date to collect logs for CellGuard."
+
+        if profileExpiry {
+            return text
+        } else {
+            return text + " Enable profile expiry notifications to see the profile's status."
         }
     }
 }
