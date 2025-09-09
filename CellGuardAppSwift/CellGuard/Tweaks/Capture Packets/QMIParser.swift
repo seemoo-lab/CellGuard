@@ -205,6 +205,7 @@ struct QMITransactionHeader {
     }
 
     let compound: Bool
+    var request: Bool { return !self.response && !self.indication }
     let response: Bool
     let indication: Bool
     let transactionId: UInt16

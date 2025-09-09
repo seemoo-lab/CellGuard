@@ -152,7 +152,9 @@ struct ConnectivityEventListEntry: View {
 
         VStack {
             HStack {
-                Text(events.first!.active ? "Connected" : "Disconnected")
+                Text(events.count > 1
+                     ? (events.first!.active ? "Connected" : "Disconnected")
+                     : events.first!.title)
                     .bold()
                 if !simSlots.isEmpty && simSlots != [0] {
                     HStack(spacing: 2) {
