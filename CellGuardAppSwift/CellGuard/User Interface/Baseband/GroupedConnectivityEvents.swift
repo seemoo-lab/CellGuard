@@ -14,20 +14,17 @@ enum GroupedConnectivityEventsError: Error {
 }
 
 struct GroupedConnectivityEvents: Identifiable {
-
-    let settings: ConnectivityListFilterSettings
     let events: [ConnectivityEvent]
     let start: Date
     let end: Date
     let id: Int
 
-    init(events: [ConnectivityEvent], settings: ConnectivityListFilterSettings) throws {
+    init(events: [ConnectivityEvent]) throws {
         // We require that the list contains at least one element
         if events.isEmpty {
             throw GroupedConnectivityEventsError.emptyList
         }
         self.events = events
-        self.settings = settings
 
         // We assume the measurements are sorted in descending order based on their timestamp
         guard let end = events.first?.collected else {
@@ -41,11 +38,4 @@ struct GroupedConnectivityEvents: Identifiable {
 
         self.id = events.reduce(0, { (pref, event) in pref &+ event.objectID.hashValue })
     }
-
-    func detailsPredicate() -> NSPredicate {
-        return NSCompoundPredicate(
-            andPredicateWithSubpredicates: settings.predicates(startDate: start, endDate: end)
-        )
-    }
-
 }

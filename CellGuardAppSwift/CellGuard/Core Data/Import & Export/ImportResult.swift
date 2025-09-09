@@ -26,7 +26,7 @@ enum ImportNotice: Identifiable {
     }
 }
 
-struct ImportCount: Equatable {
+struct ImportCount: Equatable, Hashable {
     let count: Int
     let first: Date?
     let last: Date?

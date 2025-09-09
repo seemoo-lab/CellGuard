@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import NavigationBackport
 
 private func doubleString(_ value: Double, maxDigits: Int = 2) -> String {
     return String(format: "%.\(maxDigits)f", value)
@@ -37,43 +38,47 @@ struct VerificationStateLogEntryView: View {
                 CellDetailsRow("Points", "\(logEntry.pointsAwarded) / \(logEntry.pointsMax)", color: pointsColor)
                 CellDetailsRow("Duration", "\(doubleString(logEntry.duration, maxDigits: 4))s")
                 if let relatedALSCell = logEntry.relatedCellALS {
-                    NavigationLink {
-                        LogRelatedALSCellView(alsCell: relatedALSCell)
-                    } label: {
+                    ListNavigationLink(value: VerificationRelatedObjectId(object: relatedALSCell)) {
                         Text("Related ALS Cell")
                     }
                 }
                 if let relatedUserLocation = logEntry.relatedLocationUser {
-                    NavigationLink {
-                        LogRelatedUserLocationView(userLocation: relatedUserLocation)
-                    } label: {
+                    ListNavigationLink(value: VerificationRelatedObjectId(object: relatedUserLocation)) {
                         Text("Related User Location")
                     }
                 }
 
                 if let relatedALSCell = logEntry.relatedCellALS, let relatedUserLocation = logEntry.relatedLocationUser {
-                    NavigationLink {
-                        LogRelatedDistanceView(alsCell: relatedALSCell, userLocation: relatedUserLocation)
-                    } label: {
+                    ListNavigationLink(value: VerificationRelatedDistance(cellAls: relatedALSCell, userLocation: relatedUserLocation)) {
                         Text("Related Distance")
                     }
                 }
 
                 if let relatedARIPackets = logEntry.relatedPacketARI?.compactMap({$0 as? PacketARI}), relatedARIPackets.count > 0 {
-                    NavigationLink {
-                        LogRelatedPacketsView(packets: relatedARIPackets)
-                    } label: {
+                    ListNavigationLink(value: VerificationRelatedPackets(packets: relatedARIPackets)) {
                         Text("Related ARI Packets")
                     }
                 }
                 if let relatedQMIPackets = logEntry.relatedPacketQMI?.compactMap({$0 as? PacketQMI}), relatedQMIPackets.count > 0 {
-                    NavigationLink {
-                        LogRelatedPacketsView(packets: relatedQMIPackets)
-                    } label: {
+                    ListNavigationLink(value: VerificationRelatedPackets(packets: relatedQMIPackets)) {
                         Text("Related QMI Packets")
                     }
                 }
             }
+        }
+        .nbNavigationDestination(for: VerificationRelatedObjectId<CellALS>.self) { id in
+            id.ensure { LogRelatedALSCellView(alsCell: $0) }
+        }
+        .nbNavigationDestination(for: VerificationRelatedObjectId<LocationUser>.self) { id in
+            id.ensure { LogRelatedUserLocationView(userLocation: $0) }
+        }
+        .nbNavigationDestination(for: VerificationRelatedDistance.self) { id in
+            id.ensure { cell, loc in
+                LogRelatedDistanceView(alsCell: cell, userLocation: loc)
+            }
+        }
+        .nbNavigationDestination(for: VerificationRelatedPackets.self) { id in
+            id.ensure { LogRelatedPacketsView(packets: $0) }
         }
     }
 
@@ -201,14 +206,14 @@ private struct LogRelatedPacketsView: View {
 
     var body: some View {
         List(packets, id: \.id) { packet in
-            NavigationLink {
-                if let qmiPacket = packet as? PacketQMI {
-                    PacketQMIDetailsView(packet: qmiPacket)
-                } else if let ariPacket = packet as? PacketARI {
-                    PacketARIDetailsView(packet: ariPacket)
+            if let qmiPacket = packet as? PacketQMI {
+                ListNavigationLink(value: NavObjectId(object: qmiPacket)) {
+                    PacketCell(packet: packet, customInfo: customInfo(packet))
                 }
-            } label: {
-                PacketCell(packet: packet, customInfo: customInfo(packet))
+            } else if let ariPacket = packet as? PacketARI {
+                ListNavigationLink(value: NavObjectId(object: ariPacket)) {
+                    PacketCell(packet: packet, customInfo: customInfo(packet))
+                }
             }
         }
         .navigationTitle("Related Packets")

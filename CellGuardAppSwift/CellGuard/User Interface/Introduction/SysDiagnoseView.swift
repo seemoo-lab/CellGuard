@@ -6,10 +6,9 @@
 //
 
 import SwiftUI
+import NavigationBackport
 
 struct SysDiagnoseView: View {
-
-    @State private var action: Int? = 0
 
     var body: some View {
         VStack {
@@ -21,13 +20,8 @@ struct SysDiagnoseView: View {
                 )
             }
 
-            // Navigate to next permission, forward closing statement
-            NavigationLink(destination: LocationPermissionView(), tag: 1, selection: $action) {}
-
-            LargeButton(title: "Continue", backgroundColor: .blue) {
-                self.action = 1
-            }
-            .padding()
+            LargeButtonLink(title: "Continue", value: IntroductionState.location, backgroundColor: .blue)
+                .padding()
         }
         .navigationTitle("System Diagnoses")
         .navigationBarTitleDisplayMode(.large)
@@ -35,7 +29,10 @@ struct SysDiagnoseView: View {
 }
 
 #Preview {
-    NavigationView {
+    NBNavigationStack {
         SysDiagnoseView()
+            .nbNavigationDestination(for: IntroductionState.self) { _ in
+                Text("No")
+            }
     }
 }

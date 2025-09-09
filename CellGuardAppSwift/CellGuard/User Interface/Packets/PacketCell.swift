@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import NavigationBackport
 
 struct PacketCell: View {
 
@@ -161,20 +162,23 @@ private func grayText(hex: any BinaryInteger) -> Text {
 
 struct PacketCell_Previews: PreviewProvider {
     static var previews: some View {
+        @State var path = NBNavigationPath()
+
         let context = PersistenceController.preview.container.viewContext
         let packets = PersistencePreview.packets(context: context).map { PacketContainer(packet: $0) }
 
-        NavigationView {
+        NBNavigationStack(path: $path) {
             List {
                 ForEach(packets) { packet in
-                    NavigationLink {
-                        Text("Hello")
-                    } label: {
+                    ListNavigationLink(value: packet) {
                         PacketCell(packet: packet.packet)
-                            .environment(\.managedObjectContext, context)
                     }
                 }
             }
+            .nbNavigationDestination(for: PacketContainer.self) { _ in
+                Text("Hello")
+            }
         }
+        .environment(\.managedObjectContext, context)
     }
 }

@@ -14,6 +14,7 @@ public protocol Packet: NSFetchRequestResult, Identifiable {
     var direction: String? { get set }
     var imported: Date? { get set }
     var simSlotID: Int16 { get set }
+    var objectID: NSManagedObjectID { get }
 }
 
 extension Packet {
@@ -28,11 +29,19 @@ extension Packet {
     }
 }
 
-struct PacketContainer: Identifiable {
+struct PacketContainer: Identifiable, Hashable {
 
     let packet: any Packet
 
     var id: ObjectIdentifier {
         return packet.id
+    }
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(packet.hash)
+    }
+
+    static func == (lhs: PacketContainer, rhs: PacketContainer) -> Bool {
+        lhs.id == rhs.id
     }
 }

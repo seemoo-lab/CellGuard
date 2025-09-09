@@ -12,7 +12,7 @@ import SwiftGzip
 
 private let wikipediaUrlPrefix = "https://en.wikipedia.org"
 
-protocol NetworkCountryAttributes {
+protocol NetworkCountryAttributes: Hashable {
     var mcc: String { get }
     var countryName: String { get }
     // May be empty (international networks) or contain multiple ISOs separated with '/'
@@ -76,7 +76,7 @@ extension NetworkCountryAttributes {
     }
 }
 
-struct NetworkCountry: NetworkCountryAttributes, Identifiable, Decodable {
+struct NetworkCountry: NetworkCountryAttributes, Decodable, Identifiable {
     let mcc: String
     let countryName: String
     let isoString: String?

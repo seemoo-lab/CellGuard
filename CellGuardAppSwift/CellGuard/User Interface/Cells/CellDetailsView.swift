@@ -7,6 +7,12 @@
 
 import CoreData
 import SwiftUI
+import NavigationBackport
+
+struct CellDetailsNavigation: Hashable {
+    let cell: NavObjectId<CellTweak>
+    let predicate: NSPredicate?
+}
 
 struct CellDetailsView: View {
 
@@ -50,14 +56,14 @@ struct CellDetailsView: View {
     private func alsFetchRequest() -> FetchRequest<CellALS> {
         return FetchRequest<CellALS>(
             sortDescriptors: [NSSortDescriptor(keyPath: \CellALS.imported, ascending: false)],
-            predicate: PersistenceController.shared.sameCellPredicate(cell: cell),
+            predicate: PersistenceController.basedOnEnvironment().sameCellPredicate(cell: cell),
             animation: .default
         )
     }
 
     private func tweakFetchRequest() -> FetchRequest<VerificationState> {
         var predicates = [
-            PersistenceController.shared.sameCellPredicate(cell: cell, prefix: "cell.")
+            PersistenceController.basedOnEnvironment().sameCellPredicate(cell: cell, prefix: "cell.")
         ]
 
         // Append custom predicates
@@ -96,6 +102,10 @@ private struct TweakCellDetailsMap: View {
         if SingleCellMap.hasAnyLocation(alsCells, tweakCells) {
             ExpandableMap {
                 SingleCellMap(locationInfo: locationInfo, alsCells: alsCells, tweakCells: tweakCells)
+            }
+            .nbNavigationDestination(for: ExpandableMapInfo.self) { _ in
+                SingleCellMap(locationInfo: locationInfo, alsCells: alsCells, tweakCells: tweakCells)
+                    .ignoresSafeArea()
             }
         }
     }
@@ -183,6 +193,7 @@ private struct TweakCellDetailsMeasurementCount: View {
 
     var body: some View {
         let count = countByStatus(verifyStates)
+        let detailObjectIds = TweakCellMeasurementListNav(measurements: verifyStates.compactMap { $0.cell })
 
         Section(header: Text("Measurements")) {
             // We query the measurements in descending order, so that's we have to replace last with first and so on
@@ -196,9 +207,7 @@ private struct TweakCellDetailsMeasurementCount: View {
             CellDetailsRow("Suspicious", count.untrusted)
             CellDetailsRow("Anomalous", count.suspicious)
             CellDetailsRow("Trusted", count.trusted)
-            NavigationLink {
-                TweakCellMeasurementList(measurements: verifyStates.compactMap { $0.cell })
-            } label: {
+            ListNavigationLink(value: detailObjectIds) {
                 Text("Show Details")
             }
             .disabled(verifyStates.count == 0)
@@ -232,10 +241,28 @@ private struct TweakCellDetailsMeasurementCount: View {
 
 }
 
-private struct TweakCellMeasurementList: View {
+struct TweakCellMeasurementListNav: Hashable {
+
+    let measurementIds: [NavObjectId<CellTweak>]
+
+    init(measurements: any RandomAccessCollection<CellTweak>) {
+        self.measurementIds = measurements.compactMap { NavObjectId(object: $0) }
+    }
+
+    var objects: [CellTweak] {
+        measurementIds.compactMap { $0.object }
+    }
+
+}
+
+struct TweakCellMeasurementList: View {
 
     @State private var pipelineId: Int16 = primaryVerificationPipeline.id
-    let measurements: any RandomAccessCollection<CellTweak>
+    private var measurements: [CellTweak]
+
+    init(nav: TweakCellMeasurementListNav) {
+        self.measurements = nav.objects
+    }
 
     var body: some View {
         List {
@@ -281,9 +308,7 @@ private struct TweakCellMeasurementNavLink: View {
 
     var body: some View {
         if let state = measurement.verifications?.compactMap({ $0 as? VerificationState }).first(where: { $0.pipeline == pipelineId }) {
-            NavigationLink {
-                VerificationStateView(verificationState: state)
-            } label: {
+            ListNavigationLink(value: NavObjectId(object: state)) {
                 label(score: state.finished ? state.score : nil, study: measurement.study != nil)
             }
         } else {
@@ -332,19 +357,27 @@ struct CellDetailsView_Previews: PreviewProvider {
     static var previews: some View {
         let (alsCell, measurements) = prepareDB()
 
-        NavigationView {
+        NBNavigationStack {
             CellDetailsView(
                 tweakCell: measurements.first!,
                 predicate: NSPredicate(value: true)
             )
+            .cgNavigationDestinations(.summaryTab)
+            .cgNavigationDestinations(.cells)
+            .cgNavigationDestinations(.operators)
+            .cgNavigationDestinations(.packets)
         }
         .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
         .previewDisplayName("Tweak Measurement")
 
-        NavigationView {
+        NBNavigationStack {
             CellDetailsView(
                 alsCell: alsCell
             )
+            .cgNavigationDestinations(.summaryTab)
+            .cgNavigationDestinations(.cells)
+            .cgNavigationDestinations(.operators)
+            .cgNavigationDestinations(.packets)
         }
         .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
         .previewDisplayName("ALS Cell")

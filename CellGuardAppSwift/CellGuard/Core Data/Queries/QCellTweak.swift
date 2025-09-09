@@ -183,4 +183,29 @@ extension PersistenceController {
         }
     }
 
+    func fetchCellDateRange() async -> ClosedRange<Date>? {
+        return try? performAndWait(name: "fetchContext", author: "fetchCellDateRange") {_ in
+            let firstReq: NSFetchRequest<CellTweak> = CellTweak.fetchRequest()
+            firstReq.fetchLimit = 1
+            firstReq.sortDescriptors = [NSSortDescriptor(keyPath: \CellTweak.collected, ascending: true)]
+            firstReq.propertiesToFetch = ["collected"]
+            firstReq.includesSubentities = false
+
+            let lastReq: NSFetchRequest<CellTweak> = CellTweak.fetchRequest()
+            lastReq.fetchLimit = 1
+            lastReq.sortDescriptors = [NSSortDescriptor(keyPath: \CellTweak.collected, ascending: false)]
+            lastReq.propertiesToFetch = ["collected"]
+            lastReq.includesSubentities = false
+
+            let firstCell = try firstReq.execute()
+            let lastCell = try lastReq.execute()
+
+            guard let firstCell = firstCell.first, let lastCell = lastCell.first else {
+                return Date.distantPast...Date.distantFuture
+            }
+
+            return (firstCell.collected ?? Date.distantPast)...(lastCell.collected ?? Date.distantFuture)
+        }
+    }
+
 }

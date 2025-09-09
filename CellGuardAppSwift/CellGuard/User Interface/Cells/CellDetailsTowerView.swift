@@ -6,29 +6,54 @@
 //
 
 import SwiftUI
+import NavigationBackport
 
-struct CellDetailsTower: View {
+struct CellDetailsTowerNavigation: Hashable {
+    let technology: ALSTechnology
+    let country: Int32
+    let network: Int32
+    let area: Int32
+    let baseStation: Int64
+    let bitCount: Int?
+
+    init(technology: ALSTechnology, country: Int32, network: Int32, area: Int32, baseStation: Int64, bitCount: Int? = nil) {
+        self.technology = technology
+        self.country = country
+        self.network = network
+        self.area = area
+        self.baseStation = baseStation
+        self.bitCount = bitCount
+    }
+}
+
+struct CellDetailsTowerView: View {
 
     let technology: ALSTechnology
     let country: Int32
     let network: Int32
     let area: Int32
     let baseStation: Int64
-    let dissect: (Int64) -> (Int64, Int64)
     let bitCount: Int?
 
     private let techFormatter: CellTechnologyFormatter
+    private let dissect: (Int64) -> (Int64, Int64)
 
-    init(technology: ALSTechnology, country: Int32, network: Int32, area: Int32, baseStation: Int64, dissect: @escaping (Int64) -> (Int64, Int64), bitCount: Int? = nil) {
-        self.technology = technology
-        self.country = country
-        self.network = network
-        self.area = area
-        self.baseStation = baseStation
-        self.dissect = dissect
-        self.bitCount = bitCount
+    init(nav: CellDetailsTowerNavigation) {
+        self.technology = nav.technology
+        self.country = nav.country
+        self.network = nav.network
+        self.area = nav.area
+        self.baseStation = nav.baseStation
+        self.bitCount = nav.bitCount
 
         self.techFormatter = CellTechnologyFormatter(technology: technology)
+        self.dissect = switch technology {
+        case .GSM: CellIdentification.gsm
+        case .UMTS: CellIdentification.umts
+        case .LTE: CellIdentification.lte
+        case .NR: { CellIdentification.nr(nci: $0, sectorIdLength: nav.bitCount ?? 0) }
+        default: { (0, $0) }
+        }
     }
 
     var baseStationIDSingle: String {
@@ -89,6 +114,10 @@ private struct CellDetailsTowerMap: View {
         ExpandableMap {
             TowerCellMap(locationInfo: locationInfo, alsCells: cells.filter { dissect($0.cell).0 == baseStation }, dissect: dissect)
         }
+        .nbNavigationDestination(for: ExpandableMapInfo.self) { _ in
+            TowerCellMap(locationInfo: locationInfo, alsCells: cells.filter { dissect($0.cell).0 == baseStation }, dissect: dissect)
+                .ignoresSafeArea()
+        }
     }
 
 }
@@ -120,7 +149,7 @@ private struct CellDetailsList: View {
     var body: some View {
         Section(header: Text("Cells")) {
             ForEach(filteredCells, id: \.id) { (cell: CellALS) in
-                NavigationLink(destination: CellDetailsView(alsCell: cell)) {
+                ListNavigationLink(value: NavObjectId(object: cell)) {
                     Text(plainCellId(cell))
                 }
             }

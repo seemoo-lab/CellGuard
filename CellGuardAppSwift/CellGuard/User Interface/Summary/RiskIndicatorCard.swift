@@ -7,8 +7,9 @@
 
 import UIKit
 import SwiftUI
+import NavigationBackport
 
-enum RiskMediumCause: Equatable {
+enum RiskMediumCause: Equatable, Hashable {
     case permissions
     case tweakCells
     case tweakPackets
@@ -42,7 +43,7 @@ enum RiskMediumCause: Equatable {
     }
 }
 
-enum RiskLevel: Equatable {
+enum RiskLevel: Equatable, Hashable {
     case unknown
     case low
     case lowMonitor
@@ -165,9 +166,7 @@ struct RiskIndicatorCard: View {
     @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
-        NavigationLink {
-            RiskInfoView(risk: risk)
-        } label: {
+        NBNavigationLink(value: risk) {
             VStack {
                 HStack {
                     Text("\(risk.header()) Risk")

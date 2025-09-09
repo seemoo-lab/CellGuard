@@ -7,93 +7,83 @@
 
 import CoreData
 import SwiftUI
+import NavigationBackport
 
-struct ConnectivityDetailsView: View {
-    let group: GroupedConnectivityEvents
+struct ConnectivityEventList: View {
+    private let eventsByDay: [(key: Date, value: [ConnectivityEvent])]
+    private let groupStart: Date
+    private let groupEnd: Date
+    private let sameDay: Bool
 
-    var body: some View {
-        if group.events.count == 1 {
-            ConnectivityDetails(event: group.events.first!)
-        } else {
-            ConnectivityEventList(group: group)
-        }
-    }
-}
+    init(events: [ConnectivityEvent]) {
+        let timestamps = events.compactMap { $0.collected }
 
-private struct ConnectivityEventList: View {
-    let group: GroupedConnectivityEvents
+        self.groupStart = timestamps.min() ?? Date.distantPast
+        self.groupEnd = timestamps.max() ?? Date.distantFuture
 
-    var body: some View {
         let calendar = Calendar.current
-        let sameDay = calendar.startOfDay(for: group.start) == calendar.startOfDay(for: group.end)
+        self.sameDay = calendar.startOfDay(for: self.groupStart) == calendar.startOfDay(for: self.groupEnd)
 
+        self.eventsByDay = Dictionary(grouping: events) {
+            calendar.startOfDay(for: $0.collected ?? Date())
+        }.sorted(by: {$0.key > $1.key})
+    }
+
+    var body: some View {
         List {
-            ForEach(groupByDay(), id: \.key) { (day, dayEvents) in
+            ForEach(eventsByDay, id: \.key) { (day, dayEvents) in
                 Section(header: Text(mediumDateFormatter.string(from: day))) {
                     ForEach(dayEvents) { event in
-                        if let eventGroup = try? GroupedConnectivityEvents(events: [event], settings: group.settings) {
-                            ConnectivityEventNavLink(group: eventGroup)
+                        ListNavigationLink(value: NavObjectId(object: event)) {
+                            ConnectivityEventListEntry(event: event)
                         }
                     }
                 }
             }
         }
-        .navigationTitle(fullMediumDateTimeFormatter.string(from: group.start)
-                         + " - "
-                         + (sameDay ? mediumTimeFormatter : fullMediumDateTimeFormatter).string(from: group.end))
+        .navigationTitle(navTitle)
         .navigationBarTitleDisplayMode(.inline)
         .listStyle(.insetGrouped)
     }
 
-    private func groupByDay() -> [(key: Date, value: [ConnectivityEvent])] {
-        return Dictionary(grouping: group.events) { Calendar.current.startOfDay(for: $0.collected ?? Date()) }
-            .sorted(by: {$0.key > $1.key})
+    var navTitle: String {
+        fullMediumDateTimeFormatter.string(from: groupStart)
+        + " - "
+        + (sameDay ? mediumTimeFormatter : fullMediumDateTimeFormatter).string(from: groupEnd)
     }
 }
 
-private struct ConnectivityEventNavLink: View {
-    // We assume that the group contains just one event
-    let group: GroupedConnectivityEvents
-
-    var body: some View {
-        NavigationLink {
-            ConnectivityDetails(event: group.events.first!)
-        } label: {
-            ConnectivityEventListEntry(group: group)
-        }
-    }
-}
-
-private struct ConnectivityDetails: View {
-
+struct ConnectivityEventDetails: View {
     let event: ConnectivityEvent
 
     var body: some View {
         List {
-            Group {
-                Section(header: Text("Date & Time")) {
-                    if let collectedDate = event.collected {
-                        CellDetailsRow("Collected", fullMediumDateTimeFormatter.string(from: collectedDate))
-                    }
-                    if let importedDate = event.imported {
-                        CellDetailsRow("Imported", fullMediumDateTimeFormatter.string(from: importedDate))
-                    }
+            Section(header: Text("Date & Time")) {
+                if let collectedDate = event.collected {
+                    CellDetailsRow("Collected", fullMediumDateTimeFormatter.string(from: collectedDate))
+                }
+                if let importedDate = event.imported {
+                    CellDetailsRow("Imported", fullMediumDateTimeFormatter.string(from: importedDate))
+                }
+            }
+
+            Section(header: Text("Connectivity Properties")) {
+                CellDetailsRow("Status", event.active ? "Connected" : "Disconnected")
+                CellDetailsRow("SIM Slot", event.simSlot == 0 ? "None" : String(event.simSlot))
+                if event.basebandMode >= 0 {
+                    CellDetailsRow("Baseband Mode", Int(event.basebandMode))
+                }
+                if event.registrationStatus >= 0 {
+                    CellDetailsRow("Registration Status", Int(event.registrationStatus))
                 }
 
-                Section(header: Text("Connectivity Properties")) {
-                    CellDetailsRow("Status", event.active ? "Connected" : "Disconnected")
-                    CellDetailsRow("SIM Slot", event.simSlot == 0 ? "None" : String(event.simSlot))
-                    if event.basebandMode >= 0 {
-                        CellDetailsRow("Baseband Mode", Int(event.basebandMode))
+                if let qmiPacket = event.packetQmi {
+                    ListNavigationLink(value: NavObjectId<PacketQMI>(object: qmiPacket)) {
+                        PacketCell(packet: qmiPacket)
                     }
-                    if event.registrationStatus >= 0 {
-                        CellDetailsRow("Registration Status", Int(event.registrationStatus))
-                    }
-
-                    if let qmiPacket = event.packetQmi {
-                        NavigationLink { PacketQMIDetailsView(packet: qmiPacket) } label: { PacketCell(packet: qmiPacket) }
-                    } else if let ariPacket = event.packetAri {
-                        NavigationLink { PacketARIDetailsView(packet: ariPacket) } label: { PacketCell(packet: ariPacket) }
+                } else if let packetAri = event.packetAri {
+                    ListNavigationLink(value: NavObjectId<PacketARI>(object: packetAri)) {
+                        PacketCell(packet: packetAri)
                     }
                 }
             }

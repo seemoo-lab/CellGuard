@@ -6,12 +6,13 @@
 //
 
 import SwiftUI
+import NavigationBackport
 
 struct UpdateCheckView: View {
 
     @AppStorage(UserDefaultsKeys.updateCheck.rawValue) private var updateCheck: Bool = false
     @State private var agePolicyConfirmation: Bool = false
-    @State private var action: Int? = 0
+    @EnvironmentObject var navigator: PathNavigator
 
     var body: some View {
         VStack {
@@ -22,13 +23,6 @@ struct UpdateCheckView: View {
                     size: 120
                 )
             }
-
-            // navigation depends, show sysdiag instructions on non-jailbroken devices
-            #if JAILBREAK
-            NavigationLink(destination: LocationPermissionView(), tag: 1, selection: $action) {}
-            #else
-            NavigationLink(destination: SysDiagnoseView(), tag: 1, selection: $action) {}
-            #endif
 
             HStack {
                 Toggle(isOn: $agePolicyConfirmation) {
@@ -47,7 +41,7 @@ struct UpdateCheckView: View {
                 // Here, save that the user agreed to enable automatic update checks
                 Button {
                     updateCheck = true
-                    self.action = 1
+                    next()
                 } label: {
                     Text("Enable")
                 }
@@ -58,7 +52,7 @@ struct UpdateCheckView: View {
                 // Here, save that the user opted out (currently default)
                 Button {
                     updateCheck = false
-                    self.action = 1
+                    next()
                 } label: {
                     Text("Skip")
                 }
@@ -70,10 +64,21 @@ struct UpdateCheckView: View {
         .navigationTitle("Check for Updates")
         .navigationBarTitleDisplayMode(.large)
     }
+
+    func next() {
+        #if JAILBREAK
+        navigator.push(IntroductionState.location)
+        #else
+        navigator.push(IntroductionState.systemDiagnose)
+        #endif
+    }
 }
 
 #Preview {
-    NavigationView {
+    NBNavigationStack {
         NotificationPermissionView()
+            .nbNavigationDestination(for: IntroductionState.self) { _ in
+                Text("No")
+            }
     }
 }

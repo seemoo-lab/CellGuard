@@ -90,7 +90,7 @@ struct DataSummaryView: View {
         updateInProgress = true
         Task(priority: .utility) {
             // TODO: Change
-            let persistence = PersistenceController.shared
+            let persistence = PersistenceController.basedOnEnvironment()
 
             let basicPredicate = NSPredicate(format: "pipeline == %@ and cell != nil and cell.collected >= %@ and cell.collected <= %@", start as NSDate, end as NSDate, Int(primaryVerificationPipeline.id) as NSNumber)
 

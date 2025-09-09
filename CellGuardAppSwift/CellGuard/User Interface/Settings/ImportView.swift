@@ -7,6 +7,7 @@
 
 import SwiftUI
 import OSLog
+import NavigationBackport
 
 enum ImportFileType {
     case archive
@@ -37,8 +38,7 @@ enum ImportFileType {
     }
 }
 
-private enum ImportStatus: Equatable {
-
+enum ImportStatus: Equatable, Hashable {
     case none
     case count(ImportCount?)
     case progress(Float)
@@ -59,9 +59,7 @@ private enum ImportStatus: Equatable {
             default: break
             }
         }
-
     }
-
 }
 
 struct ImportView: View {
@@ -233,6 +231,12 @@ struct ImportView: View {
                 updateFileProperties()
             }
         }
+        .nbNavigationDestination(for: CountInfo.self) {
+            ImportStatusDetailsView(info: $0)
+        }
+        .nbNavigationDestination(for: FailureInfo.self) {
+            ImportErrorDetailsView(failure: $0)
+        }
     }
 
     private func importFile(_ url: URL) {
@@ -390,132 +394,11 @@ struct ImportView: View {
     }
 }
 
-private struct ImportStatusRow: View {
-
-    let text: String
-    @Binding var status: ImportStatus
-
-    init(_ text: String, _ status: Binding<ImportStatus>) {
-        self.text = text
-        self._status = status
-    }
-
-    var body: some View {
-        if detailContentLink {
-            NavigationLink {
-                detailContent
-                    .navigationTitle(text)
-            } label: {
-                row
-            }
-        } else {
-            row
-        }
-    }
-
-    var row: some View {
-        HStack {
-            Text(text)
-            Spacer()
-            content
-        }
-    }
-
-    var content: AnyView {
-        switch status {
-        case .none:
-            return AnyView(EmptyView())
-        case let .count(count):
-            return AnyView(Text("\(count?.count ?? 0)"))
-        case .progress:
-            return AnyView(CircularProgressView(progress: $status.progress)
-                .frame(width: 20, height: 20))
-        case .infinite:
-            return AnyView(ProgressView())
-        case .error:
-            return AnyView(Image(systemName: "xmark").foregroundColor(.gray))
-        case .finished:
-            return AnyView(Image(systemName: "checkmark").foregroundColor(.gray))
-        }
-    }
-
-    var detailContentLink: Bool {
-        switch status {
-        case let .count(count):
-            if count?.first != nil && count?.last != nil {
-                return true
-            } else {
-                return false
-            }
-        default:
-            return false
-        }
-    }
-
-    var detailContent: AnyView {
-        switch status {
-        case let .count(count):
-            if let firstDate = count?.first, let lastDate = count?.last {
-                return AnyView(List {
-                    KeyValueListRow(key: "Imported Entries", value: "\(count?.count ?? 0)")
-                    KeyValueListRow(key: "First", value: mediumDateTimeFormatter.string(from: firstDate))
-                    KeyValueListRow(key: "Last", value: mediumDateTimeFormatter.string(from: lastDate))
-                })
-            } else {
-                // We can't offer any additional information
-                return AnyView(EmptyView())
-            }
-        default:
-            return AnyView(EmptyView())
-        }
-    }
-}
-
-private struct ImportErrorView: View {
-
-    let error: Error
-
-    init(_ error: Error) {
-        self.error = error
-    }
-
-    var body: some View {
-        if let error = error as? LocalizedError {
-            if let recoverySuggestion = error.recoverySuggestion {
-                Text(error.localizedDescription + " " + recoverySuggestion)
-            } else {
-                Text(error.localizedDescription)
-            }
-
-            if let failureReason = error.failureReason {
-                NavigationLink {
-                    ScrollView {
-                        Text(failureReason)
-                            .font(.body)
-                            .padding()
-                    }
-                    .navigationTitle("Failure Reason")
-                } label: {
-                    Text("Failure Reason")
-                }
-            }
-
-            // TODO: Enable issues & create template & link to template
-            Link(destination: URL(string: "http://github.com/seemoo-lab/CellGuard")!) {
-                KeyValueListRow(key: "Report on GitHub") {
-                    Image(systemName: "link")
-                }
-            }
-        } else {
-            Text(error.localizedDescription)
-        }
-    }
-
-}
-
 struct ImportView_Previews: PreviewProvider {
     static var previews: some View {
-        NavigationView {
+        @State var importNavPath = NBNavigationPath()
+
+        NBNavigationStack(path: $importNavPath) {
             ImportView()
         }
     }

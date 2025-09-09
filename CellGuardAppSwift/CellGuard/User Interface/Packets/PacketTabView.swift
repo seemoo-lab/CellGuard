@@ -8,93 +8,53 @@
 import CoreData
 import SwiftUI
 import OSLog
+import NavigationBackport
 
 struct PacketTabView: View {
 
-    // TODO: Add divider for days (bold) & hours
-
-    private static let logger = Logger(
-        subsystem: Bundle.main.bundleIdentifier!,
-        category: String(describing: PacketTabView.self)
-    )
-
     @AppStorage(UserDefaultsKeys.appMode.rawValue) private var appMode: DataCollectionMode = .none
 
+    @State private var path = NBNavigationPath()
     @State private var filter: PacketFilterSettings = PacketFilterSettings()
-    @State private var isShowingFilterView = false
-    @State private var pausedBeforeBackground = false
     @State private var backgroundObserver: NSObjectProtocol?
     @State private var foregroundObserver: NSObjectProtocol?
 
     var body: some View {
-        // TODO: Store filter settings across different app executions?
-        NavigationView {
-            VStack {
-                // A workaround for that the NavigationLink on iOS does not respect the isShowingFilterView variable if it's embedded into a ToolbarItem.
-                // See: https://www.hackingwithswift.com/quick-start/swiftui/how-to-use-programmatic-navigation-in-swiftui
-                NavigationLink(isActive: $isShowingFilterView) {
-                    PacketFilterView(settingsBound: $filter) {
-                        isShowingFilterView = false
-                    }
-                } label: {
-                    EmptyView()
-                }
-                FilteredPacketView(filter: filter)
-            }
+        NBNavigationStack(path: $path) {
+            FilteredPacketView(filter: filter)
             .navigationTitle("Packets")
             .toolbar {
                 #if JAILBREAK
                 ToolbarItem(placement: .navigationBarTrailing) {
                     if appMode == .automatic {
-                        PauseContinueButton(filter: $filter)
+                        PauseContinueButton()
                     }
                 }
                 #endif
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
-                        isShowingFilterView = true
+                        path.push(PacketNavigationPath.filter)
                     } label: {
                         // Starting with iOS 15: line.3.horizontal.decrease.circle
                         Image(systemName: "line.horizontal.3.decrease.circle")
                     }
                 }
             }
+            .nbNavigationDestination(for: PacketNavigationPath.self) { nav in
+                PacketNavigationPath.navigate(nav)
+            }
+            .cgNavigationDestinations(.packets)
         }.onAppear {
             // Check for one time if the iPhone received ARI packets and if yes, automatically switch the filter to it
-            if !filter.protoAutoSet {
-                PersistenceController.shared.countPacketsByType { result in
-                    do {
-                        let (qmiPackets, ariPackets) = try result.get()
-                        if qmiPackets == 0 && ariPackets == 0 {
-                            Self.logger.debug("No packets recorded so far, deciding what to show at a later point")
-                            return
-                        }
-                        if ariPackets > qmiPackets {
-                            Self.logger.debug("Switch to ARI packets")
-                            self.filter.proto = .ari
-                        } else {
-                            Self.logger.debug("Switch to QMI packets")
-                            self.filter.proto = .qmi
-                        }
-                        self.filter.protoAutoSet = true
-                    } catch {
-                        Self.logger.warning("Couldn't count QMI & ARI packets: \(error)")
-                    }
-                }
-            }
+            filter.determineProtoAutomatically()
 
             #if JAILBREAK
             // Pause the FilteredPacketView when entering background.
             self.backgroundObserver = NotificationCenter.default.addObserver(forName: UIApplication.didEnterBackgroundNotification, object: nil, queue: .main) { _ in
-                self.pausedBeforeBackground = filter.pauseDate != nil
-                if !pausedBeforeBackground {
-                    filter.pauseDate = Date()
-                }
+                filter.enterBackground()
             }
             self.foregroundObserver = NotificationCenter.default.addObserver(forName: UIApplication.willEnterForegroundNotification, object: nil, queue: .main) { _ in
-                if !self.pausedBeforeBackground {
-                    filter.pauseDate = nil
-                }
+                filter.enterForeground()
             }
             #endif
         }
@@ -108,15 +68,13 @@ struct PacketTabView: View {
             }
             #endif
         }
-        // Magic that prevents Pickers from closing
-        // See: https://stackoverflow.com/a/70307271
-        .navigationViewStyle(.stack)
+        .environmentObject(filter)
     }
 }
 
 private struct PauseContinueButton: View {
 
-    @Binding var filter: PacketFilterSettings
+    @EnvironmentObject var filter: PacketFilterSettings
 
     var body: some View {
         Button {
@@ -145,12 +103,8 @@ private struct PauseContinueButton: View {
 private struct FilteredPacketView: View {
 
     // We have to use separate fetch request as the preview crashes for a unified request
-    @FetchRequest
-    private var qmiPackets: FetchedResults<PacketQMI>
-
-    @FetchRequest
-    private var ariPackets: FetchedResults<PacketARI>
-
+    @FetchRequest private var qmiPackets: FetchedResults<PacketQMI>
+    @FetchRequest private var ariPackets: FetchedResults<PacketARI>
     private let filter: PacketFilterSettings
 
     init(filter: PacketFilterSettings) {
@@ -176,41 +130,24 @@ private struct FilteredPacketView: View {
             if qmiPackets.isEmpty {
                 Text("No packets match your search criteria.")
             } else {
-                QMIPacketList(qmiPackets: qmiPackets)
+                PacketList(packets: qmiPackets)
             }
         } else {
             if ariPackets.isEmpty {
                 Text("No packets match your search criteria.")
             } else {
-                ARIPacketList(ariPackets: ariPackets)
+                PacketList(packets: ariPackets)
             }
         }
     }
 }
 
-private struct QMIPacketList: View {
-    let qmiPackets: FetchedResults<PacketQMI>
+private struct PacketList<T: NSManagedObject & Packet>: View {
+    let packets: FetchedResults<T>
 
     var body: some View {
-        List(qmiPackets) { packet in
-            NavigationLink {
-                PacketQMIDetailsView(packet: packet)
-            } label: {
-                PacketCell(packet: packet)
-            }
-        }
-        .listStyle(.insetGrouped)
-    }
-}
-
-private struct ARIPacketList: View {
-    let ariPackets: FetchedResults<PacketARI>
-
-    var body: some View {
-        List(ariPackets) { packet in
-            NavigationLink {
-                PacketARIDetailsView(packet: packet)
-            } label: {
+        List(packets) { packet in
+            ListNavigationLink(value: NavObjectId(object: packet)) {
                 PacketCell(packet: packet)
             }
         }

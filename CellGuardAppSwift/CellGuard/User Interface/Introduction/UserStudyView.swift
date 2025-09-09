@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import NavigationBackport
 
 /*
  Text aus Ethikantrag:
@@ -77,14 +78,20 @@ import SwiftUI
 
 struct UserStudyView: View {
 
-    var returnToPreviousView: Bool = false
+    let titleMode: NavigationBarItem.TitleDisplayMode
+    let next: (PathNavigator) -> Void
 
     @AppStorage(UserDefaultsKeys.study.rawValue) private var studyParticipationTimestamp: Double = 0
     @Environment(\.presentationMode) private var presentationMode: Binding<PresentationMode>
+    @EnvironmentObject var navigator: PathNavigator
 
     @State private var agePolicyConfirmation: Bool = false
-    @State private var action: Int? = 0
     @State private var confirmationSheet: Bool = false
+
+    init(titleMode: NavigationBarItem.TitleDisplayMode = .large, next: @escaping (PathNavigator) -> Void) {
+        self.titleMode = titleMode
+        self.next = next
+    }
 
     var body: some View {
         VStack {
@@ -103,13 +110,6 @@ While you can use CellGuard without participating in the study, your involvemen
                 )
             }
 
-            // navigation depends, show sysdiag instructions on non-jailbroken devices
-            #if JAILBREAK
-            NavigationLink(destination: UpdateCheckView(), tag: 1, selection: $action) {}
-            #else
-            NavigationLink(destination: SysDiagnoseView(), tag: 1, selection: $action) {}
-            #endif
-
             HStack {
                 Toggle(isOn: $agePolicyConfirmation) {
                     Text("I'm over 18 years or older and agree to the privacy policy.")
@@ -127,7 +127,7 @@ While you can use CellGuard without participating in the study, your involvemen
                 // Here, save that the user agreed to join the study
                 Button {
                     studyParticipationTimestamp = Date().timeIntervalSince1970
-                    nextView()
+                    next(navigator)
                 } label: {
                     Text("Participate")
                 }
@@ -138,7 +138,7 @@ While you can use CellGuard without participating in the study, your involvemen
                 // Here, save that the user opted out (currently default)
                 Button {
                     studyParticipationTimestamp = 0
-                    nextView()
+                    next(navigator)
                 } label: {
                     Text("Don't Participate")
                 }
@@ -148,16 +148,9 @@ While you can use CellGuard without participating in the study, your involvemen
             .padding(EdgeInsets(top: 2, leading: 10, bottom: 6, trailing: 10))
         }
         .navigationTitle("Our Study")
-        .navigationBarTitleDisplayMode(returnToPreviousView ? .automatic : .large)
+        .navigationBarTitleDisplayMode(titleMode)
     }
 
-    func nextView() {
-        if returnToPreviousView {
-            self.presentationMode.wrappedValue.dismiss()
-        } else {
-            self.action = 1
-        }
-    }
 }
 
 // See: https://stackoverflow.com/a/65895802
@@ -215,7 +208,9 @@ struct SmallButtonStyle: ButtonStyle {
 }
 
 #Preview {
-    NavigationView {
-        UserStudyView()
+    NBNavigationStack {
+        UserStudyView { _ in
+            // Doing nothing
+        }
     }
 }

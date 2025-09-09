@@ -69,16 +69,17 @@ struct DebugAddCellView: View {
                     .datePickerStyle(.graphical)
             }
 
-            Section {
+            Section(footer: Text("Please provide all mandatory properties.")) {
                 Toggle("Perform Verification", isOn: $verify)
                 Button("Insert Cell") {
                     Task {
                         await insertCell()
                     }
                 }
+                .disabled(country == nil || network == nil || area == nil || cellId == nil)
             }
-
         }
+        .navigationTitle("Laboratory")
         .listStyle(.insetGrouped)
         .alert(item: $alert) { type in
             switch type {

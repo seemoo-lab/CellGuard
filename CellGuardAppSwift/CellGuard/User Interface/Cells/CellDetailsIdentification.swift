@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import NavigationBackport
 
 struct CellDetailsIdentification: View {
 
@@ -59,12 +60,7 @@ private struct CellIdentificationGSM: View {
 
             KeyValueListRow(key: "Antennas", value: sector == 0 ? "Omnidirectional" : "Bi- or tridirectional")
 
-            NavigationLink {
-                CellDetailsTower(
-                    technology: .GSM, country: country, network: network, area: area, baseStation: bts,
-                    dissect: CellIdentification.gsm
-                )
-            } label: {
+            ListNavigationLink(value: CellDetailsTowerNavigation(technology: .GSM, country: country, network: network, area: area, baseStation: bts)) {
                 Text("Show Details")
             }
         }
@@ -88,12 +84,7 @@ private struct CellIdentificationUMTS: View {
             // Cell ID (CID) -> 16 Bits
             KeyValueListRow(key: "Cell ID", value: String(cellId))
 
-            NavigationLink {
-                CellDetailsTower(
-                    technology: .UMTS, country: country, network: network, area: area, baseStation: rnc,
-                    dissect: CellIdentification.umts
-                )
-            } label: {
+            ListNavigationLink(value: CellDetailsTowerNavigation(technology: .UMTS, country: country, network: network, area: area, baseStation: rnc)) {
                 Text("Show Details")
             }
         }
@@ -117,12 +108,7 @@ private struct CellIdentificationLTE: View {
             // Sector ID -> 8 Bits
             KeyValueListRow(key: "Sector ID", value: String(sector))
 
-            NavigationLink {
-                CellDetailsTower(
-                    technology: .LTE, country: country, network: network, area: area, baseStation: eNodeB,
-                    dissect: CellIdentification.lte
-                )
-            } label: {
+            ListNavigationLink(value: CellDetailsTowerNavigation(technology: .LTE, country: country, network: network, area: area, baseStation: eNodeB)) {
                 Text("Show Details")
             }
         }
@@ -170,13 +156,7 @@ private struct CellIdentificationNR: View {
                 )
             }
 
-            NavigationLink {
-                CellDetailsTower(
-                    technology: .NR, country: country, network: network, area: area, baseStation: gNodeB,
-                    dissect: { CellIdentification.nr(nci: $0, sectorIdLength: sectorIdLength) },
-                    bitCount: sectorIdLength
-                )
-            } label: {
+            ListNavigationLink(value: CellDetailsTowerNavigation(technology: .NR, country: country, network: network, area: area, baseStation: gNodeB, bitCount: sectorIdLength)) {
                 Text("Show Details")
             }
         }

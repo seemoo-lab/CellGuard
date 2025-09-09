@@ -50,4 +50,29 @@ extension PersistenceController {
             return importCount
         } ?? 0
     }
+
+    func fetchConnectivityDateRange() async -> ClosedRange<Date>? {
+        return try? performAndWait(name: "fetchContext", author: "fetchConnectivityDateRange") {_ in
+            let firstReq: NSFetchRequest<ConnectivityEvent> = ConnectivityEvent.fetchRequest()
+            firstReq.fetchLimit = 1
+            firstReq.sortDescriptors = [NSSortDescriptor(keyPath: \ConnectivityEvent.collected, ascending: true)]
+            firstReq.propertiesToFetch = ["collected"]
+            firstReq.includesSubentities = false
+
+            let lastReq: NSFetchRequest<ConnectivityEvent> = ConnectivityEvent.fetchRequest()
+            lastReq.fetchLimit = 1
+            lastReq.sortDescriptors = [NSSortDescriptor(keyPath: \ConnectivityEvent.collected, ascending: false)]
+            lastReq.propertiesToFetch = ["collected"]
+            lastReq.includesSubentities = false
+
+            let firstEvent = try firstReq.execute()
+            let lastEvent = try lastReq.execute()
+
+            guard let firstEvent = firstEvent.first, let lastEvent = lastEvent.first else {
+                return Date.distantPast...Date.distantFuture
+            }
+
+            return (firstEvent.collected ?? Date.distantPast)...(lastEvent.collected ?? Date.distantFuture)
+        }
+    }
 }

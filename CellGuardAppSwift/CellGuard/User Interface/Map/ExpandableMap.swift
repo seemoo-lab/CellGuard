@@ -7,37 +7,32 @@
 
 import MapKit
 import SwiftUI
+import NavigationBackport
+
+struct ExpandableMapInfo: Hashable {
+    // empty
+}
 
 struct ExpandableMap<Content: View>: View {
 
-    let map: () -> Content
-    @State private var expanded: Bool = false
+    @EnvironmentObject var navigator: PathNavigator
 
-    init(_ map: @escaping () -> Content) {
-        self.map = map
+    let map: Content
+
+    init(@ViewBuilder map: @escaping () -> Content) {
+        self.map = map()
     }
 
     var body: some View {
         ZStack {
-            // Navigation link for fullscreen view
-            NavigationLink(isActive: $expanded) {
-                map()
-                    .ignoresSafeArea()
-            } label: {
-                EmptyView()
-            }
-            .frame(width: 0, height: 0)
-            .hidden()
-            .background(Color.blue)
-
             // Small map shown here
-            map()
+            map
 
             // Button to open the expanded map
             HStack {
                 Spacer()
                 MapExpandButton {
-                    expanded = true
+                    navigator.push(ExpandableMapInfo())
                 }
             }
             .frame(maxHeight: .infinity, alignment: .bottom)
@@ -76,9 +71,17 @@ private struct MapExpandButton: View {
 
 @available(iOS 17, *)
 #Preview {
-    NavigationView {
+    NBNavigationStack {
         List {
             ExpandableMap {
+                Map(coordinateRegion: .constant(
+                    MKCoordinateRegion(
+                        center: CLLocationCoordinate2D(latitude: 37.768552, longitude: -122.481616),
+                        latitudinalMeters: 2000, longitudinalMeters: 2000
+                    )
+                ))
+            }
+            .nbNavigationDestination(for: ExpandableMapInfo.self) { _ in
                 Map(coordinateRegion: .constant(
                     MKCoordinateRegion(
                         center: CLLocationCoordinate2D(latitude: 37.768552, longitude: -122.481616),

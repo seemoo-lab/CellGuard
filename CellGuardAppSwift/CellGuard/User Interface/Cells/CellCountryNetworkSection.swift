@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import NavigationBackport
 
 struct CellCountryNetworkSection: View {
 
@@ -31,29 +32,19 @@ struct CellCountryNetworkSection: View {
             CellDetailsRow(techFormatter.country(), country)
             if let netOperator = netOperators.first, netOperators.count == 1 {
                 // If there's exactly one network, we show its country
-                NavigationLink {
-                    CountryDetailsView(country: netOperator)
-                } label: {
+                ListNavigationLink(value: CountryDetailsNavigation(country: netOperator)) {
                     CellDetailsRow("Country", netOperator.shortCountryName)
                 }
             } else if let (primary, secondary) = netCountries, let primary = primary {
                 // If there is no network or there are multiple ones, we use the generic country
-                NavigationLink {
-                    CountryDetailsView(country: primary, secondary: secondary)
-                } label: {
+                ListNavigationLink(value: CountryDetailsNavigation(country: primary, secondary: secondary)) {
                     // Show "+ X" if multiple countries refer to a MCC
                     CellDetailsRow("Country", secondary.isEmpty ? primary.shortCountryName : "\(primary.shortCountryName) + \(secondary.count)" )
                 }
             }
             CellDetailsRow(techFormatter.network(), formatMNC(network))
             if let netOperator = netOperators.first, let combinedName = netOperator.combinedName {
-                NavigationLink {
-                    if netOperators.count >= 2 {
-                        OperatorDetailsListView(netOperators: netOperators)
-                    } else {
-                        OperatorDetailsView(netOperator: netOperator)
-                    }
-                } label: {
+                ListNavigationLink(value: netOperators) {
                     CellDetailsRow("Network", netOperators.count >= 2 ? "\(combinedName) + \(netOperators.count - 1)" : combinedName)
                 }
             }
@@ -61,46 +52,98 @@ struct CellCountryNetworkSection: View {
     }
 }
 
+struct SingleCellCountryNetworkNav: Hashable {
+    let country: Int32
+    let network: Int32
+    let technology: ALSTechnology
+}
+
+struct SingleCellCountryNetworkView: View {
+    let nav: SingleCellCountryNetworkNav
+
+    var body: some View {
+        List {
+            CellCountryNetworkSection(
+                country: nav.country,
+                network: nav.network,
+                techFormatter: CellTechnologyFormatter(technology: nav.technology)
+            )
+        }
+        .listStyle(.insetGrouped)
+        .navigationTitle("Operator")
+        .navigationBarTitleDisplayMode(.inline)
+    }
+}
+
+private struct PreviewShellView<T: View>: View {
+
+    let view: T
+
+    init(@ViewBuilder _ builder: () -> T) {
+        self.view = builder()
+    }
+
+    var body: some View {
+        NBNavigationStack {
+            List {
+                view
+            }
+            .cgNavigationDestinations(.operators)
+        }
+    }
+
+}
+
 // Here are some test cases for country-only data (because there exists no operator with MNC 999).
 // Other test cases for countries (from specific network operators) are in the CountryDetailsView.swift.
 // Run the generate_operators.py script and use the "duplicate entries" as special test cases.
 // You can also build the app using debug mode and use the operator lookup (three dots -> operators) instead of the previews.
 #Preview("French Antilles") {
-    NavigationView {
-        List {
-            CellCountryNetworkSection(country: 340, network: 999, techFormatter: CellTechnologyFormatter(technology: .LTE))
-        }
+    PreviewShellView {
+        CellCountryNetworkSection(
+            country: 340,
+            network: 999,
+            techFormatter: CellTechnologyFormatter(technology: .LTE)
+        )
     }
 }
 
 #Preview("Former Netherlands Antilles") {
-    NavigationView {
-        List {
-            CellCountryNetworkSection(country: 362, network: 999, techFormatter: CellTechnologyFormatter(technology: .LTE))
-        }
+    PreviewShellView {
+        CellCountryNetworkSection(
+            country: 362,
+            network: 999,
+            techFormatter: CellTechnologyFormatter(technology: .LTE)
+        )
     }
 }
 
 #Preview("French Indian Ocean Territories") {
-    NavigationView {
-        List {
-            CellCountryNetworkSection(country: 647, network: 999, techFormatter: CellTechnologyFormatter(technology: .LTE))
-        }
+    PreviewShellView {
+        CellCountryNetworkSection(
+            country: 647,
+            network: 999,
+            techFormatter: CellTechnologyFormatter(technology: .LTE)
+        )
     }
 }
 
 #Preview("US") {
-    NavigationView {
-        List {
-            CellCountryNetworkSection(country: 310, network: 999, techFormatter: CellTechnologyFormatter(technology: .LTE))
-        }
+    PreviewShellView {
+        CellCountryNetworkSection(
+            country: 310,
+            network: 999,
+            techFormatter: CellTechnologyFormatter(technology: .LTE)
+        )
     }
 }
 
 #Preview("US") {
-    NavigationView {
-        List {
-            CellCountryNetworkSection(country: 310, network: 999, techFormatter: CellTechnologyFormatter(technology: .LTE))
-        }
+    PreviewShellView {
+        CellCountryNetworkSection(
+            country: 310,
+            network: 999,
+            techFormatter: CellTechnologyFormatter(technology: .LTE)
+        )
     }
 }

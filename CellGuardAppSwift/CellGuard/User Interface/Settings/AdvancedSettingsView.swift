@@ -7,6 +7,7 @@
 
 import OSLog
 import SwiftUI
+import NavigationBackport
 
 struct AdvancedSettingsView: View {
 
@@ -25,19 +26,13 @@ struct AdvancedSettingsView: View {
             PipelineSection()
 
             Section(header: Text("Local Database")) {
-                NavigationLink {
-                    ImportView()
-                } label: {
+                ListNavigationLink(value: SummaryNavigationPath.dataImport) {
                     Text("Import Data")
                 }
-                NavigationLink {
-                    ExportView()
-                } label: {
+                ListNavigationLink(value: SummaryNavigationPath.dataExport) {
                     Text("Export Data")
                 }
-                NavigationLink {
-                    DeleteView()
-                } label: {
+                ListNavigationLink(value: SummaryNavigationPath.dataDelete) {
                     Text("Delete Data")
                 }
             }
@@ -143,7 +138,7 @@ private struct BackendSection: View {
                     var calendar = Calendar(identifier: .gregorian)
                     calendar.timeZone = TimeZone(identifier: "UTC")!
                     let beginningOfWeek = calendar.dateComponents([.calendar, .yearForWeekOfYear, .weekOfYear], from: Date()).date!
-                    try PersistenceController.shared.deleteStudyScore(of: beginningOfWeek)
+                    try PersistenceController.basedOnEnvironment().deleteStudyScore(of: beginningOfWeek)
                 }
             } label: {
                 Text("Clear Weekly Scores")

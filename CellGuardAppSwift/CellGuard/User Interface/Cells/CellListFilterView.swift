@@ -7,21 +7,44 @@
 
 import CoreData
 import SwiftUI
+import NavigationBackport
 
-struct CellListFilterSettings {
+class CellListFilterSettings: ObservableObject {
 
-    var status: CellListFilterStatus = .all
-    var study: CellListFilterStudyOptions = .all
+    @Published var status: CellListFilterStatus = .all
+    @Published var study: CellListFilterStudyOptions = .all
 
-    var timeFrame: CellListFilterTimeFrame = .live
-    var date: Date = Calendar.current.startOfDay(for: Date())
+    @Published var timeFrame: FilterTimeFrame = .live
+    @Published var date: Date = Calendar.current.startOfDay(for: Date())
 
-    var technology: ALSTechnology?
-    var simSlot: CellListFilterSimSlot = .all
-    var country: Int?
-    var network: Int?
-    var area: Int?
-    var cell: Int?
+    @Published var technology: ALSTechnology?
+    @Published var simSlot: FilterSimSlot = .all
+    @Published var country: Int?
+    @Published var network: Int?
+    @Published var area: Int?
+    @Published var cell: Int?
+
+    func reset() {
+        status = .all
+        study = .all
+
+        timeFrame = .live
+        date = Calendar.current.startOfDay(for: Date())
+
+        technology = nil
+        simSlot = .all
+        country = nil
+        network = nil
+        area = nil
+        cell = nil
+    }
+
+    func showLatestDate(range: ClosedRange<Date>) {
+        if timeFrame == .live && !range.contains(date) {
+            date = range.upperBound
+            timeFrame = .pastDay
+        }
+    }
 
     func predicates(startDate: Date?, endDate: Date?) -> [NSPredicate] {
         var predicateList: [NSPredicate] = [
@@ -112,12 +135,6 @@ struct CellListFilterSettings {
 
 }
 
-enum CellListFilterTimeFrame: String, CaseIterable, Identifiable {
-    case live, pastDay, pastDays
-
-    var id: Self { self }
-}
-
 enum CellListFilterStatus: String, CaseIterable, Identifiable {
     case all, processing, trusted, anomalous, suspicious
 
@@ -142,67 +159,20 @@ enum CellListFilterStudyOptions: String, CaseIterable, Identifiable {
     var id: Self { self }
 }
 
-enum CellListFilterSimSlot: UInt8, CaseIterable, Identifiable {
-    case all, slot1, slot2
-
-    var id: Self { self }
-
-    var slotNumber: Int? {
-        switch self {
-        case .slot1:
-            return 1
-        case .slot2:
-            return 2
-        default:
-            return nil
-        }
-    }
-}
-
 struct CellListFilterView: View {
-    let close: () -> Void
-
-    @Binding var settingsBound: CellListFilterSettings
-    @State var settings: CellListFilterSettings = CellListFilterSettings()
-
-    init(settingsBound: Binding<CellListFilterSettings>, close: @escaping () -> Void) {
-        self.close = close
-        self._settingsBound = settingsBound
-        self._settings = State(wrappedValue: self._settingsBound.wrappedValue)
-    }
 
     var body: some View {
-        CellListFilterSettingsView(settings: $settings, save: {
-            self.settingsBound = settings
-            self.close()
-        })
+        CellListFilterSettingsView()
         .navigationTitle("Filter")
         .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .confirmationAction) {
-                // TOOD: Somehow taps on it result in the navigation stack disappearing on iOS 14
-                if #available(iOS 15, *) {
-                    Button {
-                        self.settingsBound = settings
-                        self.close()
-                    } label: {
-                        Text("Apply")
-                    }
-                }
-            }
-        }
-        .listStyle(.insetGrouped)
     }
 }
 
 private struct CellListFilterSettingsView: View {
 
-    @Binding var settings: CellListFilterSettings
-    let save: () -> Void
+    @EnvironmentObject private var settings: CellListFilterSettings
 
     var body: some View {
-        // TODO: Somehow the Pickers that open a navigation selection menu pose an issue for the navigation bar on iOS 14
-        // If the "Apply" button is pressed afterwards, the "< Back" button vanishes from the navigation bar
         Form {
             Section(header: Text("Cells")) {
                 // See: https://stackoverflow.com/a/59348094
@@ -211,7 +181,7 @@ private struct CellListFilterSettingsView: View {
                     ForEach(ALSTechnology.allCases) { Text($0.rawValue).tag($0 as ALSTechnology?) }
                 }
                 Picker("SIM Slot", selection: $settings.simSlot) {
-                    ForEach(CellListFilterSimSlot.allCases) { Text(String(describing: $0).capitalized) }
+                    ForEach(FilterSimSlot.allCases) { Text(String(describing: $0).capitalized) }
                 }
 
                 LabelNumberField("Country", "MCC", $settings.country)
@@ -226,8 +196,8 @@ private struct CellListFilterSettingsView: View {
             }
             Section(header: Text("Data")) {
                 Picker("Display", selection: $settings.timeFrame) {
-                    Text("Live").tag(CellListFilterTimeFrame.live)
-                    Text("Recorded").tag(CellListFilterTimeFrame.pastDay)
+                    Text("Live").tag(FilterTimeFrame.live)
+                    Text("Recorded").tag(FilterTimeFrame.pastDay)
                 }
                 if settings.timeFrame == .pastDay {
                     DatePicker("Day", selection: $settings.date, in: ...Date(), displayedComponents: [.date])
@@ -240,16 +210,14 @@ private struct CellListFilterSettingsView: View {
                     Text("Submitted").tag(CellListFilterStudyOptions.submitted)
                 }
             }
-
-            if #unavailable(iOS 15) {
+        }
+        .listStyle(.insetGrouped)
+        .toolbar {
+            ToolbarItem {
                 Button {
-                    save()
+                    settings.reset()
                 } label: {
-                    HStack {
-                        Image(systemName: "tray.and.arrow.down")
-                        Text("Apply")
-                        Spacer()
-                    }
+                    Text("Reset")
                 }
             }
         }
@@ -261,10 +229,9 @@ struct CellListFilterView_Previews: PreviewProvider {
     static var previews: some View {
         @State var settings = CellListFilterSettings()
 
-        NavigationView {
-            CellListFilterView(settingsBound: $settings) {
-                // Doing nothing
-            }
+        NBNavigationStack {
+            CellListFilterView()
         }
+        .environmentObject(settings)
     }
 }

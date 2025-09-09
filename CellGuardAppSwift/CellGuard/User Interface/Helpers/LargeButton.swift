@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import NavigationBackport
 
 // The button properties .buttonStyle(.bordered) and .tint(.primary) are only available in iOS 15.
 // Therefore we're using an external class to match Apple's button style.
@@ -37,9 +38,11 @@ struct LargeButtonStyle: ButtonStyle {
     }
 }
 
-struct LargeButton: View {
+private struct LargeButtonProperties {
+    static let buttonHorizontalMargins: CGFloat = 10
+}
 
-    private static let buttonHorizontalMargins: CGFloat = 10
+struct LargeButton: View {
 
     var backgroundColor: Color
     var foregroundColor: Color
@@ -64,7 +67,7 @@ struct LargeButton: View {
 
     var body: some View {
         HStack {
-            Spacer(minLength: LargeButton.buttonHorizontalMargins)
+            Spacer(minLength: LargeButtonProperties.buttonHorizontalMargins)
             Button(action: self.action) {
                 Text(self.title)
                     .frame(maxWidth: .infinity)
@@ -73,7 +76,48 @@ struct LargeButton: View {
                                           foregroundColor: foregroundColor,
                                           isDisabled: disabled))
             .disabled(self.disabled)
-            Spacer(minLength: LargeButton.buttonHorizontalMargins)
+            Spacer(minLength: LargeButtonProperties.buttonHorizontalMargins)
+        }
+        .frame(maxWidth: .infinity)
+    }
+
+}
+
+struct LargeButtonLink<P: Hashable>: View {
+
+    var backgroundColor: Color
+    var foregroundColor: Color
+
+    private let title: String
+    private let value: P
+
+    // It would be nice to make this into a binding.
+    private let disabled: Bool
+
+    init(title: String,
+         value: P,
+         disabled: Bool = false,
+         backgroundColor: Color = Color.green,
+         foregroundColor: Color = Color.white) {
+        self.backgroundColor = backgroundColor
+        self.foregroundColor = foregroundColor
+        self.title = title
+        self.value = value
+        self.disabled = disabled
+    }
+
+    var body: some View {
+        HStack {
+            Spacer(minLength: LargeButtonProperties.buttonHorizontalMargins)
+            NBNavigationLink(value: value) {
+                Text(self.title)
+                    .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(LargeButtonStyle(backgroundColor: backgroundColor,
+                                          foregroundColor: foregroundColor,
+                                          isDisabled: disabled))
+            .disabled(self.disabled)
+            Spacer(minLength: LargeButtonProperties.buttonHorizontalMargins)
         }
         .frame(maxWidth: .infinity)
     }

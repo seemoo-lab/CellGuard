@@ -6,12 +6,15 @@
 //
 
 import SwiftUI
+import NavigationBackport
 
 struct RiskInfoView: View {
 
     let risk: RiskLevel
     @AppStorage(UserDefaultsKeys.study.rawValue) var studyParticipationTimestamp: Double = 0
 
+    @EnvironmentObject private var filter: CellListFilterSettings
+    @EnvironmentObject private var navigator: PathNavigator
     @Environment(\.colorScheme) private var colorScheme
 
     // Shows explanations of the app's function and the user's risk (based on the risk level).
@@ -31,55 +34,36 @@ struct RiskInfoView: View {
                 }
             }
 
-            // iOS 14 doesn't like it if a subview is open but the originating NavigationLink vanishes and removes "Back" button.
-            // Thus, we have to implement a work around for iOS 14.
             let calendar = Calendar.current
             let subTwoWeeksFromCurrentDate = calendar.date(byAdding: .weekOfYear, value: -2, to: Date()) ?? Date()
-
-            if #available(iOS 15, *) {
-                if risk.isCausedByCells() {
-                    Section(header: Text("Affected Cells")) {
-                        // We don't link trusted cells as this list would be too large and cause performance issues (?)
-
-                        NavigationLink {
-                            CellListView(settings: CellListFilterSettings(status: .anomalous, timeFrame: .pastDays, date: subTwoWeeksFromCurrentDate))
-                        } label: {
-                            Text(Image(systemName: "shield")) + Text(" Anomalous Cells")
-                        }
-
-                        if risk >= .high(cellCount: 1) {
-                            NavigationLink {
-                                CellListView(settings: CellListFilterSettings(status: .suspicious, timeFrame: .pastDays, date: subTwoWeeksFromCurrentDate))
-                            } label: {
-                                Text(Image(systemName: "exclamationmark.shield")) + Text(" Suspicious Cells")
-                            }
-                        }
-                    }
+            Section(header: Text("Affected Cells")) {
+                // We don't link trusted cells as this list would be too large and cause performance issues (?)
+                ListNavigationButton {
+                    filter.reset()
+                    filter.status = .anomalous
+                    filter.timeFrame = .pastDays
+                    filter.date = subTwoWeeksFromCurrentDate
+                    navigator.push(SummaryNavigationPath.cellList)
+                } label: {
+                    Text(Image(systemName: "shield")) + Text(" Anomalous Cells")
                 }
-            } else {
-                Section(header: Text("Affected Cells")) {
-                    // We don't link trusted cells as this list would be too large and cause performance issues (?)
+                .disabled(!risk.isCausedByCells())
 
-                    NavigationLink {
-                        CellListView(settings: CellListFilterSettings(status: .anomalous, timeFrame: .pastDays, date: subTwoWeeksFromCurrentDate))
-                    } label: {
-                        Text(Image(systemName: "shield")) + Text(" Anomalous Cells")
-                    }
-                    .disabled(!risk.isCausedByCells())
-
-                    NavigationLink {
-                        CellListView(settings: CellListFilterSettings(status: .suspicious, timeFrame: .pastDays, date: subTwoWeeksFromCurrentDate))
-                    } label: {
-                        Text(Image(systemName: "exclamationmark.shield")) + Text(" Suspicious Cells")
-                    }.disabled(risk < .high(cellCount: 1))
+                ListNavigationButton {
+                    filter.reset()
+                    filter.status = .suspicious
+                    filter.timeFrame = .pastDays
+                    filter.date = subTwoWeeksFromCurrentDate
+                    navigator.push(SummaryNavigationPath.cellList)
+                } label: {
+                    Text(Image(systemName: "exclamationmark.shield")) + Text(" Suspicious Cells")
                 }
+                .disabled(risk < .high(cellCount: 1))
             }
 
             if studyParticipationTimestamp == 0 {
                 Section(header: Text("Study"), footer: Text("The CellGuard team researches the abuse of fake base stations. Please join our study to contribute suspicious cells and help us to improve our methodology for uncovering them!")) {
-                    NavigationLink {
-                        UserStudyView(returnToPreviousView: true)
-                    } label: {
+                    ListNavigationLink(value: SummaryNavigationPath.userStudy) {
                         if #available(iOS 17, *) {
                             Text(Image(systemName: "pencil.and.list.clipboard")) + Text(" Participate")
                         } else {
@@ -90,9 +74,7 @@ struct RiskInfoView: View {
                 }
             } else {
                 Section(header: Text("Study"), footer: Text("Thank you for contributing to the CellGuard study. Your input will help us improve our metrics and uncover fake base station abuse.")) {
-                    NavigationLink {
-                        StudyContributionsView()
-                    } label: {
+                    ListNavigationLink(value: SummaryNavigationPath.userStudyContributions) {
                         Text("Your Contributions")
                     }
                 }

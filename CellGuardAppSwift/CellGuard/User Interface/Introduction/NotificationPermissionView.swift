@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import NavigationBackport
 
 struct NotificationPermissionView: View {
 
@@ -26,25 +27,32 @@ struct NotificationPermissionView: View {
 
                 CGNotificationManager.shared.requestAuthorization { _ in
                     // Save that we did show the intro (only once we receive a result for the notification permission)
-                    UserDefaults.standard.set(true, forKey: UserDefaultsKeys.introductionShown.rawValue)
+                    next()
                 }
             }
             .padding()
         }
         .navigationTitle("Notification Permission")
         .navigationBarTitleDisplayMode(.large)
-        .toolbar(content: {
+        .toolbar {
             ToolbarItem {
                 Button("Skip") {
-                    UserDefaults.standard.set(true, forKey: UserDefaultsKeys.introductionShown.rawValue)
+                    next()
                 }
             }
-        })
+        }
+    }
+
+    func next() {
+        UserDefaults.standard.set(true, forKey: UserDefaultsKeys.introductionShown.rawValue)
     }
 }
 
 #Preview {
-    NavigationView {
+    NBNavigationStack {
         NotificationPermissionView()
+            .nbNavigationDestination(for: IntroductionState.self) { _ in
+                Text("No")
+            }
     }
 }

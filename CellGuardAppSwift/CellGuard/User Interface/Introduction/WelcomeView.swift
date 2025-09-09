@@ -6,10 +6,9 @@
 //
 
 import SwiftUI
+import NavigationBackport
 
 struct WelcomeView: View {
-
-    @State private var action: Int? = 0
 
     var body: some View {
         VStack {
@@ -38,20 +37,8 @@ struct WelcomeView: View {
                 )
             }
 
-            // Navigate to next view
-            // WelcomeSheet
-            //  -> CellDetectionView
-            //  -> UserStudyView
-            //  -> UpdateCheckView (jailbroken)
-            //  -> SysDiagnoseView (non-jailbroken)
-            //  -> LocationPermissionView
-            //  -> NotificationPermissionView
-            NavigationLink(destination: CellDetectionView(), tag: 1, selection: $action) {}
-
-            LargeButton(title: "Continue", backgroundColor: .blue) {
-                self.action = 1
-            }
-            .padding()
+            LargeButtonLink(title: "Continue", value: IntroductionState.cellDetection, backgroundColor: .blue)
+                .padding()
         }
         .navigationTitle("Welcome to CellGuard")
         .navigationBarHidden(true)
@@ -93,7 +80,10 @@ private struct WelcomeInformation: View {
 }
 
 #Preview {
-    NavigationView {
+    NBNavigationStack {
         WelcomeView()
+            .nbNavigationDestination(for: IntroductionState.self) { _ in
+                Text("No")
+            }
     }
 }

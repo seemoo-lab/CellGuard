@@ -7,118 +7,48 @@
 
 import CoreData
 import SwiftUI
-
-// Do not attempt to use a SwiftUI Menu within a NavigationView ToolbarItem!
-// This is utterly broken in SwiftUI on iOS 14 as the menu always closes if a view gets any kind of update.
-// See:
-// - https://developer.apple.com/forums/thread/664906
-// - https://stackoverflow.com/questions/68373893/toolbar-menu-is-closed-when-updates-are-made-to-ui-in-swiftui
-// - https://www.hackingwithswift.com/forums/swiftui/navigationbar-toolbar-button-not-working-properly/3376
-// - https://stackoverflow.com/questions/63540602/navigationbar-toolbar-button-not-working-reliable-when-state-variable-refres
-// - https://stackoverflow.com/questions/65095562/observableobject-is-updating-all-views-and-causing-menus-to-close-in-swiftui
-//
-// We've got a workaround for a related problem with NavigationLinks in ToolbarItems in PacketTabView.swift.
-//
-// And we've fixed the primary issue with 'Self._printChanges()' (Only works on iOS 15 and above)
-// See: WelcomeSheet.swift
-// See: https://www.hackingwithswift.com/quick-start/swiftui/how-to-find-which-data-change-is-causing-a-swiftui-view-to-update
+import NavigationBackport
 
 struct SummaryTabView: View {
 
-    @State private var showingCellList = false
-    @State private var showingConnectivity = false
-    #if STATS_VIEW
-    @State private var showingStats = false
-    #endif
-    #if DEBUG
-    @State private var showingCellLab = false
-    @State private var showingTestOperators = false
-    #endif
-    @State private var showingSettings = false
+    @State private var path = NBNavigationPath()
+    @State private var cellFilterSettings = CellListFilterSettings()
+    @State private var connectivityFilterSettings = ConnectivityFilterSettings()
+
+    init() {
+    }
 
     var body: some View {
-        NavigationView {
-            VStack {
-                NavigationLink(isActive: $showingCellList) {
-                    CellListView()
-                } label: {
-                    EmptyView()
-                }
-
-                NavigationLink(isActive: $showingConnectivity) {
-                    ConnectivityView()
-                } label: {
-                    EmptyView()
-                }
-
-                #if STATS_VIEW
-                NavigationLink(isActive: $showingStats) {
-                    DataSummaryView()
-                } label: {
-                    EmptyView()
-                }
-                #endif
-
-                #if DEBUG
-                NavigationLink(isActive: $showingCellLab) {
-                    DebugAddCellView()
-                } label: {
-                    EmptyView()
-                }
-                NavigationLink(isActive: $showingTestOperators) {
-                    OperatorLookupView()
-                } label: {
-                    EmptyView()
-                }
-                #endif
-
-                NavigationLink(isActive: $showingSettings) {
-                    SettingsView()
-                } label: {
-                    EmptyView()
-                }
-                CombinedRiskCellView()
-            }
+        NBNavigationStack(path: $path) {
+            CombinedRiskCellView()
             .navigationTitle("Summary")
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Menu {
-                        Button {
-                            showingCellList = true
-                        } label: {
+                        NBNavigationLink(value: SummaryNavigationPath.cellList) {
                             Label("Cells", systemImage: "wave.3.left")
                         }
-                        Button {
-                            showingConnectivity = true
-                        } label: {
+                        NBNavigationLink(value: SummaryNavigationPath.connectivity) {
                             Label("Connectivity", systemImage: "bolt")
                         }
                         #if STATS_VIEW
                         // Disable stats for the beta test as it is not finished.
-                        Button {
-                            showingStats = true
-                        } label: {
+                        NBNavigationLink(value: SummaryNavigationPath.dataSummary) {
                             Label("Stats", systemImage: "chart.bar.xaxis")
                         }
                         #endif
                         #if DEBUG
-                        Button {
-                            showingCellLab = true
-                        } label: {
-                            Label("Cell Laboratory", systemImage: "leaf")
+                        NBNavigationLink(value: SummaryNavigationPath.cellLaboratory) {
+                            Label("Laboratory", systemImage: "leaf")
                         }
-                        Button {
-                            showingTestOperators = true
-                        } label: {
+                        NBNavigationLink(value: SummaryNavigationPath.operatorLookup) {
                             Label("Operators", systemImage: "globe")
                         }
                         #endif
                         Link(destination: CellGuardURLs.baseUrl) {
                             Label("Help", systemImage: "book")
                         }
-                        Button {
-                            showingSettings = true
-                        } label: {
+                        NBNavigationLink(value: SummaryNavigationPath.settings) {
                             Label("Settings", systemImage: "gear")
                         }
                     } label: {
@@ -127,8 +57,15 @@ struct SummaryTabView: View {
                     }
                 }
             }
+            .cgNavigationDestinations(.summaryTab)
+            .cgNavigationDestinations(.cells)
+            .cgNavigationDestinations(.operators)
+            .cgNavigationDestinations(.packets)
+            .cgNavigationDestinations(.connectivity)
         }
         .background(Color.gray)
+        .environmentObject(cellFilterSettings)
+        .environmentObject(connectivityFilterSettings)
     }
 }
 

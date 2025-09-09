@@ -8,6 +8,7 @@
 import SwiftUI
 import AcknowList
 import SwiftGzip
+import NavigationBackport
 
 struct CargoLicenseFile: Codable {
     var rootName: String
@@ -29,8 +30,24 @@ struct CargoLicense: Codable {
 
 struct AcknowledgementView: View {
 
+    var body: some View {
+        List {
+            ListNavigationLink(value: SummaryNavigationPath.acknowledgementsSwift) {
+                Text("Swift")
+            }
+            ListNavigationLink(value: SummaryNavigationPath.acknowledgementsRust) {
+                Text("Rust")
+            }
+        }
+        .navigationTitle("Third-Party Libraries")
+        .listStyle(.insetGrouped)
+    }
+
+}
+
+struct SwiftAcknowledgementView: View {
+
     @State private var swiftAcknowledgements: [Acknow] = []
-    @State private var rustAcknowledgements: [Acknow] = []
 
     private func loadSwiftAcknowledgements () {
         var acknowledgements: [Acknow] = []
@@ -54,6 +71,21 @@ struct AcknowledgementView: View {
         acknowledgements.sort { $0.title < $1.title }
         self.swiftAcknowledgements = acknowledgements
     }
+
+    var body: some View {
+        AcknowListSwiftUIView(acknowledgements: swiftAcknowledgements)
+            .onAppear {
+                if swiftAcknowledgements.isEmpty {
+                    loadSwiftAcknowledgements()
+                }
+            }
+    }
+
+}
+
+struct RustAcknowledgementView: View {
+
+    @State private var rustAcknowledgements: [Acknow] = []
 
     private func loadRustAcknowledgements() {
         let jsonDecoder = JSONDecoder()
@@ -82,28 +114,12 @@ struct AcknowledgementView: View {
     }
 
     var body: some View {
-        List {
-            NavigationLink {
-                AcknowListSwiftUIView(acknowledgements: swiftAcknowledgements)
-            } label: {
-                Text("Swift")
+        AcknowListSwiftUIView(acknowledgements: rustAcknowledgements)
+            .onAppear {
+                if rustAcknowledgements.isEmpty {
+                    loadRustAcknowledgements()
+                }
             }
-            NavigationLink {
-                AcknowListSwiftUIView(acknowledgements: rustAcknowledgements)
-            } label: {
-                Text("Rust")
-            }
-        }
-        .onAppear {
-            if swiftAcknowledgements.isEmpty {
-                loadSwiftAcknowledgements()
-            }
-            if rustAcknowledgements.isEmpty {
-                loadRustAcknowledgements()
-            }
-        }
-        .navigationTitle("Third-Party Libraries")
-        .listStyle(.insetGrouped)
     }
 
 }

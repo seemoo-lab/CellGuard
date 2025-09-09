@@ -6,10 +6,9 @@
 //
 
 import SwiftUI
+import NavigationBackport
 
 struct CellDetectionView: View {
-
-    @State private var action: Int? = 0
 
     var body: some View {
         VStack {
@@ -28,12 +27,8 @@ In a few cases, these anomalies indicate an attack by a fake base station. Such 
                 )
             }
 
-            NavigationLink(destination: UserStudyView(), tag: 1, selection: $action) {}
-
-            LargeButton(title: "Continue", backgroundColor: .blue) {
-                self.action = 1
-            }
-            .padding()
+            LargeButtonLink(title: "Continue", value: IntroductionState.userStudy, backgroundColor: .blue)
+                .padding()
         }
         .navigationTitle("Fake Base Stations")
         .navigationBarTitleDisplayMode(.large)
@@ -49,7 +44,10 @@ In a few cases, these anomalies indicate an attack by a fake base station. Such 
 }
 
 #Preview {
-    NavigationView {
+    NBNavigationStack {
         CellDetectionView()
+            .nbNavigationDestination(for: IntroductionState.self) { _ in
+                Text("No")
+            }
     }
 }

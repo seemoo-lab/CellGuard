@@ -6,12 +6,23 @@
 //
 
 import SwiftUI
+import NavigationBackport
 
-struct CountryDetailsView: View {
-    let country: NetworkCountryAttributes
+struct CountryDetailsNavigation<C: NetworkCountryAttributes>: Hashable {
+    let country: C
     let secondary: [NetworkCountry]?
 
-    init(country: NetworkCountryAttributes, secondary: [NetworkCountry]? = nil) {
+    init(country: C, secondary: [NetworkCountry]? = nil) {
+        self.country = country
+        self.secondary = secondary
+    }
+}
+
+struct CountryDetailsView<C: NetworkCountryAttributes>: View {
+    let country: C
+    let secondary: [NetworkCountry]?
+
+    init(country: C, secondary: [NetworkCountry]? = nil) {
         self.country = country
         self.secondary = secondary
     }
@@ -86,61 +97,61 @@ private struct SimilarIsoSection: View {
 }
 
 #Preview("DE") {
-    NavigationView {
+    NBNavigationStack {
         CountryDetailsView(country: OperatorDefinitions.shared.translate(country: 262, network: 01).first!)
     }
 }
 
 #Preview("US") {
-    NavigationView {
+    NBNavigationStack {
         CountryDetailsView(country: OperatorDefinitions.shared.translate(country: 310, network: 04).first!)
     }
 }
 
 #Preview("UK") {
-    NavigationView {
+    NBNavigationStack {
         CountryDetailsView(country: OperatorDefinitions.shared.translate(country: 234, network: 02).first!)
     }
 }
 
 #Preview("GG") {
-    NavigationView {
+    NBNavigationStack {
         CountryDetailsView(country: OperatorDefinitions.shared.translate(country: 234, network: 03).first!)
     }
 }
 
 #Preview("AU") {
-    NavigationView {
+    NBNavigationStack {
         CountryDetailsView(country: OperatorDefinitions.shared.translate(country: 505, network: 01).first!)
     }
 }
 
 #Preview("BQ/CW/SX") {
-    NavigationView {
+    NBNavigationStack {
         CountryDetailsView(country: OperatorDefinitions.shared.translate(country: 362, network: 31).first!)
     }
 }
 
 #Preview("BL/GF/GP/MF/MQ") {
-    NavigationView {
+    NBNavigationStack {
         CountryDetailsView(country: OperatorDefinitions.shared.translate(country: 340, network: 01).first!)
     }
 }
 
 #Preview("IN") {
-    NavigationView {
+    NBNavigationStack {
         CountryDetailsView(country: OperatorDefinitions.shared.translate(country: 405, network: 813).first!)
     }
 }
 
 #Preview("Test") {
-    NavigationView {
+    NBNavigationStack {
         CountryDetailsView(country: OperatorDefinitions.shared.translate(country: 001, network: 01).first!)
     }
 }
 
 #Preview("Int") {
-    NavigationView {
+    NBNavigationStack {
         CountryDetailsView(country: OperatorDefinitions.shared.translate(country: 901, network: 10).first!)
     }
 }

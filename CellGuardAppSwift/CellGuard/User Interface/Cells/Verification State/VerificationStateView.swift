@@ -7,6 +7,7 @@
 
 import SwiftUI
 import CoreData
+import NavigationBackport
 
 struct VerificationStateView: View {
 
@@ -70,9 +71,9 @@ private struct VerificationStateInternalView: View {
                 }
 
                 if let qmiPacket = measurement.packetQmi {
-                    NavigationLink { PacketQMIDetailsView(packet: qmiPacket) } label: { PacketCell(packet: qmiPacket) }
+                    ListNavigationLink(value: NavObjectId(object: qmiPacket)) { PacketCell(packet: qmiPacket) }
                 } else if let ariPacket = measurement.packetAri {
-                    NavigationLink { PacketARIDetailsView(packet: ariPacket) } label: { PacketCell(packet: ariPacket) }
+                    ListNavigationLink(value: NavObjectId(object: ariPacket)) { PacketCell(packet: ariPacket) }
                 }
             }
 
@@ -105,7 +106,7 @@ private struct VerificationStateInternalView: View {
                     Button {
                         let measurementId = measurement.objectID
                         Task(priority: .background) {
-                            try? PersistenceController.shared.clearVerificationData(tweakCellID: measurementId)
+                            try? PersistenceController.basedOnEnvironment().clearVerificationData(tweakCellID: measurementId)
                         }
                     } label: {
                         KeyValueListRow(key: "Clear Verification Data") {
