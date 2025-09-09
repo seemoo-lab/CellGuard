@@ -14,6 +14,7 @@ enum CGNavigationDestinations {
     case operators
     case connectivity
     case summaryTab
+    case sysdiagnoses
 }
 
 struct CGNavigationViewModifier: ViewModifier {
@@ -81,6 +82,11 @@ struct CGNavigationViewModifier: ViewModifier {
                 .nbNavigationDestination(for: SummaryNavigationPath.self, destination: SummaryNavigationPath.navigate)
                 .nbNavigationDestination(for: RiskLevel.self) { riskLevel in
                     RiskInfoView(risk: riskLevel)
+                }
+        } else if destinations == .sysdiagnoses {
+            content
+                .nbNavigationDestination(for: NavObjectId<Sysdiagnose>.self) { id in
+                    id.ensure { SysdiagnoseDetailsView(sysdiagnose: $0) }
                 }
         } else {
             content

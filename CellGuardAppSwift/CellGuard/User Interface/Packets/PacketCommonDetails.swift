@@ -18,6 +18,11 @@ struct PacketDetailsSection: View {
             DetailsRow("SIM Slot", packet.simSlotID == 0 ? "None" : String(packet.simSlotID))
             DetailsRow("Direction", packet.direction ?? "???")
             DetailsRow("Timestamp", date: packet.collected)
+            if let sysdiagnose = packet.sysdiagnose {
+                ListNavigationLink(value: NavObjectId(object: sysdiagnose)) {
+                    SysdiagnoseCell(sysdiagnose: sysdiagnose)
+                }
+            }
             DetailsRow("Size", bytes: data.count)
             PacketDetailsDataRow("Data", data: data)
         }

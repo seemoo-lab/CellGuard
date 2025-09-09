@@ -15,6 +15,7 @@ public protocol Packet: NSFetchRequestResult, Identifiable {
     var imported: Date? { get set }
     var simSlotID: Int16 { get set }
     var objectID: NSManagedObjectID { get }
+    var sysdiagnose: Sysdiagnose? { get set }
 }
 
 extension Packet {

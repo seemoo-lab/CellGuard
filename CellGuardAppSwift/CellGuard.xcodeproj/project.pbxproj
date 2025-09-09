@@ -413,6 +413,10 @@
 		ED3A28A12E62F9D700D0B6A9 /* QSysdiagnose.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED3A289F2E62F9D200D0B6A9 /* QSysdiagnose.swift */; };
 		ED3A28A72E63221000D0B6A9 /* Sysdiagnose+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED3A28A62E63221000D0B6A9 /* Sysdiagnose+CoreDataClass.swift */; };
 		ED3A28A82E63221000D0B6A9 /* Sysdiagnose+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED3A28A62E63221000D0B6A9 /* Sysdiagnose+CoreDataClass.swift */; };
+		ED3A28AB2E639BDE00D0B6A9 /* SysdiagnoseDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED3A28AA2E639BD600D0B6A9 /* SysdiagnoseDetailsView.swift */; };
+		ED3A28AC2E639BDE00D0B6A9 /* SysdiagnoseDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED3A28AA2E639BD600D0B6A9 /* SysdiagnoseDetailsView.swift */; };
+		ED3A28AE2E639CEC00D0B6A9 /* SysdiagnoseCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED3A28AD2E639CE700D0B6A9 /* SysdiagnoseCell.swift */; };
+		ED3A28AF2E639CEC00D0B6A9 /* SysdiagnoseCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED3A28AD2E639CE700D0B6A9 /* SysdiagnoseCell.swift */; };
 		ED3A28B12E63A3D300D0B6A9 /* DetailsRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED3A28B02E63A3D000D0B6A9 /* DetailsRow.swift */; };
 		ED3A28B22E63A3D300D0B6A9 /* DetailsRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED3A28B02E63A3D000D0B6A9 /* DetailsRow.swift */; };
 		ED6F69252DBB8D40007BFE78 /* UpdateCheckView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED6F69242DBB8D40007BFE78 /* UpdateCheckView.swift */; };
@@ -670,6 +674,8 @@
 		CFFF19E62BC70E83004E40CE /* FirstLastDates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstLastDates.swift; sourceTree = "<group>"; };
 		ED3A289F2E62F9D200D0B6A9 /* QSysdiagnose.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QSysdiagnose.swift; sourceTree = "<group>"; };
 		ED3A28A62E63221000D0B6A9 /* Sysdiagnose+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sysdiagnose+CoreDataClass.swift"; sourceTree = "<group>"; };
+		ED3A28AA2E639BD600D0B6A9 /* SysdiagnoseDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SysdiagnoseDetailsView.swift; sourceTree = "<group>"; };
+		ED3A28AD2E639CE700D0B6A9 /* SysdiagnoseCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SysdiagnoseCell.swift; sourceTree = "<group>"; };
 		ED3A28B02E63A3D000D0B6A9 /* DetailsRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailsRow.swift; sourceTree = "<group>"; };
 		ED6F69242DBB8D40007BFE78 /* UpdateCheckView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateCheckView.swift; sourceTree = "<group>"; };
 		ED6F69272DBBC1CA007BFE78 /* UpdateCheckInfoCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateCheckInfoCard.swift; sourceTree = "<group>"; };
@@ -1001,6 +1007,7 @@
 		CF5CBB962968B7E1001CE9BE /* User Interface */ = {
 			isa = PBXGroup;
 			children = (
+				ED3A28A92E639BCE00D0B6A9 /* Sysdiagnose */,
 				45ECF53F2BF98EB400DD92CF /* Introduction */,
 				EDA9FEC52E1FEB1800C52409 /* Connectivity */,
 				CF54CCBF2A331E5400961E4D /* Packets */,
@@ -1280,6 +1287,15 @@
 				CF8F3E342BF3C4DE00FC9F43 /* StudyTask.swift */,
 			);
 			path = API;
+			sourceTree = "<group>";
+		};
+		ED3A28A92E639BCE00D0B6A9 /* Sysdiagnose */ = {
+			isa = PBXGroup;
+			children = (
+				ED3A28AD2E639CE700D0B6A9 /* SysdiagnoseCell.swift */,
+				ED3A28AA2E639BD600D0B6A9 /* SysdiagnoseDetailsView.swift */,
+			);
+			path = Sysdiagnose;
 			sourceTree = "<group>";
 		};
 		EDA9FEC52E1FEB1800C52409 /* Connectivity */ = {
@@ -1712,6 +1728,7 @@
 				CF2FF6942BF2A3DF006E2DF4 /* StudyClientSamples.swift in Sources */,
 				CFB6CF5B2BD122FA00EAB7B4 /* DataSummaryView.swift in Sources */,
 				CF332F9F2E05531200BBA851 /* NavObjectId.swift in Sources */,
+				ED3A28AC2E639BDE00D0B6A9 /* SysdiagnoseDetailsView.swift in Sources */,
 				CFB6CF5C2BD122FA00EAB7B4 /* CellReachOverlay.swift in Sources */,
 				ED6F69282DBBC1CC007BFE78 /* UpdateCheckInfoCard.swift in Sources */,
 				CF70A98C2BE6B51C00989FB5 /* QLocationUser.swift in Sources */,
@@ -1766,6 +1783,7 @@
 				CFB6CF782BD122FA00EAB7B4 /* DeleteView.swift in Sources */,
 				CFB6CF792BD122FA00EAB7B4 /* PersistenceError.swift in Sources */,
 				CFB6CF7A2BD122FA00EAB7B4 /* ARIDefinitions.swift in Sources */,
+				ED3A28AE2E639CEC00D0B6A9 /* SysdiagnoseCell.swift in Sources */,
 				ED6F69262DBB8D40007BFE78 /* UpdateCheckView.swift in Sources */,
 				CFB6CF7B2BD122FA00EAB7B4 /* CPTCollector.swift in Sources */,
 				CFB6CF7D2BD122FA00EAB7B4 /* TrackedUserLocation.swift in Sources */,
@@ -1824,6 +1842,7 @@
 				CFEC5E762BD1808E004978FA /* CellGuardURLs.swift in Sources */,
 				CF0A5678298A7A910012B2A8 /* VerificationProgressView.swift in Sources */,
 				ED3A28B22E63A3D300D0B6A9 /* DetailsRow.swift in Sources */,
+				ED3A28AF2E639CEC00D0B6A9 /* SysdiagnoseCell.swift in Sources */,
 				CF446754298D2A040083EE63 /* CellLocationDistance.swift in Sources */,
 				CF1DF87D2C175970008F6F40 /* StudyContributionsView.swift in Sources */,
 				CF26102F2E02F6AD00F6440C /* OperatorLookupView.swift in Sources */,
@@ -1850,6 +1869,7 @@
 				EDAFBFE92D9C0A5300D7748B /* AriCellParser.swift in Sources */,
 				45ECF56C2BFBEA5300DD92CF /* DeviceModel.swift in Sources */,
 				EDAD7A042E1D7DA600EBB924 /* QConnectivityEvent.swift in Sources */,
+				ED3A28AB2E639BDE00D0B6A9 /* SysdiagnoseDetailsView.swift in Sources */,
 				45ECF5512BFAAF1F00DD92CF /* CenteredTitleIconTextView.swift in Sources */,
 				ED7DB14E2DC785E8007D5314 /* UpdateCheckTask.swift in Sources */,
 				CFA83C9B2D9D78FC00239AB7 /* OperatorDetailsView.swift in Sources */,
