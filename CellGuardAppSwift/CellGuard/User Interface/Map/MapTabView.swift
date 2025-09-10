@@ -63,18 +63,19 @@ private struct MapWithButtonBottom: View {
     var showInfoSheet: () -> Void
 
     var body: some View {
-        // Map
-        ConnectedCellMap()
-
-        // Info Button
-        HStack {
-            Spacer()
-            OpaqueMapInfoButton(onTap: showInfoSheet)
+        ZStack {
+            // Map
+            ConnectedCellMap()
+            // Info Button
+            HStack {
+                Spacer()
+                OpaqueMapInfoButton(onTap: showInfoSheet)
+            }
+            .frame(maxHeight: .infinity, alignment: .bottom)
+            // It's quite important to set the right button style, otherwise the whole map is the tap area
+            // See: https://stackoverflow.com/a/70400079
+            .buttonStyle(.borderless)
         }
-        .frame(maxHeight: .infinity, alignment: .bottom)
-        // It's quite important to set the right button style, otherwise the whole map is the tap area
-        // See: https://stackoverflow.com/a/70400079
-        .buttonStyle(.borderless)
     }
 }
 
