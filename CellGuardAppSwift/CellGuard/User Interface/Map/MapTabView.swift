@@ -18,22 +18,8 @@ struct MapTabView: View {
 
     var body: some View {
         NBNavigationStack {
-            ZStack {
-                // Map
-                ConnectedCellMap()
-
-                // Info Button
-                HStack {
-                    Spacer()
-                    MapInfoButton {
-                        infoSheetShown = true
-                    }
-                }
-                .frame(maxHeight: .infinity, alignment: .bottom)
-                // It's quite important to set the right button style, otherwise the whole map is the tap area
-                // See: https://stackoverflow.com/a/70400079
-                .buttonStyle(.borderless)
-
+            MapWithButton {
+                infoSheetShown = true
             }
             .sheet(isPresented: $infoSheetShown) {
                 MapInfoSheet()
@@ -42,6 +28,53 @@ struct MapTabView: View {
             .cgNavigationDestinations(.operators)
             .cgNavigationDestinations(.packets)
         }
+    }
+}
+
+private struct MapWithButton: View {
+    var showInfoSheet: () -> Void
+
+    var body: some View {
+        if #available(iOS 26, *) {
+            MapWithButtonToolbar(showInfoSheet: showInfoSheet)
+        } else {
+            MapWithButtonBottom(showInfoSheet: showInfoSheet)
+        }
+    }
+
+}
+
+private struct MapWithButtonToolbar: View {
+    var showInfoSheet: () -> Void
+
+    var body: some View {
+        ConnectedCellMap()
+            .toolbar {
+                ToolbarItem {
+                    Button(action: showInfoSheet) {
+                        Image(systemName: "info")
+                    }
+                }
+            }
+    }
+}
+
+private struct MapWithButtonBottom: View {
+    var showInfoSheet: () -> Void
+
+    var body: some View {
+        // Map
+        ConnectedCellMap()
+
+        // Info Button
+        HStack {
+            Spacer()
+            OpaqueMapInfoButton(onTap: showInfoSheet)
+        }
+        .frame(maxHeight: .infinity, alignment: .bottom)
+        // It's quite important to set the right button style, otherwise the whole map is the tap area
+        // See: https://stackoverflow.com/a/70400079
+        .buttonStyle(.borderless)
     }
 }
 
@@ -65,7 +98,7 @@ private struct ConnectedCellMap: View {
     }
 }
 
-private struct MapInfoButton: View {
+private struct OpaqueMapInfoButton: View {
 
     @Environment(\.colorScheme) var colorScheme
 

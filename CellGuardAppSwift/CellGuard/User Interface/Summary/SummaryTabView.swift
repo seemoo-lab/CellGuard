@@ -52,7 +52,7 @@ struct SummaryTabView: View {
                             Label("Settings", systemImage: "gear")
                         }
                     } label: {
-                        Image(systemName: "ellipsis.circle")
+                        Image(systemName: CGIcons.settings)
                             .imageScale(.large)
                     }
                 }
