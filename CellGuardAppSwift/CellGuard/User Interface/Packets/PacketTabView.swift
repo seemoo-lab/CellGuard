@@ -35,8 +35,7 @@ struct PacketTabView: View {
                     Button {
                         path.push(PacketNavigationPath.filter)
                     } label: {
-                        // Starting with iOS 15: line.3.horizontal.decrease.circle
-                        Image(systemName: "line.horizontal.3.decrease.circle")
+                        Image(systemName: CGIcons.filter)
                     }
                 }
             }

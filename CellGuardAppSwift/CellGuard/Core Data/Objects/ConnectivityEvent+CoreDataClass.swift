@@ -28,8 +28,6 @@ public class ConnectivityEvent: NSManagedObject {
             "Disconnected"
         case (false, false), (false, true):
             "SIM Removed"
-        default:
-            "Connectivity Event"
         }
     }
 }

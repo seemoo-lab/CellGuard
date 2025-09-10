@@ -400,6 +400,10 @@
 		CFEC5E772BD1816B004978FA /* CellGuardURLs.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFEC5E752BD1808E004978FA /* CellGuardURLs.swift */; };
 		CFF05F6D2A39AA3900DE6FB2 /* DeleteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFF05F6C2A39AA3900DE6FB2 /* DeleteView.swift */; };
 		CFF05F6F2A39ABF500DE6FB2 /* PersistenceCategories.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFF05F6E2A39ABF500DE6FB2 /* PersistenceCategories.swift */; };
+		CFFEA3062E717A1F002C4EBE /* CGIcons.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFFEA3052E717A1F002C4EBE /* CGIcons.swift */; };
+		CFFEA3072E717A1F002C4EBE /* CGIcons.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFFEA3052E717A1F002C4EBE /* CGIcons.swift */; };
+		CFFEA3092E717EA6002C4EBE /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = CFFEA3082E717EA6002C4EBE /* AppIcon.icon */; };
+		CFFEA30A2E717EA6002C4EBE /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = CFFEA3082E717EA6002C4EBE /* AppIcon.icon */; };
 		CFFF19DF2BC6CF47004E40CE /* Package.resolved in Resources */ = {isa = PBXBuildFile; fileRef = CFFF19DE2BC6CF47004E40CE /* Package.resolved */; };
 		CFFF19E12BC6D045004E40CE /* AcknowList in Frameworks */ = {isa = PBXBuildFile; productRef = CFFF19E02BC6D045004E40CE /* AcknowList */; };
 		CFFF19E32BC6D2D3004E40CE /* AcknowledgementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFFF19E22BC6D2D3004E40CE /* AcknowledgementView.swift */; };
@@ -655,6 +659,8 @@
 		CFEECE622C0F795C00D6D13F /* Config.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Config.xcconfig; path = Config/Config.xcconfig; sourceTree = "<group>"; };
 		CFF05F6C2A39AA3900DE6FB2 /* DeleteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteView.swift; sourceTree = "<group>"; };
 		CFF05F6E2A39ABF500DE6FB2 /* PersistenceCategories.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceCategories.swift; sourceTree = "<group>"; };
+		CFFEA3052E717A1F002C4EBE /* CGIcons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CGIcons.swift; sourceTree = "<group>"; };
+		CFFEA3082E717EA6002C4EBE /* AppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = AppIcon.icon; sourceTree = "<group>"; };
 		CFFF19DE2BC6CF47004E40CE /* Package.resolved */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Package.resolved; path = CellGuard.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved; sourceTree = "<group>"; };
 		CFFF19E22BC6D2D3004E40CE /* AcknowledgementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AcknowledgementView.swift; sourceTree = "<group>"; };
 		CFFF19E42BC70E63004E40CE /* ImportResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportResult.swift; sourceTree = "<group>"; };
@@ -781,6 +787,7 @@
 				CF70F2AB2E5F9A9B00059960 /* ListNavigationButton.swift */,
 				CF010DBF2E619E9200AB6FFD /* SelectDateSheet.swift */,
 				CF55C4BE2E61A1DB00C1808A /* FilterSimSlot.swift */,
+				CFFEA3052E717A1F002C4EBE /* CGIcons.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -1167,6 +1174,7 @@
 				CFD0233C2961A10D00AA5A1C /* Preview Content */,
 				CF5CBB962968B7E1001CE9BE /* User Interface */,
 				CFD0233A2961A10D00AA5A1C /* Assets.xcassets */,
+				CFFEA3082E717EA6002C4EBE /* AppIcon.icon */,
 				CFD023362961A10D00AA5A1C /* CellGuardApp.swift */,
 				CFB8B2892963498200503189 /* CellGuardAppDelegate.swift */,
 				CF5CBB9429689FFE001CE9BE /* CellGuardSceneDelegate.swift */,
@@ -1452,6 +1460,7 @@
 				CFB6CF992BD122FA00EAB7B4 /* Preview Assets.xcassets in Resources */,
 				CF895A522C9B2E5C001F40EA /* countries.geojson.gz in Resources */,
 				CFB6CF9B2BD122FA00EAB7B4 /* LaunchScreen.storyboard in Resources */,
+				CFFEA3092E717EA6002C4EBE /* AppIcon.icon in Resources */,
 				CFB6CF9E2BD122FA00EAB7B4 /* Package.resolved in Resources */,
 				CF1AF7BA2D9C4F3F00B03E4E /* operators.csv.gz in Resources */,
 				CF1AF7BB2D9C4F3F00B03E4E /* countries.csv.gz in Resources */,
@@ -1471,6 +1480,7 @@
 				CFD0233E2961A10D00AA5A1C /* Preview Assets.xcassets in Resources */,
 				CF895A512C9B2E5C001F40EA /* countries.geojson.gz in Resources */,
 				CFE4A7A92B35991C00A37C7A /* LaunchScreen.storyboard in Resources */,
+				CFFEA30A2E717EA6002C4EBE /* AppIcon.icon in Resources */,
 				CFFF19DF2BC6CF47004E40CE /* Package.resolved in Resources */,
 				CF1AF7B82D9C4F3F00B03E4E /* operators.csv.gz in Resources */,
 				CF1AF7B92D9C4F3F00B03E4E /* countries.csv.gz in Resources */,
@@ -1650,6 +1660,7 @@
 				CFB6CF3E2BD122FA00EAB7B4 /* CommonCellMap.swift in Sources */,
 				CFB6CF3F2BD122FA00EAB7B4 /* CircularProgressView.swift in Sources */,
 				CF7064F32CC5137600BF8AF9 /* TowerAnnotation.swift in Sources */,
+				CFFEA3072E717A1F002C4EBE /* CGIcons.swift in Sources */,
 				CFB6CF402BD122FA00EAB7B4 /* CellClusterAnnotationView.swift in Sources */,
 				CFB6CF412BD122FA00EAB7B4 /* CellStatusIcon.swift in Sources */,
 				CFB6CF422BD122FA00EAB7B4 /* Cell.swift in Sources */,
@@ -1959,6 +1970,7 @@
 				CF2002E82A2F2BE2000922E6 /* QMIParser.swift in Sources */,
 				CF86C7972A6ACDAA002EC9B6 /* CellDetailsRow.swift in Sources */,
 				45ECF5542BFAB97A00DD92CF /* LocationPermissionView.swift in Sources */,
+				CFFEA3062E717A1F002C4EBE /* CGIcons.swift in Sources */,
 				CF5756152B2F232A00C7C60A /* cellguard.swift in Sources */,
 				CF55C4C62E61A7F100C1808A /* NavListIds.swift in Sources */,
 				CF5EF9222977FCF800C4F50A /* CellTechnologyFormatter.swift in Sources */,
@@ -2143,6 +2155,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = K2B79VWGA3;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -2205,6 +2218,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = K2B79VWGA3;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
