@@ -711,7 +711,7 @@ struct LogArchiveReader {
             locations: nil,
             packets: ImportCount(count: packets.count, first: packetDates.first, last: packetDates.last),
             connectivityEvents: ImportCount(count: connectivityCount, first: packetDates.first, last: packetDates.last),
-            sysdiagnoses: sysdiagnose != nil ? ImportCount(count: 1, first: packetDates.last, last: packetDates.last) : nil,
+            sysdiagnoses: nil,
             notices: notices
         )
     }

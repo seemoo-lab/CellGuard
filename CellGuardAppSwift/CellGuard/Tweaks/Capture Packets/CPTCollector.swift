@@ -73,12 +73,12 @@ struct CPTCollector {
             }
             #endif
 
-            let (_, qmiPacketRefs) = try PersistenceController.shared.importQMIPackets(from: qmiPackets, sysdiagnoseID: sysdiagnose)
-            let (_, ariPacketRefs) = try PersistenceController.shared.importARIPackets(from: ariPackets, sysdiagnoseID: sysdiagnose)
+            let (_, qmiPacketRefs) = try PersistenceController.shared.importQMIPackets(from: qmiPackets, sysdiagnoseId: sysdiagnose)
+            let (_, ariPacketRefs) = try PersistenceController.shared.importARIPackets(from: ariPackets, sysdiagnoseId: sysdiagnose)
             let cellPacketRefs = qmiPacketRefs.cellInfo + ariPacketRefs.cellInfo
-            let importedCells = try PersistenceController.shared.importCollectedCells(from: cellPacketRefs, sysdiagnoseID: sysdiagnose, filter: true)
+            let importedCells = try PersistenceController.shared.importCollectedCells(from: cellPacketRefs, sysdiagnoseId: sysdiagnose, filter: true)
             let connectivityPacketRefs = qmiPacketRefs.connectivityEvents + ariPacketRefs.connectivityEvents
-            let importedConnectivityEvents = try PersistenceController.shared.importConnectivityEvents(from: connectivityPacketRefs, sysdiagnoseID: sysdiagnose)
+            let importedConnectivityEvents = try PersistenceController.shared.importConnectivityEvents(from: connectivityPacketRefs, sysdiagnoseId: sysdiagnose)
 
             return (qmiPackets.count, ariPackets.count, importedCells, importedConnectivityEvents)
         } catch {

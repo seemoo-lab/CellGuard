@@ -17,7 +17,7 @@ extension PersistenceController {
 
     /// Uses `NSBatchInsertRequest` (BIR) to import QMI packets into the Core Data store on a private queue.
     /// Returns the number of imported packets and references to packets with (a) cell information and (b) connectivity events.
-    func importQMIPackets(from packets: [(CPTPacket, ParsedQMIPacket)], sysdiagnoseID: NSManagedObjectID?) throws -> (Int, PacketImportRefs) {
+    func importQMIPackets(from packets: [(CPTPacket, ParsedQMIPacket)], sysdiagnoseId: NSManagedObjectID?) throws -> (Int, PacketImportRefs) {
         if packets.isEmpty {
             return (0, PacketImportRefs())
         }
@@ -61,7 +61,7 @@ extension PersistenceController {
 
         var packetRefs = PacketImportRefs()
         try performAndWait(name: "importContext", author: "importQMIPackets") { context in
-            let sysdiagnose = sysdiagnoseID != nil ? context.object(with: sysdiagnoseID!) as? Sysdiagnose : nil
+            let sysdiagnose = sysdiagnoseId != nil ? context.object(with: sysdiagnoseId!) as? Sysdiagnose : nil
 
             var added = false
             for objectId in objectIds {
@@ -116,7 +116,7 @@ extension PersistenceController {
 
     /// Uses `NSBatchInsertRequest` (BIR) to import ARI packets into the Core Data store on a private queue.
     /// Returns the number of imported packets and references to packets with (a) cell information and (b) connectivity events.
-    func importARIPackets(from packets: [(CPTPacket, ParsedARIPacket)], sysdiagnoseID: NSManagedObjectID?) throws -> (Int, PacketImportRefs) {
+    func importARIPackets(from packets: [(CPTPacket, ParsedARIPacket)], sysdiagnoseId: NSManagedObjectID?) throws -> (Int, PacketImportRefs) {
         if packets.isEmpty {
             return (0, PacketImportRefs())
         }
@@ -159,7 +159,7 @@ extension PersistenceController {
 
         var packetRefs = PacketImportRefs()
         try performAndWait(name: "importContext", author: "importARIPackets") { context in
-            let sysdiagnose = sysdiagnoseID != nil ? context.object(with: sysdiagnoseID!) as? Sysdiagnose : nil
+            let sysdiagnose = sysdiagnoseId != nil ? context.object(with: sysdiagnoseId!) as? Sysdiagnose : nil
 
             // TODO: Can we do that in parallel?
             let ariPackets = objectIds

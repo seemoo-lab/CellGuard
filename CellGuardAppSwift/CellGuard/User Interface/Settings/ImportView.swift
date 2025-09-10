@@ -148,7 +148,10 @@ struct ImportView: View {
                     ImportStatusRow("Locations", $importStatusLocations)
                     ImportStatusRow("Packets", $importStatusPackets)
                     ImportStatusRow("Connectivity Events", $importStatusConnectivityEvents)
-                    ImportStatusRow("Sysdiagnoses", $importStatusSysdiagnoses)
+                    // We hide this row for the Sysdiagnose Import (not for the CSV Import)
+                    if case .count(value: let count) = importStatusSysdiagnoses, count != nil {
+                        ImportStatusRow("Sysdiagnoses", $importStatusSysdiagnoses)
+                    }
                 }
             }
 

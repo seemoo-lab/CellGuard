@@ -380,9 +380,9 @@ struct PersistenceCSVImporter {
             let groupedBySysdiagnose = Dictionary(grouping: packetsAndSysdiagnoses) { $0.1 }.mapValues { $0.map { $0.0 } }
             for (sysdiagnoseIdentifier, packets) in groupedBySysdiagnose {
                 let sysdiagnose = sysdiagnoseIdentifier.isEmpty ? nil : try? PersistenceController.shared.fetchSysdiagnose(archiveIdentifier: sysdiagnoseIdentifier)
-                let sysdiagnoseID = sysdiagnose != nil ? sysdiagnose!.objectID : nil
+                let sysdiagnoseId = sysdiagnose != nil ? sysdiagnose!.objectID : nil
 
-                let (_, _, cells, connectivity) = try CPTCollector.store(packets, sysdiagnose: sysdiagnoseID)
+                let (_, _, cells, connectivity) = try CPTCollector.store(packets, sysdiagnose: sysdiagnoseId)
                 cellCount = cells.count
                 connectivityCount = connectivity
             }
