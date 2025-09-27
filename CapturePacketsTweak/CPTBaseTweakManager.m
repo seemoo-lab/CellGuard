@@ -393,8 +393,8 @@
         return;
     }
 
-    // If the file is larger than 128 MB, we'll truncate it to half of its size
-    if (endOffset > 1024 * 1024 * 128) {
+    // If the file is larger than 20 MB, we'll truncate it to half of its size
+    if (endOffset > 1024 * 1024 * 20) {
         [self log:@"File end offset (before write) is %lld, truncating file to half of this size", endOffset];
 
         // Move the file pointer to the middle of the file
