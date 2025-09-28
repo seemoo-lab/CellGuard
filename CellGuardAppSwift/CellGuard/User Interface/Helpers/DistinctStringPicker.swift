@@ -10,12 +10,24 @@ import SwiftUI
 
 /// A Picker that shows distinct String values for `attribute` on entity `T`.
 struct DistinctStringPicker<T: NSManagedObject>: View {
-    @Binding var selection: String?           // currently selected value (optional to allow "All")
-    let attribute: String                     // attribute name in Core Data (must be a String attribute)
+    /// Currently selected value (optional to allow "All")
+    @Binding var selection: String?
+
+    /// Attribute key path of the Core Data object (for type checking)
+    let attribute: ReferenceWritableKeyPath<T, String?>
+    /// Attribute name in Core Data (should be similar to attribute, must be a String attribute)
+    /// Unfortunately Core Data does not support key path objects for restricting properties to fetch
+    /// and key path objects do not retrain the original property name.
+    let attributeName: String
+    /// Optionally restrict the fetch operation with a predicate
+    var predicate: NSPredicate?
+
+    /// The label of the picker
     var title: String = "Select"
-    var includeAllOption: Bool = true         // whether to show an "All" / nil option
-    var allLabel: String = "All"              // label for the nil/all option
-    var predicate: NSPredicate?               // optionally restrict the fetch
+    /// Whether to show an "All" / nil option
+    var includeAllOption: Bool = true
+    /// Label for the "All" / nil option
+    var allLabel: String = "All"
 
     @Environment(\.managedObjectContext) private var viewContext
     @State private var values: [String] = []
@@ -30,7 +42,8 @@ struct DistinctStringPicker<T: NSManagedObject>: View {
             }
         }
         .onAppear(perform: loadDistinctValues)
-        .onChange(of: predicate) { _ in loadDistinctValues() } // reload if predicate changes
+        // reload if predicate changes
+        .onChange(of: predicate) { _ in loadDistinctValues() }
     }
 
     private func loadDistinctValues() {
@@ -41,23 +54,21 @@ struct DistinctStringPicker<T: NSManagedObject>: View {
             return
         }
 
-        let request = NSFetchRequest<NSDictionary>(entityName: entityName)
-        request.resultType = .dictionaryResultType
-        request.propertiesToFetch = [attribute]
+        let request = NSFetchRequest<T>(entityName: entityName)
+        request.propertiesToFetch = [attributeName]
         request.returnsDistinctResults = true
         request.predicate = predicate
 
         do {
-            let raw = try viewContext.fetch(request)
-            let strings = raw.compactMap { dict -> String? in
-                // dict[attribute] might be NSNull or another type; cast to String
-                return dict[attribute] as? String
+            let objects = try viewContext.fetch(request)
+            let strings = objects.compactMap { object -> String? in
+                return object[keyPath: attribute]
             }
             // Deduplicate & sort deterministically
             let unique = Array(Set(strings)).sorted()
             values = unique
         } catch {
-            print("DistinctStringPicker fetch failed:", error)
+            print("DistinctStringPicker fetch failed: ", error)
             values = []
         }
     }

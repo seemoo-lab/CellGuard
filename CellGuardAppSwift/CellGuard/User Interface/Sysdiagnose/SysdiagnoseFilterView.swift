@@ -105,27 +105,32 @@ private struct SysdiagnoseListFilterSettingsView: View {
             Section(header: Text("Sysdiagnoses")) {
                 DistinctStringPicker<Sysdiagnose>(
                     selection: $settings.filename,
-                    attribute: "filename",
+                    attribute: \.filename,
+                    attributeName: "filename",
                     title: "Filename",
                 )
                 DistinctStringPicker<Sysdiagnose>(
                     selection: $settings.archiveIdentifier,
-                    attribute: "archiveIdentifier",
+                    attribute: \.archiveIdentifier,
+                    attributeName: "archiveIdentifier",
                     title: "Archive Identifier",
                 )
                 DistinctStringPicker<Sysdiagnose>(
                     selection: $settings.sourceIdentifier,
-                    attribute: "sourceIdentifier",
+                    attribute: \.sourceIdentifier,
+                    attributeName: "sourceIdentifier",
                     title: "Source Identifier",
                 )
                 DistinctStringPicker<Sysdiagnose>(
                     selection: $settings.basebandChipset,
-                    attribute: "basebandChipset",
+                    attribute: \.basebandChipset,
+                    attributeName: "basebandChipset",
                     title: "Baseband Chipset",
                 )
                 DistinctStringPicker<Sysdiagnose>(
                     selection: $settings.productBuildVersion,
-                    attribute: "productBuildVersion",
+                    attribute: \.productBuildVersion,
+                    attributeName: "productBuildVersion",
                     title: "iOS Build Version",
                 )
             }
