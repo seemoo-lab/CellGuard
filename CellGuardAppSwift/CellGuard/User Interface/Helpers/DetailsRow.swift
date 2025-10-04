@@ -13,6 +13,8 @@ struct DetailsRow: View {
     let icon: String?
     let color: Color?
     let value: String
+    let multiLine: Bool
+    var font: Font?
 
     init(_ description: String, _ value: Int) {
         self.init(description, value as NSNumber)
@@ -62,23 +64,51 @@ struct DetailsRow: View {
         }
     }
 
-    init(_ description: String, _ value: String, icon: String? = nil, color: Color? = nil) {
+    init(_ description: String, data: Data) {
+        self.init(description, data
+            .map { String($0, radix: 16, uppercase: true) }
+            .map { $0.count < 2 ? "0\($0)" : $0 }
+            .joined(separator: " "), multiLine: true)
+        self.font = Font(UIFont.monospacedSystemFont(ofSize: UIFont.systemFontSize, weight: .regular))
+    }
+
+    init(_ description: String, _ value: String, icon: String? = nil, color: Color? = .gray, multiLine: Bool = false) {
         self.description = description
         self.value = value
         self.icon = icon
         self.color = color
+        self.multiLine = multiLine
     }
 
     var body: some View {
-        KeyValueListRow(key: description) {
+        let content = Group {
             HStack {
                 Text(value)
+                    .font(font)
+                if multiLine {
+                    Spacer()
+                }
                 if let icon = self.icon {
                     Image(systemName: icon)
                 }
             }
             .if(color != nil) { view in
                 view.foregroundColor(color)
+            }
+        }
+
+        if multiLine {
+            VStack {
+                HStack {
+                    Text(description)
+                    Spacer()
+                }
+                .padding(EdgeInsets(top: 0, leading: 0, bottom: 2, trailing: 0))
+                content
+            }
+        } else {
+            KeyValueListRow(key: description) {
+                content
             }
         }
     }

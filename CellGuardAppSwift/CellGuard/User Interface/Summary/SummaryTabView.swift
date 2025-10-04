@@ -33,7 +33,7 @@ struct SummaryTabView: View {
                             Label("Connectivity", systemImage: "bolt")
                         }
                         NBNavigationLink(value: SummaryNavigationPath.sysdiagList) {
-                            Label("Sysdiagnoses", systemImage: "lock.square.stack")
+                            Label("Sysdiagnoses", systemImage: "rectangle.stack")
                         }
 
                         #if STATS_VIEW

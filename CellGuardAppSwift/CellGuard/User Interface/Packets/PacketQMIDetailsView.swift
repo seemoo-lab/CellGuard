@@ -73,7 +73,7 @@ private struct PacketQMIDetailsList: View {
                 Section(header: Text("TLV")) {
                     DetailsRow("ID", hex: tlv.type)
                     DetailsRow("Length", bytes: Int(tlv.length))
-                    PacketDetailsDataRow("Data", data: tlv.data)
+                    DetailsRow("Data", data: tlv.data)
                 }
             }
 

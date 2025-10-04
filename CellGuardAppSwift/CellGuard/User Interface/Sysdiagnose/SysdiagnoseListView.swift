@@ -21,7 +21,7 @@ struct SysdiagnoseListView: View {
 
     var body: some View {
         FilteredSysdiagnoseView(settings: settings)
-        .navigationTitle("Sysdiagnose")
+        .navigationTitle("System Diagnoses")
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
@@ -34,8 +34,7 @@ struct SysdiagnoseListView: View {
                 Button {
                     navigator.push(SummaryNavigationPath.sysdiagFilter)
                 } label: {
-                    // Starting with iOS 15: line.3.horizontal.decrease.circle
-                    Image(systemName: "line.horizontal.3.decrease.circle")
+                    Image(systemName: CGIcons.filter)
                 }
             }
         }
@@ -71,7 +70,6 @@ private struct FilteredSysdiagnoseView: View {
         self.settings = settings
 
         let sysdiagnoseRequest: NSFetchRequest<Sysdiagnose> = Sysdiagnose.fetchRequest()
-        // cellsRequest.fetchBatchSize = 25
         sysdiagnoseRequest.sortDescriptors = [NSSortDescriptor(key: "imported", ascending: false)]
         settings.applyTo(request: sysdiagnoseRequest)
 

@@ -61,7 +61,7 @@ extension PersistenceController {
 
         var packetRefs = PacketImportRefs()
         try performAndWait(name: "importContext", author: "importQMIPackets") { context in
-            let sysdiagnose = sysdiagnoseId != nil ? context.object(with: sysdiagnoseId!) as? Sysdiagnose : nil
+            let sysdiagnose = Sysdiagnose.getSysdiagnoseById(context: context, id: sysdiagnoseId)
 
             var added = false
             for objectId in objectIds {

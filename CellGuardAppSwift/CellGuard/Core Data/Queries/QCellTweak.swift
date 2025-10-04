@@ -57,7 +57,7 @@ extension PersistenceController {
             }
 
             // Import the cells without Batch import to set the packet relationship
-            let sysdiagnose = sysdiagnoseId != nil ? context.object(with: sysdiagnoseId!) as? Sysdiagnose : nil
+            let sysdiagnose = Sysdiagnose.getSysdiagnoseById(context: context, id: sysdiagnoseId)
             let importedDate = Date()
             for (packet, cellProperties) in cells {
                 let cell = CellTweak(context: context)

@@ -86,7 +86,7 @@ private struct PacketARIDetailsTLVSection: View {
                 DetailsRow("Codec", tlvDef.codecName)
             }
             DetailsRow("Length", bytes: Int(tlv.length))
-            PacketDetailsDataRow("Data", data: tlv.data)
+            DetailsRow("Data", data: tlv.data)
         }
     }
 

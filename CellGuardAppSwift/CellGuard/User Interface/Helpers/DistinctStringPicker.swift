@@ -33,17 +33,21 @@ struct DistinctStringPicker<T: NSManagedObject>: View {
     @State private var values: [String] = []
 
     var body: some View {
-        Picker(title, selection: $selection) {
-            if includeAllOption {
-                Text(allLabel).tag(nil as String?)
+        Section(header: Text(title)) {
+            Picker(title, selection: $selection) {
+                if includeAllOption {
+                    Text(allLabel).tag(nil as String?)
+                }
+                ForEach(values, id: \.self) { v in
+                    Text(v).tag(v as String?)
+                }
             }
-            ForEach(values, id: \.self) { v in
-                Text(v).tag(v as String?)
-            }
+            .onAppear(perform: loadDistinctValues)
+            // reload if predicate changes
+            .onChange(of: predicate) { _ in loadDistinctValues() }
+            .pickerStyle(.wheel)
+            .frame(maxHeight: 100)
         }
-        .onAppear(perform: loadDistinctValues)
-        // reload if predicate changes
-        .onChange(of: predicate) { _ in loadDistinctValues() }
     }
 
     private func loadDistinctValues() {

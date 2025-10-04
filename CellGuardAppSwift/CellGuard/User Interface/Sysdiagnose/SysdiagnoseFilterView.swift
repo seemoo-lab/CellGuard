@@ -102,38 +102,36 @@ private struct SysdiagnoseListFilterSettingsView: View {
 
     var body: some View {
         Form {
-            Section(header: Text("Sysdiagnoses")) {
-                DistinctStringPicker<Sysdiagnose>(
-                    selection: $settings.filename,
-                    attribute: \.filename,
-                    attributeName: "filename",
-                    title: "Filename",
-                )
-                DistinctStringPicker<Sysdiagnose>(
-                    selection: $settings.archiveIdentifier,
-                    attribute: \.archiveIdentifier,
-                    attributeName: "archiveIdentifier",
-                    title: "Archive Identifier",
-                )
-                DistinctStringPicker<Sysdiagnose>(
-                    selection: $settings.sourceIdentifier,
-                    attribute: \.sourceIdentifier,
-                    attributeName: "sourceIdentifier",
-                    title: "Source Identifier",
-                )
-                DistinctStringPicker<Sysdiagnose>(
-                    selection: $settings.basebandChipset,
-                    attribute: \.basebandChipset,
-                    attributeName: "basebandChipset",
-                    title: "Baseband Chipset",
-                )
-                DistinctStringPicker<Sysdiagnose>(
-                    selection: $settings.productBuildVersion,
-                    attribute: \.productBuildVersion,
-                    attributeName: "productBuildVersion",
-                    title: "iOS Build Version",
-                )
-            }
+            DistinctStringPicker<Sysdiagnose>(
+                selection: $settings.filename,
+                attribute: \.filename,
+                attributeName: "filename",
+                title: "Filename",
+            )
+            DistinctStringPicker<Sysdiagnose>(
+                selection: $settings.archiveIdentifier,
+                attribute: \.archiveIdentifier,
+                attributeName: "archiveIdentifier",
+                title: "Archive Identifier",
+            )
+            DistinctStringPicker<Sysdiagnose>(
+                selection: $settings.sourceIdentifier,
+                attribute: \.sourceIdentifier,
+                attributeName: "sourceIdentifier",
+                title: "Source Identifier",
+            )
+            DistinctStringPicker<Sysdiagnose>(
+                selection: $settings.basebandChipset,
+                attribute: \.basebandChipset,
+                attributeName: "basebandChipset",
+                title: "Baseband Chipset",
+            )
+            DistinctStringPicker<Sysdiagnose>(
+                selection: $settings.productBuildVersion,
+                attribute: \.productBuildVersion,
+                attributeName: "productBuildVersion",
+                title: "iOS Build Version",
+            )
         }
         .listStyle(.insetGrouped)
         .toolbar {

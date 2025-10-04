@@ -17,7 +17,7 @@ extension PersistenceController {
 
             // Fetch the packets
             let packets = packetRefs.compactMap { context.object(with: $0) as? any Packet }
-            let sysdiagnose = sysdiagnoseId != nil ? context.object(with: sysdiagnoseId!) as? Sysdiagnose : nil
+            let sysdiagnose = Sysdiagnose.getSysdiagnoseById(context: context, id: sysdiagnoseId)
 
             // Parse the connectivity events from the parsed packets
             // Import the cells without Batch import to set the packet relationship

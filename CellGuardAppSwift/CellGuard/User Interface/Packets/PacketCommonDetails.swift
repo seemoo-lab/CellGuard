@@ -24,36 +24,7 @@ struct PacketDetailsSection: View {
                 }
             }
             DetailsRow("Size", bytes: data.count)
-            PacketDetailsDataRow("Data", data: data)
-        }
-    }
-}
-
-struct PacketDetailsDataRow: View {
-
-    let description: String
-    let hexString: String
-
-    init(_ description: String, data: Data) {
-        self.description = description
-        self.hexString = data
-            .map { String($0, radix: 16, uppercase: true) }
-            .map { $0.count < 2 ? "0\($0)" : $0 }
-            .joined(separator: " ")
-    }
-
-    var body: some View {
-        VStack {
-            HStack {
-                Text(description)
-                Spacer()
-            }
-            .padding(EdgeInsets(top: 0, leading: 0, bottom: 2, trailing: 0))
-            HStack {
-                Text(hexString)
-                    .font(Font(UIFont.monospacedSystemFont(ofSize: UIFont.systemFontSize, weight: .regular)))
-                Spacer()
-            }
+            DetailsRow("Data", data: data)
         }
     }
 }

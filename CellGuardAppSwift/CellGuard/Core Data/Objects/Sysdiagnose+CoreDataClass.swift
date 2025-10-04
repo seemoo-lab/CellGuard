@@ -4,14 +4,20 @@
 //
 //  Created by mp on 30.08.25.
 //
-//  This file was automatically generated and should not be edited.
-//
 
 import Foundation
 import CoreData
 
 @objc(Sysdiagnose)
 public class Sysdiagnose: NSManagedObject {
+
+    static func getSysdiagnoseById(context: NSManagedObjectContext, id: NSManagedObjectID?) -> Sysdiagnose? {
+        if let sysdiagnoseId = id {
+            return context.object(with: sysdiagnoseId) as? Sysdiagnose
+        } else {
+            return nil
+        }
+    }
 
     var cellCount: Int {
         return self.value(forKeyPath: "cells.@count") as? Int ?? 0
