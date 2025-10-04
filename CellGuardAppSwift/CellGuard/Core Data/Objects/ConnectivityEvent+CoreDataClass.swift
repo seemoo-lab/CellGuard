@@ -18,15 +18,15 @@ public class ConnectivityEvent: NSManagedObject {
 
     var title: String {
         return switch (self.active, self.simUnlocked) {
-        case (true, nil):
+        case (true, .none):
             "Connected"
-        case (true, false):
+        case (true, .some(false)):
             "SIM Inserted"
-        case (true, true):
+        case (true, .some(true)):
             "SIM Unlocked"
-        case (false, nil):
+        case (false, .none):
             "Disconnected"
-        case (false, false), (false, true):
+        case (false, .some):
             "SIM Removed"
         }
     }
