@@ -177,7 +177,7 @@ struct ConnectivityEventListEntry: View {
                 if events.count == 1 {
                     Text(fullMediumDateTimeFormatter.string(from: startDate))
                 } else {
-                    Text(fullMediumDateTimeFormatter.string(from: endDate))
+                    Text(fullMediumDateTimeFormatter.string(from: startDate))
                     + Text(" - ")
                     + Text((sameDay ? mediumTimeFormatter : fullMediumDateTimeFormatter).string(from: endDate))
                 }
