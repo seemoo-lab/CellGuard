@@ -29,7 +29,7 @@ A baseband debug profile adds more data about cellular network connections to yo
             Text("""
 Please install the baseband debug profile provided and signed by Apple. If you are in Lockdown Mode, we recommend disconnecting your iPhone from the Internet, temporarily disabling Lockdown Mode, and then installing the baseband debug profile. After the installation, you can enable Lockdown Mode again.
 
-The debug profile expires after 21 days. Please reinstall after expiry.
+The debug profile expires after 7 days. Please reinstall after expiry.
 """)
                 .foregroundColor(.gray)
                 .padding()
