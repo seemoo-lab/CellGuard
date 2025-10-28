@@ -111,8 +111,14 @@ private struct FilteredConnectivityView: View {
         let groupedEvents = groupEvents()
         if !groupedEvents.isEmpty {
             List(groupedEvents) { eventGroup in
-                ListNavigationLink(value: NavListIds(objects: eventGroup.events)) {
-                    ConnectivityEventListEntry(group: eventGroup)
+                if eventGroup.events.count == 1 {
+                    ListNavigationLink(value: NavObjectId(object: eventGroup.events.first!)) {
+                        ConnectivityEventListEntry(event: eventGroup.events.first!)
+                    }
+                } else {
+                    ListNavigationLink(value: NavListIds(objects: eventGroup.events)) {
+                        ConnectivityEventListEntry(group: eventGroup)
+                    }
                 }
             }
             .listStyle(.insetGrouped)
@@ -171,7 +177,7 @@ struct ConnectivityEventListEntry: View {
                 if events.count == 1 {
                     Text(fullMediumDateTimeFormatter.string(from: startDate))
                 } else {
-                    Text(fullMediumDateTimeFormatter.string(from: endDate))
+                    Text(fullMediumDateTimeFormatter.string(from: startDate))
                     + Text(" - ")
                     + Text((sameDay ? mediumTimeFormatter : fullMediumDateTimeFormatter).string(from: endDate))
                 }
