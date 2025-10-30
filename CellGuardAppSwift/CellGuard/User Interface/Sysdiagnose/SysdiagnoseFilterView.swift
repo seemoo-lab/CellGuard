@@ -13,7 +13,7 @@ class SysdiagnoseFilterSettings: ObservableObject {
     @Published var date: Date = Calendar.current.startOfDay(for: Date())
     @Published var timeFrame: FilterTimeFrame = .live
 
-    @Published var filename: String?
+    @Published var filenames: [String] = []
     @Published var archiveIdentifier: String?
     @Published var sourceIdentifier: String?
     @Published var basebandChipset: String?
@@ -22,7 +22,7 @@ class SysdiagnoseFilterSettings: ObservableObject {
     func reset() {
         date = Calendar.current.startOfDay(for: Date())
         timeFrame = .live
-        filename = nil
+        filenames = []
         archiveIdentifier = nil
         sourceIdentifier = nil
         basebandChipset = nil
@@ -46,8 +46,9 @@ class SysdiagnoseFilterSettings: ObservableObject {
             predicateList.append(NSPredicate(format: "imported <= %@", end as NSDate))
         }
 
-        if let filename = filename {
-            predicateList.append(NSPredicate(format: "filename == %@", filename as NSString))
+        if !filenames.isEmpty {
+            predicateList.append(NSCompoundPredicate(
+                orPredicateWithSubpredicates: filenames.map { NSPredicate(format: "filename == %@", $0 as NSString) }))
         }
         if let archiveIdentifier = archiveIdentifier {
             predicateList.append(NSPredicate(format: "archiveIdentifier == %@", archiveIdentifier as NSString))
@@ -102,12 +103,14 @@ private struct SysdiagnoseListFilterSettingsView: View {
 
     var body: some View {
         Form {
-            DistinctStringPicker<Sysdiagnose>(
-                selection: $settings.filename,
-                attribute: \.filename,
-                attributeName: "filename",
-                title: "Filename",
-            )
+            ListNavigationLink(value: SysdiagnoseNavigationPath.filterFilenames) {
+                HStack {
+                    Text("Filenames")
+                    Spacer()
+                    Text("\(settings.filenames.count)")
+                        .foregroundColor(.gray)
+                }
+            }
             DistinctStringPicker<Sysdiagnose>(
                 selection: $settings.archiveIdentifier,
                 attribute: \.archiveIdentifier,
@@ -138,6 +141,59 @@ private struct SysdiagnoseListFilterSettingsView: View {
             ToolbarItem {
                 Button {
                     settings.reset()
+                } label: {
+                    Text("Reset")
+                }
+            }
+        }
+    }
+}
+
+struct SysdiagnoseFilterFilenameView: View {
+
+    @EnvironmentObject private var settings: SysdiagnoseFilterSettings
+    @FetchRequest private var allSysdiagnoses: FetchedResults<Sysdiagnose>
+
+    init() {
+        let request: NSFetchRequest<Sysdiagnose> = Sysdiagnose.fetchRequest()
+        request.propertiesToFetch = ["filename"]
+        request.returnsDistinctResults = true
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \Sysdiagnose.filename, ascending: false)]
+        self._allSysdiagnoses = FetchRequest(fetchRequest: request, animation: .easeOut)
+    }
+
+    var body: some View {
+        Group {
+            if !allSysdiagnoses.isEmpty {
+                List(allSysdiagnoses) { sysdiagnose in
+                    let filename = sysdiagnose.filename ?? "Empty Name"
+                    HStack {
+                        Text(filename)
+                        Spacer()
+                        Image(systemName: "checkmark")
+                            .foregroundColor(.blue)
+                            .opacity(settings.filenames.contains(filename) ? 1 : 0)
+                    }
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        if settings.filenames.contains(filename) {
+                            settings.filenames = settings.filenames.filter { $0 != filename }
+                        } else {
+                            settings.filenames.append(filename)
+                        }
+                    }
+                }
+            } else {
+                Text("No sysdiagnoses imported.")
+                    .multilineTextAlignment(.center)
+                    .padding()
+            }
+        }
+        .navigationTitle("Filenames")
+        .toolbar {
+            ToolbarItem {
+                Button {
+                    settings.filenames = []
                 } label: {
                     Text("Reset")
                 }

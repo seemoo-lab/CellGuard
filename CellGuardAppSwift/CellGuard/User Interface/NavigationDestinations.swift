@@ -88,6 +88,9 @@ struct CGNavigationViewModifier: ViewModifier {
                 .nbNavigationDestination(for: NavObjectId<Sysdiagnose>.self) { id in
                     id.ensure { SysdiagnoseDetailsView(sysdiagnose: $0) }
                 }
+                .nbNavigationDestination(for: SysdiagnoseNavigationPath.self) { nav in
+                    SysdiagnoseNavigationPath.navigate(nav)
+                }
         } else {
             content
         }

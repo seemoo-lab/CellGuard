@@ -427,6 +427,8 @@
 		ED6F69292DBBC1CC007BFE78 /* UpdateCheckInfoCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED6F69272DBBC1CA007BFE78 /* UpdateCheckInfoCard.swift */; };
 		ED7DB14D2DC785E8007D5314 /* UpdateCheckTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED7DB14C2DC785DA007D5314 /* UpdateCheckTask.swift */; };
 		ED7DB14E2DC785E8007D5314 /* UpdateCheckTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED7DB14C2DC785DA007D5314 /* UpdateCheckTask.swift */; };
+		ED897DE32EB39A5D00D8BDEC /* SysdiagnoseNavigationPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED897DE22EB39A5D00D8BDEC /* SysdiagnoseNavigationPath.swift */; };
+		ED897DE42EB39A5D00D8BDEC /* SysdiagnoseNavigationPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED897DE22EB39A5D00D8BDEC /* SysdiagnoseNavigationPath.swift */; };
 		EDA0EE8F2E69B9E600D2B0C6 /* ConnectivityEvent+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDA0EE8E2E69B9E500D2B0C6 /* ConnectivityEvent+CoreDataClass.swift */; };
 		EDA0EE902E69B9E600D2B0C6 /* ConnectivityEvent+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDA0EE8E2E69B9E500D2B0C6 /* ConnectivityEvent+CoreDataClass.swift */; };
 		EDA9FEBA2E1F9AEA00C52409 /* ConnectivityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDA9FEB92E1F9AEA00C52409 /* ConnectivityView.swift */; };
@@ -687,6 +689,7 @@
 		ED6F69242DBB8D40007BFE78 /* UpdateCheckView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateCheckView.swift; sourceTree = "<group>"; };
 		ED6F69272DBBC1CA007BFE78 /* UpdateCheckInfoCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateCheckInfoCard.swift; sourceTree = "<group>"; };
 		ED7DB14C2DC785DA007D5314 /* UpdateCheckTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateCheckTask.swift; sourceTree = "<group>"; };
+		ED897DE22EB39A5D00D8BDEC /* SysdiagnoseNavigationPath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SysdiagnoseNavigationPath.swift; sourceTree = "<group>"; };
 		EDA0EE8E2E69B9E500D2B0C6 /* ConnectivityEvent+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConnectivityEvent+CoreDataClass.swift"; sourceTree = "<group>"; };
 		EDA9FEB92E1F9AEA00C52409 /* ConnectivityView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectivityView.swift; sourceTree = "<group>"; };
 		EDA9FED62E1FEB8900C52409 /* ConnectivityFilterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectivityFilterView.swift; sourceTree = "<group>"; };
@@ -1302,6 +1305,7 @@
 		ED3A28A92E639BCE00D0B6A9 /* Sysdiagnose */ = {
 			isa = PBXGroup;
 			children = (
+				ED897DE22EB39A5D00D8BDEC /* SysdiagnoseNavigationPath.swift */,
 				EDE7DD352E70D72000C656E0 /* SysdiagnoseFilterView.swift */,
 				ED3A28B32E63ACC900D0B6A9 /* SysdiagnoseListView.swift */,
 				ED3A28AD2E639CE700D0B6A9 /* SysdiagnoseCell.swift */,
@@ -1704,6 +1708,7 @@
 				EDE7DD3A2E70D90400C656E0 /* DistinctStringPicker.swift in Sources */,
 				CFB6CF412BD122FA00EAB7B4 /* CellStatusIcon.swift in Sources */,
 				CFB6CF422BD122FA00EAB7B4 /* Cell.swift in Sources */,
+				ED897DE32EB39A5D00D8BDEC /* SysdiagnoseNavigationPath.swift in Sources */,
 				CFB6CF432BD122FA00EAB7B4 /* SwiftExtensions.swift in Sources */,
 				CFC041132C124D5F00BCD692 /* IntroductionView.swift in Sources */,
 				CFB6CF452BD122FA00EAB7B4 /* PacketCell.swift in Sources */,
@@ -1881,6 +1886,7 @@
 				CF2A1C222975DB8100E8B61C /* CellInformationCard.swift in Sources */,
 				CF57561D2B2F263500C7C60A /* LogArchiveReader.swift in Sources */,
 				CF70A9942BE6B6D600989FB5 /* QCommonFetch.swift in Sources */,
+				ED897DE42EB39A5D00D8BDEC /* SysdiagnoseNavigationPath.swift in Sources */,
 				EDAFBFE92D9C0A5300D7748B /* AriCellParser.swift in Sources */,
 				45ECF56C2BFBEA5300DD92CF /* DeviceModel.swift in Sources */,
 				EDAD7A042E1D7DA600EBB924 /* QConnectivityEvent.swift in Sources */,
