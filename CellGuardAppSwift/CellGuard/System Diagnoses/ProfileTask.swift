@@ -30,12 +30,12 @@ class ProfileData: ObservableObject {
             return
         }
 
-        let profileInstallDuration: Double = 21
+        let profileInstallDuration: Double = 7
         let days: Double = 24 * 60 * 60
 
         let removalDate = installDate.addingTimeInterval(profileInstallDuration * days)
 
-        // 20 out of 21 days passed, reinstall soon
+        // 6 out of 7 days passed, reinstall soon
         if removalDate.addingTimeInterval(-1 * days) < Date() {
             installState = .expiringSoon
         } else {
