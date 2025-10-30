@@ -15,7 +15,7 @@ struct PacketTabView: View {
     @AppStorage(UserDefaultsKeys.appMode.rawValue) private var appMode: DataCollectionMode = .none
 
     @State private var path = NBNavigationPath()
-    @State private var filter: PacketFilterSettings = PacketFilterSettings()
+    @StateObject private var filter: PacketFilterSettings = PacketFilterSettings()
     @State private var backgroundObserver: NSObjectProtocol?
     @State private var foregroundObserver: NSObjectProtocol?
 

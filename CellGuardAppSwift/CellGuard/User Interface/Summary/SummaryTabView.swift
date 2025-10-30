@@ -12,8 +12,8 @@ import NavigationBackport
 struct SummaryTabView: View {
 
     @State private var path = NBNavigationPath()
-    @State private var cellFilterSettings = CellListFilterSettings()
-    @State private var connectivityFilterSettings = ConnectivityFilterSettings()
+    @StateObject private var cellFilterSettings = CellListFilterSettings()
+    @StateObject private var connectivityFilterSettings = ConnectivityFilterSettings()
 
     init() {
     }
