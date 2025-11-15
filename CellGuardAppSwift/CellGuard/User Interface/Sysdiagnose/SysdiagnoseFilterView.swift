@@ -14,19 +14,19 @@ class SysdiagnoseFilterSettings: ObservableObject {
     @Published var timeFrame: FilterTimeFrame = .live
 
     @Published var filenames: [String] = []
-    @Published var archiveIdentifier: String?
-    @Published var sourceIdentifier: String?
-    @Published var basebandChipset: String?
-    @Published var productBuildVersion: String?
+    @Published var archiveIdentifier: [String] = []
+    @Published var sourceIdentifier: [String] = []
+    @Published var basebandChipset: [String] = []
+    @Published var productBuildVersion: [String] = []
 
     func reset() {
         date = Calendar.current.startOfDay(for: Date())
         timeFrame = .live
         filenames = []
-        archiveIdentifier = nil
-        sourceIdentifier = nil
-        basebandChipset = nil
-        productBuildVersion = nil
+        archiveIdentifier = []
+        sourceIdentifier = []
+        basebandChipset = []
+        productBuildVersion = []
     }
 
     func showLatestData(range: ClosedRange<Date>) {
@@ -50,17 +50,21 @@ class SysdiagnoseFilterSettings: ObservableObject {
             predicateList.append(NSCompoundPredicate(
                 orPredicateWithSubpredicates: filenames.map { NSPredicate(format: "filename == %@", $0 as NSString) }))
         }
-        if let archiveIdentifier = archiveIdentifier {
-            predicateList.append(NSPredicate(format: "archiveIdentifier == %@", archiveIdentifier as NSString))
+        if !archiveIdentifier.isEmpty {
+            predicateList.append(NSCompoundPredicate(
+                orPredicateWithSubpredicates: archiveIdentifier.map { NSPredicate(format: "archiveIdentifier == %@", $0 as NSString) }))
         }
-        if let sourceIdentifier = sourceIdentifier {
-            predicateList.append(NSPredicate(format: "sourceIdentifier == %@", sourceIdentifier as NSString))
+        if !sourceIdentifier.isEmpty {
+            predicateList.append(NSCompoundPredicate(
+                orPredicateWithSubpredicates: sourceIdentifier.map { NSPredicate(format: "sourceIdentifier == %@", $0 as NSString) }))
         }
-        if let basebandChipset = basebandChipset {
-            predicateList.append(NSPredicate(format: "basebandChipset == %@", basebandChipset as NSString))
+        if !basebandChipset.isEmpty {
+            predicateList.append(NSCompoundPredicate(
+                orPredicateWithSubpredicates: basebandChipset.map { NSPredicate(format: "basebandChipset == %@", $0 as NSString) }))
         }
-        if let productBuildVersion = productBuildVersion {
-            predicateList.append(NSPredicate(format: "productBuildVersion == %@", productBuildVersion as NSString))
+        if !productBuildVersion.isEmpty {
+            predicateList.append(NSCompoundPredicate(
+                orPredicateWithSubpredicates: productBuildVersion.map { NSPredicate(format: "productBuildVersion == %@", $0 as NSString) }))
         }
 
         return predicateList
@@ -103,38 +107,21 @@ private struct SysdiagnoseListFilterSettingsView: View {
 
     var body: some View {
         Form {
-            ListNavigationLink(value: SysdiagnoseNavigationPath.filterFilenames) {
-                HStack {
-                    Text("Filenames")
-                    Spacer()
-                    Text("\(settings.filenames.count)")
-                        .foregroundColor(.gray)
-                }
-            }
-            DistinctStringPicker<Sysdiagnose>(
-                selection: $settings.archiveIdentifier,
-                attribute: \.archiveIdentifier,
-                attributeName: "archiveIdentifier",
-                title: "Archive Identifier",
-            )
-            DistinctStringPicker<Sysdiagnose>(
-                selection: $settings.sourceIdentifier,
-                attribute: \.sourceIdentifier,
-                attributeName: "sourceIdentifier",
-                title: "Source Identifier",
-            )
-            DistinctStringPicker<Sysdiagnose>(
-                selection: $settings.basebandChipset,
-                attribute: \.basebandChipset,
-                attributeName: "basebandChipset",
-                title: "Baseband Chipset",
-            )
-            DistinctStringPicker<Sysdiagnose>(
-                selection: $settings.productBuildVersion,
-                attribute: \.productBuildVersion,
-                attributeName: "productBuildVersion",
-                title: "iOS Build Version",
-            )
+            CGFetchPickerField<Sysdiagnose>(title: "Filenames", keyPath: \.filename, selected: Set(settings.filenames), onSelectChanged: { elements in
+                settings.filenames = Array(elements)
+            })
+            CGFetchPickerField<Sysdiagnose>(title: "Archive Identifier", keyPath: \.archiveIdentifier, selected: Set(settings.archiveIdentifier), onSelectChanged: { elements in
+                settings.archiveIdentifier = Array(elements)
+            })
+            CGFetchPickerField<Sysdiagnose>(title: "Source Identifier", keyPath: \.sourceIdentifier, selected: Set(settings.sourceIdentifier), onSelectChanged: { elements in
+                settings.sourceIdentifier = Array(elements)
+            })
+            CGFetchPickerField<Sysdiagnose>(title: "Baseband Chipsets", keyPath: \.basebandChipset, selected: Set(settings.basebandChipset), onSelectChanged: { elements in
+                settings.basebandChipset = Array(elements)
+            })
+            CGFetchPickerField<Sysdiagnose>(title: "iOS Build Versions", keyPath: \.productBuildVersion, selected: Set(settings.productBuildVersion), onSelectChanged: { elements in
+                settings.productBuildVersion = Array(elements)
+            })
         }
         .listStyle(.insetGrouped)
         .toolbar {

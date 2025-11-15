@@ -44,6 +44,7 @@ struct PacketTabView: View {
             }
             .cgNavigationDestinations(.packets)
             .cgNavigationDestinations(.sysdiagnoses)
+            .cgNavigationDestinations(.picker)
         }.onAppear {
             // Check for one time if the iPhone received ARI packets and if yes, automatically switch the filter to it
             filter.determineProtoAutomatically()

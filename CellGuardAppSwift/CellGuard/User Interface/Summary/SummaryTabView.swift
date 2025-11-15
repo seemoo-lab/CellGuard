@@ -68,6 +68,7 @@ struct SummaryTabView: View {
             .cgNavigationDestinations(.packets)
             .cgNavigationDestinations(.connectivity)
             .cgNavigationDestinations(.sysdiagnoses)
+            .cgNavigationDestinations(.picker)
         }
         .background(Color.gray)
         .environmentObject(cellFilterSettings)
