@@ -19,6 +19,17 @@ struct SysdiagnoseListView: View {
     @EnvironmentObject private var navigator: PathNavigator
     @EnvironmentObject private var settings: SysdiagnoseFilterSettings
 
+    private func updateDateRange() {
+        Task.detached {
+            if let range = await PersistenceController.basedOnEnvironment().fetchSysdiagnoseDateRange() {
+                await MainActor.run {
+                    settings.showLatestData(range: range)
+                    sheetRange = range
+                }
+            }
+        }
+    }
+
     var body: some View {
         FilteredSysdiagnoseView(settings: settings)
         .navigationTitle("System Diagnoses")
@@ -40,17 +51,9 @@ struct SysdiagnoseListView: View {
         }
         .sheet(isPresented: $isShowingDateSheet) {
             SelectDateSheet(timeFrame: $settings.timeFrame, date: $settings.date, sheetRange: $sheetRange)
+                .onAppear { updateDateRange() }
         }
-        .onAppear {
-            Task.detached {
-                if let range = await PersistenceController.basedOnEnvironment().fetchSysdiagnoseDateRange() {
-                    await MainActor.run {
-                        settings.showLatestData(range: range)
-                        sheetRange = range
-                    }
-                }
-            }
-        }
+        .onAppear { updateDateRange() }
     }
 }
 

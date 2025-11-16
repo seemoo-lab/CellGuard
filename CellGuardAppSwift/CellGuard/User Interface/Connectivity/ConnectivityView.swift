@@ -19,6 +19,17 @@ struct ConnectivityView: View {
     @EnvironmentObject private var navigator: PathNavigator
     @EnvironmentObject private var settings: ConnectivityFilterSettings
 
+    private func updateDateRange() {
+        Task.detached {
+            if let range = await PersistenceController.basedOnEnvironment().fetchConnectivityDateRange() {
+                await MainActor.run {
+                    settings.showLatestData(range: range)
+                    sheetRange = range
+                }
+            }
+        }
+    }
+
     var body: some View {
         FilteredConnectivityView(settings: settings)
         .navigationTitle("Connectivity")
@@ -40,17 +51,9 @@ struct ConnectivityView: View {
         }
         .sheet(isPresented: $isShowingDateSheet) {
             SelectDateSheet(timeFrame: $settings.timeFrame, date: $settings.date, sheetRange: $sheetRange)
+                .onAppear { updateDateRange() }
         }
-        .onAppear {
-            Task.detached {
-                if let range = await PersistenceController.basedOnEnvironment().fetchConnectivityDateRange() {
-                    await MainActor.run {
-                        settings.showLatestData(range: range)
-                        sheetRange = range
-                    }
-                }
-            }
-        }
+        .onAppear { updateDateRange() }
     }
 }
 
