@@ -51,23 +51,23 @@ private struct VerificationStateInternalView: View {
         return Group {
             Section(header: Text("Date & Time")) {
                 if let collectedDate = measurement.collected {
-                    CellDetailsRow("Collected", fullMediumDateTimeFormatter.string(from: collectedDate))
+                    DetailsRow("Collected", fullMediumDateTimeFormatter.string(from: collectedDate))
                 }
                 if let importedDate = measurement.imported {
-                    CellDetailsRow("Imported", fullMediumDateTimeFormatter.string(from: importedDate))
+                    DetailsRow("Imported", fullMediumDateTimeFormatter.string(from: importedDate))
                 }
             }
 
             Section(header: Text("Cell Properties")) {
                 if let rat = measurement.technology {
-                    CellDetailsRow("Generation", rat)
+                    DetailsRow("Generation", rat)
                 }
-                CellDetailsRow(techFormatter.frequency(), measurement.frequency)
-                CellDetailsRow("Band", measurement.band)
-                CellDetailsRow("Bandwidth", measurement.bandwidth)
-                CellDetailsRow("Physical Cell ID", measurement.physicalCell)
+                DetailsRow(techFormatter.frequency(), measurement.frequency)
+                DetailsRow("Band", measurement.band)
+                DetailsRow("Bandwidth", measurement.bandwidth)
+                DetailsRow("Physical Cell ID", measurement.physicalCell)
                 if measurement.technology == "LTE" {
-                    CellDetailsRow("Deployment Type", measurement.deploymentType)
+                    DetailsRow("Deployment Type", measurement.deploymentType)
                 }
 
                 if let qmiPacket = measurement.packetQmi {
@@ -91,17 +91,17 @@ private struct VerificationStateInternalView: View {
             }
 
             Section(header: Text("Verification")) {
-                CellDetailsRow("Status", verificationState.finished ? "Finished" : "In Progress")
-                CellDetailsRow("Pipeline", verificationPipeline.name)
-                CellDetailsRow("Stages", verificationPipeline.stages.count)
-                CellDetailsRow("Points", "\(verificationState.score) / \(verificationPipeline.pointsMax)")
+                DetailsRow("Status", verificationState.finished ? "Finished" : "In Progress")
+                DetailsRow("Pipeline", verificationPipeline.name)
+                DetailsRow("Stages", verificationPipeline.stages.count)
+                DetailsRow("Points", "\(verificationState.score) / \(verificationPipeline.pointsMax)")
                 if verificationState.finished {
                     if verificationState.score >= verificationPipeline.pointsSuspicious {
-                        CellDetailsRow("Verdict", "Trusted", icon: "lock.shield")
+                        DetailsRow("Verdict", "Trusted", icon: "lock.shield")
                     } else if verificationState.score >= verificationPipeline.pointsUntrusted {
-                        CellDetailsRow("Verdict", "Anomalous", icon: "shield")
+                        DetailsRow("Verdict", "Anomalous", icon: "shield")
                     } else {
-                        CellDetailsRow("Verdict", "Suspicious", icon: "exclamationmark.shield")
+                        DetailsRow("Verdict", "Suspicious", icon: "exclamationmark.shield")
                     }
                     Button {
                         let measurementId = measurement.objectID
@@ -125,8 +125,8 @@ private struct VerificationStateInternalView: View {
                     KeyValueListRow(key: "Status") {
                         ProgressView()
                     }
-                    CellDetailsRow("Points", "\(currentStage.points)")
-                    CellDetailsRow("Requires Packets", currentStage.waitForPackets ? "Yes" : "No")
+                    DetailsRow("Points", "\(currentStage.points)")
+                    DetailsRow("Requires Packets", currentStage.waitForPackets ? "Yes" : "No")
                 }
             }
         }

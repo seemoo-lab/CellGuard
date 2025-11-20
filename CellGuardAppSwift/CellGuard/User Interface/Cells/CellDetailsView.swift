@@ -133,21 +133,21 @@ private struct CellDetailsCell: View {
         Group {
             CellCountryNetworkSection(country: cell.country, network: cell.network, techFormatter: techFormatter)
             Section(header: Text("Technology & Region")) {
-                CellDetailsRow("Technology", cell.technology ?? "Unknown")
+                DetailsRow("Technology", cell.technology ?? "Unknown")
                 // Only show SIM slots if some are available.
                 // There are none available for ALS-only cells.
                 if !simSlotsSet.isEmpty {
-                    CellDetailsRow("SIM Slot", simSlots)
+                    DetailsRow("SIM Slot", simSlots)
                 }
                 if let tweakCell = cell as? CellTweak,
                    tweakCell.supports5gNsa() {
-                    CellDetailsRow("5G NSA", "Supported")
+                    DetailsRow("5G NSA", "Supported")
                 }
 
-                CellDetailsRow(techFormatter.area(), cell.area)
+                DetailsRow(techFormatter.area(), cell.area)
             }
             Section(header: Text("Cell & Tower")) {
-                CellDetailsRow(techFormatter.cell(), cell.cell)
+                DetailsRow(techFormatter.cell(), cell.cell)
                 CellDetailsIdentification(cell: cell)
             }
 
@@ -169,13 +169,13 @@ private struct CellDetailsALSInfo: View {
     var body: some View {
         Section(header: Text("ALS Information")) {
             if let importedDate = alsCell.imported {
-                CellDetailsRow("Fetched", mediumDateTimeFormatter.string(from: importedDate))
+                DetailsRow("Fetched", mediumDateTimeFormatter.string(from: importedDate))
             }
             if let alsLocation = alsCell.location {
-                CellDetailsRow("Reach", "\(alsLocation.reach)m")
-                CellDetailsRow("Location Score", "\(alsLocation.score)")
+                DetailsRow("Reach", "\(alsLocation.reach)m")
+                DetailsRow("Location Score", "\(alsLocation.score)")
             }
-            CellDetailsRow(techFormatter.frequency(), alsCell.frequency)
+            DetailsRow(techFormatter.frequency(), alsCell.frequency)
         }
     }
 
@@ -198,15 +198,15 @@ private struct TweakCellDetailsMeasurementCount: View {
         Section(header: Text("Measurements")) {
             // We query the measurements in descending order, so that's we have to replace last with first and so on
             if let lastMeasurement = verifyStates.last?.cell, let firstCollected = lastMeasurement.collected {
-                CellDetailsRow("First", mediumDateTimeFormatter.string(from: firstCollected))
+                DetailsRow("First", mediumDateTimeFormatter.string(from: firstCollected))
             }
             if let firstMeasurement = verifyStates.first?.cell, let lastCollected = firstMeasurement.collected {
-                CellDetailsRow("Last", mediumDateTimeFormatter.string(from: lastCollected))
+                DetailsRow("Last", mediumDateTimeFormatter.string(from: lastCollected))
             }
-            CellDetailsRow("Pending", count.pending)
-            CellDetailsRow("Suspicious", count.untrusted)
-            CellDetailsRow("Anomalous", count.suspicious)
-            CellDetailsRow("Trusted", count.trusted)
+            DetailsRow("Pending", count.pending)
+            DetailsRow("Suspicious", count.untrusted)
+            DetailsRow("Anomalous", count.suspicious)
+            DetailsRow("Trusted", count.trusted)
             ListNavigationLink(value: detailObjectIds) {
                 Text("Show Details")
             }

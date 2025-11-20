@@ -15,6 +15,8 @@ enum SummaryNavigationPath: NBScreen {
     case cellListFilter
     case connectivity
     case connectivityFilter
+    case sysdiagList
+    case sysdiagFilter
     case dataSummary
     case cellLaboratory
     case operatorLookup
@@ -48,6 +50,10 @@ enum SummaryNavigationPath: NBScreen {
             ConnectivityView()
         } else if path == .connectivityFilter {
             ConnectivityListFilterView()
+        } else if path == .sysdiagList {
+            SysdiagnoseListView()
+        } else if path == .sysdiagFilter {
+            SysdiagnoseListFilterView()
         } else if path == .dataSummary {
             DataSummaryView()
         } else if path == .cellLaboratory {

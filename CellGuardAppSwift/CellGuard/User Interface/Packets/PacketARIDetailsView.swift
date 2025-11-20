@@ -42,27 +42,20 @@ private struct PacketARIDetailsList: View {
         let typeDef = groupDef?.types[parsed.header.type]
 
         return Group {
-            Section(header: Text("Packet")) {
-                PacketDetailsRow("Protocol", packet.proto)
-                PacketDetailsRow("SIM Slot", packet.simSlotID == 0 ? "None" : String(packet.simSlotID))
-                PacketDetailsRow("Direction", packet.direction ?? "???")
-                PacketDetailsRow("Timestamp", date: packet.collected)
-                PacketDetailsRow("Size", bytes: data.count)
-                PacketDetailsDataRow("Data", data: data)
-            }
+            PacketDetailsSection(packet: packet, data: data)
             Section(header: Text("ARI Header")) {
-                PacketDetailsRow("Group ID", hex: parsed.header.group)
+                DetailsRow("Group ID", hex: parsed.header.group)
                 if let groupDef = groupDef {
-                    PacketDetailsRow("Group Name", groupDef.name)
+                    DetailsRow("Group Name", groupDef.name)
                 }
-                PacketDetailsRow("Sequence Number", hex: parsed.header.sequenceNumber)
-                PacketDetailsRow("Length", hex: parsed.header.length)
-                PacketDetailsRow("Type ID", hex: parsed.header.type)
+                DetailsRow("Sequence Number", hex: parsed.header.sequenceNumber)
+                DetailsRow("Length", hex: parsed.header.length)
+                DetailsRow("Type ID", hex: parsed.header.type)
                 if let typeDef = typeDef {
-                    PacketDetailsRow("Type Name", typeDef.name)
+                    DetailsRow("Type Name", typeDef.name)
                 }
-                PacketDetailsRow("Transaction", hex: parsed.header.transaction)
-                PacketDetailsRow("Acknowledgement", bool: parsed.header.acknowledgement)
+                DetailsRow("Transaction", hex: parsed.header.transaction)
+                DetailsRow("Acknowledgement", bool: parsed.header.acknowledgement)
             }
             ForEach(parsed.tlvs, id: \.type) { tlv in
                 PacketARIDetailsTLVSection(tlv: tlv, typeDef: typeDef)
@@ -86,14 +79,14 @@ private struct PacketARIDetailsTLVSection: View {
 
     var body: some View {
         Section(header: Text("TLV")) {
-            PacketDetailsRow("ID", hex: tlv.type)
-            PacketDetailsRow("Version", hex: tlv.version)
+            DetailsRow("ID", hex: tlv.type)
+            DetailsRow("Version", hex: tlv.version)
             if let tlvDef = tlvDef {
-                PacketDetailsRow("Name", tlvDef.name)
-                PacketDetailsRow("Codec", tlvDef.codecName)
+                DetailsRow("Name", tlvDef.name)
+                DetailsRow("Codec", tlvDef.codecName)
             }
-            PacketDetailsRow("Length", bytes: Int(tlv.length))
-            PacketDetailsDataRow("Data", data: tlv.data)
+            DetailsRow("Length", bytes: Int(tlv.length))
+            DetailsRow("Data", data: tlv.data)
         }
     }
 

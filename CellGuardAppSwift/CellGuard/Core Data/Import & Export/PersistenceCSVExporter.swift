@@ -188,6 +188,7 @@ struct PersistenceCSVExporter {
         case .locations: return try writeLocations(url: url, progress: progress)
         case .packets: return try writePackets(url: url, progress: progress)
         case .connectivityEvents: return try writeConnectivityEvents(url: url, progress: progress)
+        case .sysdiagnoses: return try writeSysdiagnoses(url: url, progress: progress)
         }
     }
 
@@ -198,7 +199,7 @@ struct PersistenceCSVExporter {
         // https://stackoverflow.com/a/28153897
         let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "???"
         let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String  ?? "???"
-        let formatVersion = 2
+        let formatVersion = 3
 
         let info: [String: Any] = [
             "name": device.name,
@@ -279,7 +280,7 @@ struct PersistenceCSVExporter {
             url: url,
             category: .connectedCells,
             progress: progress,
-            header: ["collected", "json", "simSlot", "technology", "country", "network", "area", "cell", "verificationFinished", "verificationScore"],
+            header: ["collected", "json", "simSlot", "technology", "country", "network", "area", "cell", "verificationFinished", "verificationScore", "sysdiagnoseIdentifier"],
             writers: [DatabaseFileElementWriter(CellTweak.fetchRequest) { csv, result in
                 try csv.write(row: [
                     csvDate(result.collected),
@@ -291,7 +292,8 @@ struct PersistenceCSVExporter {
                     csvInt(result.area),
                     csvInt(result.cell),
                     csvBool(result.primaryVerification?.finished ?? false),
-                    csvInt(result.primaryVerification?.score ?? 0)
+                    csvInt(result.primaryVerification?.score ?? 0),
+                    csvString(result.sysdiagnose?.archiveIdentifier ?? "")
                 ])
             }]
         )
@@ -356,7 +358,7 @@ struct PersistenceCSVExporter {
             url: url,
             category: .packets,
             progress: progress,
-            header: ["collected", "direction", "simSlot", "proto", "data"],
+            header: ["collected", "direction", "simSlot", "proto", "data", "sysdiagnoseIdentifier"],
             writers: [
                 DatabaseFileElementWriter(PacketQMI.fetchRequest) { csv, result in
                     try csv.write(row: [
@@ -364,7 +366,8 @@ struct PersistenceCSVExporter {
                         csvString(result.direction),
                         csvInt(result.simSlotID),
                         csvString(result.proto),
-                        csvString(result.data?.base64EncodedString())
+                        csvString(result.data?.base64EncodedString()),
+                        csvString(result.sysdiagnose?.archiveIdentifier ?? "")
                     ])
                 },
                 DatabaseFileElementWriter(PacketARI.fetchRequest) { csv, result in
@@ -373,7 +376,8 @@ struct PersistenceCSVExporter {
                         csvString(result.direction),
                         csvInt(result.simSlotID),
                         csvString(result.proto),
-                        csvString(result.data?.base64EncodedString())
+                        csvString(result.data?.base64EncodedString()),
+                        csvString(result.sysdiagnose?.archiveIdentifier ?? "")
                     ])
                 }
             ]
@@ -385,7 +389,7 @@ struct PersistenceCSVExporter {
             url: url,
             category: .connectivityEvents,
             progress: progress,
-            header: ["collected", "simSlot", "active", "basebandMode", "registrationStatus"],
+            header: ["collected", "simSlot", "active", "basebandMode", "registrationStatus", "sysdiagnoseIdentifier"],
             writers: [
                 DatabaseFileElementWriter(ConnectivityEvent.fetchRequest) { csv, result in
                     try csv.write(row: [
@@ -393,7 +397,38 @@ struct PersistenceCSVExporter {
                         csvInt(result.simSlot),
                         csvBool(result.active),
                         csvInt(result.basebandMode),
-                        csvInt(result.registrationStatus)
+                        csvInt(result.registrationStatus),
+                        csvString(result.sysdiagnose?.archiveIdentifier ?? "")
+                    ])
+                }
+            ]
+        )
+    }
+
+    private func writeSysdiagnoses(url: URL, progress: CSVProgressFunc) throws -> Int {
+        return try writeData(
+            url: url,
+            category: .sysdiagnoses,
+            progress: progress,
+            header: ["imported", "filename", "archiveIdentifier", "sourceIdentifier", "endTimeRef", "highVolumeSizeLimit", "highVolumeTime", "persistSizeLimit", "persistTime", "productBuildVersion", "basebandChipset", "cellCount", "connectivityEventCount", "packetCount"],
+            writers: [
+                DatabaseFileElementWriter(Sysdiagnose.fetchRequest) { csv, result in
+                    try csv.write(row: [
+                        csvDate(result.imported),
+                        csvString(result.filename),
+                        csvString(result.archiveIdentifier),
+                        csvString(result.sourceIdentifier),
+                        csvDate(result.endTimeRef),
+                        csvInt(result.highVolumeSizeLimit),
+                        csvDate(result.highVolumeTime),
+                        csvInt(result.persistSizeLimit),
+                        csvDate(result.persistTime),
+                        csvString(result.productBuildVersion),
+                        csvString(result.basebandChipset),
+
+                        csvInt(result.cellCount),
+                        csvInt(result.connectivityEventCount),
+                        csvInt(result.packetCount)
                     ])
                 }
             ]

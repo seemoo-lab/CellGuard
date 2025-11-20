@@ -11,7 +11,7 @@ import Foundation
 extension PersistenceController {
 
     /// Uses `NSBatchInsertRequest` (BIR) to import tweak cell properties into the Core Data store on a private queue.
-    func importCollectedCells(from packetRefs: [NSManagedObjectID], filter: Bool) throws -> [CCTCellProperties] {
+    func importCollectedCells(from packetRefs: [NSManagedObjectID], sysdiagnoseId: NSManagedObjectID?, filter: Bool) throws -> [CCTCellProperties] {
         return try performAndWait(name: "importContext", author: "importCellTweak") { context in
             context.mergePolicy = NSMergePolicy.rollback
 
@@ -57,10 +57,12 @@ extension PersistenceController {
             }
 
             // Import the cells without Batch import to set the packet relationship
+            let sysdiagnose = Sysdiagnose.getSysdiagnoseById(context: context, id: sysdiagnoseId)
             let importedDate = Date()
             for (packet, cellProperties) in cells {
                 let cell = CellTweak(context: context)
                 cellProperties.applyTo(tweakCell: cell)
+                cell.sysdiagnose = sysdiagnose
 
                 // Set reference to packet
                 if let qmiPacket = packet as? PacketQMI {

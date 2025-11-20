@@ -34,9 +34,9 @@ struct VerificationStateLogEntryView: View {
     var body: some View {
         Group {
             Section(header: Text("Stage: \(stage?.name ?? "ID \(logEntry.stageId)") (\(logEntry.stageNumber))"), footer: Text(stage?.description ?? "")) {
-                CellDetailsRow("Status", "Completed")
-                CellDetailsRow("Points", "\(logEntry.pointsAwarded) / \(logEntry.pointsMax)", color: pointsColor)
-                CellDetailsRow("Duration", "\(doubleString(logEntry.duration, maxDigits: 4))s")
+                DetailsRow("Status", "Completed")
+                DetailsRow("Points", "\(logEntry.pointsAwarded) / \(logEntry.pointsMax)", color: pointsColor)
+                DetailsRow("Duration", "\(doubleString(logEntry.duration, maxDigits: 4))s")
                 if let relatedALSCell = logEntry.relatedCellALS {
                     ListNavigationLink(value: VerificationRelatedObjectId(object: relatedALSCell)) {
                         Text("Related ALS Cell")
@@ -106,32 +106,32 @@ private struct LogRelatedALSCellView: View {
 
         List {
             Section(header: Text("Identification")) {
-                CellDetailsRow("Technology", alsCell.technology ?? "Unknown")
-                CellDetailsRow(techFormatter.country(), alsCell.country)
-                CellDetailsRow(techFormatter.network(), alsCell.network)
-                CellDetailsRow(techFormatter.area(), alsCell.area)
-                CellDetailsRow(techFormatter.cell(), alsCell.cell)
+                DetailsRow("Technology", alsCell.technology ?? "Unknown")
+                DetailsRow(techFormatter.country(), alsCell.country)
+                DetailsRow(techFormatter.network(), alsCell.network)
+                DetailsRow(techFormatter.area(), alsCell.area)
+                DetailsRow(techFormatter.cell(), alsCell.cell)
             }
 
             if let importedDate = alsCell.imported {
                 Section(header: Text("Date & Time")) {
-                    CellDetailsRow("Queried at", mediumDateTimeFormatter.string(from: importedDate))
+                    DetailsRow("Queried at", mediumDateTimeFormatter.string(from: importedDate))
                 }
             }
             if let alsLocation = alsCell.location {
                 Section(header: Text("Location")) {
                     let (latitude, longitude) = coordinateToDMS(latitude: alsLocation.latitude, longitude: alsLocation.longitude)
-                    CellDetailsRow("Latitude", latitude)
-                    CellDetailsRow("Longitude", longitude)
-                    CellDetailsRow("Accuracy", "± \(alsLocation.horizontalAccuracy)m")
-                    CellDetailsRow("Reach", "\(alsLocation.reach)m")
-                    CellDetailsRow("Score", alsLocation.score)
+                    DetailsRow("Latitude", latitude)
+                    DetailsRow("Longitude", longitude)
+                    DetailsRow("Accuracy", "± \(alsLocation.horizontalAccuracy)m")
+                    DetailsRow("Reach", "\(alsLocation.reach)m")
+                    DetailsRow("Score", alsLocation.score)
                 }
             }
 
             Section(header: Text("Cell Properties")) {
-                CellDetailsRow("\(techFormatter.frequency())", alsCell.frequency)
-                CellDetailsRow("Physical Cell ID", alsCell.physicalCell)
+                DetailsRow("\(techFormatter.frequency())", alsCell.frequency)
+                DetailsRow("Physical Cell ID", alsCell.physicalCell)
             }
         }
         .navigationTitle("Related ALS Cell")
@@ -148,22 +148,22 @@ private struct LogRelatedUserLocationView: View {
 
         List {
             Section(header: Text("3D Position")) {
-                CellDetailsRow("Latitude", userLatitudeStr)
-                CellDetailsRow("Longitude", userLongitudeStr)
-                CellDetailsRow("Horizontal Accuracy", "± \(doubleString(userLocation.horizontalAccuracy)) m")
-                CellDetailsRow("Altitude", "\(doubleString(userLocation.altitude)) m")
-                CellDetailsRow("Vertical Accuracy", "± \(doubleString(userLocation.verticalAccuracy)) m")
+                DetailsRow("Latitude", userLatitudeStr)
+                DetailsRow("Longitude", userLongitudeStr)
+                DetailsRow("Horizontal Accuracy", "± \(doubleString(userLocation.horizontalAccuracy)) m")
+                DetailsRow("Altitude", "\(doubleString(userLocation.altitude)) m")
+                DetailsRow("Vertical Accuracy", "± \(doubleString(userLocation.verticalAccuracy)) m")
             }
 
             Section(header: Text("Speed")) {
-                CellDetailsRow("Speed", "\(doubleString(userLocation.speed)) m/s")
-                CellDetailsRow("Speed Accuracy", "± \(doubleString(userLocation.speedAccuracy)) m/s")
+                DetailsRow("Speed", "\(doubleString(userLocation.speed)) m/s")
+                DetailsRow("Speed Accuracy", "± \(doubleString(userLocation.speedAccuracy)) m/s")
             }
 
             Section(header: Text("Metadata")) {
-                CellDetailsRow("App in Background?", "\(userLocation.background)")
+                DetailsRow("App in Background?", "\(userLocation.background)")
                 if let collected = userLocation.collected {
-                    CellDetailsRow("Recorded at", mediumDateTimeFormatter.string(from: collected))
+                    DetailsRow("Recorded at", mediumDateTimeFormatter.string(from: collected))
                 }
             }
         }
@@ -183,9 +183,9 @@ private struct LogRelatedDistanceView: View {
     var body: some View {
         List {
             if let distance = distance {
-                CellDetailsRow("Distance", "\(doubleString(distance.distance / 1000.0)) km")
-                CellDetailsRow("Corrected Distance", "\(doubleString(distance.correctedDistance() / 1000.0)) km")
-                CellDetailsRow("Percentage of Trust", "\(doubleString((1 - distance.score()) * 100.0)) %")
+                DetailsRow("Distance", "\(doubleString(distance.distance / 1000.0)) km")
+                DetailsRow("Corrected Distance", "\(doubleString(distance.correctedDistance() / 1000.0)) km")
+                DetailsRow("Percentage of Trust", "\(doubleString((1 - distance.score()) * 100.0)) %")
             } else {
                 Text("Calculating Distance")
             }

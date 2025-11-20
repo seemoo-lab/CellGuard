@@ -33,7 +33,8 @@ extension PersistenceController {
             .alsCells: [CellALS.entity(), LocationALS.entity(), VerificationState.entity(), VerificationLog.entity()],
             .locations: [LocationUser.entity()],
             .packets: [PacketARI.entity(), PacketIndexARI.entity(), PacketQMI.entity(), PacketIndexQMI.entity()],
-            .connectivityEvents: [ConnectivityEvent.entity()]
+            .connectivityEvents: [ConnectivityEvent.entity()],
+            .sysdiagnoses: [Sysdiagnose.entity()]
         ]
 
         var deleteError: Error?

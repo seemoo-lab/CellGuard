@@ -15,6 +15,7 @@ enum PersistenceCategory: Comparable {
     case locations
     case packets
     case connectivityEvents
+    case sysdiagnoses
 
     func url(directory: URL) -> URL {
         return directory.appendingPathComponent(self.fileName())
@@ -28,6 +29,7 @@ enum PersistenceCategory: Comparable {
         case .locations: return "locations.csv"
         case .packets: return "packets.csv"
         case .connectivityEvents: return "connectivity-events.csv"
+        case .sysdiagnoses: return "sysdiagnoses.csv"
         }
     }
 }

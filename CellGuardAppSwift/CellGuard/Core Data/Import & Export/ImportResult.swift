@@ -38,6 +38,7 @@ struct ImportResult {
     let locations: ImportCount?
     let packets: ImportCount?
     let connectivityEvents: ImportCount?
+    let sysdiagnoses: ImportCount?
 
     let notices: [ImportNotice]
 }

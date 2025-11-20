@@ -7,6 +7,7 @@
 
 import Foundation
 import OSLog
+import CoreData
 
 struct CPTCollector {
 
@@ -26,7 +27,7 @@ struct CPTCollector {
             client.queryPackets { result in
                 do {
                     let packets = try result.get()
-                    let (qmiPackets, ariPackets, cells, connectivity) = try Self.store(packets)
+                    let (qmiPackets, ariPackets, cells, connectivity) = try Self.store(packets, sysdiagnose: nil)
                     Self.logger.debug("Imported \(qmiPackets) QMI, \(ariPackets) ARI packets, and \(cells.count) Cells")
                     completion.resume(returning: (qmiPackets, ariPackets, cells.count, connectivity))
                 } catch {
@@ -38,7 +39,7 @@ struct CPTCollector {
         }
     }
 
-    public static func store(_ packets: [CPTPacket]) throws -> (Int, Int, [CCTCellProperties], Int) {
+    public static func store(_ packets: [CPTPacket], sysdiagnose: NSManagedObjectID?) throws -> (Int, Int, [CCTCellProperties], Int) {
         do {
             var qmiPackets: [(CPTPacket, ParsedQMIPacket)] = []
             var ariPackets: [(CPTPacket, ParsedARIPacket)] = []
@@ -72,12 +73,12 @@ struct CPTCollector {
             }
             #endif
 
-            let (_, qmiPacketRefs) = try PersistenceController.shared.importQMIPackets(from: qmiPackets)
-            let (_, ariPacketRefs) = try PersistenceController.shared.importARIPackets(from: ariPackets)
+            let (_, qmiPacketRefs) = try PersistenceController.shared.importQMIPackets(from: qmiPackets, sysdiagnoseId: sysdiagnose)
+            let (_, ariPacketRefs) = try PersistenceController.shared.importARIPackets(from: ariPackets, sysdiagnoseId: sysdiagnose)
             let cellPacketRefs = qmiPacketRefs.cellInfo + ariPacketRefs.cellInfo
-            let importedCells = try PersistenceController.shared.importCollectedCells(from: cellPacketRefs, filter: true)
+            let importedCells = try PersistenceController.shared.importCollectedCells(from: cellPacketRefs, sysdiagnoseId: sysdiagnose, filter: true)
             let connectivityPacketRefs = qmiPacketRefs.connectivityEvents + ariPacketRefs.connectivityEvents
-            let importedConnectivityEvents = try PersistenceController.shared.importConnectivityEvents(from: connectivityPacketRefs)
+            let importedConnectivityEvents = try PersistenceController.shared.importConnectivityEvents(from: connectivityPacketRefs, sysdiagnoseId: sysdiagnose)
 
             return (qmiPackets.count, ariPackets.count, importedCells, importedConnectivityEvents)
         } catch {

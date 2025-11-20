@@ -14,6 +14,8 @@ enum CGNavigationDestinations {
     case operators
     case connectivity
     case summaryTab
+    case sysdiagnoses
+    case picker
 }
 
 struct CGNavigationViewModifier: ViewModifier {
@@ -82,6 +84,15 @@ struct CGNavigationViewModifier: ViewModifier {
                 .nbNavigationDestination(for: RiskLevel.self) { riskLevel in
                     RiskInfoView(risk: riskLevel)
                 }
+        } else if destinations == .sysdiagnoses {
+            content
+                .nbNavigationDestination(for: NavObjectId<Sysdiagnose>.self) { id in
+                    id.ensure { SysdiagnoseDetailsView(sysdiagnose: $0) }
+                }
+        } else if destinations == .picker {
+            content.nbNavigationDestination(for: FetchPickerNavigation<Sysdiagnose>.self) { data in
+                CGFetchStringPickerView(title: data.title, keyPath: data.keyPath, selected: data.selected, onSelectChanged: data.onSelectChanged)
+            }
         } else {
             content
         }

@@ -11,6 +11,7 @@ import SWCompression
 import OSLog
 import CSV
 import Regex
+import CoreData
 
 enum LogArchiveReadPhase: Int {
     // Spinner
@@ -113,6 +114,87 @@ enum LogArchiveError: Error, LocalizedError {
         default:
             return nil
         }
+    }
+}
+
+struct SysdiagnoseMetadata {
+    var imported: Date
+    var filename: String?
+    var basebandChipset: String?
+    var systemLogsInfo: SystemLogsInfo?
+    var versionMetadata: VersionMetadata?
+
+    func applyTo(_ sysdiagnose: Sysdiagnose) {
+        sysdiagnose.imported = self.imported
+        sysdiagnose.filename = self.filename
+        sysdiagnose.productBuildVersion = self.versionMetadata?.productBuildVersion
+        sysdiagnose.archiveIdentifier = self.systemLogsInfo?.archiveIdentifier
+        sysdiagnose.sourceIdentifier = self.systemLogsInfo?.sourceIdentifier
+
+        if let value = self.systemLogsInfo?.highVolumeSizeLimit {
+            sysdiagnose.highVolumeSizeLimit = value
+        }
+        if let value = self.systemLogsInfo?.persistSizeLimit {
+            sysdiagnose.persistSizeLimit = value
+        }
+
+        if let endTimeRefNs = self.systemLogsInfo?.endTimeRef?.value {
+            sysdiagnose.endTimeRef = Date(timeIntervalSince1970: TimeInterval(endTimeRefNs / 1_000_000_000))
+        }
+        if let highVolumeTimeNs = self.systemLogsInfo?.highVolumeTime?.almost?.value {
+            sysdiagnose.highVolumeTime = Date(timeIntervalSince1970: TimeInterval(highVolumeTimeNs / 1_000_000_000))
+        }
+        if let persistTimeNs = self.systemLogsInfo?.persistTime?.almost?.value {
+            sysdiagnose.persistTime = Date(timeIntervalSince1970: TimeInterval(persistTimeNs / 1_000_000_000))
+        }
+
+        sysdiagnose.basebandChipset = self.basebandChipset
+    }
+}
+
+struct SystemLogsInfo: Codable {
+    var archiveIdentifier: String?
+    var sourceIdentifier: String?
+
+    var highVolumeSizeLimit: Int64?
+    var persistSizeLimit: Int64?
+
+    var endTimeRef: TimeRef?
+    var highVolumeTime: OldestTimeRef?
+    var persistTime: OldestTimeRef?
+
+    private enum CodingKeys: String, CodingKey {
+        case archiveIdentifier = "ArchiveIdentifier"
+        case sourceIdentifier = "SourceIdentifier"
+        case endTimeRef = "EndTimeRef"
+        case highVolumeTime = "HighVolumeMetadata"
+        case highVolumeSizeLimit = "HighVolumeSizeLimit"
+        case persistTime = "PersistMetadata"
+        case persistSizeLimit = "PersistSizeLimit"
+    }
+}
+
+struct OldestTimeRef: Codable {
+    var almost: TimeRef?
+
+    init(date: Date) {
+        self.almost = TimeRef(date: date)
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case almost = "OldestTimeRef"
+    }
+}
+
+struct TimeRef: Codable {
+    var value: UInt64?
+
+    init(date: Date) {
+        self.value = UInt64(date.timeIntervalSince1970) * 1_000_000_000
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case value = "WallTime"
     }
 }
 
@@ -243,11 +325,6 @@ struct LogArchiveReader {
             throw LogArchiveError.extractLogArchiveFailed(error)
         }
 
-        let versionMetadata = parseVersionMetadata(tmpDir: tmpDir)
-        if let versionMetadata = versionMetadata {
-            Self.logger.info("Sysdiagnose originates from \(versionMetadata)")
-        }
-
         var currentFileCount = 0
         Self.logParseProgress = {
             progress(.parsingLogs, currentFileCount, fileCountTraceV3)
@@ -262,6 +339,8 @@ struct LogArchiveReader {
         let csvFile = try parseLogArchive(tmpDir: tmpDir, logArchiveDir: logArchive, speedup: speedup, rust: rust)
 
         Self.logParseProgress = nil
+        // Parse Metadata before we remove the logArchive
+        let sysdiagnoseObjectID = storeSysdiagnoseMetadata(filename: url.lastPathComponent, tmpDir: tmpDir)
 
         do {
             try fileManager.removeItem(at: logArchive)
@@ -275,7 +354,7 @@ struct LogArchiveReader {
             Self.logger.debug("Total CSV Lines: \(totalCsvLines)")
 
             var currentCsvLine = 0
-            let out = try readCSV(csvFile: csvFile) {
+            let out = try readCSV(csvFile: csvFile, sysdiagnose: sysdiagnoseObjectID) {
                 currentCsvLine += 1
 
                 // Update the SwiftUI just 100 times to avoid DoS behavior, e.g. EXC_BAD_ACCESS.
@@ -345,6 +424,9 @@ struct LogArchiveReader {
 
         } else if nameComponents.suffix(3) == ["logs", "SystemVersion", "SystemVersion.plist"] {
             // Extract file with iOS version of the capturing device
+            return true
+        } else if nameComponents.suffix(2) == ["ioreg", "IODeviceTree.txt"] {
+            // Extract ioreg/IODeviceTree.txt for sysdiagnose metadata
             return true
         }
 
@@ -443,6 +525,51 @@ struct LogArchiveReader {
         return count
     }
 
+    private func storeSysdiagnoseMetadata(filename: String, tmpDir: URL) -> NSManagedObjectID? {
+        var sysdiagnoseMetadata = SysdiagnoseMetadata(imported: Date(), filename: filename)
+        sysdiagnoseMetadata.systemLogsInfo = parseSystemLogsInfo(tmpDir: tmpDir)
+        sysdiagnoseMetadata.versionMetadata = parseVersionMetadata(tmpDir: tmpDir)
+        sysdiagnoseMetadata.basebandChipset = parseBasebandChipset(tmpDir: tmpDir)
+
+        return try? PersistenceController.shared.importSysdiagnoseMetadata(from: sysdiagnoseMetadata)
+    }
+
+    private func parseSystemLogsInfo(tmpDir: URL) -> SystemLogsInfo? {
+        let infoFilePath = tmpDir
+            .appendingPathComponent("system_logs.logarchive", conformingTo: .directory)
+            .appendingPathComponent("Info.plist", conformingTo: .propertyList)
+
+        do {
+            let data = try Data(contentsOf: infoFilePath)
+            let decoder = PropertyListDecoder()
+            return try decoder.decode(SystemLogsInfo.self, from: data)
+        } catch {
+            Self.logger.warning("Cannot read system_logs.logarchive/Info.plist: \(error)")
+            return nil
+        }
+    }
+
+    private func parseBasebandChipset(tmpDir: URL) -> String? {
+        let ioDeviceTreeFilePath = tmpDir
+            .appendingPathComponent("ioreg", conformingTo: .directory)
+            .appendingPathComponent("IODeviceTree.txt", conformingTo: .text)
+
+        do {
+            let ioDeviceTreeContents = try String(contentsOf: ioDeviceTreeFilePath, encoding: .ascii)
+            let basebandChipsetRegex = try NSRegularExpression(pattern: #""baseband-chipset" = <"(.*?)">"#)
+
+            if let match = basebandChipsetRegex.firstMatch(in: ioDeviceTreeContents, range: NSRange(ioDeviceTreeContents.startIndex..., in: ioDeviceTreeContents)) {
+                if let range = Range(match.range(at: 1), in: ioDeviceTreeContents) {
+                    return String(ioDeviceTreeContents[range])
+                }
+            }
+        } catch {
+            Self.logger.warning("Failed to read ioDeviceTree: \(error)")
+        }
+
+        return nil
+    }
+
     private func parseVersionMetadata(tmpDir: URL) -> VersionMetadata? {
         let versionFilePath = tmpDir
             .appendingPathComponent("logs", conformingTo: .directory)
@@ -488,14 +615,14 @@ struct LogArchiveReader {
         return count
     }
 
-    private func readCSV(csvFile: URL, progress: () -> Void) throws -> ImportResult {
+    private func readCSV(csvFile: URL, sysdiagnose: NSManagedObjectID?, progress: () -> Void) throws -> ImportResult {
         if let fileAttributes = try? fileManager.attributesOfItem(atPath: csvFile.path) {
             Self.logger.debug("\(fileAttributes))")
         }
 
         guard let inputStream = InputStream(url: csvFile) else {
             Self.logger.warning("No CSV input stream for \(csvFile)")
-            return ImportResult(cells: nil, alsCells: nil, locations: nil, packets: nil, connectivityEvents: nil, notices: [])
+            return ImportResult(cells: nil, alsCells: nil, locations: nil, packets: nil, connectivityEvents: nil, sysdiagnoses: nil, notices: [])
         }
 
         let csvReader = try CSVReader(stream: inputStream, hasHeaderRow: true)
@@ -562,7 +689,7 @@ struct LogArchiveReader {
         var connectivityCount = 0
         do {
             if packets.count > 0 {
-                (_, _, filteredCells, connectivityCount) = try CPTCollector.store(packets)
+                (_, _, filteredCells, connectivityCount) = try CPTCollector.store(packets, sysdiagnose: sysdiagnose)
             }
         } catch {
             throw LogArchiveError.importError(error)
@@ -584,6 +711,7 @@ struct LogArchiveReader {
             locations: nil,
             packets: ImportCount(count: packets.count, first: packetDates.first, last: packetDates.last),
             connectivityEvents: ImportCount(count: connectivityCount, first: packetDates.first, last: packetDates.last),
+            sysdiagnoses: nil,
             notices: notices
         )
     }
