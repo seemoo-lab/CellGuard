@@ -8,6 +8,7 @@
 import CoreData
 import SwiftUI
 import OSLog
+import Combine
 import NavigationBackport
 
 struct PacketTabView: View {
@@ -101,50 +102,74 @@ private struct PauseContinueButton: View {
 
 }
 
+class FetchUpdater<T: NSManagedObject>: ObservableObject {
+    @Published var currentResults: [T] = []
+    private var timerCancellable: AnyCancellable?
+    private var makeFetchRequest: () -> NSFetchRequest<T>
+
+    init(makeFetchRequest: @escaping () -> NSFetchRequest<T>, updateInterval: TimeInterval = 5) {
+        self.makeFetchRequest = makeFetchRequest
+        updateResults()
+
+        timerCancellable = Timer
+            .publish(every: updateInterval, on: .main, in: .common)
+            .autoconnect()
+            .sink { [weak self] _ in self?.updateResults() }
+    }
+
+    private func updateResults() {
+        let fetchRequest = self.makeFetchRequest()
+        if let results = try? PersistenceController.shared.container.viewContext.fetch(fetchRequest) {
+            withAnimation {
+                self.currentResults = results
+            }
+        }
+    }
+}
+
 private struct FilteredPacketView: View {
 
     // We have to use separate fetch request as the preview crashes for a unified request
-    @FetchRequest private var qmiPackets: FetchedResults<PacketQMI>
-    @FetchRequest private var ariPackets: FetchedResults<PacketARI>
+    @ObservedObject private var qmiPacketsUpdater: FetchUpdater<PacketQMI>
+    @ObservedObject private var ariPacketsUpdater: FetchUpdater<PacketARI>
     private let filter: PacketFilterSettings
 
     init(filter: PacketFilterSettings) {
         self.filter = filter
 
-        // https://www.hackingwithswift.com/quick-start/swiftui/how-to-limit-the-number-of-items-in-a-fetch-request
-        let qmiRequest: NSFetchRequest<PacketQMI> = PacketQMI.fetchRequest()
-        qmiRequest.fetchBatchSize = 25
-        qmiRequest.sortDescriptors = [NSSortDescriptor(keyPath: \PacketQMI.collected, ascending: false)]
-        filter.applyTo(qmi: qmiRequest)
-
-        let ariRequest: NSFetchRequest<PacketARI> = PacketARI.fetchRequest()
-        ariRequest.fetchBatchSize = 25
-        ariRequest.sortDescriptors = [NSSortDescriptor(keyPath: \PacketARI.collected, ascending: false)]
-        filter.applyTo(ari: ariRequest)
-
-        self._qmiPackets = FetchRequest(fetchRequest: qmiRequest, animation: .easeOut)
-        self._ariPackets = FetchRequest(fetchRequest: ariRequest, animation: .easeOut)
+        self.qmiPacketsUpdater = FetchUpdater(makeFetchRequest: {
+            let qmiRequest: NSFetchRequest<PacketQMI> = PacketQMI.fetchRequest()
+            qmiRequest.sortDescriptors = [NSSortDescriptor(keyPath: \PacketQMI.collected, ascending: false)]
+            filter.applyTo(qmi: qmiRequest)
+            return qmiRequest
+        })
+        self.ariPacketsUpdater = FetchUpdater(makeFetchRequest: {
+            let ariRequest: NSFetchRequest<PacketARI> = PacketARI.fetchRequest()
+            ariRequest.sortDescriptors = [NSSortDescriptor(keyPath: \PacketARI.collected, ascending: false)]
+            filter.applyTo(ari: ariRequest)
+            return ariRequest
+        })
     }
 
     var body: some View {
         if filter.proto == .qmi {
-            if qmiPackets.isEmpty {
+            if qmiPacketsUpdater.currentResults.isEmpty {
                 Text("No packets match your search criteria.")
             } else {
-                PacketList(packets: qmiPackets)
+                PacketList(packets: qmiPacketsUpdater.currentResults)
             }
         } else {
-            if ariPackets.isEmpty {
+            if ariPacketsUpdater.currentResults.isEmpty {
                 Text("No packets match your search criteria.")
             } else {
-                PacketList(packets: ariPackets)
+                PacketList(packets: ariPacketsUpdater.currentResults)
             }
         }
     }
 }
 
 private struct PacketList<T: NSManagedObject & Packet>: View {
-    let packets: FetchedResults<T>
+    let packets: [T]
 
     var body: some View {
         List(packets) { packet in
