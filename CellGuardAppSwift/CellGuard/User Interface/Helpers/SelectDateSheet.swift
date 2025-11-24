@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct SelectDateSheet: View {
+    var disableOnInfiniteRange = true
+
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
     @Binding var timeFrame: FilterTimeFrame
@@ -15,12 +17,15 @@ struct SelectDateSheet: View {
     @Binding var sheetRange: ClosedRange<Date>
 
     var body: some View {
-        if #available(iOS 16, *) {
-            CompactDateSheet(timeFrame: $timeFrame, date: $date, sheetRange: $sheetRange)
-            .presentationDetents([.height(horizontalSizeClass == .compact ? 400 : 500)])
-        } else {
-            ExtensiveDateSheet(timeFrame: $timeFrame, date: $date, sheetRange: $sheetRange)
+        VStack {
+            if #available(iOS 16, *) {
+                CompactDateSheet(timeFrame: $timeFrame, date: $date, sheetRange: $sheetRange)
+                    .presentationDetents([.height(horizontalSizeClass == .compact ? 400 : 500)])
+            } else {
+                ExtensiveDateSheet(timeFrame: $timeFrame, date: $date, sheetRange: $sheetRange)
+            }
         }
+        .disabled(sheetRange.lowerBound == Date.distantPast && sheetRange.upperBound == Date.distantFuture)
     }
 }
 

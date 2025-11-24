@@ -19,6 +19,17 @@ struct CellListView: View {
     @EnvironmentObject private var navigator: PathNavigator
     @EnvironmentObject private var settings: CellListFilterSettings
 
+    private func updateDateRange() {
+        Task.detached {
+            if let range = await PersistenceController.basedOnEnvironment().fetchCellDateRange() {
+                await MainActor.run {
+                    settings.showLatestDate(range: range)
+                    sheetRange = range
+                }
+            }
+        }
+    }
+
     var body: some View {
         FilteredCellView(settings: settings)
         .navigationTitle("Cells")
@@ -40,17 +51,9 @@ struct CellListView: View {
         }
         .sheet(isPresented: $isShowingDateSheet) {
             SelectDateSheet(timeFrame: $settings.timeFrame, date: $settings.date, sheetRange: $sheetRange)
+                .onAppear { updateDateRange() }
         }
-        .onAppear {
-            Task.detached {
-                if let range = await PersistenceController.basedOnEnvironment().fetchCellDateRange() {
-                    await MainActor.run {
-                        settings.showLatestDate(range: range)
-                        sheetRange = range
-                    }
-                }
-            }
-        }
+        .onAppear { updateDateRange() }
     }
 }
 
