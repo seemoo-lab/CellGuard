@@ -11,6 +11,8 @@ TCP Port: 33067
 
 To build the Tweak, you have to install [make](https://formulae.brew.sh/formula/make) and [Theos](https://theos.dev/docs/).
 
+If you build the tweak with Xcode 26, it will cause a [system crash on iOS 14](https://github.com/theos/theos/issues/855). Thus, compile the tweak with [Xcode 16.4 or lower](https://developer.apple.com/download/all/?q=xcode).
+
 ### Release
 
 You can either build the tweak for rootfull or rootless tweak injectors.
