@@ -270,7 +270,7 @@ private struct ListPacketCell: View {
                     HStack(spacing: 2) {
                         Image(systemName: "simcard")
                             .font(.system(size: 12))
-                        Text(simSlots.map { "\($0)" }.sorted().joined(separator: ","))
+                        Text(simSlots.filter { $0 != 0}.map { "\($0)" }.sorted().joined(separator: ","))
                             .font(.system(size: 14))
                     }
                     .foregroundColor(.gray)
