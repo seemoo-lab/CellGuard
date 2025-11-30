@@ -24,7 +24,7 @@ extension PersistenceController {
         }
     }
 
-    /// Import SysdiagnoseMetadata into the Core Data store on a private queue.
+    /// Fetch a sysdiagnose by its archive identifier if available.
     func fetchSysdiagnose(archiveIdentifier: String) throws -> Sysdiagnose? {
         return try performAndWait(name: "fetchContext", author: "fetchSysdiagnose") { _ in
             let fetchRequest = NSFetchRequest<Sysdiagnose>()
@@ -40,6 +40,22 @@ extension PersistenceController {
                 throw error
             }
         }
+    }
+
+    /// Fetch sysdiagnoses by their filename if available.
+    func fetchSysdiagnose(filename: String) throws -> [Sysdiagnose] {
+        return try performAndWait(name: "fetchContext", author: "fetchSysdiagnose") { _ in
+            let fetchRequest = NSFetchRequest<Sysdiagnose>()
+            fetchRequest.entity = Sysdiagnose.entity()
+            fetchRequest.predicate = NSPredicate(format: "filename = %@", filename as NSString)
+
+            do {
+                return try fetchRequest.execute()
+            } catch {
+                logger.warning("Can't fetch Sysdiagnose for filename (\(filename)): \(error)")
+                throw error
+            }
+        } ?? []
     }
 
     func fetchSysdiagnoseDateRange() async -> ClosedRange<Date>? {

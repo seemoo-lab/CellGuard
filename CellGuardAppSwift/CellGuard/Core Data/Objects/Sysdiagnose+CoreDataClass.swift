@@ -19,6 +19,13 @@ public class Sysdiagnose: NSManagedObject {
         }
     }
 
+    // We sanitize the filename because iOS renames the tar file extension after the first try (e.g., .tar-1.gz).
+    static func filenameByUrl(url: URL) -> String {
+        let gzFilename = url.deletingPathExtension()
+        let tarFilename = gzFilename.deletingPathExtension()
+        return tarFilename.lastPathComponent
+    }
+
     var cellCount: Int {
         return self.value(forKeyPath: "cells.@count") as? Int ?? 0
     }

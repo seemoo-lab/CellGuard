@@ -11,6 +11,7 @@ enum ImportNotice: Identifiable {
     case logTruncatedDueToFullDisk
     case cellParserMisalignment
     case sysdiagnoseSize
+    case sysdiagnoseAlreadyImported
 
     var id: Self { self }
 
@@ -22,6 +23,8 @@ enum ImportNotice: Identifiable {
             return "Please report this sysdiagnose. The Packet Cell Parser differs from the Log Cell Parser. Your imported data would help us to improve CellGuard. Please open an issue on github.com/seemoo-lab/CellGuard/issues to arrange a channel for reporting the sysdiagnose."
         case .sysdiagnoseSize:
             return "Make sure to import a valid system diagnose. Their usual file size is between 100 MB and 1 GB."
+        case .sysdiagnoseAlreadyImported:
+            return "This sysdiagnose has already been imported!"
         }
     }
 }
@@ -40,5 +43,5 @@ struct ImportResult {
     let connectivityEvents: ImportCount?
     let sysdiagnoses: ImportCount?
 
-    let notices: [ImportNotice]
+    var notices: [ImportNotice]
 }
