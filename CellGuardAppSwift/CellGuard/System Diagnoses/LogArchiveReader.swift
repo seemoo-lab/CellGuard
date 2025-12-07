@@ -642,7 +642,7 @@ struct LogArchiveReader {
                 continue
             }
 
-            let timestamp = Int(row[0])
+            let timestamp = Double(row[0])
             let subsystem = row[1]
             let library = row[2]
             let category = row[3]
@@ -653,13 +653,13 @@ struct LogArchiveReader {
                 skippedCount += 1
                 continue
             }
-            let timestampDate = Date(timeIntervalSince1970: Double(timestamp) / Double(NSEC_PER_SEC))
+            let timestampDate = Date(timeIntervalSince1970: timestamp / Double(NSEC_PER_SEC))
 
             do {
                 if category == "qmux" && subsystem == "com.apple.telephony.bb" {
                     packets.append(try readCSVPacketQMI(library: library, timestamp: timestampDate, message: message))
                     packetDates.update(timestampDate)
-                } else if category == "ARI" && subsystem == "com.apple.telephony.bb" {
+                } else if category.hasPrefix("ARI") && subsystem == "com.apple.telephony.bb" {
                     packets.append(try readCSVPacketARI(library: library, timestamp: timestampDate, message: message))
                     packetDates.update(timestampDate)
                 } else if category == "ct.server" && subsystem == "com.apple.CommCenter" {
@@ -672,11 +672,15 @@ struct LogArchiveReader {
                     readDeletedAction(timestamp: timestampDate, message: message)
                     skippedCount += 1
                 } else {
+                    Self.logger.warning("CSV row with unhandled combination of subsystem (\(subsystem)) & category (\(category)): \(row)")
                     skippedCount += 1
                 }
             } catch LogArchiveError.binaryPacketDataPrivate {
                 packetsPrivate.append(timestampDate)
                 packetPrivateDates.update(timestampDate)
+            } catch LogArchiveError.cellCCTParseError(_, CCTParserError.noCells(_)) {
+                skippedCount += 1
+                Self.logger.info("Cell JSON does not contain any cells:\n\(row)")
             } catch {
                 skippedCount += 1
                 Self.logger.warning("Skipped CSV row because of error (\(error)): \(row)")
