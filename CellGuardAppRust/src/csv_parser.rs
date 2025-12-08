@@ -180,17 +180,24 @@ fn filter_cellular(log_data: &LogData) -> bool {
 
     if log_data.subsystem == "com.apple.telephony.bb" {
         // This branch extracts binary QMI/ARI packet data from the log entries.
+
+        // The log entries must belong to the correct category.
+        // We add this additional check here to speed up the parsing process.
+        if !(log_data.category == "qmux" || log_data.category.starts_with("ARI")) {
+            return false;
+        }
+
         return log_data.message.contains("Bin=");
     } else if log_data.subsystem == "com.apple.CommCenter" {
         // We can remove this if case once we fully retire the string-based cell extraction.
         // Currently, we use it for comparison with the packet-based cell extraction approach.
 
-        // We can ignore messages of a few categories which will yield no useful cell data.
-        const SKIP_CATEGORIES: [&str; 3] = ["xpc.client", "DATA.IBIDriver.1", "DATA.IBIDriver.2"];
-        if SKIP_CATEGORIES.contains(&log_data.category.as_str()) {
+        // We only want messages of the ct.server category ...
+        if !log_data.category.eq("ct.server") {
             return false;
         }
 
+        // ... that contain CellInfo strings.
         return log_data.message.contains("CellInfo");
     }
 
