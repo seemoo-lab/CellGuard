@@ -698,6 +698,8 @@ struct LogArchiveReader {
         } catch {
             throw LogArchiveError.importError(error)
         }
+        // Only show the connectivity result if we've detected any connectivity events.
+        let connectivityResult = connectivityCount > 0 ? ImportCount(count: connectivityCount, first: packetDates.first, last: packetDates.last) : nil
 
         var notices: [ImportNotice] = []
         if validatePacketCellParser(packetParserCells: filteredCells, controlCells: controlCells, beforeImportTime: beforeImportTime) {
@@ -714,7 +716,7 @@ struct LogArchiveReader {
             alsCells: nil,
             locations: nil,
             packets: ImportCount(count: packets.count, first: packetDates.first, last: packetDates.last),
-            connectivityEvents: ImportCount(count: connectivityCount, first: packetDates.first, last: packetDates.last),
+            connectivityEvents: connectivityResult,
             sysdiagnoses: nil,
             notices: notices
         )
