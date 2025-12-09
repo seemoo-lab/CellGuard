@@ -173,30 +173,35 @@ fn iterate_chunks(
 
 fn filter_cellular(log_data: &LogData) -> bool {
     // Pre-scan the log entries written to the CSV file, so that the file is smaller and Swift can parse it faster
-    const PROCESSES: [&str; 1] = [
-        "/System/Library/Frameworks/CoreTelephony.framework/Support/CommCenter",
-        // "/usr/sbin/WirelessRadioManagerd"
-    ];
-    // Remove reference to "com.apple.CommCenter" once we only use the packet-based cell extraction.
-    const SUBSYSTEMS: [&str; 2] = ["com.apple.telephony.bb", "com.apple.CommCenter"];
-    // Remove reference to CellInfo once we only use
-    // the packet-based cell extraction.
-    const CONTENTS: [&str; 2] = ["CellInfo", "Bin="];
-
-    if !PROCESSES.contains(&log_data.process.as_str()) {
+    const PROCESSES: &str = "/System/Library/Frameworks/CoreTelephony.framework/Support/CommCenter";
+    if !PROCESSES.eq(log_data.process.as_str()) {
         return false;
     }
 
-    if !SUBSYSTEMS.contains(&log_data.subsystem.as_str()) {
-        return false;
-    }
+    if log_data.subsystem == "com.apple.telephony.bb" {
+        // This branch extracts binary QMI/ARI packet data from the log entries.
 
-    for content_query in &CONTENTS {
-        if log_data.message.contains(content_query) {
-            return true;
+        // The log entries must belong to the correct category.
+        // We add this additional check here to speed up the parsing process.
+        if !(log_data.category == "qmux" || log_data.category.starts_with("ARI")) {
+            return false;
         }
+
+        return log_data.message.contains("Bin=");
+    } else if log_data.subsystem == "com.apple.CommCenter" {
+        // We can remove this if case once we fully retire the string-based cell extraction.
+        // Currently, we use it for comparison with the packet-based cell extraction approach.
+
+        // We only want messages of the ct.server category ...
+        if !log_data.category.eq("ct.server") {
+            return false;
+        }
+
+        // ... that contain CellInfo strings.
+        return log_data.message.contains("CellInfo");
     }
 
+    // We ignore all other log entries.
     false
 }
 
