@@ -699,14 +699,17 @@ struct LogArchiveReader {
 
         let beforeImportTime = Date()
         var filteredCells: [CCTCellProperties] = []
+        var qmiImportCount = 0
+        var ariImportCount = 0
         var connectivityCount = 0
         do {
             if packets.count > 0 {
-                (_, _, filteredCells, connectivityCount) = try CPTCollector.store(packets, sysdiagnose: sysdiagnose)
+                (qmiImportCount, ariImportCount, filteredCells, connectivityCount) = try CPTCollector.store(packets, sysdiagnose: sysdiagnose)
             }
         } catch {
             throw LogArchiveError.importError(error)
         }
+        let packetsCount = qmiImportCount + ariImportCount
         // Only show the connectivity result if we've detected any connectivity events.
         let connectivityResult = connectivityCount > 0 ? ImportCount(count: connectivityCount, first: packetDates.first, last: packetDates.last) : nil
 
@@ -724,7 +727,7 @@ struct LogArchiveReader {
             cells: ImportCount(count: filteredCells.count, first: filteredCells.first?.timestamp, last: filteredCells.last?.timestamp),
             alsCells: nil,
             locations: nil,
-            packets: ImportCount(count: packets.count, first: packetDates.first, last: packetDates.last),
+            packets: ImportCount(count: packetsCount, first: packetDates.first, last: packetDates.last),
             connectivityEvents: connectivityResult,
             sysdiagnoses: nil,
             notices: notices

@@ -18,7 +18,7 @@ struct ImportStatusRow: View {
 
     var body: some View {
         if case .count(value: let count) = self.status,
-            let count = count, count.first != nil, count.last != nil {
+           let count = count, count.count != 0, count.first != nil, count.last != nil {
             ListNavigationLink(value: CountInfo(title: text, count: count)) {
                 row
             }
