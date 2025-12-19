@@ -364,6 +364,13 @@ struct ImportView: View {
                 notices.append(.sysdiagnoseSize)
             }
 
+            // Check by filename that the sysdiagnose has not been imported before.
+            if fileType == .sysdiagnose,
+               let sysdiagnoses = try? PersistenceController.shared.fetchSysdiagnose(filename: Sysdiagnose.filenameByUrl(url: url)),
+               sysdiagnoses.count > 0 {
+                notices.append(.sysdiagnoseAlreadyImported)
+            }
+
             DispatchQueue.main.async {
                 self.fileSize = fileSizeStr
                 self.fileType = fileType

@@ -340,7 +340,13 @@ struct LogArchiveReader {
 
         Self.logParseProgress = nil
         // Parse Metadata before we remove the logArchive
-        let sysdiagnoseObjectID = storeSysdiagnoseMetadata(filename: url.lastPathComponent, tmpDir: tmpDir)
+        let sysdiagnoseMetadata = parseSysdiagnoseMetadata(filename: Sysdiagnose.filenameByUrl(url: url), tmpDir: tmpDir)
+        var sysdiagnoseAlreadyImported = false
+        if let archiveIdentifier = sysdiagnoseMetadata.systemLogsInfo?.archiveIdentifier,
+           (try? PersistenceController.shared.fetchSysdiagnose(archiveIdentifier: archiveIdentifier)) != nil {
+            sysdiagnoseAlreadyImported = true
+        }
+        let sysdiagnoseObjectID = try? PersistenceController.shared.importSysdiagnoseMetadata(from: sysdiagnoseMetadata)
 
         do {
             try fileManager.removeItem(at: logArchive)
@@ -354,13 +360,17 @@ struct LogArchiveReader {
             Self.logger.debug("Total CSV Lines: \(totalCsvLines)")
 
             var currentCsvLine = 0
-            let out = try readCSV(csvFile: csvFile, sysdiagnose: sysdiagnoseObjectID) {
+            var out = try readCSV(csvFile: csvFile, sysdiagnose: sysdiagnoseObjectID) {
                 currentCsvLine += 1
 
                 // Update the SwiftUI just 100 times to avoid DoS behavior, e.g. EXC_BAD_ACCESS.
                 if currentCsvLine % updateFrequency == 0 {
                     progress(.importingData, currentCsvLine, totalCsvLines)
                 }
+            }
+
+            if sysdiagnoseAlreadyImported {
+                out.notices.append(.sysdiagnoseAlreadyImported)
             }
 
             Self.logger.debug("done :)")
@@ -525,13 +535,12 @@ struct LogArchiveReader {
         return count
     }
 
-    private func storeSysdiagnoseMetadata(filename: String, tmpDir: URL) -> NSManagedObjectID? {
+    private func parseSysdiagnoseMetadata(filename: String, tmpDir: URL) -> SysdiagnoseMetadata {
         var sysdiagnoseMetadata = SysdiagnoseMetadata(imported: Date(), filename: filename)
         sysdiagnoseMetadata.systemLogsInfo = parseSystemLogsInfo(tmpDir: tmpDir)
         sysdiagnoseMetadata.versionMetadata = parseVersionMetadata(tmpDir: tmpDir)
         sysdiagnoseMetadata.basebandChipset = parseBasebandChipset(tmpDir: tmpDir)
-
-        return try? PersistenceController.shared.importSysdiagnoseMetadata(from: sysdiagnoseMetadata)
+        return sysdiagnoseMetadata
     }
 
     private func parseSystemLogsInfo(tmpDir: URL) -> SystemLogsInfo? {
