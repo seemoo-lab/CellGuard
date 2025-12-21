@@ -141,17 +141,21 @@ struct ImportView: View {
                 }
             }
 
-            if importStatusUserCells != .none || importStatusALSCells != .none || importStatusLocations != .none || importStatusPackets != .none || importStatusConnectivityEvents != .none || importStatusSysdiagnoses != .none {
-                Section(header: Text("Datasets")) {
-                    ImportStatusRow("Connected Cells", $importStatusUserCells)
-                    ImportStatusRow("Cell Cache", $importStatusALSCells)
-                    ImportStatusRow("Locations", $importStatusLocations)
-                    ImportStatusRow("Packets", $importStatusPackets)
-                    ImportStatusRow("Connectivity Events", $importStatusConnectivityEvents)
-                    // We hide this row for the Sysdiagnose Import (not for the CSV Import)
-                    if case .count(value: let count) = importStatusSysdiagnoses, count != nil {
+            if importStatusPackets != .none {
+                Section(header: Text("Raw Data")) {
+                    if self.fileType == .archive {
                         ImportStatusRow("Sysdiagnoses", $importStatusSysdiagnoses)
+                        ImportStatusRow("Cell Cache", $importStatusALSCells)
+                        ImportStatusRow("Locations", $importStatusLocations)
                     }
+                    ImportStatusRow("Packets", $importStatusPackets)
+                }
+            }
+
+            if importStatusUserCells != .none || importStatusALSCells != .none || importStatusLocations != .none || importStatusConnectivityEvents != .none {
+                Section(header: Text("Derived Data")) {
+                    ImportStatusRow("Connected Cells", $importStatusUserCells)
+                    ImportStatusRow("Connectivity Events", $importStatusConnectivityEvents)
                 }
             }
 
