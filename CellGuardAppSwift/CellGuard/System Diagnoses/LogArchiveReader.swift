@@ -711,7 +711,7 @@ struct LogArchiveReader {
         }
         let packetsCount = qmiImportCount + ariImportCount
         // Only show the connectivity result if we've detected any connectivity events.
-        let connectivityResult = connectivityCount > 0 ? ImportCount(count: connectivityCount, first: packetDates.first, last: packetDates.last) : nil
+        let connectivityResult = connectivityCount > 0 ? ImportCount(importedCount: connectivityCount, totalCount: nil, first: nil, last: nil) : nil
 
         var notices: [ImportNotice] = []
         if validatePacketCellParser(packetParserCells: filteredCells, controlCells: controlCells, beforeImportTime: beforeImportTime) {
@@ -724,10 +724,10 @@ struct LogArchiveReader {
         // TODO: Check for log truncation
 
         return ImportResult(
-            cells: ImportCount(count: filteredCells.count, first: filteredCells.first?.timestamp, last: filteredCells.last?.timestamp),
+            cells: ImportCount(importedCount: filteredCells.count, totalCount: nil, first: filteredCells.first?.timestamp, last: filteredCells.last?.timestamp),
             alsCells: nil,
             locations: nil,
-            packets: ImportCount(count: packetsCount, first: packetDates.first, last: packetDates.last),
+            packets: ImportCount(importedCount: packetsCount, totalCount: packets.count, first: packetDates.first, last: packetDates.last),
             connectivityEvents: connectivityResult,
             sysdiagnoses: nil,
             notices: notices

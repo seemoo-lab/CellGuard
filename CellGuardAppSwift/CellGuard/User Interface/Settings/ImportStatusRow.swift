@@ -18,7 +18,8 @@ struct ImportStatusRow: View {
 
     var body: some View {
         if case .count(value: let count) = self.status,
-           let count = count, count.count != 0, count.first != nil, count.last != nil {
+           let count = count,
+           count.first != nil || count.last != nil || (count.totalCount != nil && count.totalCount != count.importedCount) {
             ListNavigationLink(value: CountInfo(title: text, count: count)) {
                 row
             }
@@ -40,7 +41,15 @@ struct ImportStatusRow: View {
         case .none:
             return AnyView(EmptyView())
         case let .count(count):
-            return AnyView(Text("\(count?.count ?? 0)"))
+            guard let count = count else {
+                return AnyView(Text("\(0)"))
+            }
+            if let total = count.totalCount {
+                let text = count.importedCount == total ? "\(count.importedCount)" : "\(count.importedCount) / \(total)"
+                return AnyView(Text(text))
+            } else {
+                return AnyView(Text("\(count.importedCount)"))
+            }
         case .progress:
             return AnyView(CircularProgressView(progress: $status.progress)
                 .frame(width: 20, height: 20))
@@ -64,7 +73,13 @@ struct ImportStatusDetailsView: View {
 
     var body: some View {
         List {
-            KeyValueListRow(key: "Imported Entries", value: "\(info.count.count)")
+            KeyValueListRow(key: "Imported Objects", value: "\(info.count.importedCount)")
+            if let total = info.count.totalCount {
+                if total != info.count.importedCount {
+                    Text("Some of the contained objects have already been imported before.").foregroundColor(.gray)
+                }
+                KeyValueListRow(key: "Total Objects", value: "\(total)")
+            }
             if let firstDate = info.count.first {
                 KeyValueListRow(key: "First", value: mediumDateTimeFormatter.string(from: firstDate))
             }

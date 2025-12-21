@@ -11,10 +11,10 @@ import Foundation
 extension PersistenceController {
 
     /// Uses `NSBatchInsertRequest` (BIR) to import locations into the Core Data store on a private queue.
-    func importUserLocations(from locations: [TrackedUserLocation]) throws {
+    func importUserLocations(from locations: [TrackedUserLocation]) throws -> Int {
         // TODO: Only import if the location is different by a margin with the last location
 
-        try performAndWait(name: "importContext", author: "importLocations") { context in
+        return try performAndWait(name: "importContext", author: "importLocations") { context in
             var index = 0
             let total = locations.count
 
@@ -31,17 +31,20 @@ extension PersistenceController {
                 index += 1
                 return false
             })
+            batchInsertRequest.resultType = .count
 
             let fetchResult = try context.execute(batchInsertRequest)
 
-            if let batchInsertResult = fetchResult as? NSBatchInsertResult,
-               !((batchInsertResult.result as? Bool) ?? false) {
+            guard let batchInsertResult = fetchResult as? NSBatchInsertResult,
+                  batchInsertResult.resultType == .count,
+                  let batchImportCount = batchInsertResult.result as? Int else {
                 logger.debug("Failed to execute batch import request for user locations.")
                 throw PersistenceError.batchInsertError
             }
-        }
 
-        logger.debug("Successfully inserted \(locations.count) locations.")
+            logger.debug("Successfully inserted \(batchImportCount) locations.")
+            return batchImportCount
+        } ?? 0
     }
 
     func assignLocation(to tweakCellID: NSManagedObjectID) throws -> (Bool, Date?) {

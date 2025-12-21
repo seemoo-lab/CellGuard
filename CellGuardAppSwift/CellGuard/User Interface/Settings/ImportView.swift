@@ -318,7 +318,7 @@ struct ImportView: View {
             importStatusConnectivityEvents = .count(counts.connectivityEvents)
             importStatusSysdiagnoses = .count(counts.sysdiagnoses)
             importNotices = counts.notices
-            Self.logger.info("Successfully imported \(counts.cells?.count ?? 0) cells, \(counts.alsCells?.count ?? 0) ALS cells, \(counts.locations?.count ?? 0) locations, \(counts.connectivityEvents?.count ?? 0) connectivity events, \(counts.sysdiagnoses?.count ?? 0) sysdiagnoses, and \(counts.packets?.count ?? 0) packets.")
+            Self.logger.info("Successfully imported \(counts.cells?.importedCount ?? 0) cells, \(counts.alsCells?.importedCount ?? 0) ALS cells, \(counts.locations?.importedCount ?? 0) locations, \(counts.connectivityEvents?.importedCount ?? 0) connectivity events, \(counts.sysdiagnoses?.importedCount ?? 0) sysdiagnoses, and \(counts.packets?.importedCount ?? 0) packets.")
         } catch {
             importError = error
             importNotices = []
