@@ -27,6 +27,7 @@ enum CCTParserError: Error {
     case invalidQmiDirection
     case noQmiLteCellInformation(ParsedQMIPacket)
     case unexpectedTlvLength
+    case valueTooHigh
 }
 
 enum CCTCellType: String {
@@ -121,4 +122,19 @@ struct CCTParser {
         }
         return false
     }
+}
+
+func castInteger<T: FixedWidthInteger, U: FixedWidthInteger>(_ value: U, max: (any FixedWidthInteger)? = nil) throws -> T {
+    if T.max < U.max {
+        let tMaxCasted: U = numericCast(T.max)
+        if value > tMaxCasted {
+            throw CCTParserError.valueTooHigh
+        }
+    }
+    let result: T = numericCast(value)
+    if let max = max,
+       result > max {
+        throw CCTParserError.valueTooHigh
+    }
+    return result
 }

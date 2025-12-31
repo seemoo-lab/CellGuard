@@ -87,9 +87,9 @@ extension CCTParser {
         cell.mcc = Int32((try? data.get(2) as UInt16) ?? 0)
         cell.network = Int32((try? data.get(4) as UInt16) ?? 0)
         cell.band = Int32((try? data.get(6) as UInt16) ?? 0)
-        cell.area = Int32((try? data.get(8) as UInt16) ?? 0)
+        cell.area = try castInteger((try? data.get(8) as UInt16) ?? 0, max: UInt16.max) // Max 16bit. See 3GPP TS 36.101
         cell.cellId = Int64((try? data.get(10) as UInt16) ?? 0)
-        cell.frequency = Int32((try? data.get(12) as UInt16) ?? 0)
+        cell.frequency = try castInteger((try? data.get(12) as UInt16) ?? 0) // See 3GPP TS 45.005
         let _: UInt32 = try data.get(14) // latitude
         let _: UInt32 = try data.get(18) // longitude
 
@@ -110,10 +110,10 @@ extension CCTParser {
         cell.mcc = Int32((try? data.get(2) as UInt16) ?? 0)
         cell.network = Int32((try? data.get(4) as UInt16) ?? 0)
         cell.band = Int32((try? data.get(6) as UInt16) ?? 0)
-        cell.area = Int32((try? data.get(8) as UInt16) ?? 0)
+        cell.area = try castInteger((try? data.get(8) as UInt16) ?? 0, max: UInt16.max) // Max 16bit. See 3GPP TS 36.101
         let _: UInt16 = try data.get(10) as UInt16 // unknown
         cell.cellId = Int64((try? data.get(12) as UInt32) ?? 0) // RNC-ID + Node-B cell id
-        cell.frequency = Int32((try? data.get(16) as UInt16) ?? 0)
+        cell.frequency = try castInteger((try? data.get(16) as UInt16) ?? 0) // See 3GPP TS 25.101
         let _: UInt16 = try data.get(18) // primary synchronization code (PSC)
         let _: UInt32 = try data.get(20) // latitude
         let _: UInt32 = try data.get(24) // longitude
@@ -136,7 +136,7 @@ extension CCTParser {
 
         if version == .cdma1x {
             _ = Int32((try? data.get(4) as UInt16) ?? 0) // mnc
-            cell.frequency = Int32((try? data.get(6) as UInt16) ?? 0)
+            cell.frequency = try castInteger((try? data.get(6) as UInt16) ?? 0) // See 3GPP2 C.S0057-D
             cell.band = Int32((try? data.get(8) as UInt16) ?? 0)
             cell.network = Int32((try? data.get(10) as UInt16) ?? 0)
             let _: UInt16 = try data.get(12) // nid
@@ -148,7 +148,7 @@ extension CCTParser {
             let _: UInt8 = try data.get(28) // ltmOffset
             let _: UInt8 = try data.get(29) // dayLightSavings
         } else if version == .cdmaEvdo {
-            cell.frequency = Int32((try? data.get(4) as UInt16) ?? 0)
+            cell.frequency = try castInteger((try? data.get(4) as UInt16) ?? 0) // See 3GPP2 C.S0057-D
             cell.band = Int32((try? data.get(6) as UInt16) ?? 0)
             _ = try data.getUTF8(8, length: 16) // sectorID
             let _: UInt32 = try data.get(24) // latitude
@@ -175,22 +175,20 @@ extension CCTParser {
         cell.mcc = Int32((try? data.get(2) as UInt16) ?? 0)
         cell.network = Int32((try? data.get(4) as UInt16) ?? 0)
         cell.band = Int32((try? data.get(6) as UInt16) ?? 0)
-        // According to the specification, the TAC uses just 16 bit. Therefore, this conversion causes no overflow.
-        cell.area = Int32((try? data.get(8) as UInt32) ?? 0)
+        cell.area = try castInteger((try? data.get(8) as UInt32) ?? 0, max: UInt16.max) // Max 16bit. See 3GPP TS 36.101
         // See: https://dev.seemoo.tu-darmstadt.de/apple/cell-guard/-/issues/98
         cell.cellId = Int64((try? data.get(12) as UInt32) ?? 0)
 
         offset = 16
         if version == .lte {
-            cell.frequency = Int32((try? data.get(offset) as UInt16) ?? 0)
+            cell.frequency = try castInteger((try? data.get(offset) as UInt16) ?? 0) // See 3GPP TS 36.101. Licensed up to 3.8 GHz
             offset += 2
-            cell.physicalCellId = Int32((try? data.get(offset) as UInt16) ?? 0)
+            cell.physicalCellId = try castInteger((try? data.get(offset) as UInt16) ?? 0)
             offset += 2
         } else if version == .lteV1T || version == .lteR15 || version == .lteR15V2 {
-            // With a max value of 262143, the conversion causes no overflow.
-            cell.frequency = Int32((try? data.get(offset) as UInt32) ?? 0)
+            cell.frequency = try castInteger((try? data.get(offset) as UInt32) ?? 0) // See 3GPP TS 36.101. Licensed up to 3.8 GHz
             offset += 4
-            cell.physicalCellId = Int32((try? data.get(offset) as UInt32) ?? 0)
+            cell.physicalCellId = try castInteger((try? data.get(offset) as UInt32) ?? 0)
             offset += 4
         }
 
@@ -221,14 +219,12 @@ extension CCTParser {
         let _: UInt32 = try data.get(0) // index
         cell.mcc = Int32((try? data.get(4) as UInt16) ?? 0)
         cell.network = Int32((try? data.get(6) as UInt16) ?? 0)
-        cell.band = Int32((try? data.get(8) as UInt32) ?? 0)
-        // According to the specification, the TAC uses just 36 bit. Therefore, this conversion causes no overflow.
-        cell.area = Int32((try? data.get(12) as UInt32) ?? 0)
+        cell.band = try castInteger((try? data.get(8) as UInt32) ?? 0) // 3GPP TS 38.101-1 is unclear about the max.
+        cell.area = try castInteger((try? data.get(12) as UInt32) ?? 0, max: (1<<24) - 1 ) // Max 24 bit. See 3GPP TS 36.101
         // According to the specification, the cell ID uses just 36 bit. Therefore, this conversion causes no overflow.
-        cell.cellId = Int64((try? data.get(16) as UInt64) ?? 0)
-        // With a max value of 3279165, this conversion causes no overflow.
-        cell.frequency = Int32((try? data.get(24) as UInt32) ?? 0)
-        cell.physicalCellId = Int32((try? data.get(28) as UInt32) ?? 0)
+        cell.cellId = try castInteger((try? data.get(16) as UInt64) ?? 0, max: (1<<36) - 1)
+        cell.frequency = try castInteger((try? data.get(24) as UInt32) ?? 0) // See 3GPP TS 38.101-1
+        cell.physicalCellId = try castInteger((try? data.get(28) as UInt32) ?? 0)
         let _: UInt32 = try data.get(32) // latitude
         let _: UInt32 = try data.get(36) // longitude
         cell.bandwidth = Int32((try? data.get(40) as UInt16) ?? 0)
