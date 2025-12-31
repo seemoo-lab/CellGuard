@@ -10,7 +10,8 @@ import BinarySwift
 
 extension CCTParser {
 
-    func parseQmiCell(_ data: Data, timestamp: Date, simSlot: UInt8) throws -> [CCTCellProperties] {
+    // parseQmiCell returns the parsed cell properties and errors that occurred.
+    func parseQmiCell(_ data: Data, timestamp: Date, simSlot: UInt8) throws -> ([CCTCellProperties], [Error]) {
         // Location for symbols:
         // - Own sample collection using the tweak
         // - IPSW: /System/Library/Frameworks/CoreTelephony.framework/CoreTelephony (dyld_cache)
@@ -29,6 +30,7 @@ extension CCTParser {
         }
 
         var cells: [CCTCellProperties] = []
+        var errors: [Error] = []
         for technology in PacketConstants.qmiCellInfoTechnologies {
             guard let tlvType = PacketConstants.qmiCellInfoTLVTypes[technology],
                   let tlv = parsedPacket.findTlvValue(type: tlvType) else {
@@ -36,23 +38,27 @@ extension CCTParser {
             }
 
             var cell: CCTCellProperties?
-            switch technology {
-            case .cdma1x, .cdmaEvdo:
-                // https://en.wikipedia.org/wiki/CDMA2000
-                // CDMA2000 1x Evolution-Data Optimized
-                cell = try? parseCdmaQmi(tlv, version: technology)
-            case .umts, .tdscdma:
-                // Special version of UMTS WCDMA in China
-                // https://www.electronics-notes.com/articles/connectivity/3g-umts/td-scdma.php
-                cell = try? parseUmtsQmi(tlv, version: technology)
-            case .gsm:
-                cell = try? parseGsmQmi(tlv)
-            case .lteV1, .lteV2, .lteV3, .lteV4:
-                cell = try? parseLteQmi(tlv, version: technology)
-            case .nr, .nrV2, .nrV3:
-                cell = try? parseNrQmi(tlv, version: technology)
-            default:
-                throw CCTParserError.unknownRat(technology.rawValue)
+            do {
+                switch technology {
+                case .cdma1x, .cdmaEvdo:
+                    // https://en.wikipedia.org/wiki/CDMA2000
+                    // CDMA2000 1x Evolution-Data Optimized
+                    cell = try parseCdmaQmi(tlv, version: technology)
+                case .umts, .tdscdma:
+                    // Special version of UMTS WCDMA in China
+                    // https://www.electronics-notes.com/articles/connectivity/3g-umts/td-scdma.php
+                    cell = try parseUmtsQmi(tlv, version: technology)
+                case .gsm:
+                    cell = try parseGsmQmi(tlv)
+                case .lteV1, .lteV2, .lteV3, .lteV4:
+                    cell = try parseLteQmi(tlv, version: technology)
+                case .nr, .nrV2, .nrV3:
+                    cell = try parseNrQmi(tlv, version: technology)
+                default:
+                    throw CCTParserError.unknownRat(technology.rawValue)
+                }
+            } catch {
+                errors.append(error)
             }
 
             if var cell = cell,
@@ -80,7 +86,7 @@ extension CCTParser {
             cells.append(cell)
         }
 
-        return cells
+        return (cells, errors)
     }
 
     private func parseGsmQmi(_ tlv: QmiTlv) throws -> CCTCellProperties {

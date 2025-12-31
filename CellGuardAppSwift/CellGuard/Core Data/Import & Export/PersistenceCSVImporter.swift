@@ -110,12 +110,17 @@ struct PersistenceCSVImporter {
         Self.logger.debug("Read \(alsCells?.importedCount ?? 0) ALS cells")
         let sysdiagnoses = try readSysdiagnoses(directory: tmpDirectoryURL, infoData: infoData, progress: progress)
         Self.logger.debug("Read \(sysdiagnoses?.importedCount ?? 0) sysdiagnoses")
-        let (packets, userCells, connectivity) = try readPackets(directory: tmpDirectoryURL, infoData: infoData, version: formatVersion, progress: progress)
+        let (packets, userCells, connectivity, parsingErrors) = try readPackets(directory: tmpDirectoryURL, infoData: infoData, version: formatVersion, progress: progress)
         Self.logger.debug("Read \(packets?.importedCount ?? 0) packets")
         Self.logger.debug("Read \(userCells?.importedCount ?? 0) user cells")
         Self.logger.debug("Read \(connectivity?.importedCount ?? 0) connectivity events")
 
-        return ImportResult(cells: userCells, alsCells: alsCells, locations: locations, packets: packets, connectivityEvents: connectivity, sysdiagnoses: sysdiagnoses, notices: [])
+        var notices: [ImportNotice] = []
+        if !parsingErrors.isEmpty {
+            notices.append(.pleaseReportData(.parsingAssertionFailed))
+        }
+
+        return ImportResult(cells: userCells, alsCells: alsCells, locations: locations, packets: packets, connectivityEvents: connectivity, sysdiagnoses: sysdiagnoses, notices: notices)
     }
 
     func fetchInfo(from url: URL) throws -> [String: Any] {
@@ -354,13 +359,14 @@ struct PersistenceCSVImporter {
         }
     }
 
-    private func readPackets(directory: URL, infoData: [String: Int], version: Int, progress: CSVProgressFunc) throws -> (ImportCount?, ImportCount?, ImportCount?) {
+    private func readPackets(directory: URL, infoData: [String: Int], version: Int, progress: CSVProgressFunc) throws -> (ImportCount?, ImportCount?, ImportCount?, [Error]) {
         // Set the packet retention time frame to infinite, so that older packets to-be-imported don't get deleted
         UserDefaults.standard.setValue(DeleteView.packetRetentionInfinite, forKey: UserDefaultsKeys.packetRetention.rawValue)
         UserDefaults.standard.setValue(DeleteView.locationRetentionInfinite, forKey: UserDefaultsKeys.locationRetention.rawValue)
 
         var cellCount = 0
         var connectivityCount = 0
+        var errors: [Error] = []
         let packetImportCount = try importData(directory: directory, category: .packets, infoData: infoData, progress: progress) { (csv: CSVReader) -> (CPTPacket, String)? in
             let directionStr = try csvString(csv, "direction")
             let dataStr = try csvString(csv, "data")
@@ -386,16 +392,17 @@ struct PersistenceCSVImporter {
                 let sysdiagnose = sysdiagnoseIdentifier.isEmpty ? nil : try? PersistenceController.shared.fetchSysdiagnose(archiveIdentifier: sysdiagnoseIdentifier)
                 let sysdiagnoseId = sysdiagnose != nil ? sysdiagnose!.objectID : nil
 
-                let (qmiImportCount, ariImportCount, cells, connectivity) = try CPTCollector.store(packets, sysdiagnose: sysdiagnoseId)
+                let (qmiImportCount, ariImportCount, cells, connectivity, parsingErrors) = try CPTCollector.store(packets, sysdiagnose: sysdiagnoseId)
                 importedCount += qmiImportCount + ariImportCount
                 cellCount += cells.count
                 connectivityCount += connectivity
+                errors += parsingErrors
             }
             return importedCount
         }
         let cellImportCount = ImportCount(importedCount: cellCount, totalCount: nil, first: nil, last: nil)
         let connectivityImportCount = ImportCount(importedCount: connectivityCount, totalCount: nil, first: nil, last: nil)
-        return (packetImportCount, cellImportCount, connectivityImportCount)
+        return (packetImportCount, cellImportCount, connectivityImportCount, errors)
     }
 
     private func csvDate(_ csv: CSVReader, _ key: String) throws -> Date {

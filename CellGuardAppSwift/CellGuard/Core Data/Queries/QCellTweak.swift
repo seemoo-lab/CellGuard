@@ -11,7 +11,7 @@ import Foundation
 extension PersistenceController {
 
     /// Uses `NSBatchInsertRequest` (BIR) to import tweak cell properties into the Core Data store on a private queue.
-    func importCollectedCells(from packetRefs: [NSManagedObjectID], sysdiagnoseId: NSManagedObjectID?, filter: Bool) throws -> [CCTCellProperties] {
+    func importCollectedCells(from packetRefs: [NSManagedObjectID], sysdiagnoseId: NSManagedObjectID?, filter: Bool) throws -> ([CCTCellProperties], [Error]) {
         return try performAndWait(name: "importContext", author: "importCellTweak") { context in
             context.mergePolicy = NSMergePolicy.rollback
 
@@ -21,18 +21,25 @@ extension PersistenceController {
             // Parse the cell properties from the parsed packets
             let cellParser = CCTParser()
             var cells: [(any Packet, CCTCellProperties)] = []
+            var errors: [Error] = []
             for packet in packets {
                 guard let collectedTimestamp = packet.collected,
                       let packetData = packet.data else {
                     continue
                 }
 
-                if let qmiPacket = packet as? PacketQMI,
-                   let packetCells = try? cellParser.parseQmiCell(packetData, timestamp: collectedTimestamp, simSlot: UInt8(qmiPacket.simSlotID)) {
-                    cells += packetCells.map { (packet, $0) }
-                } else if let ariPacket = packet as? PacketARI,
-                          let packetCells = try? cellParser.parseAriCell(packetData, timestamp: collectedTimestamp, simSlot: UInt8(ariPacket.simSlotID)) {
-                    cells += packetCells.map { (packet, $0) }
+                do {
+                    if let qmiPacket = packet as? PacketQMI {
+                        let (packetCells, cellErrors) = try cellParser.parseQmiCell(packetData, timestamp: collectedTimestamp, simSlot: UInt8(qmiPacket.simSlotID))
+                        cells += packetCells.map { (packet, $0) }
+                        errors += cellErrors
+                    } else if let ariPacket = packet as? PacketARI {
+                        let (packetCells, cellErrors) = try cellParser.parseAriCell(packetData, timestamp: collectedTimestamp, simSlot: UInt8(ariPacket.simSlotID))
+                        cells += packetCells.map { (packet, $0) }
+                        errors += cellErrors
+                    }
+                } catch {
+                    errors.append(error)
                 }
             }
 
@@ -90,8 +97,8 @@ extension PersistenceController {
             try context.save()
 
             logger.debug("Successfully inserted \(cells.count) tweak cells.")
-            return cells.compactMap { $0.1 }
-        } ?? []
+            return (cells.compactMap { $0.1 }, errors)
+        } ?? ([], [])
     }
 
     func importSingleTweakCell(cellProperties: CCTCellProperties, verify: Bool) throws {

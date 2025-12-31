@@ -10,7 +10,8 @@ import BinarySwift
 
 extension CCTParser {
 
-    func parseAriCell(_ data: Data, timestamp: Date, simSlot: UInt8) throws -> [CCTCellProperties] {
+    // parseAriCell returns the parsed cell properties and errors that occurred.
+    func parseAriCell(_ data: Data, timestamp: Date, simSlot: UInt8) throws -> ([CCTCellProperties], [Error]) {
         // Source: https://github.com/seemoo-lab/aristoteles/blob/master/types/structure/libari_dylib.lua
 
         let parsedPacket = try ParsedARIPacket(data: data)
@@ -23,6 +24,7 @@ extension CCTParser {
         }
 
         var cells: [CCTCellProperties] = []
+        var errors: [Error] = []
         for technology in PacketConstants.ariCellInfoTechnologies {
             let ariKey = ARIKey(type: parsedPacket.header.type, technology: technology)
             guard let tlvType = PacketConstants.ariCellInfoTLVTypes[ariKey] else {
@@ -36,19 +38,23 @@ extension CCTParser {
             }
 
             var cell: CCTCellProperties?
-            switch technology {
-            case .cdma1x, .cdmaEvdo:
-                cell = try? parseCdmaAri(tlv, version: technology)
-            case .umts, .tdscdma:
-                cell = try? parseUmtsAri(tlv, version: technology)
-            case .gsm:
-                cell = try? parseGsmAri(tlv)
-            case .lte, .lteV1T, .lteR15, .lteR15V2:
-                cell = try? parseLteAri(tlv, version: technology)
-            case .nr, .nrV2:
-                cell = try? parseNrAri(tlv, version: technology)
-            default:
-                throw CCTParserError.unknownRat(technology.rawValue)
+            do {
+                switch technology {
+                case .cdma1x, .cdmaEvdo:
+                    cell = try parseCdmaAri(tlv, version: technology)
+                case .umts, .tdscdma:
+                    cell = try parseUmtsAri(tlv, version: technology)
+                case .gsm:
+                    cell = try parseGsmAri(tlv)
+                case .lte, .lteV1T, .lteR15, .lteR15V2:
+                    cell = try parseLteAri(tlv, version: technology)
+                case .nr, .nrV2:
+                    cell = try parseNrAri(tlv, version: technology)
+                default:
+                    throw CCTParserError.unknownRat(technology.rawValue)
+                }
+            } catch {
+                errors.append(error)
             }
 
             if var cell = cell,
@@ -71,7 +77,7 @@ extension CCTParser {
             throw CCTParserError.missingRat(parsedPacket)
         }
 
-        return cells
+        return (cells, errors)
     }
 
     private func parseGsmAri(_ tlv: AriTlv) throws -> CCTCellProperties {
