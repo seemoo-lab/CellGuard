@@ -209,7 +209,7 @@ extension CCTParser {
         // We currently do not have support for array_length != 1 as then a multiple of the payload length would be transmitted.
         // However, we have not seen such CellInformation messages so far.
         if (version == .lteV1 && tlv.length != 27) || (version == .lteV2 && tlv.length != 29) ||
-            (version == .lteV3 && tlv.length != 32) || (version == .lteV4 && tlv.length != 49) {
+            (version == .lteV3 && tlv.length != 32) || (version == .lteV4 && tlv.length != 51) {
             throw CCTParserError.unexpectedTlvLength
         }
 
