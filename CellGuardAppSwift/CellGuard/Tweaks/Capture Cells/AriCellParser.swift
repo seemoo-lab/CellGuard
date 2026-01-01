@@ -73,9 +73,7 @@ extension CCTParser {
             }
         }
 
-        if cells.isEmpty {
-            throw CCTParserError.missingRat(parsedPacket)
-        }
+        // In ARI, sometimes cell information packets do not contain a single cell. (A reasoning might be the airplane mode)
 
         return (cells, errors)
     }
