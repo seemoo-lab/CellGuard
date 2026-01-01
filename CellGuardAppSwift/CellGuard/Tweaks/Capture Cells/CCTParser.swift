@@ -124,14 +124,19 @@ struct CCTParser {
     }
 }
 
+// castInteger tries to cast the passed integer to the expected integer type.
+// It throws, if not possible or if the passed maximum check fails.
+// It truncates all-one values, e.g., 0xffff -> 0xff
 func castInteger<T: FixedWidthInteger, U: FixedWidthInteger>(_ value: U, max: (any FixedWidthInteger)? = nil) throws -> T {
-    if T.max < U.max {
-        let tMaxCasted: U = numericCast(T.max)
-        if value > tMaxCasted {
-            throw CCTParserError.valueTooHigh
-        }
+    var result: T = 0
+    if T.max < U.max && value == U.max {
+        result = T.max
+    } else if T.max < U.max && value > T.max {
+        throw CCTParserError.valueTooHigh
+    } else {
+        result = numericCast(value)
     }
-    let result: T = numericCast(value)
+
     if let max = max,
        result > max {
         throw CCTParserError.valueTooHigh
