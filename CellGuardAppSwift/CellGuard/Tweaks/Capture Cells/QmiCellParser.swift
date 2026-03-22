@@ -296,7 +296,7 @@ extension CCTParser {
         let _: UInt16 = try data.get(1) // index
         cell.mcc = Int32((try? data.get(3) as UInt16) ?? 0)
         cell.network = Int32((try? data.get(5) as UInt16) ?? 0)
-        cell.band = Int32((try? data.get(7) as UInt16) ?? 0) + 1 // The offset by one provides alignment with the iOS libraries
+        cell.band = Int32((try? data.get(7) as UInt16) ?? 0)
         // According to the specification, the TAC uses just 24 bit. Therefore, this conversion causes no overflow.
         cell.area = Int32((try? data.get(9) as UInt32) ?? 0)
 
