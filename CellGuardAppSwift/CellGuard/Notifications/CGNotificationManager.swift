@@ -57,8 +57,6 @@ class CGNotificationManager: ObservableObject {
         }
     }
 
-    // TODO: Clear notification upon starting CellGuard
-
     func isCellNotificationActive() -> Bool {
         return isSuspiciousCellNotificationActive() || isAnomalousCellNotificationActive()
     }
