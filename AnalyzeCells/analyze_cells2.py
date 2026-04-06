@@ -252,6 +252,17 @@ def process_latex(
     print()
 
 
+def export_csv(df: pd.DataFrame, output_path: Path):
+    df = df.copy()
+    df['category'] = df['verificationScore'].apply(cell_score_category)
+    df['collected'] = df['collected'].apply(lambda x: datetime.fromtimestamp(x).isoformat())
+    if 'verificationFinished' in df.columns:
+        df['verificationFinished'] = df['verificationFinished'].apply(lambda x: 'yes' if x else 'no')
+    df.to_csv(output_path, index=False)
+    print(f'Exported {len(df)} rows to {output_path}')
+    print()
+
+
 def main():
     parser = argparse.ArgumentParser(
         prog='analyze_cells2.py',
@@ -262,6 +273,8 @@ def main():
     parser.add_argument('-g', '--graph', action='store_true')
     parser.add_argument('-s', '--start', type=int)
     parser.add_argument('-e', '--end', type=int)
+    parser.add_argument('-x', '--export-csv', type=Path, metavar='OUTPUT',
+                        help='Export processed cell data to a CSV file at the given path')
 
     args = parser.parse_args()
     path: Path = args.path
@@ -269,6 +282,7 @@ def main():
     graph: bool = args.graph
     start_time: datetime = datetime.fromtimestamp(args.start) if args.start else None
     end_time: datetime = datetime.fromtimestamp(args.end) if args.end else None
+    export_csv_path: Optional[Path] = args.export_csv
 
     cells2_files = []
     if path.is_dir():
@@ -312,6 +326,8 @@ def main():
             unique_untrusted, unique_suspicious, unique_trusted,
             cell_measurements, packet_count, location_count
         )
+    if export_csv_path:
+        export_csv(user_cells_df, export_csv_path)
 
     # Deleting the temporary directory
     tmp_dir.cleanup()
