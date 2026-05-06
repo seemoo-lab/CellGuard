@@ -59,6 +59,7 @@ fn parse_trace_logarchive(
         header: Vec::new(),
         catalog_data: Vec::new(),
         oversize: Vec::new(),
+        evidence: String::new(),
     };
 
     // Exclude missing data from returned output. Keep separate until we parse all oversize entries.
@@ -70,7 +71,7 @@ fn parse_trace_logarchive(
 
     for mut source in provider.tracev3_files() {
         // Check if we should skip the file when the speedup is enabled
-        let path = source.source_path();
+        let path = source.source_path().to_string();
         if speedup && path.contains("Special")
             || path.contains("Signpost")
             || path.ends_with("logdata.LiveData.tracev3")
@@ -79,10 +80,11 @@ fn parse_trace_logarchive(
         }
 
         println!("Parsing: {}", path);
-        ffi::swift_parse_trace_file(path, u32::try_from(log_count).unwrap_or(0));
+        ffi::swift_parse_trace_file(&path, u32::try_from(log_count).unwrap_or(0));
 
         log_count += iterate_chunks(
             source.reader(),
+            path,
             provider,
             timesync_data,
             &mut missing_data,
@@ -120,6 +122,7 @@ fn parse_trace_logarchive(
 fn iterate_chunks(
     mut reader: impl Read,
 
+    path: String,
     provider: &mut dyn FileProvider,
     timesync_data: &HashMap<String, TimesyncBoot>,
 
@@ -137,6 +140,7 @@ fn iterate_chunks(
     let log_iterator = UnifiedLogIterator {
         data: buf,
         header: Vec::new(),
+        evidence: path,
     };
 
     // Exclude missing data from returned output. Keep separate until we parse all oversize entries.

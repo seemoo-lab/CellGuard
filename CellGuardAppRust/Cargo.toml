@@ -15,7 +15,7 @@ crate-type = ["staticlib"]
 
 [dependencies]
 swift-bridge = "0.1"
-macos-unifiedlogs = "0.4.2"
+macos-unifiedlogs = "0.5.1"
 csv = "1.4.0"
 
 # Apply some basic optimization even for the development mode, otherwise the QMI import is way too slow
