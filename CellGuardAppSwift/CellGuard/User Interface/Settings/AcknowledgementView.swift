@@ -49,7 +49,7 @@ struct SwiftAcknowledgementView: View {
 
     @State private var swiftAcknowledgements: [Acknow] = []
 
-    private func loadSwiftAcknowledgements () {
+    private func loadSwiftAcknowledgements() {
         var acknowledgements: [Acknow] = []
 
         if let url = Bundle.main.url(forResource: "Package", withExtension: "resolved"),
