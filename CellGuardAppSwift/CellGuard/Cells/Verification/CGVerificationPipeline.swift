@@ -70,7 +70,7 @@ private struct ALSVerificationStage: VerificationStage {
 
         // If the cell is valid, import all cells of the ALS response ...
         do {
-            try persistence.importALSCells(from: preciseAlsCells)
+            _ = try persistence.importALSCells(from: preciseAlsCells)
         } catch {
             throw ALSVerificationStageError.cantImportALSCells(error)
         }

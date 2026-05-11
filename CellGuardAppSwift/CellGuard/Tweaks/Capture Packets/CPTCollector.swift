@@ -73,14 +73,14 @@ struct CPTCollector {
             }
             #endif
 
-            let (_, qmiPacketRefs) = try PersistenceController.shared.importQMIPackets(from: qmiPackets, sysdiagnoseId: sysdiagnose)
-            let (_, ariPacketRefs) = try PersistenceController.shared.importARIPackets(from: ariPackets, sysdiagnoseId: sysdiagnose)
+            let (qmiImportCount, qmiPacketRefs) = try PersistenceController.shared.importQMIPackets(from: qmiPackets, sysdiagnoseId: sysdiagnose)
+            let (ariImportCount, ariPacketRefs) = try PersistenceController.shared.importARIPackets(from: ariPackets, sysdiagnoseId: sysdiagnose)
             let cellPacketRefs = qmiPacketRefs.cellInfo + ariPacketRefs.cellInfo
             let importedCells = try PersistenceController.shared.importCollectedCells(from: cellPacketRefs, sysdiagnoseId: sysdiagnose, filter: true)
             let connectivityPacketRefs = qmiPacketRefs.connectivityEvents + ariPacketRefs.connectivityEvents
             let importedConnectivityEvents = try PersistenceController.shared.importConnectivityEvents(from: connectivityPacketRefs, sysdiagnoseId: sysdiagnose)
 
-            return (qmiPackets.count, ariPackets.count, importedCells, importedConnectivityEvents)
+            return (qmiImportCount, ariImportCount, importedCells, importedConnectivityEvents)
         } catch {
             Self.logger.warning("Can't import packets: \(error)")
             throw error

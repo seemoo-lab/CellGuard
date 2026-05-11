@@ -150,7 +150,7 @@ class LocationDataManager: NSObject, CLLocationManagerDelegate {
         DispatchQueue.global(qos: .background).async {
             let importLocations = locations.map { TrackedUserLocation(from: $0, background: self.background, preciseBackground: true) }
             do {
-                try PersistenceController.shared.importUserLocations(from: importLocations)
+                _ = try PersistenceController.shared.importUserLocations(from: importLocations)
             } catch {
                 Self.logger.warning("Can't save locations: \(error)\nLocations: \(locations)")
             }

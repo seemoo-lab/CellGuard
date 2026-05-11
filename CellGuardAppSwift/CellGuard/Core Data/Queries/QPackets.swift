@@ -111,7 +111,7 @@ extension PersistenceController {
         } */
 
         logger.debug("Successfully inserted \(packets.count) tweak QMI packets.")
-        return (packets.count, packetRefs)
+        return (objectIds.count, packetRefs)
     }
 
     /// Uses `NSBatchInsertRequest` (BIR) to import ARI packets into the Core Data store on a private queue.
@@ -207,7 +207,7 @@ extension PersistenceController {
         } */
 
         logger.debug("Successfully inserted \(packets.count) tweak ARI packets.")
-        return (packets.count, packetRefs)
+        return (objectIds.count, packetRefs)
     }
 
     func fetchIndexedQMIPackets(start: Date, end: Date, simSlotID: UInt8, reject: Bool = false, signal: Bool = false) throws -> [NSManagedObjectID: ParsedQMIPacket] {

@@ -141,17 +141,21 @@ struct ImportView: View {
                 }
             }
 
-            if importStatusUserCells != .none || importStatusALSCells != .none || importStatusLocations != .none || importStatusPackets != .none || importStatusConnectivityEvents != .none || importStatusSysdiagnoses != .none {
-                Section(header: Text("Datasets")) {
-                    ImportStatusRow("Connected Cells", $importStatusUserCells)
-                    ImportStatusRow("Cell Cache", $importStatusALSCells)
-                    ImportStatusRow("Locations", $importStatusLocations)
-                    ImportStatusRow("Packets", $importStatusPackets)
-                    ImportStatusRow("Connectivity Events", $importStatusConnectivityEvents)
-                    // We hide this row for the Sysdiagnose Import (not for the CSV Import)
-                    if case .count(value: let count) = importStatusSysdiagnoses, count != nil {
+            if importStatusPackets != .none {
+                Section(header: Text("Raw Data")) {
+                    if self.fileType == .archive {
                         ImportStatusRow("Sysdiagnoses", $importStatusSysdiagnoses)
+                        ImportStatusRow("Cell Cache", $importStatusALSCells)
+                        ImportStatusRow("Locations", $importStatusLocations)
                     }
+                    ImportStatusRow("Packets", $importStatusPackets)
+                }
+            }
+
+            if importStatusUserCells != .none || importStatusALSCells != .none || importStatusLocations != .none || importStatusConnectivityEvents != .none {
+                Section(header: Text("Derived Data")) {
+                    ImportStatusRow("Connected Cells", $importStatusUserCells)
+                    ImportStatusRow("Connectivity Events", $importStatusConnectivityEvents)
                 }
             }
 
@@ -314,7 +318,7 @@ struct ImportView: View {
             importStatusConnectivityEvents = .count(counts.connectivityEvents)
             importStatusSysdiagnoses = .count(counts.sysdiagnoses)
             importNotices = counts.notices
-            Self.logger.info("Successfully imported \(counts.cells?.count ?? 0) cells, \(counts.alsCells?.count ?? 0) ALS cells, \(counts.locations?.count ?? 0) locations, \(counts.connectivityEvents?.count ?? 0) connectivity events, \(counts.sysdiagnoses?.count ?? 0) sysdiagnoses, and \(counts.packets?.count ?? 0) packets.")
+            Self.logger.info("Successfully imported \(counts.cells?.importedCount ?? 0) cells, \(counts.alsCells?.importedCount ?? 0) ALS cells, \(counts.locations?.importedCount ?? 0) locations, \(counts.connectivityEvents?.importedCount ?? 0) connectivity events, \(counts.sysdiagnoses?.importedCount ?? 0) sysdiagnoses, and \(counts.packets?.importedCount ?? 0) packets.")
         } catch {
             importError = error
             importNotices = []

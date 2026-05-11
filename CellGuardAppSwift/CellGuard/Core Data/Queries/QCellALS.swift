@@ -11,7 +11,7 @@ import Foundation
 extension PersistenceController {
 
     /// Imports ALS cells into the Core Data store on a private queue.
-    func importALSCells(from cells: [ALSQueryCell]) throws {
+    func importALSCells(from cells: [ALSQueryCell]) throws -> Int {
         try performAndWait(name: "importContext", author: "importALSCells") { context in
             let importedDate = Date()
 
@@ -54,6 +54,8 @@ extension PersistenceController {
             try context.save()
             logger.debug("Successfully inserted \(cells.count) ALS cells.")
         }
+        // We return the total number of cells as we update the objects even if they already exist in the db.
+        return cells.count
     }
 
     func assignExistingALSIfPossible(to tweakCellID: NSManagedObjectID) throws -> NSManagedObjectID? {

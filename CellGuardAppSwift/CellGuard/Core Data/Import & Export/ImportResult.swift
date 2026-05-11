@@ -30,7 +30,8 @@ enum ImportNotice: Identifiable {
 }
 
 struct ImportCount: Equatable, Hashable {
-    let count: Int
+    let importedCount: Int
+    let totalCount: Int?
     let first: Date?
     let last: Date?
 }

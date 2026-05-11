@@ -105,15 +105,15 @@ struct PersistenceCSVImporter {
         Self.logger.debug("Got the available files from info.json: \(infoData)")
 
         let locations = try readLocations(directory: tmpDirectoryURL, infoData: infoData, progress: progress)
-        Self.logger.debug("Read \(locations?.count ?? 0) locations")
+        Self.logger.debug("Read \(locations?.importedCount ?? 0) locations")
         let alsCells = try readAlsCells(directory: tmpDirectoryURL, infoData: infoData, progress: progress)
-        Self.logger.debug("Read \(alsCells?.count ?? 0) ALS cells")
+        Self.logger.debug("Read \(alsCells?.importedCount ?? 0) ALS cells")
         let sysdiagnoses = try readSysdiagnoses(directory: tmpDirectoryURL, infoData: infoData, progress: progress)
-        Self.logger.debug("Read \(sysdiagnoses?.count ?? 0) sysdiagnoses")
+        Self.logger.debug("Read \(sysdiagnoses?.importedCount ?? 0) sysdiagnoses")
         let (packets, userCells, connectivity) = try readPackets(directory: tmpDirectoryURL, infoData: infoData, version: formatVersion, progress: progress)
-        Self.logger.debug("Read \(packets?.count ?? 0) packets")
-        Self.logger.debug("Read \(userCells?.count ?? 0) user cells")
-        Self.logger.debug("Read \(connectivity?.count ?? 0) connectivity events")
+        Self.logger.debug("Read \(packets?.importedCount ?? 0) packets")
+        Self.logger.debug("Read \(userCells?.importedCount ?? 0) user cells")
+        Self.logger.debug("Read \(connectivity?.importedCount ?? 0) connectivity events")
 
         return ImportResult(cells: userCells, alsCells: alsCells, locations: locations, packets: packets, connectivityEvents: connectivity, sysdiagnoses: sysdiagnoses, notices: [])
     }
@@ -158,7 +158,7 @@ struct PersistenceCSVImporter {
         progress: CSVProgressFunc,
         convert: (CSVReader) throws -> T?,
         timestamp: (T) -> Date?,
-        bulkImport: ([T]) throws -> Void
+        bulkImport: ([T]) throws -> Int
     ) throws -> ImportCount? {
         // Append the category's prefix to the URL
         let url = directory.appendingPathComponent(category.fileName())
@@ -189,6 +189,7 @@ struct PersistenceCSVImporter {
         // Read the CSV data and convert it into DB-ready objects which are then imported in bulk
         var dbReadyObjects: [T] = []
         var totalCounter = 0
+        var importedCounter = 0
         let beginEndDates = FirstLastDates()
 
         // Determine the size of each imported bulk
@@ -214,7 +215,7 @@ struct PersistenceCSVImporter {
 
             // If there are enough objects read, we import a bulk of them into the DB
             if dbReadyObjects.count >= bulkSize {
-                try bulkImport(dbReadyObjects)
+                importedCounter += try bulkImport(dbReadyObjects)
                 totalCounter += dbReadyObjects.count
                 dbReadyObjects.removeAll()
 
@@ -224,7 +225,7 @@ struct PersistenceCSVImporter {
         }
 
         // Import the final bulk of objects
-        try bulkImport(dbReadyObjects)
+        importedCounter += try bulkImport(dbReadyObjects)
         totalCounter += dbReadyObjects.count
         dbReadyObjects.removeAll()
 
@@ -234,7 +235,7 @@ struct PersistenceCSVImporter {
         Self.logger.debug("Finished an read \(totalCounter) entries from \(url)")
 
         // Return the total number of rows read
-        return ImportCount(count: totalCounter, first: beginEndDates.first, last: beginEndDates.last)
+        return ImportCount(importedCount: importedCounter, totalCount: totalCounter, first: beginEndDates.first, last: beginEndDates.last)
     }
 
     private func readInfo(url: URL) throws -> [String: Any] {
@@ -348,6 +349,8 @@ struct PersistenceCSVImporter {
             for sysdiagnose in sysdiagnoses {
                 _ = try PersistenceController.shared.importSysdiagnoseMetadata(from: sysdiagnose)
             }
+            // Currently, we allow the import of the same sysdiagnose. Therefore, we always import all sysdiagnoses.
+            return sysdiagnoses.count
         }
     }
 
@@ -377,18 +380,21 @@ struct PersistenceCSVImporter {
         } timestamp: { (packet, _) in
             packet.timestamp
         } bulkImport: { packetsAndSysdiagnoses in
+            var importedCount = 0
             let groupedBySysdiagnose = Dictionary(grouping: packetsAndSysdiagnoses) { $0.1 }.mapValues { $0.map { $0.0 } }
             for (sysdiagnoseIdentifier, packets) in groupedBySysdiagnose {
                 let sysdiagnose = sysdiagnoseIdentifier.isEmpty ? nil : try? PersistenceController.shared.fetchSysdiagnose(archiveIdentifier: sysdiagnoseIdentifier)
                 let sysdiagnoseId = sysdiagnose != nil ? sysdiagnose!.objectID : nil
 
-                let (_, _, cells, connectivity) = try CPTCollector.store(packets, sysdiagnose: sysdiagnoseId)
-                cellCount = cells.count
-                connectivityCount = connectivity
+                let (qmiImportCount, ariImportCount, cells, connectivity) = try CPTCollector.store(packets, sysdiagnose: sysdiagnoseId)
+                importedCount += qmiImportCount + ariImportCount
+                cellCount += cells.count
+                connectivityCount += connectivity
             }
+            return importedCount
         }
-        let cellImportCount = ImportCount(count: cellCount, first: packetImportCount?.first, last: packetImportCount?.last)
-        let connectivityImportCount = ImportCount(count: connectivityCount, first: packetImportCount?.first, last: packetImportCount?.last)
+        let cellImportCount = ImportCount(importedCount: cellCount, totalCount: nil, first: nil, last: nil)
+        let connectivityImportCount = ImportCount(importedCount: connectivityCount, totalCount: nil, first: nil, last: nil)
         return (packetImportCount, cellImportCount, connectivityImportCount)
     }
 
