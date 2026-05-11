@@ -71,24 +71,84 @@ struct ImportStatusDetailsView: View {
 
     var body: some View {
         List {
-            Section {
-                KeyValueListRow(key: "Imported Objects", value: "\(info.count.importedCount)")
-                if let total = info.count.totalCount {
-                    KeyValueListRow(key: "Total Objects", value: "\(total)")
-                }
-                if let firstDate = info.count.first {
-                    KeyValueListRow(key: "First", value: mediumDateTimeFormatter.string(from: firstDate))
-                }
-                if let lastDate = info.count.last {
-                    KeyValueListRow(key: "Last", value: mediumDateTimeFormatter.string(from: lastDate))
-                }
-            } footer: {
-                if let total = info.count.totalCount, total != info.count.importedCount {
-                    Text("Some of the objects already have been imported before.").foregroundColor(.gray)
-                }
+            if let total = info.count.totalCount {
+                ImportedAndTotalView(info: info, total: total)
+            } else {
+                ImportedOnlyView(info: info)
             }
         }
         .listStyle(.insetGrouped)
         .navigationTitle(info.title)
+    }
+}
+
+private struct ImportedAndTotalView: View {
+    let imported: Int
+    let total: Int
+    let firstDate: Date?
+    let lastDate: Date?
+    let title: String
+
+    init(info: CountInfo, total: Int) {
+        self.imported = info.count.importedCount
+        self.total = total
+        self.firstDate = info.count.first
+        self.lastDate = info.count.last
+        self.title = info.title
+    }
+
+    var body: some View {
+        Group {
+            Section {
+                DetailsRow("\(title)", imported)
+            } header: {
+                Text("Imported")
+            } footer: {
+                if total != imported {
+                    Text("Some of the objects already were imported before.")
+                }
+            }
+            Section {
+                DetailsRow("\(title)", total)
+                if let firstDate = firstDate {
+                    KeyValueListRow(key: "First", value: mediumDateTimeFormatter.string(from: firstDate))
+                }
+                if let lastDate = lastDate {
+                    KeyValueListRow(key: "Last", value: mediumDateTimeFormatter.string(from: lastDate))
+                }
+            } header: {
+                Text("Available")
+            }
+        }
+    }
+}
+
+private struct ImportedOnlyView: View {
+    let imported: Int
+    let firstDate: Date?
+    let lastDate: Date?
+    let title: String
+
+    init(info: CountInfo) {
+        self.imported = info.count.importedCount
+        self.firstDate = info.count.first
+        self.lastDate = info.count.last
+        self.title = info.title
+    }
+
+    var body: some View {
+        Group {
+            Section {
+                DetailsRow("\(title)", imported)
+                if let firstDate = firstDate {
+                    KeyValueListRow(key: "First", value: mediumDateTimeFormatter.string(from: firstDate))
+                }
+                if let lastDate = lastDate {
+                    KeyValueListRow(key: "Last", value: mediumDateTimeFormatter.string(from: lastDate))
+                }
+            } header: {
+                Text("Imported")
+            }
+        }
     }
 }
