@@ -42,7 +42,7 @@ struct ImportStatusRow: View {
             return AnyView(EmptyView())
         case let .count(count):
             guard let count = count else {
-                return AnyView(Text("\(0)"))
+                return AnyView(Text("0"))
             }
             if let total = count.totalCount {
                 let text = count.importedCount == total ? "\(count.importedCount)" : "\(count.importedCount) / \(total)"

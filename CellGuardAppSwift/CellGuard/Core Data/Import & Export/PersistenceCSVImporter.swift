@@ -347,7 +347,7 @@ struct PersistenceCSVImporter {
             sysdiagnose.imported
         } bulkImport: { sysdiagnoses in
             for sysdiagnose in sysdiagnoses {
-                let _ = try PersistenceController.shared.importSysdiagnoseMetadata(from: sysdiagnose)
+                _ = try PersistenceController.shared.importSysdiagnoseMetadata(from: sysdiagnose)
             }
             // Currently, we allow the import of the same sysdiagnose. Therefore, we always import all sysdiagnoses.
             return sysdiagnoses.count
