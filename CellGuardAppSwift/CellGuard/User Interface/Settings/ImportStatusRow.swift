@@ -29,9 +29,7 @@ struct ImportStatusRow: View {
     }
 
     var row: some View {
-        HStack {
-            Text(text)
-            Spacer()
+        KeyValueListRow(key: text) {
             content
         }
     }
@@ -73,18 +71,21 @@ struct ImportStatusDetailsView: View {
 
     var body: some View {
         List {
-            KeyValueListRow(key: "Imported Objects", value: "\(info.count.importedCount)")
-            if let total = info.count.totalCount {
-                if total != info.count.importedCount {
-                    Text("Some of the contained objects have already been imported before.").foregroundColor(.gray)
+            Section {
+                KeyValueListRow(key: "Imported Objects", value: "\(info.count.importedCount)")
+                if let total = info.count.totalCount {
+                    KeyValueListRow(key: "Total Objects", value: "\(total)")
                 }
-                KeyValueListRow(key: "Total Objects", value: "\(total)")
-            }
-            if let firstDate = info.count.first {
-                KeyValueListRow(key: "First", value: mediumDateTimeFormatter.string(from: firstDate))
-            }
-            if let lastDate = info.count.last {
-                KeyValueListRow(key: "Last", value: mediumDateTimeFormatter.string(from: lastDate))
+                if let firstDate = info.count.first {
+                    KeyValueListRow(key: "First", value: mediumDateTimeFormatter.string(from: firstDate))
+                }
+                if let lastDate = info.count.last {
+                    KeyValueListRow(key: "Last", value: mediumDateTimeFormatter.string(from: lastDate))
+                }
+            } footer: {
+                if let total = info.count.totalCount, total != info.count.importedCount {
+                    Text("Some of the objects already have been imported before.").foregroundColor(.gray)
+                }
             }
         }
         .listStyle(.insetGrouped)
