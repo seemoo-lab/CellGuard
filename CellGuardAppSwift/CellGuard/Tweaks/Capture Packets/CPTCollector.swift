@@ -27,8 +27,8 @@ struct CPTCollector {
             client.queryPackets { result in
                 do {
                     let packets = try result.get()
-                    let (qmiPackets, ariPackets, cells, connectivity) = try Self.store(packets, sysdiagnose: nil)
-                    Self.logger.debug("Imported \(qmiPackets) QMI, \(ariPackets) ARI packets, and \(cells.count) Cells")
+                    let (qmiPackets, ariPackets, cells, connectivity, parsingErrors) = try Self.store(packets, sysdiagnose: nil)
+                    Self.logger.debug("Imported \(qmiPackets) QMI, \(ariPackets) ARI packets, and \(cells.count) Cells with \(parsingErrors.count) errors")
                     completion.resume(returning: (qmiPackets, ariPackets, cells.count, connectivity))
                 } catch {
                     // TODO: Count failures and if they exceed a given threshold, output a warning notification
@@ -39,7 +39,8 @@ struct CPTCollector {
         }
     }
 
-    public static func store(_ packets: [CPTPacket], sysdiagnose: NSManagedObjectID?) throws -> (Int, Int, [CCTCellProperties], Int) {
+    // store parses and stores the passed packets and returns the number of imported objects and minor errors.
+    public static func store(_ packets: [CPTPacket], sysdiagnose: NSManagedObjectID?) throws -> (Int, Int, [CCTCellProperties], Int, [Error]) {
         do {
             var qmiPackets: [(CPTPacket, ParsedQMIPacket)] = []
             var ariPackets: [(CPTPacket, ParsedARIPacket)] = []
@@ -76,11 +77,11 @@ struct CPTCollector {
             let (qmiImportCount, qmiPacketRefs) = try PersistenceController.shared.importQMIPackets(from: qmiPackets, sysdiagnoseId: sysdiagnose)
             let (ariImportCount, ariPacketRefs) = try PersistenceController.shared.importARIPackets(from: ariPackets, sysdiagnoseId: sysdiagnose)
             let cellPacketRefs = qmiPacketRefs.cellInfo + ariPacketRefs.cellInfo
-            let importedCells = try PersistenceController.shared.importCollectedCells(from: cellPacketRefs, sysdiagnoseId: sysdiagnose, filter: true)
+            let (importedCells, parsingErrors) = try PersistenceController.shared.importCollectedCells(from: cellPacketRefs, sysdiagnoseId: sysdiagnose, filter: true)
             let connectivityPacketRefs = qmiPacketRefs.connectivityEvents + ariPacketRefs.connectivityEvents
             let importedConnectivityEvents = try PersistenceController.shared.importConnectivityEvents(from: connectivityPacketRefs, sysdiagnoseId: sysdiagnose)
 
-            return (qmiImportCount, ariImportCount, importedCells, importedConnectivityEvents)
+            return (qmiImportCount, ariImportCount, importedCells, importedConnectivityEvents, parsingErrors)
         } catch {
             Self.logger.warning("Can't import packets: \(error)")
             throw error

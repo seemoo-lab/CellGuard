@@ -10,7 +10,8 @@ import BinarySwift
 
 extension CCTParser {
 
-    func parseQmiCell(_ data: Data, timestamp: Date, simSlot: UInt8) throws -> [CCTCellProperties] {
+    // parseQmiCell returns the parsed cell properties and errors that occurred.
+    func parseQmiCell(_ data: Data, timestamp: Date, simSlot: UInt8) throws -> ([CCTCellProperties], [Error]) {
         // Location for symbols:
         // - Own sample collection using the tweak
         // - IPSW: /System/Library/Frameworks/CoreTelephony.framework/CoreTelephony (dyld_cache)
@@ -29,6 +30,7 @@ extension CCTParser {
         }
 
         var cells: [CCTCellProperties] = []
+        var errors: [Error] = []
         for technology in PacketConstants.qmiCellInfoTechnologies {
             guard let tlvType = PacketConstants.qmiCellInfoTLVTypes[technology],
                   let tlv = parsedPacket.findTlvValue(type: tlvType) else {
@@ -36,23 +38,27 @@ extension CCTParser {
             }
 
             var cell: CCTCellProperties?
-            switch technology {
-            case .cdma1x, .cdmaEvdo:
-                // https://en.wikipedia.org/wiki/CDMA2000
-                // CDMA2000 1x Evolution-Data Optimized
-                cell = try? parseCdmaQmi(tlv, version: technology)
-            case .umts, .tdscdma:
-                // Special version of UMTS WCDMA in China
-                // https://www.electronics-notes.com/articles/connectivity/3g-umts/td-scdma.php
-                cell = try? parseUmtsQmi(tlv, version: technology)
-            case .gsm:
-                cell = try? parseGsmQmi(tlv)
-            case .lteV1, .lteV2, .lteV3, .lteV4:
-                cell = try? parseLteQmi(tlv, version: technology)
-            case .nr, .nrV2, .nrV3:
-                cell = try? parseNrQmi(tlv, version: technology)
-            default:
-                throw CCTParserError.unknownRat(technology.rawValue)
+            do {
+                switch technology {
+                case .cdma1x, .cdmaEvdo:
+                    // https://en.wikipedia.org/wiki/CDMA2000
+                    // CDMA2000 1x Evolution-Data Optimized
+                    cell = try parseCdmaQmi(tlv, version: technology)
+                case .umts, .tdscdma:
+                    // Special version of UMTS WCDMA in China
+                    // https://www.electronics-notes.com/articles/connectivity/3g-umts/td-scdma.php
+                    cell = try parseUmtsQmi(tlv, version: technology)
+                case .gsm:
+                    cell = try parseGsmQmi(tlv)
+                case .lteV1, .lteV2, .lteV3, .lteV4:
+                    cell = try parseLteQmi(tlv, version: technology)
+                case .nr, .nrV2, .nrV3:
+                    cell = try parseNrQmi(tlv, version: technology)
+                default:
+                    throw CCTParserError.unknownRat(technology.rawValue)
+                }
+            } catch {
+                errors.append(error)
             }
 
             if var cell = cell,
@@ -80,7 +86,7 @@ extension CCTParser {
             cells.append(cell)
         }
 
-        return cells
+        return (cells, errors)
     }
 
     private func parseGsmQmi(_ tlv: QmiTlv) throws -> CCTCellProperties {
@@ -98,9 +104,10 @@ extension CCTParser {
         cell.mcc = Int32((try? data.get(3) as UInt16) ?? 0)
         cell.network = Int32((try? data.get(5) as UInt16) ?? 0)
         cell.band = Int32((try? data.get(7) as UInt8) ?? 0) + 1 // The offset by one provides alignment with the iOS libraries
-        cell.area = Int32((try? data.get(8) as UInt16) ?? 0)
+        cell.area = try castInteger((try? data.get(8) as UInt16) ?? 0, max: UInt16.max) // Max 16bit. See 3GPP TS 36.101
         cell.cellId = Int64((try? data.get(10) as UInt16) ?? 0)
-        cell.frequency = Int32((try? data.get(12) as UInt16) ?? 0)
+        // This is the ARFCN channel number and not the frequency in MHz
+        cell.frequency = try castInteger((try? data.get(12) as UInt16) ?? 0) // See 3GPP TS 45.005
         let _: UInt32 = try data.get(14) // latitude
         let _: UInt32 = try data.get(18) // longitude
 
@@ -131,9 +138,10 @@ extension CCTParser {
         cell.mcc = Int32((try? data.get(3) as UInt16) ?? 0)
         cell.network = Int32((try? data.get(5) as UInt16) ?? 0)
         cell.band = Int32((try? data.get(7) as UInt8) ?? 0) + 1 // The offset by one provides alignment with the iOS libraries
-        cell.area = Int32((try? data.get(8) as UInt16) ?? 0)
+        cell.area = try castInteger((try? data.get(8) as UInt16) ?? 0, max: UInt16.max) // Max 16bit. See 3GPP TS 36.101
         cell.cellId = Int64((try? data.get(10) as UInt32) ?? 0)
-        cell.frequency = Int32((try? data.get(14) as UInt16) ?? 0)
+        // This is the UARFCN channel number and not the frequency in MHz
+        cell.frequency = try castInteger((try? data.get(14) as UInt16) ?? 0) // See 3GPP TS 25.101
         let _: UInt16 = try data.get(16) // cellParameter
         let _: UInt32 = try data.get(18) // latitude
         let _: UInt32 = try data.get(22) // longitude
@@ -171,7 +179,7 @@ extension CCTParser {
 
         if version == .cdma1x {
             _ = Int32((try? data.get(5) as UInt16) ?? 0) // mnc
-            cell.frequency = Int32((try? data.get(7) as UInt8) ?? 0)
+            cell.frequency = try castInteger((try? data.get(7) as UInt8) ?? 0) // See 3GPP2 C.S0057-D
             cell.band = Int32((try? data.get(8) as UInt16) ?? 0) + 1 // The offset by one provides alignment with the iOS libraries
             cell.network = Int32((try? data.get(10) as UInt16) ?? 0)
             let _: UInt16 = try data.get(12) // nid
@@ -183,7 +191,7 @@ extension CCTParser {
             let _: UInt8 = try data.get(28) // ltmOffset
             let _: UInt8 = try data.get(29) // dayLightSavings
         } else if version == .cdmaEvdo {
-            cell.frequency = Int32((try? data.get(5) as UInt8) ?? 0)
+            cell.frequency = try castInteger((try? data.get(5) as UInt8) ?? 0) // See 3GPP2 C.S0057-D
             cell.band = Int32((try? data.get(6) as UInt16) ?? 0) + 1 // The offset by one provides alignment with the iOS libraries
             _ = try data.getUTF8(8, length: 16) // sectorID
             let _: UInt32 = try data.get(24) // latitude
@@ -201,7 +209,7 @@ extension CCTParser {
         // We currently do not have support for array_length != 1 as then a multiple of the payload length would be transmitted.
         // However, we have not seen such CellInformation messages so far.
         if (version == .lteV1 && tlv.length != 27) || (version == .lteV2 && tlv.length != 29) ||
-            (version == .lteV3 && tlv.length != 32) || (version == .lteV4 && tlv.length != 49) {
+            (version == .lteV3 && tlv.length != 32) || (version == .lteV4 && tlv.length != 51) {
             throw CCTParserError.unexpectedTlvLength
         }
 
@@ -218,11 +226,10 @@ extension CCTParser {
 
         offset = 8
         if version == .lteV1 || version == .lteV2 {
-            cell.area = Int32((try? data.get(8) as UInt16) ?? 0)
+            cell.area = try castInteger((try? data.get(8) as UInt16) ?? 0, max: UInt16.max) // Max 16bit. See 3GPP TS 36.101
             offset += 2
         } else if version == .lteV3 || version == .lteV4 {
-            // According to the specification, the TAC uses just 16 bit. Therefore, this conversion causes no overflow.
-            cell.area = Int32((try? data.get(8) as UInt32) ?? 0)
+            cell.area = try castInteger((try? data.get(8) as UInt32) ?? 0, max: UInt16.max) // Max 16bit. See 3GPP TS 36.101
             offset += 4
         }
 
@@ -231,15 +238,15 @@ extension CCTParser {
         offset += 4
 
         if version == .lteV1 {
-            cell.frequency = Int32((try? data.get(offset) as UInt16) ?? 0)
+            // This is the EARFCN channel number and not the frequency in MHz
+            cell.frequency = try castInteger((try? data.get(offset) as UInt16) ?? 0) // See 3GPP TS 36.101
             offset += 2
         } else if version == .lteV2 || version == .lteV3 || version == .lteV4 {
-            // With a max value of 262143, the conversion causes no overflow.
-            cell.frequency = Int32((try? data.get(offset) as UInt32) ?? 0)
+            cell.frequency = try castInteger((try? data.get(offset) as UInt32) ?? 0) // See 3GPP TS 36.101
             offset += 4
         }
 
-        cell.physicalCellId = Int32((try? data.get(offset) as UInt16) ?? 0)
+        cell.physicalCellId = try castInteger((try? data.get(offset) as UInt16) ?? 0)
         offset += 2
         let _: UInt32 = try data.get(offset) // latitude
         offset += 4
@@ -297,8 +304,7 @@ extension CCTParser {
         cell.mcc = Int32((try? data.get(3) as UInt16) ?? 0)
         cell.network = Int32((try? data.get(5) as UInt16) ?? 0)
         cell.band = Int32((try? data.get(7) as UInt16) ?? 0)
-        // According to the specification, the TAC uses just 24 bit. Therefore, this conversion causes no overflow.
-        cell.area = Int32((try? data.get(9) as UInt32) ?? 0)
+        cell.area = try castInteger((try? data.get(9) as UInt32) ?? 0, max: (1<<24) - 1) // Max 24 bit. See 3GPP TS 36.101
 
         offset = 13
         if version == .nr {
@@ -306,14 +312,14 @@ extension CCTParser {
             offset += 4
         } else if version == .nrV2 || version == .nrV3 {
             // According to the specification, the cell ID uses just 36 bit. Therefore, this conversion causes no overflow.
-            // With a max value of 3279165, this conversion causes no overflow.
-            cell.cellId = Int64((try? data.get(offset) as UInt64) ?? 0)
+            cell.cellId = try castInteger((try? data.get(offset) as UInt64) ?? 0)
             offset += 8
         }
 
-        cell.frequency = Int32((try? data.get(offset) as UInt32) ?? 0)
+        // This is the NR-ARFCN channel number and not the frequency in MHz
+        cell.frequency = try castInteger((try? data.get(offset) as UInt32) ?? 0) // See 3GPP TS 38.101-1
         offset += 4
-        cell.physicalCellId = Int32((try? data.get(offset) as UInt16) ?? 0)
+        cell.physicalCellId = try castInteger((try? data.get(offset) as UInt16) ?? 0)
         offset += 2
         let _: UInt32 = try data.get(offset) // latitude
         offset += 4

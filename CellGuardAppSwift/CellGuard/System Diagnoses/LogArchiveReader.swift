@@ -702,9 +702,10 @@ struct LogArchiveReader {
         var qmiImportCount = 0
         var ariImportCount = 0
         var connectivityCount = 0
+        var parsingErrors: [Error] = []
         do {
             if packets.count > 0 {
-                (qmiImportCount, ariImportCount, filteredCells, connectivityCount) = try CPTCollector.store(packets, sysdiagnose: sysdiagnose)
+                (qmiImportCount, ariImportCount, filteredCells, connectivityCount, parsingErrors) = try CPTCollector.store(packets, sysdiagnose: sysdiagnose)
             }
         } catch {
             throw LogArchiveError.importError(error)
@@ -716,6 +717,9 @@ struct LogArchiveReader {
         var notices: [ImportNotice] = []
         if validatePacketCellParser(packetParserCells: filteredCells, controlCells: controlCells, beforeImportTime: beforeImportTime) {
             notices.append(.cellParserMisalignment)
+        }
+        if !parsingErrors.isEmpty {
+            notices.append(.parsingAssertionFailed)
         }
 
         Self.logger.debug("Imported \(filteredCells.count) cells.")
