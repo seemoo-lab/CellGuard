@@ -14,7 +14,7 @@ enum ImportNotice: Identifiable {
     case sysdiagnoseSize
     case sysdiagnoseAlreadyImported
 
-    var id: String { text }
+    var id: Self { self }
 
     var requestData: Bool {
         switch self {
