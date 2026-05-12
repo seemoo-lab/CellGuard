@@ -117,7 +117,7 @@ struct PersistenceCSVImporter {
 
         var notices: [ImportNotice] = []
         if !parsingErrors.isEmpty {
-            notices.append(.pleaseReportData(.parsingAssertionFailed))
+            notices.append(.parsingAssertionFailed)
         }
 
         return ImportResult(cells: userCells, alsCells: alsCells, locations: locations, packets: packets, connectivityEvents: connectivity, sysdiagnoses: sysdiagnoses, notices: notices)

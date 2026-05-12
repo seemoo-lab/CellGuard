@@ -7,9 +7,8 @@
 
 import Foundation
 
-indirect enum ImportNotice: Identifiable {
+enum ImportNotice: Identifiable {
     case logTruncatedDueToFullDisk
-    case pleaseReportData(ImportNotice)
     case cellParserMisalignment
     case parsingAssertionFailed
     case sysdiagnoseSize
@@ -17,12 +16,21 @@ indirect enum ImportNotice: Identifiable {
 
     var id: String { text }
 
-    var text: String {
+    var requestData: Bool {
+        switch self {
+        case .cellParserMisalignment:
+            return true
+        case .parsingAssertionFailed:
+            return true
+        default:
+            return false
+        }
+    }
+
+    var innerText: String {
         switch self {
         case .logTruncatedDueToFullDisk:
             return "Make sure you have enough free storage on your iPhone, otherwise logs are truncated more frequently."
-        case .pleaseReportData(let innerNotice):
-            return "Please report your imported data. \(innerNotice.text) Your imported data would help us to improve CellGuard. Please open an issue on github.com/seemoo-lab/CellGuard/issues to arrange a channel for reporting the data."
         case .cellParserMisalignment:
             return "The Packet Cell Parser differs from the Log Cell Parser."
         case .parsingAssertionFailed:
@@ -31,6 +39,14 @@ indirect enum ImportNotice: Identifiable {
             return "Make sure to import a valid system diagnose. Their usual file size is between 100 MB and 1 GB."
         case .sysdiagnoseAlreadyImported:
             return "This sysdiagnose has already been imported!"
+        }
+    }
+
+    var text: String {
+        if requestData {
+            "Please report your imported data. \(innerText) Your imported data would help us to improve CellGuard. Please open an issue on github.com/seemoo-lab/CellGuard/issues to arrange a channel for reporting the data."
+        } else {
+            innerText
         }
     }
 }

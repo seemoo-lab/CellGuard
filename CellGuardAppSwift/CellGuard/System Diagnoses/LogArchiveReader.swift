@@ -716,10 +716,10 @@ struct LogArchiveReader {
 
         var notices: [ImportNotice] = []
         if validatePacketCellParser(packetParserCells: filteredCells, controlCells: controlCells, beforeImportTime: beforeImportTime) {
-            notices.append(.pleaseReportData(.cellParserMisalignment))
+            notices.append(.cellParserMisalignment)
         }
         if !parsingErrors.isEmpty {
-            notices.append(.pleaseReportData(.parsingAssertionFailed))
+            notices.append(.parsingAssertionFailed)
         }
 
         Self.logger.debug("Imported \(filteredCells.count) cells.")
