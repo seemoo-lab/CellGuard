@@ -165,6 +165,8 @@
 		CF73099A2A79122B00498BC3 /* DataSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF7309992A79122B00498BC3 /* DataSummaryView.swift */; };
 		CF740C172CC3B10B0083418B /* CellDetailsTowerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF740C162CC3B10B0083418B /* CellDetailsTowerView.swift */; };
 		CF740C182CC3B10B0083418B /* CellDetailsTowerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF740C162CC3B10B0083418B /* CellDetailsTowerView.swift */; };
+		CF80C8EF2FB4A0D8008F70F7 /* NotificationTypesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF80C8EE2FB4A0D8008F70F7 /* NotificationTypesView.swift */; };
+		CF80C8F02FB4A0D8008F70F7 /* NotificationTypesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF80C8EE2FB4A0D8008F70F7 /* NotificationTypesView.swift */; };
 		CF86C7912A6A9086002EC9B6 /* CellListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF86C7902A6A9086002EC9B6 /* CellListView.swift */; };
 		CF86C7932A6AC25D002EC9B6 /* CellDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF86C7922A6AC25D002EC9B6 /* CellDetailsView.swift */; };
 		CF86C7992A6AD51D002EC9B6 /* GroupedMeasurements.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF86C7982A6AD51D002EC9B6 /* GroupedMeasurements.swift */; };
@@ -583,6 +585,7 @@
 		CF70F2AB2E5F9A9B00059960 /* ListNavigationButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListNavigationButton.swift; sourceTree = "<group>"; };
 		CF7309992A79122B00498BC3 /* DataSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSummaryView.swift; sourceTree = "<group>"; };
 		CF740C162CC3B10B0083418B /* CellDetailsTowerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellDetailsTowerView.swift; sourceTree = "<group>"; };
+		CF80C8EE2FB4A0D8008F70F7 /* NotificationTypesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationTypesView.swift; sourceTree = "<group>"; };
 		CF86C7902A6A9086002EC9B6 /* CellListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellListView.swift; sourceTree = "<group>"; };
 		CF86C7922A6AC25D002EC9B6 /* CellDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellDetailsView.swift; sourceTree = "<group>"; };
 		CF86C7982A6AD51D002EC9B6 /* GroupedMeasurements.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupedMeasurements.swift; sourceTree = "<group>"; };
@@ -916,6 +919,7 @@
 			children = (
 				CF0FDCC12969AC1100A6FFE2 /* SettingsView.swift */,
 				CF2631D32C13127C0076AE33 /* AdvancedSettingsView.swift */,
+				CF80C8EE2FB4A0D8008F70F7 /* NotificationTypesView.swift */,
 				CF15E1F92AA33EA200D440AD /* ImportView.swift */,
 				CFD3F5D82E60A22B007D6C3E /* ImportStatusRow.swift */,
 				CFD3F5DB2E60A27C007D6C3E /* ImportErrorView.swift */,
@@ -1716,6 +1720,7 @@
 				CFB6CF462BD122FA00EAB7B4 /* TweakInstallInfoCard.swift in Sources */,
 				CFB6CF472BD122FA00EAB7B4 /* PacketQMIDetailsView.swift in Sources */,
 				45ED01B72D445ABA0023A090 /* ProfileTask.swift in Sources */,
+				CF80C8F02FB4A0D8008F70F7 /* NotificationTypesView.swift in Sources */,
 				CFB6CF482BD122FA00EAB7B4 /* CoreLocationALS.pb.swift in Sources */,
 				45ECF56A2BFBE44800DD92CF /* SysdiagInstructionsDetailedView.swift in Sources */,
 				CFB6CF4A2BD122FA00EAB7B4 /* CellGuard.xcdatamodeld in Sources */,
@@ -1850,6 +1855,7 @@
 				CF0157CA2CC419DD003ACAC4 /* ExpandableMap.swift in Sources */,
 				CFDF5D7B297EF71F000708A8 /* CellClusterAnnotation.swift in Sources */,
 				CF4445EC2C29700D00D0ABED /* StudyWeeklyScoresView.swift in Sources */,
+				CF80C8EF2FB4A0D8008F70F7 /* NotificationTypesView.swift in Sources */,
 				CFFF19E52BC70E63004E40CE /* ImportResult.swift in Sources */,
 				CFAE88172C2887F300092B15 /* VerificationStateStudy.swift in Sources */,
 				CFD8DD282A7175AF00954A25 /* ARIContentParser.swift in Sources */,

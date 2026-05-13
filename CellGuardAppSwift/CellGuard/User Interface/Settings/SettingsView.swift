@@ -24,8 +24,6 @@ struct SettingsView: View {
         List {
             PermissionSection()
 
-            NotificationsSection()
-
             BasebandProfileSection()
 
             StudySection()
@@ -91,51 +89,15 @@ private struct PermissionSection: View {
         Section(header: Text("Permissions"), footer: Text("Check that CellGuard has all required permission to function correctly.")) {
             Toggle("Location (Always)", isOn: isPermissionAlwaysLocation)
             Toggle("Notifications", isOn: isPermissionNotifications)
+            ListNavigationLink(value: SummaryNavigationPath.notificationTypes) {
+                Text("Configure Notifications")
+            }.disabled(!isPermissionNotifications.wrappedValue)
         }
     }
 
     private func openAppSettings() {
         if let appSettings = URL(string: UIApplication.openSettingsURLString), UIApplication.shared.canOpenURL(appSettings) {
             UIApplication.shared.open(appSettings)
-        }
-    }
-}
-
-private struct NotificationsSection: View {
-    @ObservedObject var notificationManager = CGNotificationManager.shared
-    @AppStorage(UserDefaultsKeys.suspiciousCellNotification.rawValue) var suspiciousCell: Bool = true
-    @AppStorage(UserDefaultsKeys.anomalousCellNotification.rawValue) var anomalousCell: Bool = true
-    @AppStorage(UserDefaultsKeys.keepCGRunningNotification.rawValue) var keepCGRunning: Bool = true
-    @AppStorage(UserDefaultsKeys.profileExpiryNotification.rawValue) var profileExpiry: Bool = true
-    @AppStorage(UserDefaultsKeys.newSysdiagnoseNotification.rawValue) var newSysdiagnose: Bool = true
-
-    var body: some View {
-        if notificationManager.authorizationStatus == .authorized {
-            Section(header: Text("Notifications"), footer: Text("Check which notifications you want to receive.")) {
-                Toggle("Suspicious Cell", isOn: $suspiciousCell)
-                Toggle("Anomalous Cell", isOn: $anomalousCell)
-                Toggle("Profile Expiry", isOn: Binding(get: {
-                    profileExpiry
-                }, set: { newValue in
-                    profileExpiry = newValue
-                    if newValue {
-                        // Refresh the profile data if the user enables this setting
-                        scanForProfile()
-                    } else {
-                        // Cancel all pending profile expiry notifications if the user disables it
-                        CGNotificationManager.shared.cancelProfileExpiryNotification()
-                    }
-                }))
-                Toggle("Sysdiagnose Status", isOn: $newSysdiagnose)
-                Toggle("Exit Warning", isOn: $keepCGRunning)
-            }
-        }
-    }
-
-    private func scanForProfile() {
-        Task.detached {
-            let task = ProfileTask()
-            await task.run()
         }
     }
 }
