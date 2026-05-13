@@ -24,6 +24,7 @@ enum SummaryNavigationPath: NBScreen {
     case settings
     case settingsAdvanced
     case notificationTypes
+    case profileSource
     case informationContact
     case acknowledgements
     case acknowledgementsSwift
@@ -67,6 +68,8 @@ enum SummaryNavigationPath: NBScreen {
             AdvancedSettingsView()
         } else if path == .notificationTypes {
             NotificationTypesView()
+        } else if path == .profileSource {
+            ProfileSourceView()
         } else if path == .informationContact {
             InformationContactView()
         } else if path == .acknowledgements {

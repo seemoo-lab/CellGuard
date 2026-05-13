@@ -115,6 +115,10 @@ private struct BasebandProfileSection: View {
                     Text("Install Profile")
                 }
 
+                ListNavigationLink(value: SummaryNavigationPath.profileSource) {
+                    Text("Source")
+                }
+
                 // Only show the data if the setting is enabled as otherwise the scan may be outdated.
                 if profileExpiry {
                     if let installData = profileData.installDate {
@@ -127,6 +131,7 @@ private struct BasebandProfileSection: View {
                         }
                     }
                 }
+
             }
         }
     }

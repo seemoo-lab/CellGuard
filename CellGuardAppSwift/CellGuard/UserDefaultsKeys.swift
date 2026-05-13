@@ -25,6 +25,7 @@ enum UserDefaultsKeys: String {
     case keepCGRunningNotification
     case profileExpiryNotification
     case newSysdiagnoseNotification
+    case profileSource
 
     #if JAILBREAK
     case mostRecentPacket

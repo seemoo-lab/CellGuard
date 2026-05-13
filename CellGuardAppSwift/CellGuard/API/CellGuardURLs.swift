@@ -26,5 +26,7 @@ struct CellGuardURLs {
     static let apiCells = URL(string: "cells", relativeTo: api)!
     static let apiWeekly = URL(string: "weekly", relativeTo: api)!
 
+    static let profile = URL(string: "repo/profile/Baseband.mobileconfig", relativeTo: baseUrl)!
+
     static let github = URL(string: "https://github.com/seemoo-lab/CellGuard/")!
 }

@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct DebugProfileDetailedView: View {
+    @AppStorage(UserDefaultsKeys.profileSource.rawValue) var profileSource: ProfileSource = .cellGuard
     @Environment(\.openURL) var openURL
 
     var body: some View {
@@ -22,7 +23,7 @@ A baseband debug profile adds more data about cellular network connections to yo
             )
 
             LargeButton(title: "Download Profile", backgroundColor: .blue) {
-                openURL(AppleURLs.downloadBasebandProfile)
+                openURL(profileSource.url)
             }
             .padding(.horizontal)
 
