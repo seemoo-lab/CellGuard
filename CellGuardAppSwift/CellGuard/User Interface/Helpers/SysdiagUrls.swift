@@ -62,6 +62,8 @@ struct SysdiagUrls {
 
     static func installShortcut() {
         // Lukas' shortcut to open a sysdiagnose in Preferences.app.
+        //
+        // == Below iOS 26 ==
         // Until iOS 17, CellGuard could also use the same deep link schema, but
         // - the App Review Guidelines §2.5.1 forbids using internal APIs
         // - this has ceased working with iOS 18
@@ -75,7 +77,16 @@ struct SysdiagUrls {
         // 4. Open the targeted sysdiagnose (if its name was provided)
         //
         // We have to include the URL actions as required by iOS 14
-        let urlString = "https://www.icloud.com/shortcuts/f61eaf9ab6c64d8c9de8dfbc57d92fcd"
+        //
+        // == Starting from iOS 26 ==
+        // We cannot directly link to the sysdiagnose entry, instead we
+        // can use a generic link pointing towards "Analytics & Improvements".
+        //
+        // settings-navigation://com.apple.Settings.PrivacyAndSecurity/PROBLEM_REPORTING
+        //
+        // List of all URLs: https://github.com/paralevel/ios-settings-urls
+        //
+        let urlString = "https://www.icloud.com/shortcuts/90d254ec325a4a4d83baceb83f12f777"
         guard let url = URL(string: urlString) else {
             Self.logger.warning("Cannot create URL to install shortcut: \(urlString)")
             return
