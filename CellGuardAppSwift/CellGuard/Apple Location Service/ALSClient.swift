@@ -83,8 +83,10 @@ struct ALSQueryCell: CustomStringConvertible, Equatable, Hashable {
     }
 
     init(fromGsmProto proto: AlsProto_GsmCell) {
-        // If the cell has a Primary Scrambling Code (PSC), it's a UMTS cell
-        self.technology = proto.hasPsc ? .UMTS : .GSM
+        // Old flawed approach: If the cell has a Primary Scrambling Code (PSC), it's a UMTS cell
+        // New approach by Florian Künzig (cdr-chakotay): Assuming the RNC ID of a UMTS cell is not zero, if the cell ID is larger than 0xFFFF, then it is a UMTS and else a GSM cell.
+        // See: https://github.com/cdr-chakotay/ALS_Kt/blob/main/src/main/kotlin/org/kufl/als_kt/ALSQueryModels.kt#L160
+        self.technology = proto.cellID > 0xFFFF ? .UMTS : .GSM
         self.country = proto.mcc
         self.network = proto.mnc
         self.area = proto.lacID
