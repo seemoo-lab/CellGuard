@@ -46,20 +46,20 @@ struct AlsProto_Meta: Sendable {
   // methods supported on all messages.
 
   var softwareBuild: String {
-    get {return _softwareBuild ?? String()}
+    get {_softwareBuild ?? String()}
     set {_softwareBuild = newValue}
   }
   /// Returns true if `softwareBuild` has been explicitly set.
-  var hasSoftwareBuild: Bool {return self._softwareBuild != nil}
+  var hasSoftwareBuild: Bool {self._softwareBuild != nil}
   /// Clears the value of `softwareBuild`. Subsequent reads from it will return its default value.
   mutating func clearSoftwareBuild() {self._softwareBuild = nil}
 
   var productID: String {
-    get {return _productID ?? String()}
+    get {_productID ?? String()}
     set {_productID = newValue}
   }
   /// Returns true if `productID` has been explicitly set.
-  var hasProductID: Bool {return self._productID != nil}
+  var hasProductID: Bool {self._productID != nil}
   /// Clears the value of `productID`. Subsequent reads from it will return its default value.
   mutating func clearProductID() {self._productID = nil}
 
@@ -78,91 +78,100 @@ struct AlsProto_Location: Sendable {
 
   /// Formula: latitude * pow(10, -8)
   var latitude: Int64 {
-    get {return _latitude ?? 0}
+    get {_latitude ?? 0}
     set {_latitude = newValue}
   }
   /// Returns true if `latitude` has been explicitly set.
-  var hasLatitude: Bool {return self._latitude != nil}
+  var hasLatitude: Bool {self._latitude != nil}
   /// Clears the value of `latitude`. Subsequent reads from it will return its default value.
   mutating func clearLatitude() {self._latitude = nil}
 
   /// Formula: longitude * pow(10, -8)
   var longitude: Int64 {
-    get {return _longitude ?? 0}
+    get {_longitude ?? 0}
     set {_longitude = newValue}
   }
   /// Returns true if `longitude` has been explicitly set.
-  var hasLongitude: Bool {return self._longitude != nil}
+  var hasLongitude: Bool {self._longitude != nil}
   /// Clears the value of `longitude`. Subsequent reads from it will return its default value.
   mutating func clearLongitude() {self._longitude = nil}
 
   /// Unit: meters
   var accuracy: Int32 {
-    get {return _accuracy ?? 0}
+    get {_accuracy ?? 0}
     set {_accuracy = newValue}
   }
   /// Returns true if `accuracy` has been explicitly set.
-  var hasAccuracy: Bool {return self._accuracy != nil}
+  var hasAccuracy: Bool {self._accuracy != nil}
   /// Clears the value of `accuracy`. Subsequent reads from it will return its default value.
   mutating func clearAccuracy() {self._accuracy = nil}
 
   /// Observed value: 0
   var locationType: Int32 {
-    get {return _locationType ?? 0}
+    get {_locationType ?? 0}
     set {_locationType = newValue}
   }
   /// Returns true if `locationType` has been explicitly set.
-  var hasLocationType: Bool {return self._locationType != nil}
+  var hasLocationType: Bool {self._locationType != nil}
   /// Clears the value of `locationType`. Subsequent reads from it will return its default value.
   mutating func clearLocationType() {self._locationType = nil}
 
   /// Unit: meters, only set for Wifi APs
   var altitude: Int32 {
-    get {return _altitude ?? 0}
+    get {_altitude ?? 0}
     set {_altitude = newValue}
   }
   /// Returns true if `altitude` has been explicitly set.
-  var hasAltitude: Bool {return self._altitude != nil}
+  var hasAltitude: Bool {self._altitude != nil}
   /// Clears the value of `altitude`. Subsequent reads from it will return its default value.
   mutating func clearAltitude() {self._altitude = nil}
 
   /// Unit: meters, only set for Wifi APs
   var verticalAccuracy: Int32 {
-    get {return _verticalAccuracy ?? 0}
+    get {_verticalAccuracy ?? 0}
     set {_verticalAccuracy = newValue}
   }
   /// Returns true if `verticalAccuracy` has been explicitly set.
-  var hasVerticalAccuracy: Bool {return self._verticalAccuracy != nil}
+  var hasVerticalAccuracy: Bool {self._verticalAccuracy != nil}
   /// Clears the value of `verticalAccuracy`. Subsequent reads from it will return its default value.
   mutating func clearVerticalAccuracy() {self._verticalAccuracy = nil}
 
-  /// Unit: meters
-  var reach: UInt32 {
-    get {return _reach ?? 0}
-    set {_reach = newValue}
+  var confidence: Int32 {
+    get {_confidence ?? 0}
+    set {_confidence = newValue}
   }
-  /// Returns true if `reach` has been explicitly set.
-  var hasReach: Bool {return self._reach != nil}
-  /// Clears the value of `reach`. Subsequent reads from it will return its default value.
-  mutating func clearReach() {self._reach = nil}
+  /// Returns true if `confidence` has been explicitly set.
+  var hasConfidence: Bool {self._confidence != nil}
+  /// Clears the value of `confidence`. Subsequent reads from it will return its default value.
+  mutating func clearConfidence() {self._confidence = nil}
 
   /// Assumption: How often the wifi / cell was seen by Apple devices?
   var score: Int32 {
-    get {return _score ?? 0}
+    get {_score ?? 0}
     set {_score = newValue}
   }
   /// Returns true if `score` has been explicitly set.
-  var hasScore: Bool {return self._score != nil}
+  var hasScore: Bool {self._score != nil}
   /// Clears the value of `score`. Subsequent reads from it will return its default value.
   mutating func clearScore() {self._score = nil}
 
+  /// Unit: meters
+  var reach: UInt32 {
+    get {_reach ?? 0}
+    set {_reach = newValue}
+  }
+  /// Returns true if `reach` has been explicitly set.
+  var hasReach: Bool {self._reach != nil}
+  /// Clears the value of `reach`. Subsequent reads from it will return its default value.
+  mutating func clearReach() {self._reach = nil}
+
   /// The field is never set and its function is unknown
   var infoMask: UInt32 {
-    get {return _infoMask ?? 0}
+    get {_infoMask ?? 0}
     set {_infoMask = newValue}
   }
   /// Returns true if `infoMask` has been explicitly set.
-  var hasInfoMask: Bool {return self._infoMask != nil}
+  var hasInfoMask: Bool {self._infoMask != nil}
   /// Clears the value of `infoMask`. Subsequent reads from it will return its default value.
   mutating func clearInfoMask() {self._infoMask = nil}
 
@@ -176,8 +185,9 @@ struct AlsProto_Location: Sendable {
   fileprivate var _locationType: Int32? = nil
   fileprivate var _altitude: Int32? = nil
   fileprivate var _verticalAccuracy: Int32? = nil
-  fileprivate var _reach: UInt32? = nil
+  fileprivate var _confidence: Int32? = nil
   fileprivate var _score: Int32? = nil
+  fileprivate var _reach: UInt32? = nil
   fileprivate var _infoMask: UInt32? = nil
 }
 
@@ -189,41 +199,41 @@ struct AlsProto_WirelessAP: Sendable {
 
   /// The MAC address of the Wifi router
   var macID: String {
-    get {return _macID ?? String()}
+    get {_macID ?? String()}
     set {_macID = newValue}
   }
   /// Returns true if `macID` has been explicitly set.
-  var hasMacID: Bool {return self._macID != nil}
+  var hasMacID: Bool {self._macID != nil}
   /// Clears the value of `macID`. Subsequent reads from it will return its default value.
   mutating func clearMacID() {self._macID = nil}
 
   /// Location of the wireless access point, only set in responses
   var location: AlsProto_Location {
-    get {return _location ?? AlsProto_Location()}
+    get {_location ?? AlsProto_Location()}
     set {_location = newValue}
   }
   /// Returns true if `location` has been explicitly set.
-  var hasLocation: Bool {return self._location != nil}
+  var hasLocation: Bool {self._location != nil}
   /// Clears the value of `location`. Subsequent reads from it will return its default value.
   mutating func clearLocation() {self._location = nil}
 
   /// The channel number of the Wifi, only set in responses
   /// See https://en.wikipedia.org/wiki/List_of_WLAN_channels
   var channel: UInt32 {
-    get {return _channel ?? 0}
+    get {_channel ?? 0}
     set {_channel = newValue}
   }
   /// Returns true if `channel` has been explicitly set.
-  var hasChannel: Bool {return self._channel != nil}
+  var hasChannel: Bool {self._channel != nil}
   /// Clears the value of `channel`. Subsequent reads from it will return its default value.
   mutating func clearChannel() {self._channel = nil}
 
   var numZaxisHarvestTraces: UInt32 {
-    get {return _numZaxisHarvestTraces ?? 0}
+    get {_numZaxisHarvestTraces ?? 0}
     set {_numZaxisHarvestTraces = newValue}
   }
   /// Returns true if `numZaxisHarvestTraces` has been explicitly set.
-  var hasNumZaxisHarvestTraces: Bool {return self._numZaxisHarvestTraces != nil}
+  var hasNumZaxisHarvestTraces: Bool {self._numZaxisHarvestTraces != nil}
   /// Clears the value of `numZaxisHarvestTraces`. Subsequent reads from it will return its default value.
   mutating func clearNumZaxisHarvestTraces() {self._numZaxisHarvestTraces = nil}
 
@@ -245,54 +255,54 @@ struct AlsProto_Nr5GCell: Sendable {
   /// Mobile Country Code
   /// See https://en.wikipedia.org/wiki/Mobile_country_code
   var mcc: Int32 {
-    get {return _mcc ?? 0}
+    get {_mcc ?? 0}
     set {_mcc = newValue}
   }
   /// Returns true if `mcc` has been explicitly set.
-  var hasMcc: Bool {return self._mcc != nil}
+  var hasMcc: Bool {self._mcc != nil}
   /// Clears the value of `mcc`. Subsequent reads from it will return its default value.
   mutating func clearMcc() {self._mcc = nil}
 
   /// Mobile Network Code
   /// See https://en.wikipedia.org/wiki/List_of_mobile_network_operators_of_Europe
   var mnc: Int32 {
-    get {return _mnc ?? 0}
+    get {_mnc ?? 0}
     set {_mnc = newValue}
   }
   /// Returns true if `mnc` has been explicitly set.
-  var hasMnc: Bool {return self._mnc != nil}
+  var hasMnc: Bool {self._mnc != nil}
   /// Clears the value of `mnc`. Subsequent reads from it will return its default value.
   mutating func clearMnc() {self._mnc = nil}
 
   /// Unique number to identify a single cell within MCC + MNC + TAC.#
   /// If the value is -1 the location is only a rough estimate for the whole area (TAC).
   var cellID: Int64 {
-    get {return _cellID ?? 0}
+    get {_cellID ?? 0}
     set {_cellID = newValue}
   }
   /// Returns true if `cellID` has been explicitly set.
-  var hasCellID: Bool {return self._cellID != nil}
+  var hasCellID: Bool {self._cellID != nil}
   /// Clears the value of `cellID`. Subsequent reads from it will return its default value.
   mutating func clearCellID() {self._cellID = nil}
 
   /// Tracking Area Code
   /// See https://ec.europa.eu/eurostat/cros/content/Glossary%3ALocation_Area_Code/Tracking_Area_Code_%28LAC/TAC%29_en
   var tacID: Int32 {
-    get {return _tacID ?? 0}
+    get {_tacID ?? 0}
     set {_tacID = newValue}
   }
   /// Returns true if `tacID` has been explicitly set.
-  var hasTacID: Bool {return self._tacID != nil}
+  var hasTacID: Bool {self._tacID != nil}
   /// Clears the value of `tacID`. Subsequent reads from it will return its default value.
   mutating func clearTacID() {self._tacID = nil}
 
   /// Location of the cell, only set in responses
   var location: AlsProto_Location {
-    get {return _location ?? AlsProto_Location()}
+    get {_location ?? AlsProto_Location()}
     set {_location = newValue}
   }
   /// Returns true if `location` has been explicitly set.
-  var hasLocation: Bool {return self._location != nil}
+  var hasLocation: Bool {self._location != nil}
   /// Clears the value of `location`. Subsequent reads from it will return its default value.
   mutating func clearLocation() {self._location = nil}
 
@@ -300,11 +310,11 @@ struct AlsProto_Nr5GCell: Sendable {
   /// See https://www.cellmapper.net/arfcn?net=NR&ARFCN=0&MCC=222
   /// See https://de.wikipedia.org/wiki/ARFCN
   var nrarfcn: Int32 {
-    get {return _nrarfcn ?? 0}
+    get {_nrarfcn ?? 0}
     set {_nrarfcn = newValue}
   }
   /// Returns true if `nrarfcn` has been explicitly set.
-  var hasNrarfcn: Bool {return self._nrarfcn != nil}
+  var hasNrarfcn: Bool {self._nrarfcn != nil}
   /// Clears the value of `nrarfcn`. Subsequent reads from it will return its default value.
   mutating func clearNrarfcn() {self._nrarfcn = nil}
 
@@ -330,54 +340,54 @@ struct AlsProto_ScdmaCell: Sendable {
   /// Mobile Country Code
   /// See https://en.wikipedia.org/wiki/Mobile_country_code
   var mcc: Int32 {
-    get {return _mcc ?? 0}
+    get {_mcc ?? 0}
     set {_mcc = newValue}
   }
   /// Returns true if `mcc` has been explicitly set.
-  var hasMcc: Bool {return self._mcc != nil}
+  var hasMcc: Bool {self._mcc != nil}
   /// Clears the value of `mcc`. Subsequent reads from it will return its default value.
   mutating func clearMcc() {self._mcc = nil}
 
   /// Mobile Network Code
   /// See https://en.wikipedia.org/wiki/List_of_mobile_network_operators_of_Europe
   var mnc: Int32 {
-    get {return _mnc ?? 0}
+    get {_mnc ?? 0}
     set {_mnc = newValue}
   }
   /// Returns true if `mnc` has been explicitly set.
-  var hasMnc: Bool {return self._mnc != nil}
+  var hasMnc: Bool {self._mnc != nil}
   /// Clears the value of `mnc`. Subsequent reads from it will return its default value.
   mutating func clearMnc() {self._mnc = nil}
 
   /// Unique number to identify a single cell within MCC + MNC + TAC.#
   /// If the value is -1 the location is only a rough estimate for the whole area (LAC).
   var cellID: Int32 {
-    get {return _cellID ?? 0}
+    get {_cellID ?? 0}
     set {_cellID = newValue}
   }
   /// Returns true if `cellID` has been explicitly set.
-  var hasCellID: Bool {return self._cellID != nil}
+  var hasCellID: Bool {self._cellID != nil}
   /// Clears the value of `cellID`. Subsequent reads from it will return its default value.
   mutating func clearCellID() {self._cellID = nil}
 
   /// Location Area Code
   /// See https://ec.europa.eu/eurostat/cros/content/Glossary%3ALocation_Area_Code/Tracking_Area_Code_%28LAC/TAC%29_en
   var lacID: Int32 {
-    get {return _lacID ?? 0}
+    get {_lacID ?? 0}
     set {_lacID = newValue}
   }
   /// Returns true if `lacID` has been explicitly set.
-  var hasLacID: Bool {return self._lacID != nil}
+  var hasLacID: Bool {self._lacID != nil}
   /// Clears the value of `lacID`. Subsequent reads from it will return its default value.
   mutating func clearLacID() {self._lacID = nil}
 
   /// Location of the cell, only set for responses
   var location: AlsProto_Location {
-    get {return _location ?? AlsProto_Location()}
+    get {_location ?? AlsProto_Location()}
     set {_location = newValue}
   }
   /// Returns true if `location` has been explicitly set.
-  var hasLocation: Bool {return self._location != nil}
+  var hasLocation: Bool {self._location != nil}
   /// Clears the value of `location`. Subsequent reads from it will return its default value.
   mutating func clearLocation() {self._location = nil}
 
@@ -386,22 +396,22 @@ struct AlsProto_ScdmaCell: Sendable {
   /// See https://de.wikipedia.org/wiki/ARFCN
   /// See: https://de.wikipedia.org/wiki/UTRA_Absolute_Radio_Frequency_Channel_Number
   var arfcn: Int32 {
-    get {return _arfcn ?? 0}
+    get {_arfcn ?? 0}
     set {_arfcn = newValue}
   }
   /// Returns true if `arfcn` has been explicitly set.
-  var hasArfcn: Bool {return self._arfcn != nil}
+  var hasArfcn: Bool {self._arfcn != nil}
   /// Clears the value of `arfcn`. Subsequent reads from it will return its default value.
   mutating func clearArfcn() {self._arfcn = nil}
 
   /// Primary Scrambling Code, only set for UMTS cells in responses
   /// See https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=9119377
   var psc: Int32 {
-    get {return _psc ?? 0}
+    get {_psc ?? 0}
     set {_psc = newValue}
   }
   /// Returns true if `psc` has been explicitly set.
-  var hasPsc: Bool {return self._psc != nil}
+  var hasPsc: Bool {self._psc != nil}
   /// Clears the value of `psc`. Subsequent reads from it will return its default value.
   mutating func clearPsc() {self._psc = nil}
 
@@ -428,54 +438,54 @@ struct AlsProto_LteCell: Sendable {
   /// Mobile Country Code
   /// See https://en.wikipedia.org/wiki/Mobile_country_code
   var mcc: Int32 {
-    get {return _mcc ?? 0}
+    get {_mcc ?? 0}
     set {_mcc = newValue}
   }
   /// Returns true if `mcc` has been explicitly set.
-  var hasMcc: Bool {return self._mcc != nil}
+  var hasMcc: Bool {self._mcc != nil}
   /// Clears the value of `mcc`. Subsequent reads from it will return its default value.
   mutating func clearMcc() {self._mcc = nil}
 
   /// Mobile Network Code
   /// See https://en.wikipedia.org/wiki/List_of_mobile_network_operators_of_Europe
   var mnc: Int32 {
-    get {return _mnc ?? 0}
+    get {_mnc ?? 0}
     set {_mnc = newValue}
   }
   /// Returns true if `mnc` has been explicitly set.
-  var hasMnc: Bool {return self._mnc != nil}
+  var hasMnc: Bool {self._mnc != nil}
   /// Clears the value of `mnc`. Subsequent reads from it will return its default value.
   mutating func clearMnc() {self._mnc = nil}
 
   /// Unique number to identify a single cell within MCC + MNC + TAC.#
   /// If the value is -1 the location is only a rough estimate for the whole area (TAC).
   var cellID: Int32 {
-    get {return _cellID ?? 0}
+    get {_cellID ?? 0}
     set {_cellID = newValue}
   }
   /// Returns true if `cellID` has been explicitly set.
-  var hasCellID: Bool {return self._cellID != nil}
+  var hasCellID: Bool {self._cellID != nil}
   /// Clears the value of `cellID`. Subsequent reads from it will return its default value.
   mutating func clearCellID() {self._cellID = nil}
 
   /// Tracking Area Code
   /// See https://ec.europa.eu/eurostat/cros/content/Glossary%3ALocation_Area_Code/Tracking_Area_Code_%28LAC/TAC%29_en
   var tacID: Int32 {
-    get {return _tacID ?? 0}
+    get {_tacID ?? 0}
     set {_tacID = newValue}
   }
   /// Returns true if `tacID` has been explicitly set.
-  var hasTacID: Bool {return self._tacID != nil}
+  var hasTacID: Bool {self._tacID != nil}
   /// Clears the value of `tacID`. Subsequent reads from it will return its default value.
   mutating func clearTacID() {self._tacID = nil}
 
   /// Location of the cell, only set for responses
   var location: AlsProto_Location {
-    get {return _location ?? AlsProto_Location()}
+    get {_location ?? AlsProto_Location()}
     set {_location = newValue}
   }
   /// Returns true if `location` has been explicitly set.
-  var hasLocation: Bool {return self._location != nil}
+  var hasLocation: Bool {self._location != nil}
   /// Clears the value of `location`. Subsequent reads from it will return its default value.
   mutating func clearLocation() {self._location = nil}
 
@@ -483,22 +493,22 @@ struct AlsProto_LteCell: Sendable {
   /// See https://www.cellmapper.net/arfcn?net=NR&ARFCN=0&MCC=222
   /// See https://de.wikipedia.org/wiki/ARFCN
   var uarfcn: Int32 {
-    get {return _uarfcn ?? 0}
+    get {_uarfcn ?? 0}
     set {_uarfcn = newValue}
   }
   /// Returns true if `uarfcn` has been explicitly set.
-  var hasUarfcn: Bool {return self._uarfcn != nil}
+  var hasUarfcn: Bool {self._uarfcn != nil}
   /// Clears the value of `uarfcn`. Subsequent reads from it will return its default value.
   mutating func clearUarfcn() {self._uarfcn = nil}
 
   /// This number could reference to the cell's PCI (Physical Cell Identity)
   /// See http://people.csail.mit.edu/bkph/cellular_repeater_numerology.shtml
   var pid: Int32 {
-    get {return _pid ?? 0}
+    get {_pid ?? 0}
     set {_pid = newValue}
   }
   /// Returns true if `pid` has been explicitly set.
-  var hasPid: Bool {return self._pid != nil}
+  var hasPid: Bool {self._pid != nil}
   /// Clears the value of `pid`. Subsequent reads from it will return its default value.
   mutating func clearPid() {self._pid = nil}
 
@@ -526,54 +536,54 @@ struct AlsProto_GsmCell: Sendable {
   /// Mobile Country Code
   /// See https://en.wikipedia.org/wiki/Mobile_country_code
   var mcc: Int32 {
-    get {return _mcc ?? 0}
+    get {_mcc ?? 0}
     set {_mcc = newValue}
   }
   /// Returns true if `mcc` has been explicitly set.
-  var hasMcc: Bool {return self._mcc != nil}
+  var hasMcc: Bool {self._mcc != nil}
   /// Clears the value of `mcc`. Subsequent reads from it will return its default value.
   mutating func clearMcc() {self._mcc = nil}
 
   /// Mobile Network Code
   /// See https://en.wikipedia.org/wiki/List_of_mobile_network_operators_of_Europe
   var mnc: Int32 {
-    get {return _mnc ?? 0}
+    get {_mnc ?? 0}
     set {_mnc = newValue}
   }
   /// Returns true if `mnc` has been explicitly set.
-  var hasMnc: Bool {return self._mnc != nil}
+  var hasMnc: Bool {self._mnc != nil}
   /// Clears the value of `mnc`. Subsequent reads from it will return its default value.
   mutating func clearMnc() {self._mnc = nil}
 
   /// Unique number to identify a single cell within MCC + MNC + TAC.#
   /// If the value is -1 the location is only a rough estimate for the whole area (LAC).
   var cellID: Int64 {
-    get {return _cellID ?? 0}
+    get {_cellID ?? 0}
     set {_cellID = newValue}
   }
   /// Returns true if `cellID` has been explicitly set.
-  var hasCellID: Bool {return self._cellID != nil}
+  var hasCellID: Bool {self._cellID != nil}
   /// Clears the value of `cellID`. Subsequent reads from it will return its default value.
   mutating func clearCellID() {self._cellID = nil}
 
   /// Location Area Code
   /// See https://ec.europa.eu/eurostat/cros/content/Glossary%3ALocation_Area_Code/Tracking_Area_Code_%28LAC/TAC%29_en
   var lacID: Int32 {
-    get {return _lacID ?? 0}
+    get {_lacID ?? 0}
     set {_lacID = newValue}
   }
   /// Returns true if `lacID` has been explicitly set.
-  var hasLacID: Bool {return self._lacID != nil}
+  var hasLacID: Bool {self._lacID != nil}
   /// Clears the value of `lacID`. Subsequent reads from it will return its default value.
   mutating func clearLacID() {self._lacID = nil}
 
   /// Location of the cell, only set for responses
   var location: AlsProto_Location {
-    get {return _location ?? AlsProto_Location()}
+    get {_location ?? AlsProto_Location()}
     set {_location = newValue}
   }
   /// Returns true if `location` has been explicitly set.
-  var hasLocation: Bool {return self._location != nil}
+  var hasLocation: Bool {self._location != nil}
   /// Clears the value of `location`. Subsequent reads from it will return its default value.
   mutating func clearLocation() {self._location = nil}
 
@@ -582,22 +592,22 @@ struct AlsProto_GsmCell: Sendable {
   /// See https://de.wikipedia.org/wiki/ARFCN
   /// See: https://de.wikipedia.org/wiki/UTRA_Absolute_Radio_Frequency_Channel_Number
   var arfcn: Int32 {
-    get {return _arfcn ?? 0}
+    get {_arfcn ?? 0}
     set {_arfcn = newValue}
   }
   /// Returns true if `arfcn` has been explicitly set.
-  var hasArfcn: Bool {return self._arfcn != nil}
+  var hasArfcn: Bool {self._arfcn != nil}
   /// Clears the value of `arfcn`. Subsequent reads from it will return its default value.
   mutating func clearArfcn() {self._arfcn = nil}
 
   /// Primary Scrambling Code, only set for UMTS cells in responses
   /// See https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=9119377
   var psc: Int32 {
-    get {return _psc ?? 0}
+    get {_psc ?? 0}
     set {_psc = newValue}
   }
   /// Returns true if `psc` has been explicitly set.
-  var hasPsc: Bool {return self._psc != nil}
+  var hasPsc: Bool {self._psc != nil}
   /// Clears the value of `psc`. Subsequent reads from it will return its default value.
   mutating func clearPsc() {self._psc = nil}
 
@@ -622,96 +632,96 @@ struct AlsProto_CdmaCell: @unchecked Sendable {
   /// Mobile Country Code
   /// See https://en.wikipedia.org/wiki/Mobile_country_code
   var mcc: Int32 {
-    get {return _storage._mcc ?? 0}
+    get {_storage._mcc ?? 0}
     set {_uniqueStorage()._mcc = newValue}
   }
   /// Returns true if `mcc` has been explicitly set.
-  var hasMcc: Bool {return _storage._mcc != nil}
+  var hasMcc: Bool {_storage._mcc != nil}
   /// Clears the value of `mcc`. Subsequent reads from it will return its default value.
   mutating func clearMcc() {_uniqueStorage()._mcc = nil}
 
   /// System Identification (Number) which is worldwide unique
   /// See https://en.wikipedia.org/wiki/System_identification_number
   var sid: Int32 {
-    get {return _storage._sid ?? 0}
+    get {_storage._sid ?? 0}
     set {_uniqueStorage()._sid = newValue}
   }
   /// Returns true if `sid` has been explicitly set.
-  var hasSid: Bool {return _storage._sid != nil}
+  var hasSid: Bool {_storage._sid != nil}
   /// Clears the value of `sid`. Subsequent reads from it will return its default value.
   mutating func clearSid() {_uniqueStorage()._sid = nil}
 
   /// Network Identification (Number)
   /// See https://wiki.opencellid.org/wiki/Public:CDMA
   var nid: Int32 {
-    get {return _storage._nid ?? 0}
+    get {_storage._nid ?? 0}
     set {_uniqueStorage()._nid = newValue}
   }
   /// Returns true if `nid` has been explicitly set.
-  var hasNid: Bool {return _storage._nid != nil}
+  var hasNid: Bool {_storage._nid != nil}
   /// Clears the value of `nid`. Subsequent reads from it will return its default value.
   mutating func clearNid() {_uniqueStorage()._nid = nil}
 
   /// Basestation Identification (Number)
   /// See https://wiki.opencellid.org/wiki/Public:CDMA
   var bsid: Int32 {
-    get {return _storage._bsid ?? 0}
+    get {_storage._bsid ?? 0}
     set {_uniqueStorage()._bsid = newValue}
   }
   /// Returns true if `bsid` has been explicitly set.
-  var hasBsid: Bool {return _storage._bsid != nil}
+  var hasBsid: Bool {_storage._bsid != nil}
   /// Clears the value of `bsid`. Subsequent reads from it will return its default value.
   mutating func clearBsid() {_uniqueStorage()._bsid = nil}
 
   /// Location of the cell, only set for responses
   var location: AlsProto_Location {
-    get {return _storage._location ?? AlsProto_Location()}
+    get {_storage._location ?? AlsProto_Location()}
     set {_uniqueStorage()._location = newValue}
   }
   /// Returns true if `location` has been explicitly set.
-  var hasLocation: Bool {return _storage._location != nil}
+  var hasLocation: Bool {_storage._location != nil}
   /// Clears the value of `location`. Subsequent reads from it will return its default value.
   mutating func clearLocation() {_uniqueStorage()._location = nil}
 
   /// Assumption: Zone Identification of the cell
   var zoneid: Int32 {
-    get {return _storage._zoneid ?? 0}
+    get {_storage._zoneid ?? 0}
     set {_uniqueStorage()._zoneid = newValue}
   }
   /// Returns true if `zoneid` has been explicitly set.
-  var hasZoneid: Bool {return _storage._zoneid != nil}
+  var hasZoneid: Bool {_storage._zoneid != nil}
   /// Clears the value of `zoneid`. Subsequent reads from it will return its default value.
   mutating func clearZoneid() {_uniqueStorage()._zoneid = nil}
 
   /// The frequency band of the cell, only set for cells in responses
   /// https://en.wikipedia.org/wiki/CDMA_frequency_bands
   var bandclass: Int32 {
-    get {return _storage._bandclass ?? 0}
+    get {_storage._bandclass ?? 0}
     set {_uniqueStorage()._bandclass = newValue}
   }
   /// Returns true if `bandclass` has been explicitly set.
-  var hasBandclass: Bool {return _storage._bandclass != nil}
+  var hasBandclass: Bool {_storage._bandclass != nil}
   /// Clears the value of `bandclass`. Subsequent reads from it will return its default value.
   mutating func clearBandclass() {_uniqueStorage()._bandclass = nil}
 
   /// Assumption: The frequency channel of the cell, only set for cells in responses
   var channel: Int32 {
-    get {return _storage._channel ?? 0}
+    get {_storage._channel ?? 0}
     set {_uniqueStorage()._channel = newValue}
   }
   /// Returns true if `channel` has been explicitly set.
-  var hasChannel: Bool {return _storage._channel != nil}
+  var hasChannel: Bool {_storage._channel != nil}
   /// Clears the value of `channel`. Subsequent reads from it will return its default value.
   mutating func clearChannel() {_uniqueStorage()._channel = nil}
 
   /// Number to identify a basestation, only set for cells in responses
   /// See https://en.wikipedia.org/wiki/List_of_CDMA_terminology
   var pnoffset: Int32 {
-    get {return _storage._pnoffset ?? 0}
+    get {_storage._pnoffset ?? 0}
     set {_uniqueStorage()._pnoffset = newValue}
   }
   /// Returns true if `pnoffset` has been explicitly set.
-  var hasPnoffset: Bool {return _storage._pnoffset != nil}
+  var hasPnoffset: Bool {_storage._pnoffset != nil}
   /// Clears the value of `pnoffset`. Subsequent reads from it will return its default value.
   mutating func clearPnoffset() {_uniqueStorage()._pnoffset = nil}
 
@@ -735,158 +745,158 @@ struct AlsProto_ALSLocationRequest: @unchecked Sendable {
   /// A single GSM cell the iPhone is currently connected to.
   /// Do not specify cells of other types or any Wifi AP.
   var gsmCells: [AlsProto_GsmCell] {
-    get {return _storage._gsmCells}
+    get {_storage._gsmCells}
     set {_uniqueStorage()._gsmCells = newValue}
   }
 
   /// Multiple Wifi APs in proximity.
   /// Do not specify cells.
   var wirelessAps: [AlsProto_WirelessAP] {
-    get {return _storage._wirelessAps}
+    get {_storage._wirelessAps}
     set {_uniqueStorage()._wirelessAps = newValue}
   }
 
   /// This value is always set to 0.
   /// We could observe this for LTE, GSM, and Wifi requests.
   var numberOfSurroundingCells: Int32 {
-    get {return _storage._numberOfSurroundingCells ?? 0}
+    get {_storage._numberOfSurroundingCells ?? 0}
     set {_uniqueStorage()._numberOfSurroundingCells = newValue}
   }
   /// Returns true if `numberOfSurroundingCells` has been explicitly set.
-  var hasNumberOfSurroundingCells: Bool {return _storage._numberOfSurroundingCells != nil}
+  var hasNumberOfSurroundingCells: Bool {_storage._numberOfSurroundingCells != nil}
   /// Clears the value of `numberOfSurroundingCells`. Subsequent reads from it will return its default value.
   mutating func clearNumberOfSurroundingCells() {_uniqueStorage()._numberOfSurroundingCells = nil}
 
   /// This value is set for LTE and GSM requests to 1.
   /// It is set for Wifi requests to 100.
   var numberOfSurroundingWifis: Int32 {
-    get {return _storage._numberOfSurroundingWifis ?? 0}
+    get {_storage._numberOfSurroundingWifis ?? 0}
     set {_uniqueStorage()._numberOfSurroundingWifis = newValue}
   }
   /// Returns true if `numberOfSurroundingWifis` has been explicitly set.
-  var hasNumberOfSurroundingWifis: Bool {return _storage._numberOfSurroundingWifis != nil}
+  var hasNumberOfSurroundingWifis: Bool {_storage._numberOfSurroundingWifis != nil}
   /// Clears the value of `numberOfSurroundingWifis`. Subsequent reads from it will return its default value.
   mutating func clearNumberOfSurroundingWifis() {_uniqueStorage()._numberOfSurroundingWifis = nil}
 
   /// Never set presumably because it's transmitted through the custom header
   var appBundleID: String {
-    get {return _storage._appBundleID ?? String()}
+    get {_storage._appBundleID ?? String()}
     set {_uniqueStorage()._appBundleID = newValue}
   }
   /// Returns true if `appBundleID` has been explicitly set.
-  var hasAppBundleID: Bool {return _storage._appBundleID != nil}
+  var hasAppBundleID: Bool {_storage._appBundleID != nil}
   /// Clears the value of `appBundleID`. Subsequent reads from it will return its default value.
   mutating func clearAppBundleID() {_uniqueStorage()._appBundleID = nil}
 
   /// A single CDMA cell the iPhone is currently connected to.
   /// Do not specify cells of other types or any Wifi AP.
   var cdmaCells: [AlsProto_CdmaCell] {
-    get {return _storage._cdmaCells}
+    get {_storage._cdmaCells}
     set {_uniqueStorage()._cdmaCells = newValue}
   }
 
   /// A single CDMA-EVDO cell the iPhone is currently connected to.
   /// Do not specify cells of other types or any Wifi AP.
   var cdmaEvdoCells: [AlsProto_CdmaCell] {
-    get {return _storage._cdmaEvdoCells}
+    get {_storage._cdmaEvdoCells}
     set {_uniqueStorage()._cdmaEvdoCells = newValue}
   }
 
   /// Assumption: This value is never set even when requesting CDMA cells.
   var numberOfSurroundingCdmaCells: Int32 {
-    get {return _storage._numberOfSurroundingCdmaCells ?? 0}
+    get {_storage._numberOfSurroundingCdmaCells ?? 0}
     set {_uniqueStorage()._numberOfSurroundingCdmaCells = newValue}
   }
   /// Returns true if `numberOfSurroundingCdmaCells` has been explicitly set.
-  var hasNumberOfSurroundingCdmaCells: Bool {return _storage._numberOfSurroundingCdmaCells != nil}
+  var hasNumberOfSurroundingCdmaCells: Bool {_storage._numberOfSurroundingCdmaCells != nil}
   /// Clears the value of `numberOfSurroundingCdmaCells`. Subsequent reads from it will return its default value.
   mutating func clearNumberOfSurroundingCdmaCells() {_uniqueStorage()._numberOfSurroundingCdmaCells = nil}
 
   /// Assumption: This value is never set even when requesting CDMA-EVDO cells.
   var numberOfSurroundingCdmaEvdoCells: Int32 {
-    get {return _storage._numberOfSurroundingCdmaEvdoCells ?? 0}
+    get {_storage._numberOfSurroundingCdmaEvdoCells ?? 0}
     set {_uniqueStorage()._numberOfSurroundingCdmaEvdoCells = newValue}
   }
   /// Returns true if `numberOfSurroundingCdmaEvdoCells` has been explicitly set.
-  var hasNumberOfSurroundingCdmaEvdoCells: Bool {return _storage._numberOfSurroundingCdmaEvdoCells != nil}
+  var hasNumberOfSurroundingCdmaEvdoCells: Bool {_storage._numberOfSurroundingCdmaEvdoCells != nil}
   /// Clears the value of `numberOfSurroundingCdmaEvdoCells`. Subsequent reads from it will return its default value.
   mutating func clearNumberOfSurroundingCdmaEvdoCells() {_uniqueStorage()._numberOfSurroundingCdmaEvdoCells = nil}
 
   /// A single LTE cell the iPhone is currently connected to.
   /// Do not specify cells of other types or any Wifi AP.
   var lteCells: [AlsProto_LteCell] {
-    get {return _storage._lteCells}
+    get {_storage._lteCells}
     set {_uniqueStorage()._lteCells = newValue}
   }
 
   /// This value is never set even when requesting LTE cells.
   var numberOfSurroundingLteCells: Int32 {
-    get {return _storage._numberOfSurroundingLteCells ?? 0}
+    get {_storage._numberOfSurroundingLteCells ?? 0}
     set {_uniqueStorage()._numberOfSurroundingLteCells = newValue}
   }
   /// Returns true if `numberOfSurroundingLteCells` has been explicitly set.
-  var hasNumberOfSurroundingLteCells: Bool {return _storage._numberOfSurroundingLteCells != nil}
+  var hasNumberOfSurroundingLteCells: Bool {_storage._numberOfSurroundingLteCells != nil}
   /// Clears the value of `numberOfSurroundingLteCells`. Subsequent reads from it will return its default value.
   mutating func clearNumberOfSurroundingLteCells() {_uniqueStorage()._numberOfSurroundingLteCells = nil}
 
   /// A single SCDMA cell the iPhone is currently connected to.
   /// Do not specify cells of other types or any Wifi AP.
   var scdmaCells: [AlsProto_ScdmaCell] {
-    get {return _storage._scdmaCells}
+    get {_storage._scdmaCells}
     set {_uniqueStorage()._scdmaCells = newValue}
   }
 
   /// Assumption: This value is never set even when requesting SCDMA cells.
   var numberOfSurroundingScdmaCells: Int32 {
-    get {return _storage._numberOfSurroundingScdmaCells ?? 0}
+    get {_storage._numberOfSurroundingScdmaCells ?? 0}
     set {_uniqueStorage()._numberOfSurroundingScdmaCells = newValue}
   }
   /// Returns true if `numberOfSurroundingScdmaCells` has been explicitly set.
-  var hasNumberOfSurroundingScdmaCells: Bool {return _storage._numberOfSurroundingScdmaCells != nil}
+  var hasNumberOfSurroundingScdmaCells: Bool {_storage._numberOfSurroundingScdmaCells != nil}
   /// Clears the value of `numberOfSurroundingScdmaCells`. Subsequent reads from it will return its default value.
   mutating func clearNumberOfSurroundingScdmaCells() {_uniqueStorage()._numberOfSurroundingScdmaCells = nil}
 
   /// A single Nr5G cell the iPhone is currently connected to.
   /// Do not specify cells of other types or any Wifi AP.
   var nr5Gcells: [AlsProto_Nr5GCell] {
-    get {return _storage._nr5Gcells}
+    get {_storage._nr5Gcells}
     set {_uniqueStorage()._nr5Gcells = newValue}
   }
 
   /// Assumption: This value is never set even when requesting Nr5G cells.
   var numberOfSurroundingNr5Gcells: Int32 {
-    get {return _storage._numberOfSurroundingNr5Gcells ?? 0}
+    get {_storage._numberOfSurroundingNr5Gcells ?? 0}
     set {_uniqueStorage()._numberOfSurroundingNr5Gcells = newValue}
   }
   /// Returns true if `numberOfSurroundingNr5Gcells` has been explicitly set.
-  var hasNumberOfSurroundingNr5Gcells: Bool {return _storage._numberOfSurroundingNr5Gcells != nil}
+  var hasNumberOfSurroundingNr5Gcells: Bool {_storage._numberOfSurroundingNr5Gcells != nil}
   /// Clears the value of `numberOfSurroundingNr5Gcells`. Subsequent reads from it will return its default value.
   mutating func clearNumberOfSurroundingNr5Gcells() {_uniqueStorage()._numberOfSurroundingNr5Gcells = nil}
 
   /// The value is always set to k2dot4GHZ (even for cell request).
   var surroundingWifiBands: [AlsProto_WifiBand] {
-    get {return _storage._surroundingWifiBands}
+    get {_storage._surroundingWifiBands}
     set {_uniqueStorage()._surroundingWifiBands = newValue}
   }
 
   /// LTE / UMTS: Not set (on iPhone 12 mini with iOS 14.2.1)
   /// GSM: Set to 2 (on iPhone 6S with iOS 15.7.2)
   var wifiAltitudeScale: AlsProto_AltitudeScale {
-    get {return _storage._wifiAltitudeScale ?? .none}
+    get {_storage._wifiAltitudeScale ?? .none}
     set {_uniqueStorage()._wifiAltitudeScale = newValue}
   }
   /// Returns true if `wifiAltitudeScale` has been explicitly set.
-  var hasWifiAltitudeScale: Bool {return _storage._wifiAltitudeScale != nil}
+  var hasWifiAltitudeScale: Bool {_storage._wifiAltitudeScale != nil}
   /// Clears the value of `wifiAltitudeScale`. Subsequent reads from it will return its default value.
   mutating func clearWifiAltitudeScale() {_uniqueStorage()._wifiAltitudeScale = nil}
 
   /// Device metadata
   var meta: AlsProto_Meta {
-    get {return _storage._meta ?? AlsProto_Meta()}
+    get {_storage._meta ?? AlsProto_Meta()}
     set {_uniqueStorage()._meta = newValue}
   }
   /// Returns true if `meta` has been explicitly set.
-  var hasMeta: Bool {return _storage._meta != nil}
+  var hasMeta: Bool {_storage._meta != nil}
   /// Clears the value of `meta`. Subsequent reads from it will return its default value.
   mutating func clearMeta() {_uniqueStorage()._meta = nil}
 
@@ -982,7 +992,7 @@ extension AlsProto_Meta: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementa
 
 extension AlsProto_Location: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = _protobuf_package + ".Location"
-  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}latitude\0\u{1}longitude\0\u{1}accuracy\0\u{1}locationType\0\u{1}altitude\0\u{1}verticalAccuracy\0\u{2}\u{5}reach\0\u{1}score\0\u{1}infoMask\0")
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}latitude\0\u{1}longitude\0\u{1}accuracy\0\u{1}locationType\0\u{1}altitude\0\u{1}verticalAccuracy\0\u{1}confidence\0\u{2}\u{4}score\0\u{1}reach\0\u{1}infoMask\0")
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
@@ -996,8 +1006,9 @@ extension AlsProto_Location: SwiftProtobuf.Message, SwiftProtobuf._MessageImplem
       case 4: try { try decoder.decodeSingularInt32Field(value: &self._locationType) }()
       case 5: try { try decoder.decodeSingularInt32Field(value: &self._altitude) }()
       case 6: try { try decoder.decodeSingularInt32Field(value: &self._verticalAccuracy) }()
-      case 11: try { try decoder.decodeSingularUInt32Field(value: &self._reach) }()
-      case 12: try { try decoder.decodeSingularInt32Field(value: &self._score) }()
+      case 7: try { try decoder.decodeSingularInt32Field(value: &self._confidence) }()
+      case 11: try { try decoder.decodeSingularInt32Field(value: &self._score) }()
+      case 12: try { try decoder.decodeSingularUInt32Field(value: &self._reach) }()
       case 13: try { try decoder.decodeSingularUInt32Field(value: &self._infoMask) }()
       default: break
       }
@@ -1027,11 +1038,14 @@ extension AlsProto_Location: SwiftProtobuf.Message, SwiftProtobuf._MessageImplem
     try { if let v = self._verticalAccuracy {
       try visitor.visitSingularInt32Field(value: v, fieldNumber: 6)
     } }()
-    try { if let v = self._reach {
-      try visitor.visitSingularUInt32Field(value: v, fieldNumber: 11)
+    try { if let v = self._confidence {
+      try visitor.visitSingularInt32Field(value: v, fieldNumber: 7)
     } }()
     try { if let v = self._score {
-      try visitor.visitSingularInt32Field(value: v, fieldNumber: 12)
+      try visitor.visitSingularInt32Field(value: v, fieldNumber: 11)
+    } }()
+    try { if let v = self._reach {
+      try visitor.visitSingularUInt32Field(value: v, fieldNumber: 12)
     } }()
     try { if let v = self._infoMask {
       try visitor.visitSingularUInt32Field(value: v, fieldNumber: 13)
@@ -1046,8 +1060,9 @@ extension AlsProto_Location: SwiftProtobuf.Message, SwiftProtobuf._MessageImplem
     if lhs._locationType != rhs._locationType {return false}
     if lhs._altitude != rhs._altitude {return false}
     if lhs._verticalAccuracy != rhs._verticalAccuracy {return false}
-    if lhs._reach != rhs._reach {return false}
+    if lhs._confidence != rhs._confidence {return false}
     if lhs._score != rhs._score {return false}
+    if lhs._reach != rhs._reach {return false}
     if lhs._infoMask != rhs._infoMask {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
