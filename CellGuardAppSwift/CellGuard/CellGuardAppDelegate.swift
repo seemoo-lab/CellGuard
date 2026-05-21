@@ -322,10 +322,21 @@ extension CellGuardAppDelegate: UNUserNotificationCenterDelegate {
         // https://stackoverflow.com/a/79185555
 
         let userInfo = response.notification.request.content.userInfo
-        if let type = userInfo["type"] as? String,
-           type == "sysdiag",
-           let fileName = (userInfo["fileName"] as? String) {
-            SysdiagUrls.open(sysdiagnose: fileName)
+        if let type = userInfo["type"] as? String {
+            if type == "sysdiag",
+               let fileName = (userInfo["fileName"] as? String) {
+                // Open settings app or settings URL via shortcut
+                SysdiagUrls.open(sysdiagnose: fileName)
+            } else if type == "profile-expiry" {
+                // Open website to download new profile
+                let profileSourceStr = UserDefaults.standard.string(forKey: UserDefaultsKeys.profileSource.rawValue)
+                let profileSource = if let str = profileSourceStr {
+                    ProfileSource(rawValue: str) ?? .default
+                } else {
+                    ProfileSource.default
+                }
+                UIApplication.shared.open(profileSource.url)
+            }
         }
 
         completionHandler()

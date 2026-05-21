@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct DebugProfileDetailedView: View {
-    @AppStorage(UserDefaultsKeys.profileSource.rawValue) var profileSource: ProfileSource = .cellGuard
+    @AppStorage(UserDefaultsKeys.profileSource.rawValue) var profileSource: ProfileSource = .default
     @Environment(\.openURL) var openURL
 
     var body: some View {

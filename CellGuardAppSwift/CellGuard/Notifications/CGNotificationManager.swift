@@ -181,9 +181,10 @@ class CGNotificationManager: ObservableObject {
         let identifier = "profile-expiry"
 
         // Set the notification content
-        // TODO: Deep link to profile install view
         let content = UNMutableNotificationContent()
         content.sound = nil
+        // Set userInfo to directly open the URL for installing the profile
+        content.userInfo = ["type": "profile-expiry"]
 
         // The notification should appear one day before the profile expiry
         let trigger: UNCalendarNotificationTrigger?

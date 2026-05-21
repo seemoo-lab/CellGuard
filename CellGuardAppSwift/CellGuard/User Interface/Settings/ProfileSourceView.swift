@@ -17,10 +17,12 @@ enum ProfileSource: String {
         case .apple: AppleURLs.downloadBasebandProfile
         }
     }
+
+    static let `default` = ProfileSource.cellGuard
 }
 
 struct ProfileSourceView: View {
-    @AppStorage(UserDefaultsKeys.profileSource.rawValue) var source: ProfileSource = .cellGuard
+    @AppStorage(UserDefaultsKeys.profileSource.rawValue) var source: ProfileSource = .default
 
     var body: some View {
         List {
