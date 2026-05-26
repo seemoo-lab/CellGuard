@@ -6,6 +6,7 @@ dependencies = [
     "pandas",
     "matplotlib",
     "mpld3",
+    "pandas-stubs>=3.0.0.260204",
 ]
 
 [dependency-groups]

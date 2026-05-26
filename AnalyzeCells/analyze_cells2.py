@@ -5,7 +5,7 @@ import zipfile
 from dataclasses import dataclass
 from datetime import datetime, time, timedelta
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Hashable
 
 import pandas as pd
 from matplotlib import pyplot as plt
@@ -13,8 +13,14 @@ from matplotlib.dates import DateFormatter
 
 
 def extract_cells2(cells2_file: Path, destination: Path):
+    # Only extract files that are required for analysis from ZIP archive
+    allowed_files = [
+        "als-cells.csv", "connectivity-events.csv", "info.json",
+        "locations.csv", "packets.csv", "sysdiagnoses.csv", "user-cells.csv"
+    ]
     with zipfile.ZipFile(cells2_file, 'r') as zip_ref:
-        zip_ref.extractall(destination)
+        extract_files = [f for f in zip_ref.namelist() if f in allowed_files]
+        zip_ref.extractall(destination, members=extract_files)
 
 
 @dataclass(eq=True, frozen=True)
@@ -118,7 +124,10 @@ def process_packets(dirs: list[Path], start: Optional[datetime], end: Optional[d
 
 def load_user_cells(dirs: list[Path], start: Optional[datetime], end: Optional[datetime]) -> pd.DataFrame:
     # https://stackoverflow.com/a/63002444/4106848
-    columns = ['collected', 'verificationFinished', 'verificationScore', 'technology', 'country', 'network', 'area', 'cell']
+    columns = [
+        'collected', 'verificationFinished', 'verificationScore',
+        'technology', 'country', 'network', 'area', 'cell'
+    ]
     dfs = [pd.read_csv(d.joinpath('user-cells.csv'), usecols=lambda x: x in columns) for d in dirs]
     df = filter_start_end(pd.concat(dfs), start, end)
 
@@ -142,7 +151,7 @@ def process_user_cells(df: pd.DataFrame) -> tuple[int, int, int, int]:
         return 0, 0, 0, 0
 
     score_series = df['verificationScore'].apply(cell_score_category)
-    category_count: dict[str, int] = score_series.groupby(score_series).count().to_dict()
+    category_count: dict[Hashable, int] = score_series.groupby(score_series).count().to_dict()
 
     print('User Cells:')
     print(f'  Start: {datetime.fromtimestamp(df["collected"].min())}')
@@ -159,7 +168,7 @@ def process_user_cells(df: pd.DataFrame) -> tuple[int, int, int, int]:
         unique_cell_count = len(unique_df.index)
 
         unique_score_series = unique_df['verificationScore'].apply(cell_score_category)
-        unique_category_count: dict[str, int] = unique_score_series.groupby(unique_score_series).count().to_dict()
+        unique_category_count: dict[Hashable, int] = unique_score_series.groupby(unique_score_series).count().to_dict()
 
         unique_untrusted = unique_category_count.get("Untrusted", 0)
         unique_suspicious = unique_category_count.get("Suspicious", 0)
@@ -267,8 +276,8 @@ def main():
     path: Path = args.path
     latex_table: bool = args.latex_table
     graph: bool = args.graph
-    start_time: datetime = datetime.fromtimestamp(args.start) if args.start else None
-    end_time: datetime = datetime.fromtimestamp(args.end) if args.end else None
+    start_time: Optional[datetime] = datetime.fromtimestamp(args.start) if args.start else None
+    end_time: Optional[datetime] = datetime.fromtimestamp(args.end) if args.end else None
 
     cells2_files = []
     if path.is_dir():
