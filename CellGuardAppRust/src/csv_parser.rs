@@ -187,7 +187,8 @@ fn filter_cellular(log_data: &LogData) -> bool {
 
         // The log entries must belong to the correct category.
         // We add this additional check here to speed up the parsing process.
-        if !(log_data.category == "qmux" || log_data.category.starts_with("ARI")) {
+        // TODO: This is not a full fix for the iOS 27 issue as the library also does not understand some stuff
+        if !(log_data.category.ends_with("qmux") || log_data.category.starts_with("ARI")) {
             return false;
         }
 
