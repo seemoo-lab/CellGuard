@@ -44,6 +44,8 @@ enum IntroductionState: NBScreen {
                 #if JAILBREAK
                 navigator.push(IntroductionState.updates)
                 #else
+                // TODO: This is a hacky solution, move to a better one in the future!
+                UserDefaults.standard.setValue(DataCollectionMode.manual.rawValue, forKey: UserDefaultsKeys.appMode.rawValue)
                 navigator.push(IntroductionState.systemDiagnose)
                 #endif
             }
