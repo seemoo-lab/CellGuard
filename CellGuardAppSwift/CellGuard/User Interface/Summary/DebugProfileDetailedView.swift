@@ -23,7 +23,7 @@ A baseband debug profile adds more data about cellular network connections to yo
             )
 
             LargeButton(title: "Download Profile", backgroundColor: .blue) {
-                openURL(profileSource.url)
+                openURL(profileSource.url.absoluteURL)
             }
             .padding(.horizontal)
 

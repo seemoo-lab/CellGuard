@@ -29,7 +29,7 @@ private struct UpdateCard: View {
 
     var body: some View {
         Button {
-            openURL(CellGuardURLs.changelog)
+            openURL(CellGuardURLs.changelog.absoluteURL)
         } label: {
             VStack {
                 HStack {

@@ -91,7 +91,7 @@ private struct TweakCard: View {
 
     var body: some View {
         Button {
-            openURL(CellGuardURLs.installGuide)
+            openURL(CellGuardURLs.installGuide.absoluteURL)
         } label: {
             VStack {
                 HStack {
