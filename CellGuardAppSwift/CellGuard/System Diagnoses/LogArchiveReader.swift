@@ -665,7 +665,7 @@ struct LogArchiveReader {
             let timestampDate = Date(timeIntervalSince1970: timestamp / Double(NSEC_PER_SEC))
 
             do {
-                if category == "qmux" && subsystem == "com.apple.telephony.bb" {
+                if category.hasSuffix("qmux") && subsystem == "com.apple.telephony.bb" {
                     packets.append(try readCSVPacketQMI(library: library, timestamp: timestampDate, message: message))
                     packetDates.update(timestampDate)
                 } else if category.hasPrefix("ARI") && subsystem == "com.apple.telephony.bb" {

@@ -15,8 +15,9 @@ crate-type = ["staticlib"]
 
 [dependencies]
 swift-bridge = "0.1"
-macos-unifiedlogs = "0.6.0"
+macos-unifiedlogs = { git = "https://github.com/mandiant/macos-UnifiedLogs", rev = "d5a2838722caddcbfb8c31ac23d58ecbb553a10b" }
 csv = "1.4.0"
+log = "0.4.34"
 
 # Apply some basic optimization even for the development mode, otherwise the QMI import is way too slow
 # https://doc.rust-lang.org/cargo/reference/profiles.html

@@ -1,15 +1,38 @@
 use crate::ffi;
 use csv::Writer;
+use macos_unifiedlogs::cache::MemoryStringCache;
 use macos_unifiedlogs::filesystem::LogarchiveProvider;
 use macos_unifiedlogs::iterator::UnifiedLogIterator;
 use macos_unifiedlogs::parser::{build_log, collect_timesync};
 use macos_unifiedlogs::timesync::TimesyncBoot;
-use macos_unifiedlogs::traits::FileProvider;
+use macos_unifiedlogs::traits::{FileProvider, SourceFile, StringCache};
 use macos_unifiedlogs::unified_log::{LogData, UnifiedLogData};
 use std::collections::HashMap;
 use std::fs::{File, OpenOptions};
 use std::io::Read;
 use std::path::Path;
+use log::info;
+
+struct IterationContext {
+    missing_data: Vec<UnifiedLogData>,
+    oversize_strings: UnifiedLogData,
+}
+
+struct ParseContext<'a> {
+    context: &'a mut IterationContext,
+}
+
+/// Error type to signal broken pipe (output consumer closed)
+#[derive(Debug)]
+struct BrokenPipeError;
+
+impl std::fmt::Display for BrokenPipeError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "Broken pipe")
+    }
+}
+
+impl std::error::Error for BrokenPipeError {}
 
 // Parse a provided directory path. Currently, expect the path to follow macOS log collect structure.
 pub fn parse_log_archive(path: &Path, output_path: &Path, high_volume_speedup: bool) -> u32 {
@@ -20,27 +43,37 @@ pub fn parse_log_archive(path: &Path, output_path: &Path, high_volume_speedup: b
 
     // Keep UUID, UUID cache, timesync files in memory while we parse all tracev3 files
     // Allows for faster lookups
-    let log_count = parse_trace_logarchive(
+    let parse_result = parse_trace_file(
         &timesync_data,
         &mut provider,
+        &MemoryStringCache::default(),
         output_path,
         high_volume_speedup,
     );
 
     // TODO: We could use the oslog crate for logging: https://lib.rs/crates/oslog
-    println!("\nFinished parsing Unified Log data. Saved results to: output.csv");
-    log_count
+    match parse_result {
+        Ok(count) => {
+            println!("\nFinished parsing Unified Log data. Saved results to: output.csv");
+            count
+        }
+        Err(err) => {
+            println!("\nFailed to parse Unified Log data. Error: {}", err);
+            0
+        }
+    }
 }
 
 // Use the provided strings, shared strings, timesync data to parse the Unified Log data at provided path.
 // Currently, expect the path to follow macOS log collect structure.
 // If speedup = true, only scan tracev3 files in the Persist & HighVolume folders as they are the only ones containing interesting cellular logs.
-fn parse_trace_logarchive(
+fn parse_trace_file(
     timesync_data: &HashMap<String, TimesyncBoot>,
-    provider: &mut dyn FileProvider,
+    provider: &impl FileProvider,
+    cache: &impl StringCache,
     output_path: &Path,
     speedup: bool,
-) -> u32 {
+) -> Result<u32, BrokenPipeError> {
     // Create and open the CSV file, so we don't have to open it everytime we write an entry
     let csv_file = OpenOptions::new()
         .append(true)
@@ -52,24 +85,37 @@ fn parse_trace_logarchive(
     // Write the CSV header
     output_header(&mut csv_writer).unwrap();
 
-    // We need to persist the Oversize log entries (they contain large strings that don't fit in normal log entries)
-    // Some log entries have Oversize strings located in different tracev3 files.
-    // This is very rare. Seen in ~20 log entries out of ~700,000. Seen in ~700 out of ~18 million
-    let mut oversize_strings = UnifiedLogData {
-        header: Vec::new(),
-        catalog_data: Vec::new(),
-        oversize: Vec::new(),
-        evidence: String::new(),
+    let mut context = IterationContext {
+        // Exclude missing data from returned output. Keep separate until we parse all oversize entries.
+        // Then at end, go through all missing data and check all parsed oversize entries again
+        missing_data: Vec::new(),
+        // We need to persist the Oversize log entries (they contain large strings that don't fit in normal log entries)
+        // Some log entries have Oversize strings located in different tracev3 files.
+        // This is very rare. Seen in ~20 log entries out of ~700,000. Seen in ~700 out of ~18 million
+        oversize_strings: UnifiedLogData {
+            header: Vec::new(),
+            catalog_data: Vec::new(),
+            oversize: Vec::new(),
+            evidence: String::new(),
+        },
     };
-
-    // Exclude missing data from returned output. Keep separate until we parse all oversize entries.
-    // Then at end, go through all missing data and check all parsed oversize entries again
-    let mut missing_data: Vec<UnifiedLogData> = Vec::new();
+    let mut parse_context = ParseContext {
+        context: &mut context,
+    };
 
     // Counting the number of read log entries
     let mut log_count: usize = 0;
 
+    // Loop through all travec3 files in Persist directory
     for mut source in provider.tracev3_files() {
+        // Continue for some patterns (Lukas: idk why)
+        if Path::new(source.source_path())
+            .file_name()
+            .is_some_and(|f| f.to_str().unwrap().starts_with("._"))
+        {
+            continue;
+        }
+
         // Check if we should skip the file when the speedup is enabled
         let path = source.source_path().to_string();
         if speedup && path.contains("Special")
@@ -82,30 +128,50 @@ fn parse_trace_logarchive(
         println!("Parsing: {}", path);
         ffi::swift_parse_trace_file(&path, u32::try_from(log_count).unwrap_or(0));
 
-        log_count += iterate_chunks(
+        if let Ok(new_count) = iterate_chunks(
             source.reader(),
-            path,
             provider,
+            cache,
             timesync_data,
-            &mut missing_data,
-            &mut oversize_strings,
             &mut csv_writer,
-        );
+            &mut parse_context,
+            path
+        ) {
+            log_count += new_count;
+        } else {
+            info!("Broken pipe detected, stopping log parsing");
+            return Err(BrokenPipeError);
+        }
     }
 
-    println!("Oversize cache size: {}", oversize_strings.oversize.len());
-    println!("Logs with missing Oversize strings: {}", missing_data.len());
+    println!(
+        "Oversize cache size: {size}",
+        size = parse_context.context.oversize_strings.oversize.len()
+    );
+    println!(
+        "Logs with missing Oversize strings: {count}",
+        count = parse_context.context.missing_data.len()
+    );
     println!("Checking Oversize cache one more time...");
 
     // Since we have all oversize entries now,
     // we go through any log entries that we weren't able to build before.
-    for mut leftover_data in missing_data {
+    let leftover_data = std::mem::take(&mut parse_context.context.missing_data);
+    for mut leftover_data in leftover_data {
         // Add all of our previous oversize data to logs for lookups
-        leftover_data.oversize = oversize_strings.oversize.clone();
+        leftover_data
+            .oversize
+            .clone_from(&parse_context.context.oversize_strings.oversize);
 
         // If we fail to find any missing data its probably due to the logs rolling.
         // Ex: tracev3A rolls, tracev3B references Oversize entry in tracev3A will trigger missing data since tracev3A is gone.
-        let (results, _) = build_log(&leftover_data, provider, timesync_data, false);
+        let (results, _) = build_log(
+            &leftover_data,
+            provider,
+            cache,
+            timesync_data,
+            false
+        );
 
         for result in results {
             if filter_cellular(&result) {
@@ -116,25 +182,23 @@ fn parse_trace_logarchive(
     }
     println!("Parsed {} log entries", log_count);
 
-    u32::try_from(log_count).unwrap_or(0)
+    Ok(u32::try_from(log_count).unwrap_or(0))
 }
 
 fn iterate_chunks(
     mut reader: impl Read,
-
-    path: String,
-    provider: &mut dyn FileProvider,
+    provider: &impl FileProvider,
+    cache: &impl StringCache,
     timesync_data: &HashMap<String, TimesyncBoot>,
-
-    missing: &mut Vec<UnifiedLogData>,
-    oversize_strings: &mut UnifiedLogData,
     csv_writer: &mut Writer<File>,
-) -> usize {
+    parse_context: &mut ParseContext,
+    path: String,
+) -> Result<usize, BrokenPipeError> {
     let mut buf = Vec::new();
 
     if let Err(e) = reader.read_to_end(&mut buf) {
         println!("Failed to read tracev3 file: {:?}", e);
-        return 0;
+        return Ok(0);
     }
 
     let log_iterator = UnifiedLogIterator {
@@ -149,18 +213,22 @@ fn iterate_chunks(
 
     let mut count = 0;
     for mut chunk in log_iterator {
-        chunk.oversize.append(&mut oversize_strings.oversize);
-        let (results, missing_logs) = build_log(&chunk, provider, timesync_data, exclude_missing);
+        chunk.oversize.append(&mut parse_context.context.oversize_strings.oversize);
+        let (results, missing_logs) =
+            build_log(&chunk, provider, cache, timesync_data, exclude_missing);
 
         for log_entry in results {
             if filter_cellular(&log_entry) {
-                output_log(&log_entry, csv_writer).unwrap();
+                if let Err(err) = output_log(&log_entry, csv_writer) {
+                    log::error!("Failed to output log data: {:?}", err);
+                    return Err(BrokenPipeError);
+                }
                 count += 1;
             }
         }
 
         // Track oversize entries
-        oversize_strings.oversize = chunk.oversize;
+        parse_context.context.oversize_strings.oversize = chunk.oversize;
 
         if missing_logs.catalog_data.is_empty()
             && missing_logs.header.is_empty()
@@ -169,10 +237,10 @@ fn iterate_chunks(
             continue;
         }
         // Track possible missing log data due to oversize strings being in another file
-        missing.push(missing_logs);
+        parse_context.context.missing_data.push(missing_logs);
     }
 
-    count
+    Ok(count)
 }
 
 fn filter_cellular(log_data: &LogData) -> bool {
@@ -187,7 +255,6 @@ fn filter_cellular(log_data: &LogData) -> bool {
 
         // The log entries must belong to the correct category.
         // We add this additional check here to speed up the parsing process.
-        // TODO: This is not a full fix for the iOS 27 issue as the library also does not understand some stuff
         if !(log_data.category.ends_with("qmux") || log_data.category.starts_with("ARI")) {
             return false;
         }
