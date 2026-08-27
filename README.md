@@ -30,6 +30,7 @@ The repository consists of five directories
 
 ## Publications
 
+- [Swantje Lange, Lukas Arnold, Maximilian Paß, Matthias Hollick, Jiska Classen (2026): **DEMO: Recent Advancements in Detecting Cellular Attacks with CellGuard**](https://dl.acm.org/doi/10.1145/3765613.3814569)
 - [Lukas Arnold, Matthias Hollick, Jiska Classen (2024): **Catch You Cause I Can: Busting Rogue Base Stations using CellGuard and the Apple Cell Location Database**](https://doi.org/10.1145/3678890.3678898)
 
 ## Screenshots
