@@ -1,5 +1,6 @@
 use crate::ffi;
 use csv::Writer;
+use log::info;
 use macos_unifiedlogs::cache::MemoryStringCache;
 use macos_unifiedlogs::filesystem::LogarchiveProvider;
 use macos_unifiedlogs::iterator::UnifiedLogIterator;
@@ -11,7 +12,6 @@ use std::collections::HashMap;
 use std::fs::{File, OpenOptions};
 use std::io::Read;
 use std::path::Path;
-use log::info;
 
 struct IterationContext {
     missing_data: Vec<UnifiedLogData>,
@@ -135,7 +135,7 @@ fn parse_trace_file(
             timesync_data,
             &mut csv_writer,
             &mut parse_context,
-            path
+            path,
         ) {
             log_count += new_count;
         } else {
@@ -165,13 +165,7 @@ fn parse_trace_file(
 
         // If we fail to find any missing data its probably due to the logs rolling.
         // Ex: tracev3A rolls, tracev3B references Oversize entry in tracev3A will trigger missing data since tracev3A is gone.
-        let (results, _) = build_log(
-            &leftover_data,
-            provider,
-            cache,
-            timesync_data,
-            false
-        );
+        let (results, _) = build_log(&leftover_data, provider, cache, timesync_data, false);
 
         for result in results {
             if filter_cellular(&result) {
@@ -213,7 +207,9 @@ fn iterate_chunks(
 
     let mut count = 0;
     for mut chunk in log_iterator {
-        chunk.oversize.append(&mut parse_context.context.oversize_strings.oversize);
+        chunk
+            .oversize
+            .append(&mut parse_context.context.oversize_strings.oversize);
         let (results, missing_logs) =
             build_log(&chunk, provider, cache, timesync_data, exclude_missing);
 
