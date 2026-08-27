@@ -19,6 +19,7 @@ struct SysdiagUrls {
     static func open(sysdiagnose fileName: String?) {
         let urlString: String
 
+        // TODO: Something does not seem to work with Shortcuts on iOS 27
         if UserDefaults.standard.bool(forKey: UserDefaultsKeys.shortcutInstalled.rawValue) {
             if let fileName = fileName {
                 guard let fileNameEncoded = fileName.addingPercentEncoding(withAllowedCharacters: .urlFragmentAllowed) else {
