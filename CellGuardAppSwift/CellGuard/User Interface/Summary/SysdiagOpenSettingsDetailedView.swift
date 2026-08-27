@@ -41,6 +41,7 @@ struct SysdiagOpenSettingsDetailedView: View {
                     Text("Privacy & Security ›")
                 }
                 Text("       Analytics and Improvements ›")
+                // TODO: Changed in iOS 27 "Analytics Data" -> "View Analytics Logs"
                 Text("       Analytics Data ›")
                 Text("       Scoll Upwards")
                     .foregroundColor(.gray)
