@@ -10,6 +10,7 @@ import MapKit
 import SwiftUI
 import Combine
 import NavigationBackport
+import CoreData
 
 struct CellInformationCard: View {
 

@@ -108,11 +108,11 @@ enum RiskLevel: Equatable, Hashable {
 
     func color(dark: Bool) -> Color {
         switch self {
-        case .unknown: return dark ? Color(UIColor.systemGray6) : .gray
-        case .low: return dark ? Color(.green * 0.6 + .black * 0.4) : .green
-        case .lowMonitor: return dark ? Color(.green * 0.6 + .black * 0.4) : .green
-        case .medium: return dark ? Color(.blue * 0.4 + .black * 0.7): .blue
-        case .high: return dark ? Color(.red * 0.2 + .yellow * 0.1 + .black * 0.4) : .orange
+        case .unknown: return dark ? Color(UIColor.systemGray6) : Color.gray
+        case .low: return dark ? Color(UIColor.green * 0.6 + UIColor.black * 0.4) : Color.green
+        case .lowMonitor: return dark ? Color(UIColor.green * 0.6 + UIColor.black * 0.4) : Color.green
+        case .medium: return dark ? Color(UIColor.blue * 0.4 + UIColor.black * 0.7): Color.blue
+        case .high: return dark ? Color(UIColor.red * 0.2 + UIColor.yellow * 0.1 + UIColor.black * 0.4) : Color.orange
         }
     }
 

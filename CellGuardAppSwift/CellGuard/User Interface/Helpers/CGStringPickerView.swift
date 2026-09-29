@@ -84,8 +84,8 @@ struct CGStaticStringPickerView: View {
     init(title: String, allElements: Set<String>, selectedElements: Set<String>, onSelectChanged: @escaping (Set<String>) -> Void) {
         self.title = title
         self.elements = allElements
-        self.selectedElements = selectedElements
         self.onSelectChanged = onSelectChanged
+        self.selectedElements = selectedElements
     }
 
     private func isElementSelected(_ element: String) -> Bool {
