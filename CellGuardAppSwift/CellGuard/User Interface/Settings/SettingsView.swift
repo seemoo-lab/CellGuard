@@ -34,10 +34,10 @@ struct SettingsView: View {
             IntroductionSection()
 
             Section {
-                ListNavigationLink(value: SummaryNavigationPath.informationContact) {
+                NavigationLink(value: SummaryNavigationPath.informationContact) {
                     Text("Information & Contact")
                 }
-                ListNavigationLink(value: SummaryNavigationPath.settingsAdvanced) {
+                NavigationLink(value: SummaryNavigationPath.settingsAdvanced) {
                     Text("Advanced Settings")
                 }
             }
@@ -88,7 +88,7 @@ private struct PermissionSection: View {
         Section(header: Text("Permissions"), footer: Text("Check that CellGuard has all required permission to function correctly.")) {
             Toggle("Location (Always)", isOn: isPermissionAlwaysLocation)
             Toggle("Notifications", isOn: isPermissionNotifications)
-            ListNavigationLink(value: SummaryNavigationPath.notificationTypes) {
+            NavigationLink(value: SummaryNavigationPath.notificationTypes) {
                 Text("Configure Notifications")
             }.disabled(!isPermissionNotifications.wrappedValue)
         }
@@ -110,11 +110,11 @@ private struct BasebandProfileSection: View {
     var body: some View {
         if appMode == .manual {
             Section(header: Text("Baseband Profile"), footer: Text(footer)) {
-                ListNavigationLink(value: SummaryNavigationPath.debugProfile) {
+                NavigationLink(value: SummaryNavigationPath.debugProfile) {
                     Text("Install Profile")
                 }
 
-                ListNavigationLink(value: SummaryNavigationPath.profileSource) {
+                NavigationLink(value: SummaryNavigationPath.profileSource) {
                     Text("Source")
                 }
 
@@ -154,7 +154,7 @@ private struct StudySection: View {
     var body: some View {
         Section(header: Text("Study"), footer: Text("Join our study to improve CellGuard.")) {
             if studyParticipationTimestamp == 0 {
-                ListNavigationLink(value: SummaryNavigationPath.userStudy) {
+                NavigationLink(value: SummaryNavigationPath.userStudy) {
                     Text("Participate")
                 }
             } else {
@@ -165,7 +165,7 @@ private struct StudySection: View {
                 }
             }
 
-            ListNavigationLink(value: SummaryNavigationPath.userStudyContributions) {
+            NavigationLink(value: SummaryNavigationPath.userStudyContributions) {
                 Text("Your Contributions")
             }
         }

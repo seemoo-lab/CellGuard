@@ -173,7 +173,7 @@ private struct PacketList<T: NSManagedObject & Packet>: View {
 
     var body: some View {
         List(packets) { packet in
-            ListNavigationLink(value: NavObjectId(object: packet)) {
+            NavigationLink(value: NavObjectId(object: packet)) {
                 PacketCell(packet: packet)
             }
         }

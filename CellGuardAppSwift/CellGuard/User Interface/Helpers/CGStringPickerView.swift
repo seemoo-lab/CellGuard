@@ -15,7 +15,7 @@ struct CGFetchPickerField<T: Identifiable & Equatable & NSManagedObject>: View {
     var onSelectChanged: (Set<String>) -> Void
 
     var body: some View {
-        ListNavigationLink(value: FetchPickerNavigation<T>(title: title, keyPath: keyPath, selected: selected, onSelectChanged: onSelectChanged)) {
+        NavigationLink(value: FetchPickerNavigation<T>(title: title, keyPath: keyPath, selected: selected, onSelectChanged: onSelectChanged)) {
             HStack {
                 Text(title)
                 Spacer()

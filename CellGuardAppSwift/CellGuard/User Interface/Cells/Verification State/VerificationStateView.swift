@@ -71,9 +71,9 @@ private struct VerificationStateInternalView: View {
                 }
 
                 if let qmiPacket = measurement.packetQmi {
-                    ListNavigationLink(value: NavObjectId(object: qmiPacket)) { PacketCell(packet: qmiPacket) }
+                    NavigationLink(value: NavObjectId(object: qmiPacket)) { PacketCell(packet: qmiPacket) }
                 } else if let ariPacket = measurement.packetAri {
-                    ListNavigationLink(value: NavObjectId(object: ariPacket)) { PacketCell(packet: ariPacket) }
+                    NavigationLink(value: NavObjectId(object: ariPacket)) { PacketCell(packet: ariPacket) }
                 }
             }
 

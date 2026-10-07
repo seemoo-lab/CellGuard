@@ -12,7 +12,7 @@ struct OperatorDetailsListView: View {
 
     var body: some View {
         List(netOperators) { netOperator in
-            ListNavigationLink(value: netOperator) {
+            NavigationLink(value: netOperator) {
                 KeyValueListRow(key: netOperator.combinedName ?? netOperator.countryName, value: netOperator.isoString ?? "-")
             }
         }

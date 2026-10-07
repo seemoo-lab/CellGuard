@@ -224,7 +224,7 @@ private struct TweakCellDetailsMeasurementCount: View {
             DetailsRow("Suspicious", count.untrusted)
             DetailsRow("Anomalous", count.suspicious)
             DetailsRow("Trusted", count.trusted)
-            ListNavigationLink(value: detailObjectIds) {
+            NavigationLink(value: detailObjectIds) {
                 Text("Show Details")
             }
             .disabled(verifyStates.count == 0)
@@ -325,7 +325,7 @@ private struct TweakCellMeasurementNavLink: View {
 
     var body: some View {
         if let state = measurement.verifications?.compactMap({ $0 as? VerificationState }).first(where: { $0.pipeline == pipelineId }) {
-            ListNavigationLink(value: NavObjectId(object: state)) {
+            NavigationLink(value: NavObjectId(object: state)) {
                 label(score: state.finished ? state.score : nil, study: measurement.study != nil)
             }
         } else {

@@ -64,7 +64,7 @@ struct RiskInfoView: View {
 
             if studyParticipationTimestamp == 0 {
                 Section(header: Text("Study"), footer: Text("The CellGuard team researches the abuse of fake base stations. Please join our study to contribute suspicious cells and help us to improve our methodology for uncovering them!")) {
-                    ListNavigationLink(value: SummaryNavigationPath.userStudy) {
+                    NavigationLink(value: SummaryNavigationPath.userStudy) {
                         if #available(iOS 17, *) {
                             Text(Image(systemName: "pencil.and.list.clipboard")) + Text(" Participate")
                         } else {
@@ -75,7 +75,7 @@ struct RiskInfoView: View {
                 }
             } else {
                 Section(header: Text("Study"), footer: Text("Thank you for contributing to the CellGuard study. Your input will help us improve our metrics and uncover fake base station abuse.")) {
-                    ListNavigationLink(value: SummaryNavigationPath.userStudyContributions) {
+                    NavigationLink(value: SummaryNavigationPath.userStudyContributions) {
                         Text("Your Contributions")
                     }
                 }

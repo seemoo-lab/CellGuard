@@ -20,7 +20,7 @@ struct ImportStatusRow: View {
         if case .count(value: let count) = self.status,
            let count = count,
            count.first != nil || count.last != nil || (count.totalCount != nil && count.totalCount != count.importedCount) {
-            ListNavigationLink(value: CountInfo(title: text, count: count)) {
+            NavigationLink(value: CountInfo(title: text, count: count)) {
                 row
             }
         } else {

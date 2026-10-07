@@ -24,7 +24,7 @@ struct OperatorLookupView: View {
                 }
             }
 
-            ListNavigationLink(value: SingleCellCountryNetworkNav(
+            NavigationLink(value: SingleCellCountryNetworkNav(
                 country: Int32(truncatingIfNeeded: country ?? 0),
                 network: Int32(truncatingIfNeeded: network ?? 0),
                 technology: technology)

@@ -48,8 +48,6 @@
 		CF0591F42DBCF653003CB81C /* SysdiagUrls.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0591F22DBCF653003CB81C /* SysdiagUrls.swift */; };
 		CF07EFA52A3B4B56005B53ED /* OperatorDefinitions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF07EFA42A3B4B56005B53ED /* OperatorDefinitions.swift */; };
 		CF0A5678298A7A910012B2A8 /* VerificationProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0A5677298A7A910012B2A8 /* VerificationProgressView.swift */; };
-		CF0F2F002E12BCFB0053D7E8 /* ListNavigationLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0F2EFF2E12BCFB0053D7E8 /* ListNavigationLink.swift */; };
-		CF0F2F012E12BCFB0053D7E8 /* ListNavigationLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0F2EFF2E12BCFB0053D7E8 /* ListNavigationLink.swift */; };
 		CF0FDCB529698E1500A6FFE2 /* SummaryTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0FDCB429698E1500A6FFE2 /* SummaryTabView.swift */; };
 		CF0FDCB729699E5100A6FFE2 /* MapTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0FDCB629699E5100A6FFE2 /* MapTabView.swift */; };
 		CF0FDCBB29699E8A00A6FFE2 /* HomeTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0FDCBA29699E8A00A6FFE2 /* HomeTabView.swift */; };
@@ -499,7 +497,6 @@
 		CF0591F22DBCF653003CB81C /* SysdiagUrls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SysdiagUrls.swift; sourceTree = "<group>"; };
 		CF07EFA42A3B4B56005B53ED /* OperatorDefinitions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperatorDefinitions.swift; sourceTree = "<group>"; };
 		CF0A5677298A7A910012B2A8 /* VerificationProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerificationProgressView.swift; sourceTree = "<group>"; };
-		CF0F2EFF2E12BCFB0053D7E8 /* ListNavigationLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListNavigationLink.swift; sourceTree = "<group>"; };
 		CF0FDCB429698E1500A6FFE2 /* SummaryTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SummaryTabView.swift; sourceTree = "<group>"; };
 		CF0FDCB629699E5100A6FFE2 /* MapTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapTabView.swift; sourceTree = "<group>"; };
 		CF0FDCBA29699E8A00A6FFE2 /* HomeTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeTabView.swift; sourceTree = "<group>"; };
@@ -815,7 +812,6 @@
 				CF0591F22DBCF653003CB81C /* SysdiagUrls.swift */,
 				CF332F9D2E05531200BBA851 /* NavObjectId.swift */,
 				CF55C4C42E61A7EC00C1808A /* NavListIds.swift */,
-				CF0F2EFF2E12BCFB0053D7E8 /* ListNavigationLink.swift */,
 				CF70F2AB2E5F9A9B00059960 /* ListNavigationButton.swift */,
 				CF010DBF2E619E9200AB6FFD /* SelectDateSheet.swift */,
 				CF55C4BE2E61A1DB00C1808A /* FilterSimSlot.swift */,
@@ -1444,7 +1440,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1420;
-				LastUpgradeCheck = 2600;
+				LastUpgradeCheck = 2710;
 				TargetAttributes = {
 					CFD023322961A10D00AA5A1C = {
 						CreatedOnToolsVersion = 14.2;
@@ -1842,7 +1838,6 @@
 				CFB6CF872BD122FA00EAB7B4 /* CellTechnologyFormatter.swift in Sources */,
 				45ECF5642BFBDB3800DD92CF /* SysdiagInstructionsCard.swift in Sources */,
 				CFB6CF882BD122FA00EAB7B4 /* CellFileKeys.swift in Sources */,
-				CF0F2F012E12BCFB0053D7E8 /* ListNavigationLink.swift in Sources */,
 				CFB6CF892BD122FA00EAB7B4 /* Packet.swift in Sources */,
 				45ECF5612BFACE8400DD92CF /* LeadingTitleIconTextView.swift in Sources */,
 			);
@@ -2046,7 +2041,6 @@
 				CFBEC8462BC7F7100021C0B9 /* Packet.swift in Sources */,
 				CF010DC12E619E9200AB6FFD /* SelectDateSheet.swift in Sources */,
 				45ECF5602BFACE8400DD92CF /* LeadingTitleIconTextView.swift in Sources */,
-				CF0F2F002E12BCFB0053D7E8 /* ListNavigationLink.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

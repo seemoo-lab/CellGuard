@@ -234,7 +234,7 @@ struct PacketFilterListView: View {
                     Picker("Type", selection: $settings.qmiType) {
                         ForEach(PacketFilterQMIType.allCases) { Text($0.rawValue.capitalized) }
                     }
-                    ListNavigationLink(value: PacketNavigationPath.filterServicesQmi) {
+                    NavigationLink(value: PacketNavigationPath.filterServicesQmi) {
                         HStack {
                             Text("Services")
                             Spacer()
@@ -243,7 +243,7 @@ struct PacketFilterListView: View {
                         }
                     }
                 } else {
-                    ListNavigationLink(value: PacketNavigationPath.filterGroupsAri) {
+                    NavigationLink(value: PacketNavigationPath.filterGroupsAri) {
                         HStack {
                             Text("Groups")
                             Spacer()

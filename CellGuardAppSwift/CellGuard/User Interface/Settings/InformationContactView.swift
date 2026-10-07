@@ -73,7 +73,7 @@ struct InformationContactView: View {
             }
 
             Section(header: Text("Acknowledgements")) {
-                ListNavigationLink(value: SummaryNavigationPath.acknowledgements) {
+                NavigationLink(value: SummaryNavigationPath.acknowledgements) {
                     Text("Third-Party Libraries")
                 }
                 Link(destination: URL(string: "https://en.wikipedia.org/wiki/Mobile_country_code")!, label: {

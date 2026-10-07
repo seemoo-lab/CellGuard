@@ -164,7 +164,7 @@ private struct CellDetailsList: View {
     var body: some View {
         Section(header: Text("Cells")) {
             ForEach(filteredCells, id: \.id) { (cell: CellALS) in
-                ListNavigationLink(value: NavObjectId(object: cell)) {
+                NavigationLink(value: NavObjectId(object: cell)) {
                     Text(plainCellId(cell))
                 }
             }

@@ -224,7 +224,7 @@ private struct GroupedNavigationLink: View {
     let cellMeasurements: GroupedMeasurements
 
     var body: some View {
-        ListNavigationLink(
+        NavigationLink(
             // The first entry should also update to include newer cell measurements
             // The init method of the GroupedMeasurement class guarantees that each instance contains at least one measurement
             value: CellDetailsNavigation(cell: .init(object: cellMeasurements.measurements.first!), predicate: cellMeasurements.detailsPredicate())

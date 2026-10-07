@@ -33,7 +33,7 @@ struct ConnectivityEventList: View {
             ForEach(eventsByDay, id: \.key) { (day, dayEvents) in
                 Section(header: Text(mediumDateFormatter.string(from: day))) {
                     ForEach(dayEvents) { event in
-                        ListNavigationLink(value: NavObjectId(object: event)) {
+                        NavigationLink(value: NavObjectId(object: event)) {
                             ConnectivityEventListEntry(event: event)
                         }
                     }
@@ -80,11 +80,11 @@ struct ConnectivityEventDetails: View {
                 }
 
                 if let qmiPacket = event.packetQmi {
-                    ListNavigationLink(value: NavObjectId<PacketQMI>(object: qmiPacket)) {
+                    NavigationLink(value: NavObjectId<PacketQMI>(object: qmiPacket)) {
                         PacketCell(packet: qmiPacket)
                     }
                 } else if let packetAri = event.packetAri {
-                    ListNavigationLink(value: NavObjectId<PacketARI>(object: packetAri)) {
+                    NavigationLink(value: NavObjectId<PacketARI>(object: packetAri)) {
                         PacketCell(packet: packetAri)
                     }
                 }

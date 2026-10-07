@@ -169,7 +169,7 @@ struct PacketCell_Previews: PreviewProvider {
         NavigationStack(path: $path) {
             List {
                 ForEach(packets) { packet in
-                    ListNavigationLink(value: packet) {
+                    NavigationLink(value: packet) {
                         PacketCell(packet: packet.packet)
                     }
                 }

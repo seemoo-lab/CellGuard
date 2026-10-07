@@ -81,7 +81,7 @@ private struct FilteredSysdiagnoseView: View {
     var body: some View {
         if !sysdiagnoses.isEmpty {
             List(sysdiagnoses) { sysdiagnose in
-                ListNavigationLink(value: NavObjectId(object: sysdiagnose)) {
+                NavigationLink(value: NavObjectId(object: sysdiagnose)) {
                     SysdiagnoseCell(sysdiagnose: sysdiagnose, showArchiveIdentifier: true)
                 }
             }

@@ -27,7 +27,7 @@ struct ImportErrorView: View {
             }
 
             if let failureReason = error.failureReason {
-                ListNavigationLink(value: FailureInfo(reason: failureReason)) {
+                NavigationLink(value: FailureInfo(reason: failureReason)) {
                     Text("Failure Reason")
                 }
             }

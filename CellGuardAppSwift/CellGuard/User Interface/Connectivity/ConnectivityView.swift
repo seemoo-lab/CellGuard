@@ -114,11 +114,11 @@ private struct FilteredConnectivityView: View {
         if !groupedEvents.isEmpty {
             List(groupedEvents) { eventGroup in
                 if eventGroup.events.count == 1 {
-                    ListNavigationLink(value: NavObjectId(object: eventGroup.events.first!)) {
+                    NavigationLink(value: NavObjectId(object: eventGroup.events.first!)) {
                         ConnectivityEventListEntry(event: eventGroup.events.first!)
                     }
                 } else {
-                    ListNavigationLink(value: NavListIds(objects: eventGroup.events)) {
+                    NavigationLink(value: NavListIds(objects: eventGroup.events)) {
                         ConnectivityEventListEntry(group: eventGroup)
                     }
                 }

@@ -19,7 +19,7 @@ struct PacketDetailsSection: View {
             DetailsRow("Direction", packet.direction ?? "???")
             DetailsRow("Timestamp", date: packet.collected)
             if let sysdiagnose = packet.sysdiagnose {
-                ListNavigationLink(value: NavObjectId(object: sysdiagnose)) {
+                NavigationLink(value: NavObjectId(object: sysdiagnose)) {
                     SysdiagnoseCell(sysdiagnose: sysdiagnose, showArchiveIdentifier: false)
                 }
             }

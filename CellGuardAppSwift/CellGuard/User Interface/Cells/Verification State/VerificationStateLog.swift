@@ -37,29 +37,29 @@ struct VerificationStateLogEntryView: View {
                 DetailsRow("Points", "\(logEntry.pointsAwarded) / \(logEntry.pointsMax)", color: pointsColor)
                 DetailsRow("Duration", "\(doubleString(logEntry.duration, maxDigits: 4))s")
                 if let relatedALSCell = logEntry.relatedCellALS {
-                    ListNavigationLink(value: VerificationRelatedObjectId(object: relatedALSCell)) {
+                    NavigationLink(value: VerificationRelatedObjectId(object: relatedALSCell)) {
                         Text("Related ALS Cell")
                     }
                 }
                 if let relatedUserLocation = logEntry.relatedLocationUser {
-                    ListNavigationLink(value: VerificationRelatedObjectId(object: relatedUserLocation)) {
+                    NavigationLink(value: VerificationRelatedObjectId(object: relatedUserLocation)) {
                         Text("Related User Location")
                     }
                 }
 
                 if let relatedALSCell = logEntry.relatedCellALS, let relatedUserLocation = logEntry.relatedLocationUser {
-                    ListNavigationLink(value: VerificationRelatedDistance(cellAls: relatedALSCell, userLocation: relatedUserLocation)) {
+                    NavigationLink(value: VerificationRelatedDistance(cellAls: relatedALSCell, userLocation: relatedUserLocation)) {
                         Text("Related Distance")
                     }
                 }
 
                 if let relatedARIPackets = logEntry.relatedPacketARI?.compactMap({$0 as? PacketARI}), relatedARIPackets.count > 0 {
-                    ListNavigationLink(value: VerificationRelatedPackets(packets: relatedARIPackets)) {
+                    NavigationLink(value: VerificationRelatedPackets(packets: relatedARIPackets)) {
                         Text("Related ARI Packets")
                     }
                 }
                 if let relatedQMIPackets = logEntry.relatedPacketQMI?.compactMap({$0 as? PacketQMI}), relatedQMIPackets.count > 0 {
-                    ListNavigationLink(value: VerificationRelatedPackets(packets: relatedQMIPackets)) {
+                    NavigationLink(value: VerificationRelatedPackets(packets: relatedQMIPackets)) {
                         Text("Related QMI Packets")
                     }
                 }
@@ -193,11 +193,11 @@ private struct LogRelatedPacketsView: View {
     var body: some View {
         List(packets, id: \.id) { packet in
             if let qmiPacket = packet as? PacketQMI {
-                ListNavigationLink(value: NavObjectId(object: qmiPacket)) {
+                NavigationLink(value: NavObjectId(object: qmiPacket)) {
                     PacketCell(packet: packet, customInfo: customInfo(packet))
                 }
             } else if let ariPacket = packet as? PacketARI {
-                ListNavigationLink(value: NavObjectId(object: ariPacket)) {
+                NavigationLink(value: NavObjectId(object: ariPacket)) {
                     PacketCell(packet: packet, customInfo: customInfo(packet))
                 }
             }

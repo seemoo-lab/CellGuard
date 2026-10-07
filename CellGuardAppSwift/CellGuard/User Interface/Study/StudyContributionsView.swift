@@ -27,7 +27,7 @@ struct StudyContributionsView: View {
                 Text("Cells")
             }
 
-            ListNavigationLink(value: SummaryNavigationPath.userStudyScoresWeekly) {
+            NavigationLink(value: SummaryNavigationPath.userStudyScoresWeekly) {
                 Text("Weekly Measurements")
             }
         }
