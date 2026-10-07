@@ -74,13 +74,8 @@ extension Double {
 }
 
 extension View {
-    func roundedThinMaterialBackground(color: ColorScheme) -> some View {
-        if #available(iOS 15, *) {
-            return background(.thinMaterial, in: RoundedRectangle(cornerRadius: 10))
-        } else {
-            return background(RoundedRectangle(cornerRadius: 10)
-                .fill((color == .light ? Color.white : Color.black).opacity(0.5)))
-        }
+    func roundedThinMaterialBackground() -> some View {
+        background(.thinMaterial, in: RoundedRectangle(cornerRadius: 10))
     }
 }
 

@@ -18,12 +18,8 @@ struct SelectDateSheet: View {
 
     var body: some View {
         VStack {
-            if #available(iOS 16, *) {
-                CompactDateSheet(timeFrame: $timeFrame, date: $date, sheetRange: $sheetRange)
-                    .presentationDetents([.height(horizontalSizeClass == .compact ? 400 : 500)])
-            } else {
-                ExtensiveDateSheet(timeFrame: $timeFrame, date: $date, sheetRange: $sheetRange)
-            }
+            CompactDateSheet(timeFrame: $timeFrame, date: $date, sheetRange: $sheetRange)
+                .presentationDetents([.height(horizontalSizeClass == .compact ? 400 : 500)])
         }
         .disabled(sheetRange.lowerBound == Date.distantPast && sheetRange.upperBound == Date.distantFuture)
     }
@@ -53,40 +49,6 @@ private struct CompactDateSheet: View {
                 maxHeight: horizontalSizeClass == .compact ? 400 : 500,
             )
             .padding()
-    }
-
-    var dateBinding: Binding<Date> {
-        Binding {
-            date
-        } set: { newDate in
-            let dateInBounds = newDate > sheetRange.upperBound ? sheetRange.upperBound : newDate
-            let startOfDate: Date = Calendar.current.startOfDay(for: dateInBounds)
-            let startOfToday = Calendar.current.startOfDay(for: Date())
-
-            timeFrame = startOfToday == startOfDate ? .live : .pastDay
-            date = dateInBounds
-        }
-    }
-}
-
-private struct ExtensiveDateSheet: View {
-
-    @Binding var timeFrame: FilterTimeFrame
-    @Binding var date: Date
-    @Binding var sheetRange: ClosedRange<Date>
-
-    var body: some View {
-        VStack {
-            Text("Select Date")
-                .font(.headline)
-            Text("Choose a date to inspect cells")
-                .font(.subheadline)
-                .padding([.bottom], 40)
-
-            DatePicker("Cell Date", selection: dateBinding, in: sheetRange, displayedComponents: [.date])
-                .datePickerStyle(.graphical)
-        }
-        .padding()
     }
 
     var dateBinding: Binding<Date> {

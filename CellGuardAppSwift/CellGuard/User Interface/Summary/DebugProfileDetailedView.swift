@@ -42,11 +42,7 @@ The debug profile expires after 7 days. Please reinstall after expiry.
     }
 
     private var icon: String {
-        if #available(iOS 16, *) {
-            return "cellularbars"
-        } else {
-            return "antenna.radiowaves.left.and.right"
-        }
+        "cellularbars"
     }
 }
 

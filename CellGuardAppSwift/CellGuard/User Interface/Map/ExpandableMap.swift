@@ -49,8 +49,6 @@ struct ExpandableMap<Destination: Hashable, Content: View>: View {
 
 private struct MapExpandButton: View {
 
-    @Environment(\.colorScheme) var colorScheme
-
     private let onTap: () -> Void
 
     init(onTap: @escaping () -> Void) {
@@ -64,7 +62,7 @@ private struct MapExpandButton: View {
             Image(systemName: "arrow.up.left.and.arrow.down.right")
         }
         .padding(EdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8))
-        .roundedThinMaterialBackground(color: colorScheme)
+        .roundedThinMaterialBackground()
         .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5))
     }
 

@@ -29,19 +29,6 @@ private enum ShownSheet: Hashable, Identifiable {
 
 struct HomeTabView: View {
 
-    var body: some View {
-        if #available(iOS 15, *) {
-            HomeTabViewIOS15()
-        } else {
-            HomeTabViewIOS14()
-        }
-    }
-
-}
-
-@available(iOS 15, *)
-private struct HomeTabViewIOS15: View {
-
     @AppStorage(UserDefaultsKeys.introductionShown.rawValue) var introductionShown: Bool = false
 
     @State private var showingTab = ShownTab.summary
@@ -65,41 +52,6 @@ private struct HomeTabViewIOS15: View {
                 IntroductionView()
             }
     }
-}
-
-// Multiple .sheet() & .fullScreenCover() statements on a single view are not supported in iOS 14
-// See: https://stackoverflow.com/a/63181811
-// See: https://www.hackingwithswift.com/forums/swiftui/using-sheet-and-fullscreencover-together/4258/13585
-private struct HomeTabViewIOS14: View {
-
-    @AppStorage(UserDefaultsKeys.introductionShown.rawValue) var introductionShown: Bool = false
-
-    @State private var shownTab = ShownTab.summary
-    @State private var shownSheet: ShownSheet?
-
-    var body: some View {
-        ZStack {
-            EmptyView()
-                .sheet(item: $shownSheet) { (sheet: ShownSheet) in
-                    switch sheet {
-                    case let .importFile(url):
-                        CGNavigationStack {
-                            ImportView(fileUrl: url)
-                        }
-                    }
-                }
-
-            CompositeTabView(shownTab: $shownTab, shownSheet: $shownSheet)
-                .fullScreenCover(isPresented: Binding(get: {
-                    !introductionShown
-                }, set: { _ in
-                    // Ignore the change
-                })) {
-                    IntroductionView()
-                }
-        }
-    }
-
 }
 
 private struct CompositeTabView: View {

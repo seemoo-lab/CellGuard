@@ -101,8 +101,6 @@ private struct ConnectedCellMap: View {
 
 private struct OpaqueMapInfoButton: View {
 
-    @Environment(\.colorScheme) var colorScheme
-
     private let onTap: () -> Void
 
     init(onTap: @escaping () -> Void) {
@@ -116,7 +114,7 @@ private struct OpaqueMapInfoButton: View {
             Image(systemName: "info.circle")
         }
         .padding(EdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10))
-        .roundedThinMaterialBackground(color: colorScheme)
+        .roundedThinMaterialBackground()
         .padding(EdgeInsets(top: 6, leading: 6, bottom: 6, trailing: 6))
     }
 

@@ -34,11 +34,7 @@ In a few cases, these anomalies indicate an attack by a fake base station. Such 
     }
 
     private var icon: String {
-        if #available(iOS 16, *) {
-            return "cellularbars"
-        } else {
-            return "antenna.radiowaves.left.and.right"
-        }
+        "cellularbars"
     }
 }
 
