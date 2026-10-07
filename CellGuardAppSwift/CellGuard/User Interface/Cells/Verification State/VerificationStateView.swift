@@ -21,6 +21,7 @@ struct VerificationStateView: View {
                 Text("No cell has been assigned to this verification state or the selected verification pipeline is missing.")
             }
         }
+        .verificationLogNavigationDestinations()
         .navigationTitle("Verification State")
         .navigationBarTitleDisplayMode(.inline)
         .listStyle(.insetGrouped)

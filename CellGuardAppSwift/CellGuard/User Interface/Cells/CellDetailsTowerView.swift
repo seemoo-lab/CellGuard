@@ -77,9 +77,18 @@ struct CellDetailsTowerView: View {
         return FetchRequest(fetchRequest: request)
     }
 
+    var expandedMap: some View {
+        CellDetailsTowerMap(baseStation: baseStation, dissect: dissect, fetchRequest: fetchRequest, destination: expandedMapRoute, fullScreen: true)
+            .ignoresSafeArea()
+    }
+
+    private var expandedMapRoute: ExpandedCellMapNavigation {
+        .tower(CellDetailsTowerNavigation(technology: technology, country: country, network: network, area: area, baseStation: baseStation, bitCount: bitCount))
+    }
+
     var body: some View {
         List {
-            CellDetailsTowerMap(baseStation: baseStation, dissect: dissect, fetchRequest: fetchRequest)
+            CellDetailsTowerMap(baseStation: baseStation, dissect: dissect, fetchRequest: fetchRequest, destination: expandedMapRoute)
 
             CellCountryNetworkSection(country: country, network: network, techFormatter: techFormatter)
             Section(header: Text("Technology & Region")) {
@@ -104,7 +113,12 @@ private struct CellDetailsTowerMap: View {
     @FetchRequest private var cells: FetchedResults<CellALS>
     @ObservedObject private var locationInfo = LocationDataManagerPublished.shared
 
-    init(baseStation: Int64, dissect: @escaping (Int64) -> (Int64, Int64), fetchRequest: FetchRequest<CellALS>) {
+    private let destination: ExpandedCellMapNavigation
+    private let fullScreen: Bool
+
+    init(baseStation: Int64, dissect: @escaping (Int64) -> (Int64, Int64), fetchRequest: FetchRequest<CellALS>, destination: ExpandedCellMapNavigation, fullScreen: Bool = false) {
+        self.destination = destination
+        self.fullScreen = fullScreen
         self.baseStation = baseStation
         self.dissect = dissect
         self._cells = fetchRequest
@@ -112,12 +126,12 @@ private struct CellDetailsTowerMap: View {
 
     var body: some View {
         // TODO: Show sector id instead of provider name / network
-        ExpandableMap {
+        if fullScreen {
             TowerCellMap(locationInfo: locationInfo, alsCells: cells.filter { dissect($0.cell).0 == baseStation }, dissect: dissect)
-        }
-        .navigationDestination(for: ExpandableMapInfo.self) { _ in
-            TowerCellMap(locationInfo: locationInfo, alsCells: cells.filter { dissect($0.cell).0 == baseStation }, dissect: dissect)
-                .ignoresSafeArea()
+        } else {
+            ExpandableMap(destination: destination) {
+                TowerCellMap(locationInfo: locationInfo, alsCells: cells.filter { dissect($0.cell).0 == baseStation }, dissect: dissect)
+            }
         }
     }
 

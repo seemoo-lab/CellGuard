@@ -12,13 +12,15 @@ struct ExpandableMapInfo: Hashable {
     // empty
 }
 
-struct ExpandableMap<Content: View>: View {
+struct ExpandableMap<Destination: Hashable, Content: View>: View {
 
     @EnvironmentObject var navigator: NavigationRouter
 
+    let destination: Destination
     let map: Content
 
-    init(@ViewBuilder map: @escaping () -> Content) {
+    init(destination: Destination, @ViewBuilder map: @escaping () -> Content) {
+        self.destination = destination
         self.map = map()
     }
 
@@ -31,7 +33,7 @@ struct ExpandableMap<Content: View>: View {
             HStack {
                 Spacer()
                 MapExpandButton {
-                    navigator.push(ExpandableMapInfo())
+                    navigator.push(destination)
                 }
             }
             .frame(maxHeight: .infinity, alignment: .bottom)
@@ -72,7 +74,7 @@ private struct MapExpandButton: View {
 #Preview {
     CGNavigationStack {
         List {
-            ExpandableMap {
+            ExpandableMap(destination: ExpandableMapInfo()) {
                 Map(coordinateRegion: .constant(
                     MKCoordinateRegion(
                         center: CLLocationCoordinate2D(latitude: 37.768552, longitude: -122.481616),
@@ -80,14 +82,15 @@ private struct MapExpandButton: View {
                     )
                 ))
             }
-            .navigationDestination(for: ExpandableMapInfo.self) { _ in
-                Map(coordinateRegion: .constant(
-                    MKCoordinateRegion(
-                        center: CLLocationCoordinate2D(latitude: 37.768552, longitude: -122.481616),
-                        latitudinalMeters: 2000, longitudinalMeters: 2000
-                    )
-                ))
-            }
+
+        }
+        .navigationDestination(for: ExpandableMapInfo.self) { _ in
+            Map(coordinateRegion: .constant(
+                MKCoordinateRegion(
+                    center: CLLocationCoordinate2D(latitude: 37.768552, longitude: -122.481616),
+                    latitudinalMeters: 2000, longitudinalMeters: 2000
+                )
+            ))
         }
     }
 }

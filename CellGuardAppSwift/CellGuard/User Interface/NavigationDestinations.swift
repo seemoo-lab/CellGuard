@@ -8,6 +8,12 @@
 import Foundation
 import SwiftUI
 
+enum ExpandedCellMapNavigation: Hashable {
+    case als(NavObjectId<CellALS>)
+    case tweak(CellDetailsNavigation)
+    case tower(CellDetailsTowerNavigation)
+}
+
 enum CGNavigationDestinations {
     case packets
     case cells
@@ -32,6 +38,16 @@ struct CGNavigationViewModifier: ViewModifier {
                 }
         } else if destinations == .cells {
             content
+                .navigationDestination(for: ExpandedCellMapNavigation.self) { route in
+                    switch route {
+                    case .als(let id):
+                        id.ensure { CellDetailsView(alsCell: $0).expandedMap }
+                    case .tweak(let nav):
+                        nav.cell.ensure { CellDetailsView(tweakCell: $0, predicate: nav.predicate).expandedMap }
+                    case .tower(let nav):
+                        CellDetailsTowerView(nav: nav).expandedMap
+                    }
+                }
                 .navigationDestination(for: NavObjectId<CellALS>.self) { id in
                     id.ensure { CellDetailsView(alsCell: $0) }
                 }

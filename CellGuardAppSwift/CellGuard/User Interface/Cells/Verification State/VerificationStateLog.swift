@@ -65,20 +65,7 @@ struct VerificationStateLogEntryView: View {
                 }
             }
         }
-        .navigationDestination(for: VerificationRelatedObjectId<CellALS>.self) { id in
-            id.ensure { LogRelatedALSCellView(alsCell: $0) }
-        }
-        .navigationDestination(for: VerificationRelatedObjectId<LocationUser>.self) { id in
-            id.ensure { LogRelatedUserLocationView(userLocation: $0) }
-        }
-        .navigationDestination(for: VerificationRelatedDistance.self) { id in
-            id.ensure { cell, loc in
-                LogRelatedDistanceView(alsCell: cell, userLocation: loc)
-            }
-        }
-        .navigationDestination(for: VerificationRelatedPackets.self) { id in
-            id.ensure { LogRelatedPacketsView(packets: $0) }
-        }
+
     }
 
     var pointsColor: Color? {
@@ -274,4 +261,25 @@ private struct LogRelatedPacketsView: View {
         }
     }
 
+}
+
+// Register these on the containing list, rather than on lazily created log rows.
+extension View {
+    func verificationLogNavigationDestinations() -> some View {
+        self
+        .navigationDestination(for: VerificationRelatedObjectId<CellALS>.self) { id in
+            id.ensure { LogRelatedALSCellView(alsCell: $0) }
+        }
+        .navigationDestination(for: VerificationRelatedObjectId<LocationUser>.self) { id in
+            id.ensure { LogRelatedUserLocationView(userLocation: $0) }
+        }
+        .navigationDestination(for: VerificationRelatedDistance.self) { id in
+            id.ensure { cell, loc in
+                LogRelatedDistanceView(alsCell: cell, userLocation: loc)
+            }
+        }
+        .navigationDestination(for: VerificationRelatedPackets.self) { id in
+            id.ensure { LogRelatedPacketsView(packets: $0) }
+        }
+    }
 }

@@ -17,16 +17,19 @@ struct CellDetailsView: View {
 
     let cell: Cell
     let predicate: NSPredicate?
+    private let mapRoute: ExpandedCellMapNavigation
 
     @State private var showAll: Bool
 
     init(alsCell: CellALS) {
+        self.mapRoute = .als(NavObjectId(object: alsCell))
         self.cell = alsCell
         self.predicate = nil
         self._showAll = State(initialValue: true)
     }
 
     init(tweakCell: CellTweak, predicate: NSPredicate? = nil) {
+        self.mapRoute = .tweak(CellDetailsNavigation(cell: NavObjectId(object: tweakCell), predicate: predicate))
         self.cell = tweakCell
         self.predicate = predicate
         self._showAll = State(initialValue: false)
@@ -37,7 +40,7 @@ struct CellDetailsView: View {
         let measurementsRequest = tweakFetchRequest()
 
         List {
-            TweakCellDetailsMap(alsCells: alsCellsRequest, verifyStates: measurementsRequest)
+            TweakCellDetailsMap(alsCells: alsCellsRequest, verifyStates: measurementsRequest, destination: expandedMapRoute)
             CellDetailsCell(cell: cell, verifyStates: measurementsRequest)
             TweakCellDetailsMeasurementCount(alsCells: alsCellsRequest, verifyStates: measurementsRequest)
             // A toolbar item somehow hides the navigation history (back button) upon state change and thus, we use a simple button
@@ -50,6 +53,18 @@ struct CellDetailsView: View {
         }
         .listStyle(.insetGrouped)
         .navigationTitle("\(cell.technology ?? "Unknown") Cell")
+    }
+
+    var expandedMap: some View {
+        TweakCellDetailsMap(alsCells: alsFetchRequest(), verifyStates: tweakFetchRequest(), destination: expandedMapRoute, fullScreen: true)
+            .ignoresSafeArea()
+    }
+
+    private var expandedMapRoute: ExpandedCellMapNavigation {
+        if case .tweak(let nav) = mapRoute {
+            return .tweak(CellDetailsNavigation(cell: nav.cell, predicate: showAll ? nil : predicate))
+        }
+        return mapRoute
     }
 
     private func alsFetchRequest() -> FetchRequest<CellALS> {
@@ -90,7 +105,12 @@ private struct TweakCellDetailsMap: View {
 
     @ObservedObject private var locationInfo = LocationDataManagerPublished.shared
 
-    init(alsCells: FetchRequest<CellALS>, verifyStates: FetchRequest<VerificationState>) {
+    private let destination: ExpandedCellMapNavigation
+    private let fullScreen: Bool
+
+    init(alsCells: FetchRequest<CellALS>, verifyStates: FetchRequest<VerificationState>, destination: ExpandedCellMapNavigation, fullScreen: Bool = false) {
+        self.destination = destination
+        self.fullScreen = fullScreen
         self._alsCells = alsCells
         self._verifyStates = verifyStates
     }
@@ -98,13 +118,11 @@ private struct TweakCellDetailsMap: View {
     var body: some View {
         let tweakCells = verifyStates.compactMap { $0.cell }
 
-        if SingleCellMap.hasAnyLocation(alsCells, tweakCells) {
-            ExpandableMap {
+        if fullScreen {
+            SingleCellMap(locationInfo: locationInfo, alsCells: alsCells, tweakCells: tweakCells)
+        } else if SingleCellMap.hasAnyLocation(alsCells, tweakCells) {
+            ExpandableMap(destination: destination) {
                 SingleCellMap(locationInfo: locationInfo, alsCells: alsCells, tweakCells: tweakCells)
-            }
-            .navigationDestination(for: ExpandableMapInfo.self) { _ in
-                SingleCellMap(locationInfo: locationInfo, alsCells: alsCells, tweakCells: tweakCells)
-                    .ignoresSafeArea()
             }
         }
     }
