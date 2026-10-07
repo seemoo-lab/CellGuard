@@ -6,22 +6,22 @@
 //
 
 import SwiftUI
-import NavigationBackport
 
 struct IntroductionView: View {
 
-    @State var path: NBNavigationPath = NBNavigationPath()
+    @StateObject private var navigator = NavigationRouter()
 
     var body: some View {
-        NBNavigationStack(path: $path) {
+        NavigationStack(path: $navigator.path) {
             WelcomeView()
-                .nbNavigationDestination(for: IntroductionState.self, destination: IntroductionState.navigate)
+                .navigationDestination(for: IntroductionState.self, destination: IntroductionState.navigate)
         }
+        .environmentObject(navigator)
     }
 
 }
 
-enum IntroductionState: NBScreen {
+enum IntroductionState: Hashable, Identifiable {
     // case welcome
     case cellDetection
     case userStudy

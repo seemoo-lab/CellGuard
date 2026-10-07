@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import NavigationBackport
 
 // This view is only intended to be used for testing various country & network values.
 struct OperatorLookupView: View {

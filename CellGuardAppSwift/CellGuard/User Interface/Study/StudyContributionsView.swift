@@ -6,12 +6,11 @@
 //
 
 import SwiftUI
-import NavigationBackport
 
 struct StudyContributionsView: View {
 
     @EnvironmentObject private var filter: CellListFilterSettings
-    @EnvironmentObject private var navigator: PathNavigator
+    @EnvironmentObject private var navigator: NavigationRouter
 
     var body: some View {
         List {
@@ -38,5 +37,9 @@ struct StudyContributionsView: View {
 }
 
 #Preview {
-    StudyContributionsView()
+    CGNavigationStack {
+        StudyContributionsView()
+            .cgNavigationDestinations(.summaryTab)
+    }
+    .environmentObject(CellListFilterSettings())
 }

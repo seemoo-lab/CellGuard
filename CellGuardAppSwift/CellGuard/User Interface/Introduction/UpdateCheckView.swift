@@ -6,13 +6,12 @@
 //
 
 import SwiftUI
-import NavigationBackport
 
 struct UpdateCheckView: View {
 
     @AppStorage(UserDefaultsKeys.updateCheck.rawValue) private var updateCheck: Bool = false
     @State private var agePolicyConfirmation: Bool = false
-    @EnvironmentObject var navigator: PathNavigator
+    @EnvironmentObject var navigator: NavigationRouter
 
     var body: some View {
         VStack {
@@ -75,9 +74,9 @@ struct UpdateCheckView: View {
 }
 
 #Preview {
-    NBNavigationStack {
+    CGNavigationStack {
         NotificationPermissionView()
-            .nbNavigationDestination(for: IntroductionState.self) { _ in
+            .navigationDestination(for: IntroductionState.self) { _ in
                 Text("No")
             }
     }

@@ -8,7 +8,6 @@
 import CoreData
 import OSLog
 import SwiftUI
-import NavigationBackport
 
 private enum StudyMeasurementUploadStatus {
     // Measurement will not be uploaded
@@ -203,7 +202,7 @@ private struct VerificationStateStudyViewSheet: View {
     @State private var submitting: Bool = false
 
     var body: some View {
-        NBNavigationStack {
+        NavigationStack {
             List {
                 Section(header: Text("Suggested Level"), footer: Text("Trusted cells are genuine parts of their network. Anomalous cells exhibit some unusual behavior. Suspicious cells exhibit suspicious behavior in multiple regards.")) {
                     Picker(selection: $riskLevel, label: Text("Level")) {

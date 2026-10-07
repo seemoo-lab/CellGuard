@@ -1,7 +1,7 @@
 // Version.xcconfig
 
 // Major & Minor Version
-MARKETING_VERSION = 1.6.0;
+MARKETING_VERSION = 1.7.0;
 
 // Build number
-CURRENT_PROJECT_VERSION = 11;
+CURRENT_PROJECT_VERSION = 1;

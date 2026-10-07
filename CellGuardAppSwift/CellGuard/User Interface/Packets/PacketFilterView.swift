@@ -8,7 +8,6 @@
 import OSLog
 import CoreData
 import SwiftUI
-import NavigationBackport
 
 class PacketFilterSettings: ObservableObject {
     private static let logger = Logger(
@@ -376,10 +375,10 @@ struct PacketFilterARIGroupsView: View {
 
 struct PacketFilterView_Previews: PreviewProvider {
     static var previews: some View {
-        @State var path = NBNavigationPath()
+        @State var path = NavigationPath()
         @State var settings = PacketFilterSettings()
 
-        NBNavigationStack(path: $path) {
+        NavigationStack(path: $path) {
             PacketFilterView()
                 .environmentObject(settings)
         }

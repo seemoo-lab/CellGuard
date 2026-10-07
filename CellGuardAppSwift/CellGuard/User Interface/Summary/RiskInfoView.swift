@@ -6,7 +6,8 @@
 //
 
 import SwiftUI
-import NavigationBackport
+
+import CoreData
 
 struct RiskInfoView: View {
 
@@ -14,7 +15,7 @@ struct RiskInfoView: View {
     @AppStorage(UserDefaultsKeys.study.rawValue) var studyParticipationTimestamp: Double = 0
 
     @EnvironmentObject private var filter: CellListFilterSettings
-    @EnvironmentObject private var navigator: PathNavigator
+    @EnvironmentObject private var navigator: NavigationRouter
     @Environment(\.colorScheme) private var colorScheme
 
     // Shows explanations of the app's function and the user's risk (based on the risk level).
@@ -117,17 +118,35 @@ private struct ProgressCounterView: View {
 
 struct RiskInfoView_Previews: PreviewProvider {
     static var previews: some View {
-        RiskInfoView(risk: .unknown)
+        CGNavigationStack {
+            RiskInfoView(risk: .unknown)
+                .cgNavigationDestinations(.summaryTab)
+        }
             .previewDisplayName("Unknown")
-        RiskInfoView(risk: .low)
+        CGNavigationStack {
+            RiskInfoView(risk: .low)
+                .cgNavigationDestinations(.summaryTab)
+        }
             .previewDisplayName("Low")
-        RiskInfoView(risk: .lowMonitor)
+        CGNavigationStack {
+            RiskInfoView(risk: .lowMonitor)
+                .cgNavigationDestinations(.summaryTab)
+        }
             .previewDisplayName("Low (Monitor)")
-        RiskInfoView(risk: .medium(cause: .permissions))
+        CGNavigationStack {
+            RiskInfoView(risk: .medium(cause: .permissions))
+                .cgNavigationDestinations(.summaryTab)
+        }
             .previewDisplayName("Medium (Permissions)")
-        RiskInfoView(risk: .medium(cause: .cells(cellCount: 3)))
+        CGNavigationStack {
+            RiskInfoView(risk: .medium(cause: .cells(cellCount: 3)))
+                .cgNavigationDestinations(.summaryTab)
+        }
             .previewDisplayName("Medium (Cells)")
-        RiskInfoView(risk: .high(cellCount: 3))
+        CGNavigationStack {
+            RiskInfoView(risk: .high(cellCount: 3))
+                .cgNavigationDestinations(.summaryTab)
+        }
             .previewDisplayName("High")
     }
 }

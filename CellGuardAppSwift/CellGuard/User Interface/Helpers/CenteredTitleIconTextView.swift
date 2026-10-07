@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import NavigationBackport
 
 struct CenteredTitleIconTextView: View {
 
@@ -58,7 +57,7 @@ struct CenteredTitleIconTextView: View {
 }
 
 #Preview {
-    NBNavigationStack {
+    NavigationStack {
         CenteredTitleIconTextView(
             icon: "antenna.radiowaves.left.and.right",
             description: "Why we need this permission...",

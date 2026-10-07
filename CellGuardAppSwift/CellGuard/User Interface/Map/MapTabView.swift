@@ -9,15 +9,14 @@ import SwiftUI
 import UIKit
 import MapKit
 import CoreData
-import NavigationBackport
 
 struct MapTabView: View {
 
-    @State private var path = NBNavigationPath()
+    @StateObject private var navigator = NavigationRouter()
     @State private var infoSheetShown = false
 
     var body: some View {
-        NBNavigationStack {
+        NavigationStack(path: $navigator.path) {
             MapWithButton {
                 infoSheetShown = true
             }
@@ -28,6 +27,7 @@ struct MapTabView: View {
             .cgNavigationDestinations(.operators)
             .cgNavigationDestinations(.packets)
         }
+        .environmentObject(navigator)
     }
 }
 
@@ -87,7 +87,7 @@ private struct ConnectedCellMap: View {
     )
     private var alsCells: FetchedResults<CellALS>
 
-    @EnvironmentObject var navigator: PathNavigator
+    @EnvironmentObject var navigator: NavigationRouter
     @ObservedObject private var locationManager = LocationDataManagerPublished.shared
 
     var body: some View {

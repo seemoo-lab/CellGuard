@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import NavigationBackport
 
 struct SysdiagOpenSettingsCard: View {
 
@@ -14,7 +13,7 @@ struct SysdiagOpenSettingsCard: View {
 
     var body: some View {
         if appMode == .manual {
-            NBNavigationLink(value: SummaryNavigationPath.sysdiagOpenSettings) {
+            NavigationLink(value: SummaryNavigationPath.sysdiagOpenSettings) {
                 OpenCard()
             }
         }

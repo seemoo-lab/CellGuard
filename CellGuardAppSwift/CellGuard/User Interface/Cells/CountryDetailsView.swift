@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import NavigationBackport
 
 struct CountryDetailsNavigation<C: NetworkCountryAttributes>: Hashable {
     let country: C
@@ -97,61 +96,61 @@ private struct SimilarIsoSection: View {
 }
 
 #Preview("DE") {
-    NBNavigationStack {
+    NavigationStack {
         CountryDetailsView(country: OperatorDefinitions.shared.translate(country: 262, network: 01).first!)
     }
 }
 
 #Preview("US") {
-    NBNavigationStack {
+    NavigationStack {
         CountryDetailsView(country: OperatorDefinitions.shared.translate(country: 310, network: 04).first!)
     }
 }
 
 #Preview("UK") {
-    NBNavigationStack {
+    NavigationStack {
         CountryDetailsView(country: OperatorDefinitions.shared.translate(country: 234, network: 02).first!)
     }
 }
 
 #Preview("GG") {
-    NBNavigationStack {
+    NavigationStack {
         CountryDetailsView(country: OperatorDefinitions.shared.translate(country: 234, network: 03).first!)
     }
 }
 
 #Preview("AU") {
-    NBNavigationStack {
+    NavigationStack {
         CountryDetailsView(country: OperatorDefinitions.shared.translate(country: 505, network: 01).first!)
     }
 }
 
 #Preview("BQ/CW/SX") {
-    NBNavigationStack {
+    NavigationStack {
         CountryDetailsView(country: OperatorDefinitions.shared.translate(country: 362, network: 31).first!)
     }
 }
 
 #Preview("BL/GF/GP/MF/MQ") {
-    NBNavigationStack {
+    NavigationStack {
         CountryDetailsView(country: OperatorDefinitions.shared.translate(country: 340, network: 01).first!)
     }
 }
 
 #Preview("IN") {
-    NBNavigationStack {
+    NavigationStack {
         CountryDetailsView(country: OperatorDefinitions.shared.translate(country: 405, network: 813).first!)
     }
 }
 
 #Preview("Test") {
-    NBNavigationStack {
+    NavigationStack {
         CountryDetailsView(country: OperatorDefinitions.shared.translate(country: 001, network: 01).first!)
     }
 }
 
 #Preview("Int") {
-    NBNavigationStack {
+    NavigationStack {
         CountryDetailsView(country: OperatorDefinitions.shared.translate(country: 901, network: 10).first!)
     }
 }

@@ -7,7 +7,6 @@
 
 import CoreData
 import SwiftUI
-import NavigationBackport
 
 struct ConnectivityEventList: View {
     private let eventsByDay: [(key: Date, value: [ConnectivityEvent])]

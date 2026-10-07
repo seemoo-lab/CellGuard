@@ -6,9 +6,8 @@
 //
 
 import SwiftUI
-import NavigationBackport
 
-enum PacketNavigationPath: NBScreen {
+enum PacketNavigationPath: Hashable, Identifiable {
 
     case filter
     case filterGroupsAri

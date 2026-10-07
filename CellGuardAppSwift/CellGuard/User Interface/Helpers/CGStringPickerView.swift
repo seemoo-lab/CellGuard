@@ -7,7 +7,6 @@
 
 import SwiftUI
 import CoreData
-import NavigationBackport
 
 struct CGFetchPickerField<T: Identifiable & Equatable & NSManagedObject>: View {
     var title: String

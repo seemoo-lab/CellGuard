@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import NavigationBackport
 
 private struct AlertIdentifiable: Identifiable {
     let id: String
@@ -224,7 +223,7 @@ struct SettingsSheet_Previews: PreviewProvider {
     static var previews: some View {
         @State var cellFilterSettings = CellListFilterSettings()
 
-        NBNavigationStack {
+        NavigationStack {
             SettingsView()
                 .cgNavigationDestinations(.summaryTab)
                 .cgNavigationDestinations(.cells)

@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import NavigationBackport
 
 private enum DeleteAlert: Hashable, Identifiable {
     case deletionFailed(String)
@@ -316,7 +315,7 @@ private struct DeleteOldButton: View {
 
 struct DeleteView_Previews: PreviewProvider {
     static var previews: some View {
-        NBNavigationStack {
+        NavigationStack {
             DeleteView()
         }
         .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)

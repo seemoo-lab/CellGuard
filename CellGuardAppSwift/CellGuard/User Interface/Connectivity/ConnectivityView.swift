@@ -9,14 +9,13 @@ import CoreData
 import Foundation
 import SwiftUI
 import OSLog
-import NavigationBackport
 
 struct ConnectivityView: View {
 
     @State private var isShowingDateSheet = false
     @State private var sheetRange = Date.distantPast...Date.distantFuture
 
-    @EnvironmentObject private var navigator: PathNavigator
+    @EnvironmentObject private var navigator: NavigationRouter
     @EnvironmentObject private var settings: ConnectivityFilterSettings
 
     private func updateDateRange() {
@@ -196,7 +195,7 @@ struct ConnectivityView_Previews: PreviewProvider {
     static var previews: some View {
         @State var connectivityFilterSettings = ConnectivityFilterSettings()
 
-        NBNavigationStack {
+        CGNavigationStack {
             ConnectivityView()
                 .cgNavigationDestinations(.connectivity)
                 .cgNavigationDestinations(.packets)

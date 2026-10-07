@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import NavigationBackport
 
 struct NotificationPermissionView: View {
 
@@ -49,9 +48,9 @@ struct NotificationPermissionView: View {
 }
 
 #Preview {
-    NBNavigationStack {
+    NavigationStack {
         NotificationPermissionView()
-            .nbNavigationDestination(for: IntroductionState.self) { _ in
+            .navigationDestination(for: IntroductionState.self) { _ in
                 Text("No")
             }
     }

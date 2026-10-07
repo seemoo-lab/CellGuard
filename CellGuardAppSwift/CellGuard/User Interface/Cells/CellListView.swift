@@ -9,14 +9,13 @@ import CoreData
 import Foundation
 import SwiftUI
 import OSLog
-import NavigationBackport
 
 struct CellListView: View {
 
     @State private var isShowingDateSheet = false
     @State private var sheetRange = Date.distantPast...Date.distantFuture
 
-    @EnvironmentObject private var navigator: PathNavigator
+    @EnvironmentObject private var navigator: NavigationRouter
     @EnvironmentObject private var settings: CellListFilterSettings
 
     private func updateDateRange() {
@@ -320,7 +319,7 @@ struct CellListView_Previews: PreviewProvider {
     static var previews: some View {
         @State var filter = CellListFilterSettings()
 
-        NBNavigationStack {
+        CGNavigationStack {
             CellListView()
                 .cgNavigationDestinations(.summaryTab)
                 .cgNavigationDestinations(.cells)

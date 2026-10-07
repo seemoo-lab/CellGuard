@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import NavigationBackport
 
 private func doubleString(_ value: Double, maxDigits: Int = 2) -> String {
     return String(format: "%.\(maxDigits)f", value)
@@ -66,18 +65,18 @@ struct VerificationStateLogEntryView: View {
                 }
             }
         }
-        .nbNavigationDestination(for: VerificationRelatedObjectId<CellALS>.self) { id in
+        .navigationDestination(for: VerificationRelatedObjectId<CellALS>.self) { id in
             id.ensure { LogRelatedALSCellView(alsCell: $0) }
         }
-        .nbNavigationDestination(for: VerificationRelatedObjectId<LocationUser>.self) { id in
+        .navigationDestination(for: VerificationRelatedObjectId<LocationUser>.self) { id in
             id.ensure { LogRelatedUserLocationView(userLocation: $0) }
         }
-        .nbNavigationDestination(for: VerificationRelatedDistance.self) { id in
+        .navigationDestination(for: VerificationRelatedDistance.self) { id in
             id.ensure { cell, loc in
                 LogRelatedDistanceView(alsCell: cell, userLocation: loc)
             }
         }
-        .nbNavigationDestination(for: VerificationRelatedPackets.self) { id in
+        .navigationDestination(for: VerificationRelatedPackets.self) { id in
             id.ensure { LogRelatedPacketsView(packets: $0) }
         }
     }

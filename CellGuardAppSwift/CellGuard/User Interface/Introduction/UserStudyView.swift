@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import NavigationBackport
 
 /*
  Text aus Ethikantrag:
@@ -79,16 +78,16 @@ import NavigationBackport
 struct UserStudyView: View {
 
     let titleMode: NavigationBarItem.TitleDisplayMode
-    let next: (PathNavigator) -> Void
+    let next: (NavigationRouter) -> Void
 
     @AppStorage(UserDefaultsKeys.study.rawValue) private var studyParticipationTimestamp: Double = 0
     @Environment(\.presentationMode) private var presentationMode: Binding<PresentationMode>
-    @EnvironmentObject var navigator: PathNavigator
+    @EnvironmentObject var navigator: NavigationRouter
 
     @State private var agePolicyConfirmation: Bool = false
     @State private var confirmationSheet: Bool = false
 
-    init(titleMode: NavigationBarItem.TitleDisplayMode = .large, next: @escaping (PathNavigator) -> Void) {
+    init(titleMode: NavigationBarItem.TitleDisplayMode = .large, next: @escaping (NavigationRouter) -> Void) {
         self.titleMode = titleMode
         self.next = next
     }
@@ -208,7 +207,7 @@ struct SmallButtonStyle: ButtonStyle {
 }
 
 #Preview {
-    NBNavigationStack {
+    CGNavigationStack {
         UserStudyView { _ in
             // Doing nothing
         }

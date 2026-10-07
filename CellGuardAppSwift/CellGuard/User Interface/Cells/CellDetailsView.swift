@@ -7,7 +7,6 @@
 
 import CoreData
 import SwiftUI
-import NavigationBackport
 
 struct CellDetailsNavigation: Hashable {
     let cell: NavObjectId<CellTweak>
@@ -103,7 +102,7 @@ private struct TweakCellDetailsMap: View {
             ExpandableMap {
                 SingleCellMap(locationInfo: locationInfo, alsCells: alsCells, tweakCells: tweakCells)
             }
-            .nbNavigationDestination(for: ExpandableMapInfo.self) { _ in
+            .navigationDestination(for: ExpandableMapInfo.self) { _ in
                 SingleCellMap(locationInfo: locationInfo, alsCells: alsCells, tweakCells: tweakCells)
                     .ignoresSafeArea()
             }
@@ -357,7 +356,7 @@ struct CellDetailsView_Previews: PreviewProvider {
     static var previews: some View {
         let (alsCell, measurements) = prepareDB()
 
-        NBNavigationStack {
+        CGNavigationStack {
             CellDetailsView(
                 tweakCell: measurements.first!,
                 predicate: NSPredicate(value: true)
@@ -370,7 +369,7 @@ struct CellDetailsView_Previews: PreviewProvider {
         .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
         .previewDisplayName("Tweak Measurement")
 
-        NBNavigationStack {
+        CGNavigationStack {
             CellDetailsView(
                 alsCell: alsCell
             )

@@ -7,6 +7,7 @@
 
 import CoreData
 import SwiftUI
+import Combine
 
 struct TweakInstallInfoCard: View {
 

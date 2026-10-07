@@ -7,7 +7,6 @@
 
 import OSLog
 import SwiftUI
-import NavigationBackport
 
 struct AdvancedSettingsView: View {
 
@@ -131,18 +130,34 @@ private struct LocationSection: View {
 
 private struct BackendSection: View {
 
+    @State private var clearScoresError: String?
+
     var body: some View {
         Section(header: Text("Backend"), footer: Text("\(CellGuardURLs.baseUrl.absoluteString)")) {
             Button {
                 Task.detached(priority: .userInitiated) {
-                    var calendar = Calendar(identifier: .gregorian)
-                    calendar.timeZone = TimeZone(identifier: "UTC")!
-                    let beginningOfWeek = calendar.dateComponents([.calendar, .yearForWeekOfYear, .weekOfYear], from: Date()).date!
-                    try PersistenceController.basedOnEnvironment().deleteStudyScore(of: beginningOfWeek)
+                    do {
+                        var calendar = Calendar(identifier: .gregorian)
+                        calendar.timeZone = TimeZone(identifier: "UTC")!
+                        let beginningOfWeek = calendar.dateComponents([.calendar, .yearForWeekOfYear, .weekOfYear], from: Date()).date!
+                        try PersistenceController.basedOnEnvironment().deleteStudyScore(of: beginningOfWeek)
+                    } catch {
+                        await MainActor.run {
+                            clearScoresError = error.localizedDescription
+                        }
+                    }
                 }
             } label: {
                 Text("Clear Weekly Scores")
             }
+        }
+        .alert("Unable to Clear Weekly Scores", isPresented: Binding(
+            get: { clearScoresError != nil },
+            set: { if !$0 { clearScoresError = nil } }
+        )) {
+            Button("OK", role: .cancel) { clearScoresError = nil }
+        } message: {
+            Text(clearScoresError ?? "")
         }
     }
 

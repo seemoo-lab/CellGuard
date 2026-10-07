@@ -7,7 +7,6 @@
 
 import SwiftUI
 import CoreData
-import NavigationBackport
 
 struct VerificationStateView: View {
 

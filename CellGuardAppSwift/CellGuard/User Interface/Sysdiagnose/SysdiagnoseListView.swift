@@ -9,14 +9,13 @@ import CoreData
 import Foundation
 import SwiftUI
 import OSLog
-import NavigationBackport
 
 struct SysdiagnoseListView: View {
 
     @State private var isShowingDateSheet = false
     @State private var sheetRange = Date.distantPast...Date.distantFuture
 
-    @EnvironmentObject private var navigator: PathNavigator
+    @EnvironmentObject private var navigator: NavigationRouter
     @EnvironmentObject private var settings: SysdiagnoseFilterSettings
 
     private func updateDateRange() {
@@ -99,7 +98,7 @@ struct SysdiagnoseListView_Previews: PreviewProvider {
     static var previews: some View {
         @State var sysdiagnoseFilterSettings = SysdiagnoseFilterSettings()
 
-        NBNavigationStack {
+        CGNavigationStack {
             SysdiagnoseListView()
                 .cgNavigationDestinations(.sysdiagnoses)
         }

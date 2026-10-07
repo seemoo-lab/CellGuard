@@ -7,7 +7,6 @@
 
 import CoreData
 import SwiftUI
-import NavigationBackport
 
 class ConnectivityFilterSettings: ObservableObject {
     @Published var date: Date = Calendar.current.startOfDay(for: Date())
@@ -117,7 +116,7 @@ struct ConnectivityListFilterView_Previews: PreviewProvider {
     static var previews: some View {
         @State var settings = ConnectivityFilterSettings()
 
-        NBNavigationStack {
+        NavigationStack {
             ConnectivityListFilterView()
                 .environmentObject(settings)
         }

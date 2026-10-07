@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import NavigationBackport
 
 struct PacketARIDetailsView: View {
     let packet: PacketARI
@@ -97,7 +96,7 @@ struct PacketARIDetailsView_Previews: PreviewProvider {
         let context = PersistenceController.preview.container.viewContext
         let packets = PersistencePreview.packets(context: context)
 
-        NBNavigationStack {
+        NavigationStack {
             if let packet = packets[3] as? PacketARI {
                 PacketARIDetailsView(packet: packet)
             }

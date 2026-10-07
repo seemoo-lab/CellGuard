@@ -7,7 +7,6 @@
 
 import MapKit
 import SwiftUI
-import NavigationBackport
 
 struct ExpandableMapInfo: Hashable {
     // empty
@@ -15,7 +14,7 @@ struct ExpandableMapInfo: Hashable {
 
 struct ExpandableMap<Content: View>: View {
 
-    @EnvironmentObject var navigator: PathNavigator
+    @EnvironmentObject var navigator: NavigationRouter
 
     let map: Content
 
@@ -71,7 +70,7 @@ private struct MapExpandButton: View {
 
 @available(iOS 17, *)
 #Preview {
-    NBNavigationStack {
+    CGNavigationStack {
         List {
             ExpandableMap {
                 Map(coordinateRegion: .constant(
@@ -81,7 +80,7 @@ private struct MapExpandButton: View {
                     )
                 ))
             }
-            .nbNavigationDestination(for: ExpandableMapInfo.self) { _ in
+            .navigationDestination(for: ExpandableMapInfo.self) { _ in
                 Map(coordinateRegion: .constant(
                     MKCoordinateRegion(
                         center: CLLocationCoordinate2D(latitude: 37.768552, longitude: -122.481616),

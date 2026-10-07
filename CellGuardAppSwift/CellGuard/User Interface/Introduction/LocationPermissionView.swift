@@ -6,11 +6,10 @@
 //
 
 import SwiftUI
-import NavigationBackport
 
 struct LocationPermissionView: View {
 
-    @EnvironmentObject var navigator: PathNavigator
+    @EnvironmentObject var navigator: NavigationRouter
 
     var body: some View {
         VStack {
@@ -57,9 +56,9 @@ struct LocationPermissionView: View {
 }
 
 #Preview {
-    NBNavigationStack {
+    CGNavigationStack {
         LocationPermissionView()
-            .nbNavigationDestination(for: IntroductionState.self) { _ in
+            .navigationDestination(for: IntroductionState.self) { _ in
                 Text("No")
             }
     }

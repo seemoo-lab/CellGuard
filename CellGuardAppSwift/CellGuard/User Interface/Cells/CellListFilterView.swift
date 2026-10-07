@@ -7,7 +7,6 @@
 
 import CoreData
 import SwiftUI
-import NavigationBackport
 
 class CellListFilterSettings: ObservableObject {
 
@@ -229,7 +228,7 @@ struct CellListFilterView_Previews: PreviewProvider {
     static var previews: some View {
         @State var settings = CellListFilterSettings()
 
-        NBNavigationStack {
+        NavigationStack {
             CellListFilterView()
         }
         .environmentObject(settings)

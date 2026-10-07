@@ -29,7 +29,7 @@ struct CircularProgressView: View {
                 .stroke(style: StrokeStyle(lineWidth: lineWidth, lineCap: .round, lineJoin: .round))
                 .foregroundColor(Color.blue)
                 .rotationEffect(Angle(degrees: 270.0))
-                .animation(.linear)
+                .animation(.linear, value: progress)
         }
     }
 }

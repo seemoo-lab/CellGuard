@@ -8,7 +8,6 @@
 import SwiftUI
 import AcknowList
 import SwiftGzip
-import NavigationBackport
 
 struct CargoLicenseFile: Codable {
     var rootName: String

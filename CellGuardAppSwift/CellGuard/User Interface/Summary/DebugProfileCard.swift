@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import NavigationBackport
 
 struct DebugProfileCard: View {
 
@@ -16,7 +15,7 @@ struct DebugProfileCard: View {
 
     var body: some View {
         if appMode == .manual && [.notPresent, .expiringSoon].contains(profileData.installState) {
-            NBNavigationLink(value: SummaryNavigationPath.debugProfile) {
+            NavigationLink(value: SummaryNavigationPath.debugProfile) {
                 DebugProfileCardView()
             }
         }

@@ -5,11 +5,10 @@
 //  Created by Lukas Arnold on 18.06.25.
 //
 
-import NavigationBackport
 import Foundation
 import SwiftUI
 
-enum SummaryNavigationPath: NBScreen {
+enum SummaryNavigationPath: Hashable {
 
     case cellList
     case cellListFilter

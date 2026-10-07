@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import NavigationBackport
 
 struct PacketQMIDetailsView: View {
     let packet: PacketQMI
@@ -88,7 +87,7 @@ struct PacketQMIDetailsView_Previews: PreviewProvider {
         let context = PersistenceController.preview.container.viewContext
         let packets = PersistencePreview.packets(context: context)
 
-        NBNavigationStack {
+        NavigationStack {
             if let packet = packets[0] as? PacketQMI {
                 PacketQMIDetailsView(packet: packet)
             }

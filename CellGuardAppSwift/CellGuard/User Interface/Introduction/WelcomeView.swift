@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import NavigationBackport
 
 struct WelcomeView: View {
 
@@ -80,9 +79,9 @@ private struct WelcomeInformation: View {
 }
 
 #Preview {
-    NBNavigationStack {
+    NavigationStack {
         WelcomeView()
-            .nbNavigationDestination(for: IntroductionState.self) { _ in
+            .navigationDestination(for: IntroductionState.self) { _ in
                 Text("No")
             }
     }

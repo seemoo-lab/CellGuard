@@ -7,7 +7,6 @@
 
 import CoreData
 import SwiftUI
-import NavigationBackport
 
 class SysdiagnoseFilterSettings: ObservableObject {
     @Published var date: Date = Calendar.current.startOfDay(for: Date())
@@ -193,7 +192,7 @@ struct SysdiagnoseListFilterView_Previews: PreviewProvider {
     static var previews: some View {
         @State var settings = SysdiagnoseFilterSettings()
 
-        NBNavigationStack {
+        NavigationStack {
             SysdiagnoseListFilterView()
                 .environmentObject(settings)
         }

@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import CoreData
 
 struct VerificationProgressView: View {
     @FetchRequest(

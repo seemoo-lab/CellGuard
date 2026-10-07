@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import NavigationBackport
 
 struct OperatorDetailsListView: View {
     let netOperators: [NetworkOperator]
@@ -80,13 +79,13 @@ struct OperatorDetailsView: View {
 }
 
 #Preview("DE Telekom") {
-    NBNavigationStack {
+    NavigationStack {
         OperatorDetailsView(netOperator: OperatorDefinitions.shared.translate(country: 262, network: 01).first!)
     }
 }
 
 #Preview("BA RS Telecom") {
-    NBNavigationStack {
+    NavigationStack {
         OperatorDetailsView(netOperator: OperatorDefinitions.shared.translate(country: 218, network: 05).first!)
     }
 }

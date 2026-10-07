@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import NavigationBackport
 
 struct CellDetectionView: View {
 
@@ -44,9 +43,9 @@ In a few cases, these anomalies indicate an attack by a fake base station. Such 
 }
 
 #Preview {
-    NBNavigationStack {
+    NavigationStack {
         CellDetectionView()
-            .nbNavigationDestination(for: IntroductionState.self) { _ in
+            .navigationDestination(for: IntroductionState.self) { _ in
                 Text("No")
             }
     }

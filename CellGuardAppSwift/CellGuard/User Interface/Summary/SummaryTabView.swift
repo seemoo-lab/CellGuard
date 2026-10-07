@@ -7,11 +7,10 @@
 
 import CoreData
 import SwiftUI
-import NavigationBackport
 
 struct SummaryTabView: View {
 
-    @State private var path = NBNavigationPath()
+    @StateObject private var navigator = NavigationRouter()
     @StateObject private var cellFilterSettings = CellListFilterSettings()
     @StateObject private var connectivityFilterSettings = ConnectivityFilterSettings()
     @StateObject private var sysdiagnoseFilterSettings = SysdiagnoseFilterSettings()
@@ -20,40 +19,40 @@ struct SummaryTabView: View {
     }
 
     var body: some View {
-        NBNavigationStack(path: $path) {
+        NavigationStack(path: $navigator.path) {
             CombinedRiskCellView()
             .navigationTitle("Summary")
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Menu {
-                        NBNavigationLink(value: SummaryNavigationPath.cellList) {
+                        NavigationLink(value: SummaryNavigationPath.cellList) {
                             Label("Cells", systemImage: "wave.3.left")
                         }
-                        NBNavigationLink(value: SummaryNavigationPath.connectivity) {
+                        NavigationLink(value: SummaryNavigationPath.connectivity) {
                             Label("Connectivity", systemImage: "bolt")
                         }
-                        NBNavigationLink(value: SummaryNavigationPath.sysdiagList) {
+                        NavigationLink(value: SummaryNavigationPath.sysdiagList) {
                             Label("Sysdiagnoses", systemImage: "rectangle.stack")
                         }
 
                         #if STATS_VIEW
                         // Disable stats for the beta test as it is not finished.
-                        NBNavigationLink(value: SummaryNavigationPath.dataSummary) {
+                        NavigationLink(value: SummaryNavigationPath.dataSummary) {
                             Label("Stats", systemImage: "chart.bar.xaxis")
                         }
                         #endif
                         #if DEBUG
-                        NBNavigationLink(value: SummaryNavigationPath.cellLaboratory) {
+                        NavigationLink(value: SummaryNavigationPath.cellLaboratory) {
                             Label("Laboratory", systemImage: "leaf")
                         }
-                        NBNavigationLink(value: SummaryNavigationPath.operatorLookup) {
+                        NavigationLink(value: SummaryNavigationPath.operatorLookup) {
                             Label("Operators", systemImage: "globe")
                         }
                         #endif
                         Link(destination: CellGuardURLs.baseUrl) {
                             Label("Help", systemImage: "book")
                         }
-                        NBNavigationLink(value: SummaryNavigationPath.settings) {
+                        NavigationLink(value: SummaryNavigationPath.settings) {
                             Label("Settings", systemImage: "gear")
                         }
                     } label: {
@@ -70,6 +69,7 @@ struct SummaryTabView: View {
             .cgNavigationDestinations(.sysdiagnoses)
             .cgNavigationDestinations(.picker)
         }
+        .environmentObject(navigator)
         .background(Color.gray)
         .environmentObject(cellFilterSettings)
         .environmentObject(connectivityFilterSettings)

@@ -8,7 +8,6 @@
 import CoreData
 import OSLog
 import SwiftUI
-import NavigationBackport
 
 private enum ShownTab: Identifiable {
     case summary
@@ -53,7 +52,7 @@ private struct HomeTabViewIOS15: View {
             .sheet(item: $showingSheet) { (sheet: ShownSheet) in
                 switch sheet {
                 case let .importFile(url):
-                    NBNavigationStack {
+                    CGNavigationStack {
                         ImportView(fileUrl: url)
                     }
                 }
@@ -84,7 +83,7 @@ private struct HomeTabViewIOS14: View {
                 .sheet(item: $shownSheet) { (sheet: ShownSheet) in
                     switch sheet {
                     case let .importFile(url):
-                        NBNavigationStack {
+                        CGNavigationStack {
                             ImportView(fileUrl: url)
                         }
                     }

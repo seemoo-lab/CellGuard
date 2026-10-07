@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import NavigationBackport
 
 struct CellCountryNetworkSection: View {
 
@@ -32,12 +31,12 @@ struct CellCountryNetworkSection: View {
             DetailsRow(techFormatter.country(), country)
             if let netOperator = netOperators.first, netOperators.count == 1 {
                 // If there's exactly one network, we show its country
-                ListNavigationLink(value: CountryDetailsNavigation(country: netOperator)) {
+                NavigationLink(value: CountryDetailsNavigation(country: netOperator)) {
                     DetailsRow("Country", netOperator.shortCountryName)
                 }
             } else if let (primary, secondary) = netCountries, let primary = primary {
                 // If there is no network or there are multiple ones, we use the generic country
-                ListNavigationLink(value: CountryDetailsNavigation(country: primary, secondary: secondary)) {
+                NavigationLink(value: CountryDetailsNavigation(country: primary, secondary: secondary)) {
                     // Show "+ X" if multiple countries refer to a MCC
                     DetailsRow("Country", secondary.isEmpty ? primary.shortCountryName : "\(primary.shortCountryName) + \(secondary.count)" )
                 }
@@ -84,7 +83,7 @@ private struct PreviewShellView<T: View>: View {
     }
 
     var body: some View {
-        NBNavigationStack {
+        NavigationStack {
             List {
                 view
             }

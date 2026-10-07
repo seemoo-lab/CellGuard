@@ -1,5 +1,5 @@
 {
-  "originHash" : "df2cb982f14e0f4851381570e796becd124beed43d6f8a764e27774dee07ec20",
+  "originHash" : "822157601b7a66b7f0bc6d221e3d773307986d950da368247f180154d2efd078",
   "pins" : [
     {
       "identity" : "acknowlist",
@@ -38,15 +38,6 @@
       }
     },
     {
-      "identity" : "navigationbackport",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/johnpatrickmorgan/NavigationBackport.git",
-      "state" : {
-        "revision" : "8ad57caedac32db5b86a83cefa531dfe60a453f1",
-        "version" : "0.11.6"
-      }
-    },
-    {
       "identity" : "regex",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/sharplet/Regex",
@@ -78,8 +69,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-collections.git",
       "state" : {
-        "revision" : "a0cb0954ecb21e4e31b0070e6ed5674e8556685a",
-        "version" : "1.6.0"
+        "revision" : "3b69cedbaa49957e97c092ae400bb57602ef941f",
+        "version" : "1.7.2"
       }
     },
     {
@@ -96,8 +87,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-nio.git",
       "state" : {
-        "revision" : "0b18836bd8b0162e7e17a995a3fbee20ed8f3b2b",
-        "version" : "2.101.3"
+        "revision" : "6db9d9abd92ad7399b8a564cafbb87d3507245fa",
+        "version" : "2.104.0"
       }
     },
     {
@@ -123,8 +114,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/SimplyDanny/SwiftLintPlugins",
       "state" : {
-        "revision" : "3292bab28e6e92000161348003fdef8edc4e582d",
-        "version" : "0.65.0"
+        "revision" : "ef7d692fc6706e8f5628e26bcafaefa445c58a97",
+        "version" : "0.65.1"
       }
     },
     {

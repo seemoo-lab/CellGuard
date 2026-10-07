@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import NavigationBackport
 
 struct ExportView: View {
     @State private var doExportCells = true
@@ -165,7 +164,7 @@ private struct ProgressToggle: View {
 
 struct ExportView_Previews: PreviewProvider {
     static var previews: some View {
-        NBNavigationStack {
+        NavigationStack {
             ExportView()
         }
     }

@@ -7,7 +7,6 @@
 
 import SwiftUI
 import OSLog
-import NavigationBackport
 
 enum ImportFileType {
     case archive
@@ -241,10 +240,10 @@ struct ImportView: View {
                 updateFileProperties()
             }
         }
-        .nbNavigationDestination(for: CountInfo.self) {
+        .navigationDestination(for: CountInfo.self) {
             ImportStatusDetailsView(info: $0)
         }
-        .nbNavigationDestination(for: FailureInfo.self) {
+        .navigationDestination(for: FailureInfo.self) {
             ImportErrorDetailsView(failure: $0)
         }
     }
@@ -417,9 +416,9 @@ struct ImportView: View {
 
 struct ImportView_Previews: PreviewProvider {
     static var previews: some View {
-        @State var importNavPath = NBNavigationPath()
+        @State var importNavPath = NavigationPath()
 
-        NBNavigationStack(path: $importNavPath) {
+        NavigationStack(path: $importNavPath) {
             ImportView()
         }
     }

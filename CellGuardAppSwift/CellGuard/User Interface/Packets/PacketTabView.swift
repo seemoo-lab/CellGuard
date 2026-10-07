@@ -9,19 +9,18 @@ import CoreData
 import SwiftUI
 import OSLog
 import Combine
-import NavigationBackport
 
 struct PacketTabView: View {
 
     @AppStorage(UserDefaultsKeys.appMode.rawValue) private var appMode: DataCollectionMode = .none
 
-    @State private var path = NBNavigationPath()
+    @StateObject private var navigator = NavigationRouter()
     @StateObject private var filter: PacketFilterSettings = PacketFilterSettings()
     @State private var backgroundObserver: NSObjectProtocol?
     @State private var foregroundObserver: NSObjectProtocol?
 
     var body: some View {
-        NBNavigationStack(path: $path) {
+        NavigationStack(path: $navigator.path) {
             FilteredPacketView(filter: filter)
             .navigationTitle("Packets")
             .toolbar {
@@ -34,13 +33,13 @@ struct PacketTabView: View {
                 #endif
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
-                        path.push(PacketNavigationPath.filter)
+                        navigator.push(PacketNavigationPath.filter)
                     } label: {
                         Image(systemName: CGIcons.filter)
                     }
                 }
             }
-            .nbNavigationDestination(for: PacketNavigationPath.self) { nav in
+            .navigationDestination(for: PacketNavigationPath.self) { nav in
                 PacketNavigationPath.navigate(nav)
             }
             .cgNavigationDestinations(.packets)
@@ -70,6 +69,7 @@ struct PacketTabView: View {
             }
             #endif
         }
+        .environmentObject(navigator)
         .environmentObject(filter)
     }
 }

@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import NavigationBackport
 
 // The button properties .buttonStyle(.bordered) and .tint(.primary) are only available in iOS 15.
 // Therefore we're using an external class to match Apple's button style.
@@ -109,7 +108,7 @@ struct LargeButtonLink<P: Hashable>: View {
     var body: some View {
         HStack {
             Spacer(minLength: LargeButtonProperties.buttonHorizontalMargins)
-            NBNavigationLink(value: value) {
+            NavigationLink(value: value) {
                 Text(self.title)
                     .frame(maxWidth: .infinity)
             }
