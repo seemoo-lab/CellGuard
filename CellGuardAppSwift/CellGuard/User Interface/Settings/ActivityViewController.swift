@@ -8,7 +8,7 @@
 import UIKit
 import SwiftUI
 
-// SwiftUI on iOS 14 doesn't allow to show the share window, and thus we have to resort back to UIKit.
+// Present sharing automatically after an asynchronous export completes.
 // Author: samwize (https://stackoverflow.com/a/60137973)
 
 struct ActivityViewController: UIViewControllerRepresentable {
@@ -16,15 +16,14 @@ struct ActivityViewController: UIViewControllerRepresentable {
     var activityItems: [Any]
     var applicationActivities: [UIActivity]?
 
-    @Environment(\.presentationMode)
-    var presentationMode
+    @Environment(\.dismiss) private var dismiss
 
     func makeUIViewController(context: UIViewControllerRepresentableContext<ActivityViewController>) -> UIActivityViewController {
         // Create the share controller
         let controller = UIActivityViewController(activityItems: activityItems, applicationActivities: applicationActivities)
         // Dismiss this view if the controller is dismissed
         controller.completionWithItemsHandler = { (_, _, _, _) in
-            self.presentationMode.wrappedValue.dismiss()
+            self.dismiss()
         }
         return controller
     }

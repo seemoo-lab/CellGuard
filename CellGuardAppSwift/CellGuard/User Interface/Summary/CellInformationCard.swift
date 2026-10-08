@@ -8,7 +8,6 @@
 import UIKit
 import MapKit
 import SwiftUI
-import Combine
 
 import CoreData
 
@@ -186,32 +185,18 @@ private struct ConnectedCellInfoCard: View {
     }
 }
 
-private class TimeUpdater: ObservableObject {
-    static let shared = TimeUpdater()
-
-    @Published var currentDate: Date = Date()
-    private var timerCancellable: AnyCancellable?
-
-    private init() {
-        timerCancellable = Timer
-            .publish(every: 1, on: .main, in: .common)
-            .autoconnect()
-            .sink { [weak self] in self?.currentDate = $0 }
-    }
-}
-
 private struct CellInfoDateItem: View {
 
     let cell: CellTweak
     let dateFormatter = RelativeDateTimeFormatter()
 
-    @ObservedObject private var timeUpdater = TimeUpdater.shared
-
     var body: some View {
-        CellInformationItem(
-            title: "Date",
-            text: dateFormatter.localizedString(for: cell.collected ?? cell.imported ?? timeUpdater.currentDate, relativeTo: timeUpdater.currentDate)
-        )
+        TimelineView(.periodic(from: .now, by: 1)) { context in
+            CellInformationItem(
+                title: "Date",
+                text: dateFormatter.localizedString(for: cell.collected ?? cell.imported ?? context.date, relativeTo: context.date)
+            )
+        }
     }
 }
 
