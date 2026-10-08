@@ -142,27 +142,47 @@ private struct ConnectedCellInfoCard: View {
         }
         .padding(EdgeInsets(top: 20, leading: 20, bottom: 10, trailing: 20))
 
-        HStack {
-            CellInformationItem(title: techFormatter.country(), number: cell.country)
-            CellInformationItem(title: techFormatter.network(), text: formatMNC(cell.network))
-            CellInformationItem(title: techFormatter.area(), number: cell.area)
-            CellInformationItem(title: techFormatter.cell(), number: cell.cell)
-        }
-        .padding(EdgeInsets(top: 5, leading: 15, bottom: 10, trailing: 15))
+        ViewThatFits(in: .horizontal) {
+            HStack {
+                identityItems
+                detailItems
+            }
+            .fixedSize(horizontal: true, vertical: false)
+            .padding(EdgeInsets(top: 5, leading: 20, bottom: cell.location == nil ? 25 : 10, trailing: 20))
 
-        HStack {
-            let technology = cell.supports5gNsa() ? "5G NSA" : cell.technology
-            CellInformationItem(title: "Technology", text: technology)
-            // CellInformationItem(title: techFormatter.frequency(), number: cell.frequency)
-            CellInfoDateItem(cell: cell)
+            VStack(spacing: 8) {
+                HStack {
+                    identityItems
+                }
+                .padding(EdgeInsets(top: 5, leading: 15, bottom: 10, trailing: 15))
+
+                HStack {
+                    detailItems
+                }
+                .padding(EdgeInsets(top: 5, leading: 20, bottom: cell.location == nil ? 25 : 10, trailing: 20))
+            }
         }
-        .padding(EdgeInsets(top: 5, leading: 20, bottom: cell.location == nil ? 25 : 10, trailing: 20))
 
         if SingleCellMap.hasAnyLocation(alsCells, tweakCells) {
             SingleCellMap(locationInfo: locationInfo, alsCells: alsCells, tweakCells: tweakCells)
                 .frame(height: 200)
                 .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
         }
+    }
+
+    @ViewBuilder
+    private var identityItems: some View {
+        CellInformationItem(title: techFormatter.country(), number: cell.country)
+        CellInformationItem(title: techFormatter.network(), text: formatMNC(cell.network))
+        CellInformationItem(title: techFormatter.area(), number: cell.area)
+        CellInformationItem(title: techFormatter.cell(), number: cell.cell)
+    }
+
+    @ViewBuilder
+    private var detailItems: some View {
+        let technology = cell.supports5gNsa() ? "5G NSA" : cell.technology
+        CellInformationItem(title: "Technology", text: technology)
+        CellInfoDateItem(cell: cell)
     }
 }
 
@@ -248,6 +268,10 @@ struct CellInformation_Previews: PreviewProvider {
     static var previews: some View {
         CellInformationCard(cell: exampleCell())
             .previewDisplayName("iPhone 14 Pro")
+
+        CellInformationCard(cell: exampleCell(), dualSim: true)
+            .previewLayout(.fixed(width: 900, height: 250))
+            .previewDisplayName("Expanded iPhone")
 
         /* CellInformationView(cell: exampleCell())
             .previewDevice("iPhone SE (3rd generation)")
