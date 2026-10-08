@@ -15,17 +15,11 @@ cd $PROJECT_DIR
 
 export PATH="$HOME/.cargo/bin:$PATH"
 
-# Without this we can't compile on MacOS Big Sur
-# https://github.com/TimNN/cargo-lipo/issues/41#issuecomment-774793892
-if [[ -n "${DEVELOPER_SDK_DIR:-}" ]]; then
-  export LIBRARY_PATH="${DEVELOPER_SDK_DIR}/MacOSX.sdk/usr/lib:${LIBRARY_PATH:-}"
-fi
-
 TARGETS=""
 if [[ "$PLATFORM_NAME" = "iphonesimulator" ]]; then
-    TARGETS="aarch64-apple-ios-sim,x86_64-apple-ios"
+    TARGETS="aarch64-apple-ios-sim"
 else
-    TARGETS="aarch64-apple-ios,x86_64-apple-ios"
+    TARGETS="aarch64-apple-ios"
 fi
 
 # if [ $ENABLE_PREVIEWS == "NO" ]; then

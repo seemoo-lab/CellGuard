@@ -1569,6 +1569,7 @@
 			outputPaths = (
 				"$(PROJECT_DIR)/Generated",
 				"$(PROJECT_DIR)/../CellGuardAppRust/target/universal/debug",
+				"$(PROJECT_DIR)/../CellGuardAppRust/target/universal/release",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
