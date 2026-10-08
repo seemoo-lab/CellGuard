@@ -43,8 +43,11 @@ struct UpdateCheckView: View {
                     next()
                 } label: {
                     Text("Enable")
+                        .frame(maxWidth: .infinity)
                 }
-                .buttonStyle(SmallButtonStyle())
+                .buttonStyle(.borderedProminent)
+                .controlSize(.large)
+                .tint(.blue)
                 .padding(3)
                 .disabled(!agePolicyConfirmation)
 
@@ -54,8 +57,11 @@ struct UpdateCheckView: View {
                     next()
                 } label: {
                     Text("Skip")
+                        .frame(maxWidth: .infinity)
                 }
-                .buttonStyle(SmallButtonStyle())
+                .buttonStyle(.borderedProminent)
+                .controlSize(.large)
+                .tint(.blue)
                 .padding(3)
             }
             .padding(EdgeInsets(top: 2, leading: 10, bottom: 6, trailing: 10))

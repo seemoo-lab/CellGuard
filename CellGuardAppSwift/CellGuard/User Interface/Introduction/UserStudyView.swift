@@ -81,7 +81,6 @@ struct UserStudyView: View {
     let next: (NavigationRouter) -> Void
 
     @AppStorage(UserDefaultsKeys.study.rawValue) private var studyParticipationTimestamp: Double = 0
-    @Environment(\.presentationMode) private var presentationMode: Binding<PresentationMode>
     @EnvironmentObject var navigator: NavigationRouter
 
     @State private var agePolicyConfirmation: Bool = false
@@ -129,8 +128,11 @@ While you can use CellGuard without participating in the study, your involvemen
                     next(navigator)
                 } label: {
                     Text("Participate")
+                        .frame(maxWidth: .infinity)
                 }
-                .buttonStyle(SmallButtonStyle())
+                .buttonStyle(.borderedProminent)
+                .controlSize(.large)
+                .tint(.blue)
                 .padding(3)
                 .disabled(!agePolicyConfirmation)
 
@@ -140,8 +142,11 @@ While you can use CellGuard without participating in the study, your involvemen
                     next(navigator)
                 } label: {
                     Text("Don't Participate")
+                        .frame(maxWidth: .infinity)
                 }
-                .buttonStyle(SmallButtonStyle())
+                .buttonStyle(.borderedProminent)
+                .controlSize(.large)
+                .tint(.blue)
                 .padding(3)
             }
             .padding(EdgeInsets(top: 2, leading: 10, bottom: 6, trailing: 10))
@@ -166,43 +171,6 @@ struct CheckboxStyle: ToggleStyle {
                 configuration.label
         }
         .onTapGesture { configuration.isOn.toggle() }
-    }
-}
-
-// Some hack as the big button is not resizable, so we're using a smaller button here
-
-struct SmallButtonStyle: ButtonStyle {
-
-    // We have to embed the button style in an extra, otherwise isEnabled is always true on iOS 14.4 and below.
-    // See: https://stackoverflow.com/a/64255870
-    // See: https://stackoverflow.com/q/69089886
-    struct SmallButtonView: View {
-        @Environment(\.isEnabled) private var isEnabled: Bool
-        let configuration: Configuration
-
-        init(configuration: Configuration) {
-            self.configuration = configuration
-        }
-
-        var body: some View {
-            let foregroundColor = Color(UIColor.white)
-            let backgroundColor = Color(UIColor.systemBlue)
-
-            let confForegroundColor = !isEnabled || configuration.isPressed ? foregroundColor.opacity(0.3) : foregroundColor
-            let confBackgroundColor = !isEnabled || configuration.isPressed ? backgroundColor.opacity(0.3) : backgroundColor
-
-            configuration.label
-                .frame(maxWidth: .infinity)
-                .padding()
-                .background(confBackgroundColor)
-                .foregroundColor(confForegroundColor)
-                // .foregroundStyle(.white)
-                .clipShape(RoundedRectangle(cornerSize: CGSize(width: 10, height: 20)))
-        }
-    }
-
-    func makeBody(configuration: Configuration) -> some View {
-        return SmallButtonView(configuration: configuration)
     }
 }
 
