@@ -20,6 +20,3 @@ package = false
 [[tool.uv.index]]
 name = "pypi"
 url = "https://pypi.org/simple"
-
-[tool.uv.sources]
-luaparser = { git = "https://github.com/boolangery/py-lua-parser", rev = "3.3.1" }
